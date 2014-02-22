@@ -1,0 +1,5 @@
+name: MGLib
+version: 0.1-dev1
+main: com.headswilllol.mglib.MGLib
+description: A Bukkit library designed to ease the process of minigame plugin creation
+author: Maxim Roncace
