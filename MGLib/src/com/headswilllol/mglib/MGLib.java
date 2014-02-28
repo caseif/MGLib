@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MGLib extends JavaPlugin {
 	
 	public static List<String> approved = new ArrayList<String>();
+	public static final int lastDev = 2;
 
 	public static MGLib plugin;
 
@@ -31,7 +32,7 @@ public class MGLib extends JavaPlugin {
 	}
 	
 	private static void initialize(){
-		approved.add("0.1-dev1");
+		approved.add("0.1");
 	}
 
 }
