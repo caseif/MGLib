@@ -4,19 +4,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.amigocraft.mglib.round.Round;
+import net.amigocraft.mglib.round.Stage;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * The primary API class. Contains all necessary methods to create a minigame plugin from the library.
+ * @author Maxim Roncacé
+ * @version 0.1-dev4
+ * @since 0.1
+ */
 public class Minigame {
 
 	private static HashMap<String, Minigame> registeredInstances = new HashMap<String, Minigame>();
 
-	@SuppressWarnings("unused")
 	private JavaPlugin plugin;
+
+	private List<Round> rounds = new ArrayList<Round>();
 
 	/**
 	 * Creates a new instance of the MGLib API. This object may be used for all API methods
 	 * @param plugin An instance of your plugin.
-	 * @param minimumVersion The approved version of MGLib for your plugin.
+	 * @param approvedVersion The approved version of MGLib for your plugin.\
+	 * @since 0.1
 	 */
 	public Minigame(JavaPlugin plugin, String approvedVersion){
 		if (!registeredInstances.containsKey(plugin.getName())){
@@ -33,7 +44,8 @@ public class Minigame {
 	/**
 	 * Creates a new instance of the MGLib API. This object may be used for all API methods
 	 * @param plugin An instance of your plugin.
-	 * @param minimumVersion The approved versions of MGLib for your plugin.
+	 * @param approvedVersions The approved versions of MGLib for your plugin.
+	 * @since 0.1
 	 */
 	public Minigame(JavaPlugin plugin, List<String> approvedVersions){
 		this.plugin = plugin;
@@ -47,8 +59,10 @@ public class Minigame {
 			}
 		}
 		if (compatibleVersions.size() == 0){
-			MGLib.log.warning(plugin + " was built for a newer version of MGLib. As such, it is likely that " +
-					"it wlil not work correctly.");
+			MGLib.log.warning(plugin + " was built for a newer or incompatible version of MGLib. As such, it is " +
+					"likely that it wlil not work correctly.");
+			MGLib.log.info("Type /mglib v" + plugin.getName() + " to see a list of compatible MGLib versions");
+			//TODO: Actually implement this ^
 		}
 		if (dev)
 			MGLib.log.warning(plugin + " was tested only against development version(s) of MGLib. " +
@@ -73,6 +87,7 @@ public class Minigame {
 	 * Finds the instance of the MGLib API associated with a given plugin
 	 * @param plugin The name of the plugin to search for
 	 * @return The instance of the MGLib API (Minigame.class) associated with the given plugin
+	 * @since 0.1
 	 */
 	public static Minigame getMinigameInstance(String plugin){
 		return registeredInstances.get(plugin);
@@ -82,9 +97,45 @@ public class Minigame {
 	 * Finds the instance of the MGLib API associated with a given plugin
 	 * @param plugin The plugin to search for
 	 * @return The instance of the MGLib API (Minigame.class) associated with the given plugin
+	 * @since 0.1
 	 */
 	public static Minigame getMinigameInstance(JavaPlugin plugin){
 		return getMinigameInstance(plugin.getName());
+	}
+	
+	/**
+	 * @return A list containing all rounds associated with the instance which registered this API instance.
+	 * @since 0.1
+	 */
+	public List<Round> getRounds(){
+		return rounds;
+	}
+	
+	/**
+	 * Creates and stores a new round with the given parameters.
+	 * @param world The name of the world to create the round in.
+	 * @param time The time (in seconds) the round should last for. Set to 0 for no limit.
+	 * @return The created round.
+	 * @since 0.1
+	 */
+	public Round createRound(String world, int time){
+		Round r = new Round(plugin.getName(), world);
+		r.setStage(Stage.WAITING);
+		rounds.add(r);
+		return r;
+	}
+
+	/**
+	 * @param n The world of the round to retrieve.
+	 * @return The instance of the round associated with the given world.
+	 * @since 0.1
+	 */
+	public Round getRound(String world){
+		for (Round r : rounds){
+			if (r.getWorld().equals(world))
+				return r;
+		}
+		return null;
 	}
 
 }
