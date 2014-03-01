@@ -1,4 +1,4 @@
-package com.headswilllol.mglib;
+package net.amigocraft.mglib;
 
 import java.util.ArrayList;
 import java.util.List;

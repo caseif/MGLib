@@ -1,12 +1,10 @@
-package com.headswilllol.mglib.api;
+package net.amigocraft.mglib;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.headswilllol.mglib.MGLib;
 
 public class Minigame {
 
