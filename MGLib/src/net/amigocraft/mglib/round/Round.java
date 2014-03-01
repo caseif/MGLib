@@ -7,7 +7,7 @@ import net.amigocraft.mglib.Minigame;
 
 /**
  * Represents a round within a minigame.
- * @author Maxim Roncacé
+ * @author Maxim RoncacÃ©
  * @since 0.1
  */
 public class Round {
