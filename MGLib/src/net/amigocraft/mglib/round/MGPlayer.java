@@ -38,7 +38,7 @@ public class MGPlayer {
 	}
 	
 	/**
-	 * @return The minigame plugin associated with this {@MGPlayer}.
+	 * @return The minigame plugin associated with this {@link MGPlayer}.
 	 * @since 0.1
 	 */
 	public String getPlugin(){
@@ -104,7 +104,7 @@ public class MGPlayer {
 	}
 	
 	/**
-	 * Returns the {@MGPlayer} associated with the given username.
+	 * Returns the {@link MGPlayer} associated with the given username.
 	 * @param player The username to search for.
 	 * @return The {@link MGPlayer} associated with the given username, or <b>null</b> if none is found.
 	 * @since 0.1

@@ -126,7 +126,7 @@ public class Minigame {
 	}
 
 	/**
-	 * @param n The world of the round to retrieve.
+	 * @param world The world of the round to retrieve.
 	 * @return The instance of the round associated with the given world.
 	 * @since 0.1
 	 */
