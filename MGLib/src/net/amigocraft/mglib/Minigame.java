@@ -118,8 +118,8 @@ public class Minigame {
 	 * @return The created round.
 	 * @since 0.1
 	 */
-	public Round createRound(String world, int time){
-		Round r = new Round(plugin.getName(), world);
+	public Round createRound(String world, int preparationTime, int playingTime){
+		Round r = new Round(plugin.getName(), world, preparationTime, playingTime);
 		r.setStage(Stage.WAITING);
 		rounds.add(r);
 		return r;
