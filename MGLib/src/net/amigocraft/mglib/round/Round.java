@@ -7,6 +7,9 @@ import org.bukkit.Bukkit;
 
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.Minigame;
+import net.amigocraft.mglib.event.MinigameRoundEndEvent;
+import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
+import net.amigocraft.mglib.event.MinigameRoundStartEvent;
 
 /**
  * Represents a round within a minigame.
@@ -28,12 +31,12 @@ public class Round {
 	/**
 	 * Creates a new {@link Round} with the given parameters.
 	 * <br><br>
-	 * Please use {@link Minigame#createRound(String, int)} unless you understand the implications of using this
-	 * constructor.
+	 * Please use {@link Minigame#createRound(String, int, int) Minigame#createRound()} unless you understand the
+	 * implications of using this constructor.
 	 * @param plugin The plugin which this round should be associated with.
 	 * @param world The world which this round takes place in.
-	 * @param preparationTime The round's total preparation time.
-	 * @param playingTime The round's total playing time.
+	 * @param preparationTime The round's total preparation time. Use -1 for no limit, or 0 for no preparation phase.
+	 * @param roundTime The round's total playing time. Use -1 for no limit.
 	 * @since 0.1
 	 */
 	public Round(String plugin, String world, int preparationTime, int roundTime){
@@ -98,7 +101,7 @@ public class Round {
 	public int getPlayingTime(){
 		return roundTime;
 	}
-	
+
 	/**
 	 * @return The round's timer's task's handle, or -1 if a timer is not started.
 	 * @since 0.1
@@ -118,7 +121,7 @@ public class Round {
 
 	/**
 	 * Sets the current stage of this {@link Round}.
-	 * @param s The stage to set thsi {@link Round} to.
+	 * @param s The stage to set this {@link Round} to.
 	 * @since 0.1
 	 */
 	public void setStage(Stage s){
@@ -136,7 +139,8 @@ public class Round {
 
 	/**
 	 * Sets the round's preparation time.
-	 * @param t The number of seconds to set the preparation time to.
+	 * @param t The number of seconds to set the preparation time to. Use -1 for no limit, or 0 for
+	 * no preparation phase.
 	 * @since 0.1
 	 */
 	public void setPreparationTime(int t){
@@ -145,7 +149,7 @@ public class Round {
 
 	/**
 	 * Sets the round's playing time.
-	 * @param t The number of seconds to set the preparation time to.
+	 * @param t The number of seconds to set the preparation time to. Use -1 for no limit.
 	 * @since 0.1
 	 */
 	public void setPlayingTime(int t){
@@ -207,20 +211,22 @@ public class Round {
 	}
 
 	/**
-	 * Starts the round's timer. If the round's current stage is {@link Stage#PREPARING}, it will be set to
-	 * {@link Stage#PLAYING} and the timer will be reset when it reaches 0.
-	 * @throws IllegalStateException if the timer has already been started.
+	 * Begin the round and start its timer. If the round's current stage is {@link Stage#PREPARING}, it will
+	 * be set to {@link Stage#PLAYING} and the timer will be reset when it reaches 0. Otherwise, its stage
+	 * will be set to {@link Stage#PREPARING} and it will begins its preparation stage.
+	 * <br><br>
+	 * After it finishes its preparation, it will begin as it would if this method were called again (don't
+	 * actually call it again though, or you'll trigger an exception).
+	 * @throws IllegalStateException if the stage is already {@link Stage#PLAYING}.
 	 * @since 0.1
 	 */
-	public void startTimer(){
-		if (timerHandle == -1){
+	public void startRound(){
+		if (stage != Stage.PLAYING){
 			final Round r = this;
-			if (r.getStage() == Stage.PLAYING)
-				r.setTime(r.getPlayingTime());
-			else {
-				r.setTime(r.getPreparationTime());
-				r.setStage(Stage.PREPARING);
-			}
+			r.setTime(r.getPreparationTime());
+			r.setStage(Stage.PREPARING);
+			Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r));
+			if (time != -1){
 			timerHandle = Bukkit.getScheduler().runTaskTimer(MGLib.plugin, new Runnable(){
 				public void run(){
 					r.tickDown();
@@ -228,32 +234,42 @@ public class Round {
 						if (r.getStage() == Stage.PREPARING){
 							r.setStage(Stage.PLAYING);
 							r.setTime(r.getPlayingTime());
+							Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
 						}
 						else {
-							Bukkit.getScheduler().cancelTask(r.getTimerHandle());
-							r.setStage(Stage.WAITING);
-							r.setTime(-1);
-							//TODO: Fire custom event
+							endRound(true);
 						}
 					}
 				}
 			}, 0L, 20L).getTaskId();
+			}
 		}
 		else
 			throw new IllegalStateException(Bukkit.getPluginManager().getPlugin(plugin) +
-					" attempted to start a timer which " +
-					"was already started.");
+					" attempted to start a round which had already been started.");
 	}
 
 	/**
-	 * Stops and resets the round's timer. The stage will also be set to {@link Stage#WAITING}.
+	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
 	 * @throws IllegalStateException if the timer has not been started.
 	 * @since 0.1
 	 */
-	public void stopTimer(){
+	public void endRound(boolean timeUp){
 		setTime(-1);
-		Bukkit.getScheduler().cancelTask(timerHandle);
+		if (timerHandle != -1)
+			Bukkit.getScheduler().cancelTask(timerHandle);
+		stage = Stage.WAITING;
 		timerHandle = -1;
+		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
+	}
+
+	/**
+	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
+	 * @throws IllegalStateException if the timer has not been started.
+	 * @since 0.1
+	 */
+	public void endRound(){
+		endRound(false);
 	}
 
 	public boolean equals(Object p){

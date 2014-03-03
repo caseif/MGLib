@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * The primary API class. Contains all necessary methods to create a minigame plugin from the library.
  * @author Maxim Roncacé
- * @version 0.1-dev4
+ * @version 0.1-dev6
  * @since 0.1
  */
 public class Minigame {
@@ -114,12 +114,13 @@ public class Minigame {
 	/**
 	 * Creates and stores a new round with the given parameters.
 	 * @param world The name of the world to create the round in.
-	 * @param time The time (in seconds) the round should last for. Set to 0 for no limit.
+	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
+	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
 	 * @return The created round.
 	 * @since 0.1
 	 */
-	public Round createRound(String world, int preparationTime, int playingTime){
-		Round r = new Round(plugin.getName(), world, preparationTime, playingTime);
+	public Round createRound(String world, int preparationTime, int roundTime){
+		Round r = new Round(plugin.getName(), world, preparationTime, roundTime);
 		r.setStage(Stage.WAITING);
 		rounds.add(r);
 		return r;
