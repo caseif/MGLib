@@ -29,6 +29,7 @@ public class MinigameRoundEndEvent extends Event {
 	}
 	
 	/**
+	 * Gets the round which has ended.
 	 * @return The round which has ended.
 	 * @since 0.1
 	 */
@@ -37,13 +38,16 @@ public class MinigameRoundEndEvent extends Event {
 	}
 	
 	/**
+	 * Gets whether the round ended because its timer reached 0.
 	 * @return Whether the round ended because its timer reached 0.
+	 * @since 0.1
 	 */
 	public boolean wasOutOfTime(){
 		return outOfTime;
 	}
 	
 	/**
+	 * Gets the name of the plugin which triggered this event.
 	 * @return The name of the plugin which triggered this event.
 	 * @since 0.1
 	 */

@@ -26,6 +26,7 @@ public class MinigameRoundRollbackEvent extends Event {
 	}
 	
 	/**
+	 * Gets the round which has been rolled back.
 	 * @return The round which has been rolled back.
 	 * @since 0.1
 	 */
@@ -34,6 +35,7 @@ public class MinigameRoundRollbackEvent extends Event {
 	}
 	
 	/**
+	 * Gets the name of the plugin which triggered this event.
 	 * @return The name of the plugin which triggered this event.
 	 * @since 0.1
 	 */

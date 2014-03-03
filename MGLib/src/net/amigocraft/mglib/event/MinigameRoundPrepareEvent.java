@@ -26,6 +26,7 @@ public class MinigameRoundPrepareEvent extends Event {
 	}
 	
 	/**
+	 * Gets the round which has begun preparing.
 	 * @return The round which has begun preparing.
 	 * @since 0.1
 	 */
@@ -34,6 +35,7 @@ public class MinigameRoundPrepareEvent extends Event {
 	}
 	
 	/**
+	 * Gets the name of the plugin which triggered this event.
 	 * @return The name of the plugin which triggered this event.
 	 * @since 0.1
 	 */

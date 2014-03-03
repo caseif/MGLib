@@ -104,6 +104,7 @@ public class Minigame {
 	}
 	
 	/**
+	 * Gets a list containing all rounds associated with the instance which registered this API instance.
 	 * @return A list containing all rounds associated with the instance which registered this API instance.
 	 * @since 0.1
 	 */
@@ -127,6 +128,7 @@ public class Minigame {
 	}
 
 	/**
+	 * Gets the instance of the round associated with the given world.
 	 * @param world The world of the round to retrieve.
 	 * @return The instance of the round associated with the given world.
 	 * @since 0.1

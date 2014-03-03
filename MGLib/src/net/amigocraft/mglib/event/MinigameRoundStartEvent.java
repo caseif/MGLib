@@ -37,6 +37,7 @@ public class MinigameRoundStartEvent extends Event {
 	}
 	
 	/**
+	 * Gets the round which has been started.
 	 * @return The round which has been started.
 	 * @since 0.1
 	 */
@@ -45,6 +46,7 @@ public class MinigameRoundStartEvent extends Event {
 	}
 	
 	/**
+	 * Gets whether the round start was on account of its preparation period ending.
 	 * @return Whether the round start was on account of its preparation period ending.
 	 * @since 0.1
 	 */
@@ -53,6 +55,7 @@ public class MinigameRoundStartEvent extends Event {
 	}
 	
 	/**
+	 * Gets the name of the plugin which triggered this event.
 	 * @return The name of the plugin which triggered this event.
 	 * @since 0.1
 	 */

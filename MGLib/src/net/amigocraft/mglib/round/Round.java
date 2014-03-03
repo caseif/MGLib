@@ -47,6 +47,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the name of the minigame plugin associated with this {@link Round}.
 	 * @return The name of the minigame plugin associated with this {@link Round}. 
 	 * @since 0.1
 	 */
@@ -55,6 +56,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the instance of the MGLib API registered by the plugin associated with this {@link Round}.
 	 * @return The instance of the MGLib API registered by the plugin associated with this {@link Round}.
 	 * @since 0.1
 	 */
@@ -63,6 +65,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the name of the world associated with this {@link Round}.
 	 * @return The name of the world associated with this {@link Round}.
 	 * @since 0.1
 	 */
@@ -71,6 +74,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the current {@link Stage} of this {@link Round}.
 	 * @return The current {@link Stage} of this {@link Round}.
 	 * @since 0.1
 	 */
@@ -79,6 +83,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the current time remaining in this {@link Round}.
 	 * @return The current time remaining in this {@link Round}.
 	 * @since 0.1
 	 */
@@ -87,6 +92,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the round's preparation time.
 	 * @return The round's preparation time.
 	 * @since 0.1
 	 */
@@ -95,6 +101,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the round's playing time.
 	 * @return The round's playing time.
 	 * @since 0.1
 	 */
@@ -103,6 +110,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets the round's timer's task's handle, or -1 if a timer is not started.
 	 * @return The round's timer's task's handle, or -1 if a timer is not started.
 	 * @since 0.1
 	 */
@@ -196,6 +204,7 @@ public class Round {
 	}
 
 	/**
+	 * Gets a list of {@link MGPlayer}s in this {@link Round}.
 	 * @return A list of {@link MGPlayer}s in this {@link Round}.
 	 * @since 0.1
 	 */

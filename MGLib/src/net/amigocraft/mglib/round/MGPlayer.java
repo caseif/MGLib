@@ -38,6 +38,7 @@ public class MGPlayer {
 	}
 	
 	/**
+	 * Gets the minigame plugin associated with this {@link MGPlayer}.
 	 * @return The minigame plugin associated with this {@link MGPlayer}.
 	 * @since 0.1
 	 */
@@ -46,6 +47,7 @@ public class MGPlayer {
 	}
 	
 	/**
+	 * Gets the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
 	 * @return The MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
 	 * @since 0.1
 	 */
@@ -54,6 +56,7 @@ public class MGPlayer {
 	}
 
 	/**
+	 * Gets the username of this {@link MGPlayer}.
 	 * @return The username of this {@link MGPlayer}.
 	 * @since 0.1
 	 */
@@ -62,6 +65,7 @@ public class MGPlayer {
 	}
 
 	/**
+	 * Gets the world associated with this {@link MGPlayer}.
 	 * @return The world associated with this {@link MGPlayer}.
 	 * @since 0.1
 	 */
@@ -70,6 +74,7 @@ public class MGPlayer {
 	}
 
 	/**
+	 * Gets whether this player is "dead" in the minigame.
 	 * @return Whether this player is "dead" in the minigame (can return true even if {@link Player#isDead()} returns
 	 * false).
 	 * @since 0.1
@@ -79,6 +84,7 @@ public class MGPlayer {
 	}
 	
 	/**
+	 * Gets the {@link Round} associated with this player.
 	 * @return The {@link Round} associated with this player.
 	 * @since 0.1
 	 */
@@ -87,6 +93,7 @@ public class MGPlayer {
 	}
 	
 	/**
+	 * Gets the username of this {@link MGPlayer}.
 	 * @param name The username of this {@link MGPlayer}.
 	 * @since 0.1
 	 */
