@@ -1,5 +1,7 @@
 package net.amigocraft.mglib;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,12 +9,20 @@ import java.util.List;
 import net.amigocraft.mglib.round.Round;
 import net.amigocraft.mglib.round.Stage;
 
+import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * The primary API class. Contains all necessary methods to create a minigame plugin from the library.
+ * The primary API class. Contains necessary methods to create a minigame plugin from the library.
+ * <br><br>
+ * Building against this version of the library is <i>highly discouraged</i>. This is a development build,
+ * and as such, is very prone to change. Methods may be in this version that will disappear in
+ * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev6
+ * @version 0.1-dev7
  * @since 0.1
  */
 public class Minigame {
@@ -79,7 +89,7 @@ public class Minigame {
 				}
 				else
 					return true;
-					
+
 		return false;
 	}
 
@@ -102,7 +112,7 @@ public class Minigame {
 	public static Minigame getMinigameInstance(JavaPlugin plugin){
 		return getMinigameInstance(plugin.getName());
 	}
-	
+
 	/**
 	 * Gets a list containing all rounds associated with the instance which registered this API instance.
 	 * @return A list containing all rounds associated with the instance which registered this API instance.
@@ -111,17 +121,17 @@ public class Minigame {
 	public List<Round> getRounds(){
 		return rounds;
 	}
-	
+
 	/**
 	 * Creates and stores a new round with the given parameters.
-	 * @param world The name of the world to create the round in.
+	 * @param name The name of the world to create the round in.
 	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
 	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
 	 * @return The created round.
 	 * @since 0.1
 	 */
-	public Round createRound(String world, int preparationTime, int roundTime){
-		Round r = new Round(plugin.getName(), world, preparationTime, roundTime);
+	public Round createRound(String name, boolean discrete, int preparationTime, int roundTime){
+		Round r = new Round(plugin.getName(), name, discrete, preparationTime, roundTime);
 		r.setStage(Stage.WAITING);
 		rounds.add(r);
 		return r;
@@ -129,16 +139,112 @@ public class Minigame {
 
 	/**
 	 * Gets the instance of the round associated with the given world.
-	 * @param world The world of the round to retrieve.
+	 * @param name The name of the round to retrieve.
 	 * @return The instance of the round associated with the given world.
 	 * @since 0.1
 	 */
-	public Round getRound(String world){
+	public Round getRound(String name){
 		for (Round r : rounds){
-			if (r.getWorld().equals(world))
+			if (r.getName().equals(name))
 				return r;
 		}
 		return null;
+	}
+
+	/**
+	 * Creates an arena for use with MGLib.
+	 * @param name The name of the arena (used to identify it).
+	 * @param spawn The initial spawn point of the arena.
+	 * @param corner1 A corner of the arena.
+	 * @param corner2 The corner of the arena opposite <b>corner1</b>.
+	 * @throws IllegalArgumentException if the given locations are not in the same world, or if
+	 * an arena of the same name already exists.
+	 * <br><br>
+	 * It is recommended that you call {@link String#contains(CharSequence) String#contains()} on the exception
+	 * message to determine and handle the issue rather than just printing the stack trace (it scares users).
+	 * @since 0.1
+	 */
+	public void createArena(String name, Location spawn, Location corner1, Location corner2)
+			throws IllegalArgumentException {
+
+		if (spawn.getWorld().getName() != corner1.getWorld().getName())
+			throw new IllegalArgumentException();
+		if (spawn.getWorld().getName() != corner2.getWorld().getName())
+			throw new IllegalArgumentException();
+
+		double x1 = corner1.getX();
+		double y1 = corner1.getY();
+		double z1 = corner1.getZ();
+		double x2 = corner2.getX();
+		double y2 = corner2.getY();
+		double z2 = corner2.getZ();
+
+		double minX;
+		double minY;
+		double minZ;
+		double maxX;
+		double maxY;
+		double maxZ;
+
+		if (x1 < x2){
+			minX = x1;
+			maxX = x2;
+		}
+		else {
+			minX = x2;
+			maxX = x1;
+		}
+		if (y1 < y2){
+			minY = y1;
+			maxY = y2;
+		}
+		else {
+			minY = y2;
+			maxY = y1;
+		}
+		if (z1 < z2){
+			minZ = z1;
+			maxZ = z2;
+		}
+		else {
+			minZ = z2;
+			maxZ = z1;
+		}
+
+		try {
+			File f = new File(plugin.getDataFolder(), "arenas.yml");
+			if (!f.exists())
+				f.createNewFile();
+			YamlConfiguration y = new YamlConfiguration();
+			y.load(f);
+			if (y.contains(name))
+				throw new IllegalArgumentException("An arena named \"" + name + "\" already exists");
+			ConfigurationSection c = y.getConfigurationSection(name);
+			c.set("world", spawn.getWorld());
+			c.set("spawnX", spawn.getX());
+			c.set("spawnY", spawn.getY());
+			c.set("spawnZ", spawn.getZ());
+			if (minX != Double.NaN){
+				c.set("boundaries", true);
+				c.set("minX", minX);
+				c.set("minY", minY);
+				c.set("minZ", minZ);
+				c.set("maxX", maxX);
+				c.set("maxY", maxY);
+				c.set("maxZ", maxZ);
+			}
+			else
+				c.set("boundaries", false);
+		}
+		catch (IOException ex){
+			ex.printStackTrace();
+			MGLib.log.severe("Failed to create arena for plugin " + plugin.getName());
+		}
+		catch (InvalidConfigurationException ex){ // y'all need Java 7 :P
+			ex.printStackTrace();
+			MGLib.log.severe("Failed to create arena for plugin " + plugin.getName());
+		}
+
 	}
 
 }

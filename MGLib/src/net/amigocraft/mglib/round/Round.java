@@ -24,7 +24,7 @@ public class Round {
 	private String plugin;
 	private int time = 0;
 	private Stage stage;
-	private String world;
+	private String name;
 
 	private int timerHandle = -1;
 
@@ -34,14 +34,15 @@ public class Round {
 	 * Please use {@link Minigame#createRound(String, int, int) Minigame#createRound()} unless you understand the
 	 * implications of using this constructor.
 	 * @param plugin The plugin which this round should be associated with.
-	 * @param world The world which this round takes place in.
+	 * @param name The name of the arena in which this round takes place in.
+	 * @param discrete Whether this round will take place in a discrete world (uses a defined arena when false).
 	 * @param preparationTime The round's total preparation time. Use -1 for no limit, or 0 for no preparation phase.
 	 * @param roundTime The round's total playing time. Use -1 for no limit.
 	 * @since 0.1
 	 */
-	public Round(String plugin, String world, int preparationTime, int roundTime){
+	public Round(String plugin, String name, boolean discrete, int preparationTime, int roundTime){
 		this.plugin = plugin;
-		this.world = world;
+		this.name = name;
 		stage = Stage.WAITING;
 		Minigame.getMinigameInstance(plugin).getRounds().add(this);
 	}
@@ -65,12 +66,12 @@ public class Round {
 	}
 
 	/**
-	 * Gets the name of the world associated with this {@link Round}.
-	 * @return The name of the world associated with this {@link Round}.
+	 * Gets the name of the arena associated with this {@link Round}.
+	 * @return The name of the arena associated with this {@link Round}.
 	 * @since 0.1
 	 */
-	public String getWorld(){
-		return world;
+	public String getName(){
+		return name;
 	}
 
 	/**
@@ -119,12 +120,12 @@ public class Round {
 	}
 
 	/**
-	 * Sets the associated world of this {@link Round}.
-	 * @param world The world to associate with this {@link Round}.
+	 * Sets the associated arena of this {@link Round}.
+	 * @param arena The arena to associate with this {@link Round}.
 	 * @since 0.1
 	 */
-	public void setWorld(String world){
-		this.world = world;
+	public void setName(String name){
+		this.name = name;
 	}
 
 	/**
@@ -212,7 +213,7 @@ public class Round {
 		List<MGPlayer> temp = new ArrayList<MGPlayer>();
 		List<MGPlayer> p = new ArrayList<MGPlayer>();
 		for (MGPlayer t : MGPlayer.players)
-			if (t.getWorld().equals(world))
+			if (t.getWorld().equals(name))
 				temp.add(t);
 		for (MGPlayer t : temp)
 			p.add(t);
@@ -283,10 +284,10 @@ public class Round {
 
 	public boolean equals(Object p){
 		Round r = (Round)p;
-		return world.equals(r.getWorld());
+		return name.equals(r.getName());
 	}
 
 	public int hashCode(){
-		return 41 * (plugin.hashCode() + world.hashCode() + 41);
+		return 41 * (plugin.hashCode() + name.hashCode() + 41);
 	}
 }
