@@ -1,11 +1,18 @@
 package net.amigocraft.mglib.round;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.amigocraft.mglib.MGLib;
+import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Minigame;
 import net.amigocraft.mglib.event.MinigameRoundEndEvent;
 import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
@@ -26,21 +33,50 @@ public class Round {
 	private Stage stage;
 	private String name;
 
+	private String world;
+	private List<Location> spawns;
+	private Location minBound;
+	private Location maxBound;
+
 	private int timerHandle = -1;
 
 	/**
 	 * Creates a new {@link Round} with the given parameters.
 	 * <br><br>
-	 * Please use {@link Minigame#createRound(String, int, int) Minigame#createRound()} unless you understand the
-	 * implications of using this constructor.
+	 * Please use {@link Minigame#createRound(String, boolean, int, int) Minigame#createRound()} unless you
+	 * understand the implications of using this constructor.
 	 * @param plugin The plugin which this round should be associated with.
 	 * @param name The name of the arena in which this round takes place in.
 	 * @param discrete Whether this round will take place in a discrete world (uses a defined arena when false).
 	 * @param preparationTime The round's total preparation time. Use -1 for no limit, or 0 for no preparation phase.
 	 * @param roundTime The round's total playing time. Use -1 for no limit.
+	 * @throws IllegalArgumentException if the specified arena does not exist or the world of the specified arena does not exist
+	 * @throws IOException if an exception occurs while loading the arenas.yml file from disk
+	 * @throws InvalidConfigurationException if an exception occurs while loading the configuration from arenas.yml
 	 * @since 0.1
 	 */
-	public Round(String plugin, String name, boolean discrete, int preparationTime, int roundTime){
+	public Round(String plugin, String name, boolean discrete, int preparationTime, int roundTime)
+			throws IllegalArgumentException, IOException, InvalidConfigurationException {
+		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
+		if (!y.contains(name))
+			throw new IllegalArgumentException("Error occurred while creating round for " +
+					Minigame.getMinigameInstance(plugin).getPlugin() + ": specified arena does not exist");
+		ConfigurationSection cs = y.getConfigurationSection(name);
+		World w = Bukkit.getWorld(cs.getString("world"));
+		if (w == null)
+			throw new IllegalArgumentException("Error occurred while creating round for " +
+					Minigame.getMinigameInstance(plugin).getPlugin() + ": world of the specified arena does not exist");
+		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){
+			spawns.add(new Location(w, cs.getDouble(k + ".x"), cs.getDouble(k + ".y"), cs.getDouble(k + ".z")));
+		}
+		if (cs.getBoolean("boundaries")){
+			minBound = new Location(w, cs.getDouble("minX"), cs.getDouble("minY"), cs.getDouble("minZ"));
+			minBound = new Location(w, cs.getDouble("maxX"), cs.getDouble("maxY"), cs.getDouble("maxZ"));
+		}
+		else {
+			minBound = null;
+			maxBound = null;
+		}
 		this.plugin = plugin;
 		this.name = name;
 		stage = Stage.WAITING;
@@ -121,7 +157,7 @@ public class Round {
 
 	/**
 	 * Sets the associated arena of this {@link Round}.
-	 * @param arena The arena to associate with this {@link Round}.
+	 * @param name The arena to associate with this {@link Round}.
 	 * @since 0.1
 	 */
 	public void setName(String name){
@@ -237,21 +273,21 @@ public class Round {
 			r.setStage(Stage.PREPARING);
 			Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r));
 			if (time != -1){
-			timerHandle = Bukkit.getScheduler().runTaskTimer(MGLib.plugin, new Runnable(){
-				public void run(){
-					r.tickDown();
-					if (r.getTime() <= 0){
-						if (r.getStage() == Stage.PREPARING){
-							r.setStage(Stage.PLAYING);
-							r.setTime(r.getPlayingTime());
-							Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
-						}
-						else {
-							endRound(true);
+				timerHandle = Bukkit.getScheduler().runTaskTimer(MGLib.plugin, new Runnable(){
+					public void run(){
+						r.tickDown();
+						if (r.getTime() <= 0){
+							if (r.getStage() == Stage.PREPARING){
+								r.setStage(Stage.PLAYING);
+								r.setTime(r.getPlayingTime());
+								Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
+							}
+							else {
+								endRound(true);
+							}
 						}
 					}
-				}
-			}, 0L, 20L).getTaskId();
+				}, 0L, 20L).getTaskId();
 			}
 		}
 		else
@@ -280,6 +316,44 @@ public class Round {
 	 */
 	public void endRound(){
 		endRound(false);
+	}
+	
+	/**
+	 * Retrieves the world in which this round takes place.
+	 * @return the world in which this round takes place.
+	 * @since 0.1
+	 */
+	public String getWorld(){
+		return world;
+	}
+	
+	/**
+	 * Retrieves the location representing the minimum boundary on all three axes of the arena this round takes place in.
+	 * @return the location representing the minimum boundary on all three axes of the arena this round takes place in, or
+	 * null if the arena does not have boundaries.
+	 * @since 0.1
+	 */
+	public Location getMinimumBoundary(){
+		return minBound;
+	}
+	
+	/**
+	 * Retrieves the location representing the maximum boundary on all three axes of the arena this round takes place in.
+	 * @return the location representing the maximum boundary on all three axes of the arena this round takes place in, or
+	 * null if the arena does not have boundaries.
+	 * @since 0.1
+	 */
+	public Location getMaximumBoundary(){
+		return maxBound;
+	}
+	
+	/**
+	 * Retrieves a list of possible spawns for this round's arena.
+	 * @return a list of possible spawns for this round's arena.
+	 * @since 0.1
+	 */
+	public List<Location> getSpawns(){
+		return spawns;
 	}
 
 	public boolean equals(Object p){

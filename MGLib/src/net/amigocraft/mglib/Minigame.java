@@ -1,6 +1,5 @@
 package net.amigocraft.mglib;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev7
+ * @version 0.1-dev8
  * @since 0.1
  */
 public class Minigame {
@@ -79,6 +78,14 @@ public class Minigame {
 					"As such, it may not be fully compatible with the installed instance of the library. Please " +
 					"notify the developer of " + plugin.getName() + " so he/she may take appropriate action.");
 	}
+	
+	/**
+	 * Retrieves the {@link JavaPlugin} associated with this {@link Minigame} instance.
+	 * @return The {@link JavaPlugin} associated with this {@link Minigame} instance.
+	 */
+	public JavaPlugin getPlugin(){
+		return plugin;
+	}
 
 	private boolean isCompatible(String version){
 		for (String v : MGLib.approved)
@@ -128,9 +135,13 @@ public class Minigame {
 	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
 	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
 	 * @return The created round.
+	 * @throws IllegalArgumentException if the specified arena cannot be loaded (due to it or its world being nonexistent)
+	 * @throws IOException if an exception occurs while loading the arenas.yml file from disk
+	 * @throws InvalidConfigurationException if an exception occurs while loading the configuration from arenas.yml
 	 * @since 0.1
 	 */
-	public Round createRound(String name, boolean discrete, int preparationTime, int roundTime){
+	public Round createRound(String name, boolean discrete, int preparationTime, int roundTime)
+			throws IllegalArgumentException, IOException, InvalidConfigurationException{
 		Round r = new Round(plugin.getName(), name, discrete, preparationTime, roundTime);
 		r.setStage(Stage.WAITING);
 		rounds.add(r);
@@ -159,18 +170,28 @@ public class Minigame {
 	 * @param corner2 The corner of the arena opposite <b>corner1</b>.
 	 * @throws IllegalArgumentException if the given locations are not in the same world, or if
 	 * an arena of the same name already exists.
+	 * @throws IOException if the filesystem calls throw one.
+	 * @throws InvalidConfigurationException if the loaded YAML file is invalid.
 	 * <br><br>
-	 * It is recommended that you call {@link String#contains(CharSequence) String#contains()} on the exception
-	 * message to determine and handle the issue rather than just printing the stack trace (it scares users).
+	 * It is recommended that you use {@link String#contains(CharSequence) String#contains()} in the event of
+	 * an IllegalArgumentException to determine and handle the issue rather than just printing the stack trace
+	 * (it scares users).
+	 * <br><br>
+	 * Example:
+	 * <pre>
+	 * {@code if (ex.getMessage().contains("exist")){
+	 * 	// arena exists; handle appropriately
+	 *  }
+	 * </pre>
 	 * @since 0.1
 	 */
 	public void createArena(String name, Location spawn, Location corner1, Location corner2)
-			throws IllegalArgumentException {
+			throws IllegalArgumentException, IOException, InvalidConfigurationException {
 
 		if (spawn.getWorld().getName() != corner1.getWorld().getName())
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Given locations are not in the same world");
 		if (spawn.getWorld().getName() != corner2.getWorld().getName())
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Given locations are not in the same world");
 
 		double x1 = corner1.getX();
 		double y1 = corner1.getY();
@@ -210,41 +231,54 @@ public class Minigame {
 			minZ = z2;
 			maxZ = z1;
 		}
+		
+		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
+		if (y.contains(name))
+			throw new IllegalArgumentException("An arena named \"" + name + "\" already exists");
+		ConfigurationSection c = y.getConfigurationSection(name);
+		c.set("world", spawn.getWorld());
+		c.set("spawns.0.x", spawn.getX());
+		c.set("spawns.0.y", spawn.getY());
+		c.set("spawns.0.z", spawn.getZ());
+		if (minX != Double.NaN){
+			c.set("boundaries", true);
+			c.set("minX", minX);
+			c.set("minY", minY);
+			c.set("minZ", minZ);
+			c.set("maxX", maxX);
+			c.set("maxY", maxY);
+			c.set("maxZ", maxZ);
+		}
+		else
+			c.set("boundaries", false);
 
-		try {
-			File f = new File(plugin.getDataFolder(), "arenas.yml");
-			if (!f.exists())
-				f.createNewFile();
-			YamlConfiguration y = new YamlConfiguration();
-			y.load(f);
-			if (y.contains(name))
-				throw new IllegalArgumentException("An arena named \"" + name + "\" already exists");
-			ConfigurationSection c = y.getConfigurationSection(name);
-			c.set("world", spawn.getWorld());
-			c.set("spawnX", spawn.getX());
-			c.set("spawnY", spawn.getY());
-			c.set("spawnZ", spawn.getZ());
-			if (minX != Double.NaN){
-				c.set("boundaries", true);
-				c.set("minX", minX);
-				c.set("minY", minY);
-				c.set("minZ", minZ);
-				c.set("maxX", maxX);
-				c.set("maxY", maxY);
-				c.set("maxZ", maxZ);
-			}
-			else
-				c.set("boundaries", false);
-		}
-		catch (IOException ex){
-			ex.printStackTrace();
-			MGLib.log.severe("Failed to create arena for plugin " + plugin.getName());
-		}
-		catch (InvalidConfigurationException ex){ // y'all need Java 7 :P
-			ex.printStackTrace();
-			MGLib.log.severe("Failed to create arena for plugin " + plugin.getName());
-		}
+	}
 
+	/**
+	 * Removes an arena from the plugin's config, effectively deleting it.
+	 * @param name The arena to delete.
+	 * @throws IllegalArgumentException if an arena by the specified name does not exist.
+	 * @throws IOException if the filesystem calls throw one.
+	 * @throws InvalidConfigurationException if the loaded YAML file is invalid.
+	 * <br><br>
+	 * It is recommended that you use {@link String#contains(CharSequence) String#contains()} in the event of
+	 * an IllegalArgumentException to determine and handle the issue rather than just printing the stack trace
+	 * (it scares users).
+	 * <br><br>
+	 * Example:
+	 * <pre>
+	 * {@code if (ex.getMessage().contains("exist")){
+	 * 	// arena does not exist; handle appropriately
+	 *  }
+	 * </pre>
+	 * @since 0.1
+	 */
+	public void deleteArena(String name) throws IllegalArgumentException, IOException, InvalidConfigurationException {
+		//TODO: Remove players in arena
+		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
+		if (!y.contains(name))
+			throw new IllegalArgumentException("An arena by the name \"" + name + "\" does not exist");
+		y.set(name, null);
 	}
 
 }
