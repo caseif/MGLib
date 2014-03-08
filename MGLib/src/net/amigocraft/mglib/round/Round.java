@@ -1,6 +1,5 @@
 package net.amigocraft.mglib.round;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.MGUtil;
@@ -31,12 +30,14 @@ public class Round {
 	private String plugin;
 	private int time = 0;
 	private Stage stage;
-	private String name;
 
 	private String world;
+	private String arena;
 	private List<Location> spawns;
 	private Location minBound;
 	private Location maxBound;
+
+	private List<MGPlayer> players = new ArrayList<MGPlayer>();
 
 	private int timerHandle = -1;
 
@@ -46,28 +47,29 @@ public class Round {
 	 * Please use {@link Minigame#createRound(String, boolean, int, int) Minigame#createRound()} unless you
 	 * understand the implications of using this constructor.
 	 * @param plugin The plugin which this round should be associated with.
-	 * @param name The name of the arena in which this round takes place in.
+	 * @param arena The name of the arena in which this round takes place in.
 	 * @param discrete Whether this round will take place in a discrete world (uses a defined arena when false).
 	 * @param preparationTime The round's total preparation time. Use -1 for no limit, or 0 for no preparation phase.
 	 * @param roundTime The round's total playing time. Use -1 for no limit.
-	 * @throws IllegalArgumentException if the specified arena does not exist or the world of the specified arena does not exist
-	 * @throws IOException if an exception occurs while loading the arenas.yml file from disk
-	 * @throws InvalidConfigurationException if an exception occurs while loading the configuration from arenas.yml
+	 * @throws IllegalArgumentException if the specified arena does not exist or the world of the specified arena does not exist.
 	 * @since 0.1
 	 */
-	public Round(String plugin, String name, boolean discrete, int preparationTime, int roundTime)
-			throws IllegalArgumentException, IOException, InvalidConfigurationException {
+	public Round(String plugin, String arena, boolean discrete, int preparationTime, int roundTime)
+			throws IllegalArgumentException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
-		if (!y.contains(name))
+		if (!y.contains(arena))
 			throw new IllegalArgumentException("Error occurred while creating round for " +
 					Minigame.getMinigameInstance(plugin).getPlugin() + ": specified arena does not exist");
-		ConfigurationSection cs = y.getConfigurationSection(name);
-		World w = Bukkit.getWorld(cs.getString("world"));
+		ConfigurationSection cs = y.getConfigurationSection(arena);
+		world = cs.getString(world);
+		World w = Bukkit.getWorld(world);
 		if (w == null)
 			throw new IllegalArgumentException("Error occurred while creating round for " +
 					Minigame.getMinigameInstance(plugin).getPlugin() + ": world of the specified arena does not exist");
 		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){
-			spawns.add(new Location(w, cs.getDouble(k + ".x"), cs.getDouble(k + ".y"), cs.getDouble(k + ".z")));
+			Location l = new Location(w, cs.getDouble(k + ".x"), cs.getDouble(k + ".y"), cs.getDouble(k + ".z"));
+			l.setPitch((float)cs.getDouble(k + ".pitch"));
+			l.setYaw((float)cs.getDouble(k + ".yaw"));
 		}
 		if (cs.getBoolean("boundaries")){
 			minBound = new Location(w, cs.getDouble("minX"), cs.getDouble("minY"), cs.getDouble("minZ"));
@@ -78,7 +80,7 @@ public class Round {
 			maxBound = null;
 		}
 		this.plugin = plugin;
-		this.name = name;
+		this.arena = arena;
 		stage = Stage.WAITING;
 		Minigame.getMinigameInstance(plugin).getRounds().add(this);
 	}
@@ -106,8 +108,8 @@ public class Round {
 	 * @return The name of the arena associated with this {@link Round}.
 	 * @since 0.1
 	 */
-	public String getName(){
-		return name;
+	public String getArena(){
+		return arena;
 	}
 
 	/**
@@ -160,8 +162,8 @@ public class Round {
 	 * @param name The arena to associate with this {@link Round}.
 	 * @since 0.1
 	 */
-	public void setName(String name){
-		this.name = name;
+	public void setArena(String arena){
+		this.arena = arena;
 	}
 
 	/**
@@ -246,14 +248,11 @@ public class Round {
 	 * @since 0.1
 	 */
 	public List<MGPlayer> getPlayers(){
-		List<MGPlayer> temp = new ArrayList<MGPlayer>();
-		List<MGPlayer> p = new ArrayList<MGPlayer>();
-		for (MGPlayer t : MGPlayer.players)
-			if (t.getWorld().equals(name))
-				temp.add(t);
-		for (MGPlayer t : temp)
-			p.add(t);
-		return p;
+		return players;
+	}
+
+	public void setPlayers(List<MGPlayer> players) {
+		this.players = players;
 	}
 
 	/**
@@ -317,16 +316,7 @@ public class Round {
 	public void endRound(){
 		endRound(false);
 	}
-	
-	/**
-	 * Retrieves the world in which this round takes place.
-	 * @return the world in which this round takes place.
-	 * @since 0.1
-	 */
-	public String getWorld(){
-		return world;
-	}
-	
+
 	/**
 	 * Retrieves the location representing the minimum boundary on all three axes of the arena this round takes place in.
 	 * @return the location representing the minimum boundary on all three axes of the arena this round takes place in, or
@@ -336,7 +326,7 @@ public class Round {
 	public Location getMinimumBoundary(){
 		return minBound;
 	}
-	
+
 	/**
 	 * Retrieves the location representing the maximum boundary on all three axes of the arena this round takes place in.
 	 * @return the location representing the maximum boundary on all three axes of the arena this round takes place in, or
@@ -346,7 +336,7 @@ public class Round {
 	public Location getMaximumBoundary(){
 		return maxBound;
 	}
-	
+
 	/**
 	 * Retrieves a list of possible spawns for this round's arena.
 	 * @return a list of possible spawns for this round's arena.
@@ -356,12 +346,47 @@ public class Round {
 		return spawns;
 	}
 
+	/**
+	 * Internally and physically adds the player by the given username to this {@link Round}.
+	 * @param player The username of the player to add
+	 * @throws IllegalArgumentException if a player by the given username cannot be found.
+	 * @since 0.1
+	 */
+	public void addPlayer(String player){
+		Player p = Bukkit.getPlayer(player);
+		if (p == null)
+			throw new IllegalArgumentException("Specified player is not online");
+
+	}
+
+	/**
+	 * Returns the {@link MGPlayer} in this round associated with the given username.
+	 * @param player The username to search for.
+	 * @return The {@link MGPlayer} in this round associated with the given username, or <b>null</b> if none is found.
+	 * @since 0.1
+	 */
+	public MGPlayer getMGPlayer(String player){
+		for (MGPlayer p : getPlayers())
+			if (p.getName().equals(player))
+				return p;
+		return null;
+	}
+	
+	/**
+	 * Retrieves the world of this arena.
+	 * @return The name of the world containing this arena.
+	 * @since 0.1
+	 */
+	public String getWorld(){
+		return world;
+	}
+
 	public boolean equals(Object p){
 		Round r = (Round)p;
-		return name.equals(r.getName());
+		return arena.equals(r.getArena());
 	}
 
 	public int hashCode(){
-		return 41 * (plugin.hashCode() + name.hashCode() + 41);
+		return 41 * (plugin.hashCode() + arena.hashCode() + 41);
 	}
 }

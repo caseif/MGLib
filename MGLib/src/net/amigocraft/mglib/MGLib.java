@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev8
+ * @version 0.1-dev9
  * @since 0.1
  */
 public class MGLib extends JavaPlugin {
@@ -24,7 +24,7 @@ public class MGLib extends JavaPlugin {
 	 * The current (or last, if the current version is a release) development version of MGLib.
 	 * @since 0.1
 	 */
-	public static final int lastDev = 8;
+	public static final int lastDev = 9;
 
 	/**
 	 * The current instance of the plugin.

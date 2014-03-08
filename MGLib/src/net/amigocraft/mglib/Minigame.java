@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.amigocraft.mglib.round.MGPlayer;
 import net.amigocraft.mglib.round.Round;
 import net.amigocraft.mglib.round.Stage;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -21,7 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev8
+ * @version 0.1-dev9
  * @since 0.1
  */
 public class Minigame {
@@ -30,7 +32,7 @@ public class Minigame {
 
 	private JavaPlugin plugin;
 
-	private List<Round> rounds = new ArrayList<Round>();
+	private HashMap<String, Round> rounds = new HashMap<String, Round>();
 
 	/**
 	 * Creates a new instance of the MGLib API. This object may be used for all API methods
@@ -78,7 +80,7 @@ public class Minigame {
 					"As such, it may not be fully compatible with the installed instance of the library. Please " +
 					"notify the developer of " + plugin.getName() + " so he/she may take appropriate action.");
 	}
-	
+
 	/**
 	 * Retrieves the {@link JavaPlugin} associated with this {@link Minigame} instance.
 	 * @return The {@link JavaPlugin} associated with this {@link Minigame} instance.
@@ -126,25 +128,27 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public List<Round> getRounds(){
-		return rounds;
+		return (List<Round>)rounds.values();
 	}
 
 	/**
 	 * Creates and stores a new round with the given parameters.
-	 * @param name The name of the world to create the round in.
+	 * @param arena The name of the arena to create the round in.
 	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
 	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
 	 * @return The created round.
-	 * @throws IllegalArgumentException if the specified arena cannot be loaded (due to it or its world being nonexistent)
+	 * @throws IllegalArgumentException if the specified arena cannot be loaded (due to it or its world being nonexistent),
+	 * or if the given arena is already associated with a {@link Round}.
 	 * @throws IOException if an exception occurs while loading the arenas.yml file from disk
 	 * @throws InvalidConfigurationException if an exception occurs while loading the configuration from arenas.yml
 	 * @since 0.1
 	 */
-	public Round createRound(String name, boolean discrete, int preparationTime, int roundTime)
+	public Round createRound(String arena, boolean discrete, int preparationTime, int roundTime)
 			throws IllegalArgumentException, IOException, InvalidConfigurationException{
-		Round r = new Round(plugin.getName(), name, discrete, preparationTime, roundTime);
+
+		Round r = new Round(plugin.getName(), arena, discrete, preparationTime, roundTime);
 		r.setStage(Stage.WAITING);
-		rounds.add(r);
+		rounds.put(arena, r);
 		return r;
 	}
 
@@ -155,8 +159,8 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public Round getRound(String name){
-		for (Round r : rounds){
-			if (r.getName().equals(name))
+		for (Round r : rounds.values()){
+			if (r.getArena().equals(name))
 				return r;
 		}
 		return null;
@@ -165,13 +169,11 @@ public class Minigame {
 	/**
 	 * Creates an arena for use with MGLib.
 	 * @param name The name of the arena (used to identify it).
-	 * @param spawn The initial spawn point of the arena.
+	 * @param spawn The initial spawn point of the arena (more may be added later).
 	 * @param corner1 A corner of the arena.
 	 * @param corner2 The corner of the arena opposite <b>corner1</b>.
 	 * @throws IllegalArgumentException if the given locations are not in the same world, or if
 	 * an arena of the same name already exists.
-	 * @throws IOException if the filesystem calls throw one.
-	 * @throws InvalidConfigurationException if the loaded YAML file is invalid.
 	 * <br><br>
 	 * It is recommended that you use {@link String#contains(CharSequence) String#contains()} in the event of
 	 * an IllegalArgumentException to determine and handle the issue rather than just printing the stack trace
@@ -186,7 +188,7 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public void createArena(String name, Location spawn, Location corner1, Location corner2)
-			throws IllegalArgumentException, IOException, InvalidConfigurationException {
+			throws IllegalArgumentException {
 
 		if (spawn.getWorld().getName() != corner1.getWorld().getName())
 			throw new IllegalArgumentException("Given locations are not in the same world");
@@ -231,7 +233,7 @@ public class Minigame {
 			minZ = z2;
 			maxZ = z1;
 		}
-		
+
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
 		if (y.contains(name))
 			throw new IllegalArgumentException("An arena named \"" + name + "\" already exists");
@@ -240,6 +242,8 @@ public class Minigame {
 		c.set("spawns.0.x", spawn.getX());
 		c.set("spawns.0.y", spawn.getY());
 		c.set("spawns.0.z", spawn.getZ());
+		c.set("spawns.0.pitch", spawn.getPitch());
+		c.set("spawns.0.yaw", spawn.getYaw());
 		if (minX != Double.NaN){
 			c.set("boundaries", true);
 			c.set("minX", minX);
@@ -258,8 +262,6 @@ public class Minigame {
 	 * Removes an arena from the plugin's config, effectively deleting it.
 	 * @param name The arena to delete.
 	 * @throws IllegalArgumentException if an arena by the specified name does not exist.
-	 * @throws IOException if the filesystem calls throw one.
-	 * @throws InvalidConfigurationException if the loaded YAML file is invalid.
 	 * <br><br>
 	 * It is recommended that you use {@link String#contains(CharSequence) String#contains()} in the event of
 	 * an IllegalArgumentException to determine and handle the issue rather than just printing the stack trace
@@ -273,12 +275,129 @@ public class Minigame {
 	 * </pre>
 	 * @since 0.1
 	 */
-	public void deleteArena(String name) throws IllegalArgumentException, IOException, InvalidConfigurationException {
+	public void deleteArena(String name) throws IllegalArgumentException {
 		//TODO: Remove players in arena
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
 		if (!y.contains(name))
 			throw new IllegalArgumentException("An arena by the name \"" + name + "\" does not exist");
 		y.set(name, null);
+	}
+
+	/**
+	 * Returns the {@link MGPlayer} associated with the given username.
+	 * @param player The username to search for.
+	 * @return The {@link MGPlayer} associated with the given username, or <b>null</b> if none is found.
+	 * @since 0.1
+	 */
+	public MGPlayer getMGPlayer(String player){
+		for (Round r : rounds.values())
+			for (MGPlayer p : r.getPlayers())
+				if (p.getName().equals(player))
+					return p;
+		return null;
+	}
+
+	/**
+	 * Convenience method for checking if an {@link MGPlayer} is associated with the given username.
+	 * <br><br>
+	 * This method simply checks if {@link MGPlayer#getMGPlayer(String) MGPlayer#getMGPlayer(p)} is <b>null</b>.
+	 * @param p The username to search for.
+	 * @return Whether an associated {@link MGPlayer} was found.
+	 * @since 0.1
+	 */
+	public boolean isPlayer(String p){
+		if (getMGPlayer(p) != null)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Adds a spawn to the given arena with the given coordinates, pitch, and yaw.
+	 * @param arena The arena to add the new spawn to.
+	 * @param x The x-coordinate of the new spawn.
+	 * @param y The y-coordinate of the new spawn.
+	 * @param z The z-coordinate of the new spawn.
+	 * @param pitch The pitch (x- and z-rotation) of the new spawn.
+	 * @param yaw The yaw (y-rotation) of the new spawn.
+	 * @since 0.1
+	 */
+	public void addSpawn(String arena, double x, double y, double z, float pitch, float yaw){
+		if (rounds.containsKey(arena)){
+			Round r = rounds.get(arena);
+			Location l = new Location(Bukkit.getWorld(r.getWorld()), x, y, z);
+			l.setPitch(pitch);
+			l.setYaw(yaw);
+			r.getSpawns().add(l);
+		}
+		YamlConfiguration yc = MGUtil.loadArenaYaml(plugin.getName());
+		int min;
+		for (min = 0; min > 0; min++)
+			if (yc.get("spawns." + min) != null)
+				break;
+		yc.set("spawns." + min + ".x", x);
+		yc.set("spawns." + min + ".y", y);
+		yc.set("spawns." + min + ".z", z);
+		yc.set("spawns." + min + ".pitch", pitch);
+		yc.set("spawns." + min + ".yaw", yaw);
+		MGUtil.saveArenaYaml(plugin.getName(), yc);
+	}
+
+	/**
+	 * Adds a spawn to the given arena with the given coordinates.
+	 * @param arena The arena to add the new spawn to.
+	 * @param x The x-coordinate of the new spawn.
+	 * @param y The y-coordinate of the new spawn.
+	 * @param z The z-coordinate of the new spawn.
+	 * @since 0.1
+	 */
+	public void addSpawn(String arena, double x, double y, double z){
+		addSpawn(arena, x, y, z, 90f, 0f);
+	}
+
+	/**
+	 * Adds a spawn to the given arena with the given {@link Location}.
+	 * @param arena The arena to add the new spawn to.
+	 * @param l The location of the new spawn.
+	 * @param saveOrientation Whether to save the {@link Location}'s pitch and yaw to the spawn.
+	 * @since 0.1
+	 */
+	public void addSpawn(String arena, Location l, boolean saveOrientation){
+		if (saveOrientation)
+			addSpawn(arena, l.getX(), l.getY(), l.getZ(), l.getPitch(), l.getYaw());
+		else
+			addSpawn(arena, l.getX(), l.getY(), l.getZ());
+	}
+
+	/**
+	 * Delets a spawn from the given arena at the given {@link Location}.
+	 * @param l The {@link Location} of the spawn to delete.
+	 * @since 0.1
+	 */
+	public void deleteSpawn(String arena, double x, double y, double z){
+		if (rounds.containsKey(arena)){
+			Round r = rounds.get(arena);
+			for (Location l : r.getSpawns())
+				if (l.getX() == x && l.getY() == y && l.getZ() == z)
+					r.getSpawns().remove(l);
+		}
+		YamlConfiguration yc = MGUtil.loadArenaYaml(plugin.getName());
+		ConfigurationSection spawns = yc.getConfigurationSection("spawns");
+		for (String k : spawns.getKeys(false))
+			if (yc.getDouble(k + ".x") == x && yc.getDouble(k + ".y") == y && yc.getDouble(k + ".z") == z)
+				yc.set(k, null);
+		MGUtil.saveArenaYaml(plugin.getName(), yc);
+	}
+	
+	/**
+	 * Deletes a spawn from the given arena at the given coordinates.
+	 * @param arena The arena to delete the spawn from.
+	 * @param x The x-coordinate of the spawn to delete.
+	 * @param y The y-coordinate of the spawn to delete.
+	 * @param z The z-coordinate of the spawn to delete.
+	 * @since 0.1
+	 */
+	public void deleteSpawn(String arena, Location l){
+		deleteSpawn(arena, l.getX(), l.getY(), l.getZ());
 	}
 
 }
