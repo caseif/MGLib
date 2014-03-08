@@ -23,7 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev9
+ * @version 0.1-dev10
  * @since 0.1
  */
 public class Minigame {
@@ -180,10 +180,8 @@ public class Minigame {
 	 * (it scares users).
 	 * <br><br>
 	 * Example:
-	 * <pre>
-	 * {@code if (ex.getMessage().contains("exist")){
-	 * 	// arena exists; handle appropriately
-	 *  }
+	 * <pre>{@code if (ex.getMessage().contains("exist"))
+	 * 	// arena exists; handle appropriately}
 	 * </pre>
 	 * @since 0.1
 	 */
@@ -268,10 +266,9 @@ public class Minigame {
 	 * (it scares users).
 	 * <br><br>
 	 * Example:
-	 * <pre>
-	 * {@code if (ex.getMessage().contains("exist")){
-	 * 	// arena does not exist; handle appropriately
-	 *  }
+	 * <pre>{@code if (ex.getMessage().contains("exist"))
+	 * 	// arena exists; handle appropriately}
+	 * </pre>
 	 * </pre>
 	 * @since 0.1
 	 */
@@ -300,7 +297,7 @@ public class Minigame {
 	/**
 	 * Convenience method for checking if an {@link MGPlayer} is associated with the given username.
 	 * <br><br>
-	 * This method simply checks if {@link MGPlayer#getMGPlayer(String) MGPlayer#getMGPlayer(p)} is <b>null</b>.
+	 * This method simply checks if {@link Minigame#getMGPlayer(String) Minigame#getMGPlayer(p)} is <b>null</b>.
 	 * @param p The username to search for.
 	 * @return Whether an associated {@link MGPlayer} was found.
 	 * @since 0.1
@@ -367,10 +364,13 @@ public class Minigame {
 		else
 			addSpawn(arena, l.getX(), l.getY(), l.getZ());
 	}
-
+	
 	/**
-	 * Delets a spawn from the given arena at the given {@link Location}.
-	 * @param l The {@link Location} of the spawn to delete.
+	 * Deletes a spawn from the given arena at the given coordinates.
+	 * @param arena The arena to delete the spawn from.
+	 * @param x The x-coordinate of the spawn to delete.
+	 * @param y The y-coordinate of the spawn to delete.
+	 * @param z The z-coordinate of the spawn to delete.
 	 * @since 0.1
 	 */
 	public void deleteSpawn(String arena, double x, double y, double z){
@@ -389,11 +389,8 @@ public class Minigame {
 	}
 	
 	/**
-	 * Deletes a spawn from the given arena at the given coordinates.
-	 * @param arena The arena to delete the spawn from.
-	 * @param x The x-coordinate of the spawn to delete.
-	 * @param y The y-coordinate of the spawn to delete.
-	 * @param z The z-coordinate of the spawn to delete.
+	 * Delets a spawn from the given arena at the given {@link Location}.
+	 * @param l The {@link Location} of the spawn to delete.
 	 * @since 0.1
 	 */
 	public void deleteSpawn(String arena, Location l){

@@ -1,5 +1,6 @@
 package net.amigocraft.mglib;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -9,22 +10,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev9
+ * @version 0.1-dev10
  * @since 0.1
  */
 public class MGLib extends JavaPlugin {
-	
+
 	/**
 	 * A list containing compatible versions of MGLib.
 	 * @since 0.1
 	 */
 	public static List<String> approved = new ArrayList<String>();
-	
+
 	/**
 	 * The current (or last, if the current version is a release) development version of MGLib.
 	 * @since 0.1
 	 */
-	public static final int lastDev = 9;
+	public static final int lastDev = 10;
 
 	/**
 	 * The current instance of the plugin.
@@ -50,9 +51,26 @@ public class MGLib extends JavaPlugin {
 		plugin = this;
 		log = getLogger();
 		initialize();
+		saveDefaultConfig();
+		// updater
+		if (getConfig().getBoolean("enable-updater")){
+			new Updater(this, 74979, this.getFile(), Updater.UpdateType.DEFAULT, true);
+		}
+
+		// submit metrics
+		if (getConfig().getBoolean("enable-metrics")){
+			try {
+				Metrics metrics = new Metrics(this);
+				metrics.start();
+			}
+			catch (IOException ex){
+				log.warning("Failed to enable plugin metrics!");
+			}
+		}
 		if (this.getDescription().getVersion().contains("dev"))
 			log.warning("You are running a development build of MGLib. As such, plugins using the library may not " +
-					"work correctly.");
+					"work correctly. If you're a developer, we strongly recommend building against a alpha/beta/release" +
+					"build of the library.");
 		log.info(this + " is now ready!");
 	}
 
@@ -65,7 +83,7 @@ public class MGLib extends JavaPlugin {
 		log.info(this + " has been disabled!");
 		log = null;
 	}
-	
+
 	private static void initialize(){
 		approved.add("0.1");
 	}

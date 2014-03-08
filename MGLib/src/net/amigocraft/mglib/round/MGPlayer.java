@@ -19,7 +19,7 @@ public class MGPlayer {
 	/**
 	 * Creates a new MGPlayer instance.
 	 * @param name The username of the player.
-	 * @param world The world of the player (this argument is subject to change).
+	 * @param arena The arena of the player (this argument is subject to change).
 	 * @since 0.1
 	 */
 	public MGPlayer(String name, String arena){

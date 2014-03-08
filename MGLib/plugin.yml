@@ -1,5 +1,5 @@
 name: MGLib
-version: 0.1-dev9
-main: com.headswilllol.mglib.MGLib
+version: 0.1-dev10
+main: net.amigocraft.mglib.MGLib
 description: A Bukkit library designed to ease the process of minigame plugin creation
 author: Maxim Roncacé

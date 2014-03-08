@@ -37,7 +37,7 @@ public class MGUtil {
 	/**
 	 * Saves the given plugin's arenas.yml file.
 	 * @param plugin The plugin to save the given {@link YamlConfiguration} to.
-	 * @return The {@link YamlConfiguration} to save.
+	 * @param y The {@link YamlConfiguration} to save.
 	 */
 	public static void saveArenaYaml(String plugin, YamlConfiguration y){
 		JavaPlugin jp = Minigame.getMinigameInstance(plugin).getPlugin();

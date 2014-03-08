@@ -1,0 +1,10 @@
+# ####################### #
+# # MGLib Configuration # #
+# ####################### #
+
+# Should MGLib silently download and install updates when available?
+# We highly recommend you set this to true so you may run plugins using new features.
+enable-updater: true
+
+# Should MGLib submit anonymous statistics to MCStats? (Set to false if you're paranoid.)
+enable-metrics: true

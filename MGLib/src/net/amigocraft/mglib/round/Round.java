@@ -159,7 +159,7 @@ public class Round {
 
 	/**
 	 * Sets the associated arena of this {@link Round}.
-	 * @param name The arena to associate with this {@link Round}.
+	 * @param arena The arena to associate with this {@link Round}.
 	 * @since 0.1
 	 */
 	public void setArena(String arena){
