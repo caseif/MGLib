@@ -16,6 +16,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.collect.Lists;
+
 /**
  * The primary API class. Contains necessary methods to create a minigame plugin from the library.
  * <br><br>
@@ -23,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev10
+ * @version 0.1-dev11
  * @since 0.1
  */
 public class Minigame {
@@ -128,7 +130,7 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public List<Round> getRounds(){
-		return (List<Round>)rounds.values();
+		return Lists.newArrayList(rounds.values());
 	}
 
 	/**
@@ -288,7 +290,7 @@ public class Minigame {
 	 */
 	public MGPlayer getMGPlayer(String player){
 		for (Round r : rounds.values())
-			for (MGPlayer p : r.getPlayers())
+			for (MGPlayer p : r.getPlayerList())
 				if (p.getName().equals(player))
 					return p;
 		return null;

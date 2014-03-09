@@ -1,7 +1,8 @@
 package net.amigocraft.mglib.round;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,12 +11,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Lists;
+
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Minigame;
 import net.amigocraft.mglib.event.MinigameRoundEndEvent;
 import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
 import net.amigocraft.mglib.event.MinigameRoundStartEvent;
+import net.amigocraft.mglib.event.PlayerJoinMinigameRoundEvent;
 
 /**
  * Represents a round within a minigame.
@@ -37,7 +41,7 @@ public class Round {
 	private Location minBound;
 	private Location maxBound;
 
-	private List<MGPlayer> players = new ArrayList<MGPlayer>();
+	private HashMap<String, MGPlayer> players = new HashMap<String, MGPlayer>();
 
 	private int timerHandle = -1;
 
@@ -243,16 +247,21 @@ public class Round {
 	}
 
 	/**
-	 * Gets a list of {@link MGPlayer}s in this {@link Round}.
+	 * Retrieves a list of {@link MGPlayer}s in this {@link Round}.
 	 * @return A list of {@link MGPlayer}s in this {@link Round}.
 	 * @since 0.1
 	 */
-	public List<MGPlayer> getPlayers(){
-		return players;
+	public List<MGPlayer> getPlayerList(){
+		return Lists.newArrayList(players.values());
 	}
-
-	public void setPlayers(List<MGPlayer> players) {
-		this.players = players;
+	
+	/**
+	 * Retrieves a hashmap of {@link MGPlayer}s in this {@link Round}.
+	 * @return A hashmap of {@link MGPlayer}s in this {@link Round}, with their name as a key.
+	 * @since 0.1
+	 */
+	public HashMap<String, MGPlayer> getPlayers(){
+		return players;
 	}
 
 	/**
@@ -347,31 +356,18 @@ public class Round {
 	}
 
 	/**
-	 * Internally and physically adds the player by the given username to this {@link Round}.
-	 * @param player The username of the player to add
-	 * @throws IllegalArgumentException if a player by the given username cannot be found.
-	 * @since 0.1
-	 */
-	public void addPlayer(String player){
-		Player p = Bukkit.getPlayer(player);
-		if (p == null)
-			throw new IllegalArgumentException("Specified player is not online");
-
-	}
-
-	/**
 	 * Returns the {@link MGPlayer} in this round associated with the given username.
 	 * @param player The username to search for.
 	 * @return The {@link MGPlayer} in this round associated with the given username, or <b>null</b> if none is found.
 	 * @since 0.1
 	 */
 	public MGPlayer getMGPlayer(String player){
-		for (MGPlayer p : getPlayers())
+		for (MGPlayer p : getPlayerList())
 			if (p.getName().equals(player))
 				return p;
 		return null;
 	}
-	
+
 	/**
 	 * Retrieves the world of this arena.
 	 * @return The name of the world containing this arena.
@@ -379,6 +375,63 @@ public class Round {
 	 */
 	public String getWorld(){
 		return world;
+	}
+
+	/**
+	 * Adds a player by the given name to this {@link Round round}.
+	 * @param name The player to add to this {@link Round round}.
+	 * @throws IllegalArgumentException if the given player is not online
+	 * @since 0.1
+	 */
+	public void addPlayer(String name) throws IllegalArgumentException{
+		Player p = Bukkit.getPlayer(name);
+		if (p == null) // check that the specified player is online
+			throw new IllegalArgumentException("\"" + name + "\" is not presently online");
+		MGPlayer mp = null;
+		for (Round r : Minigame.getMinigameInstance(plugin).getRounds()) // reuse the old MGPlayer if it exists
+			if (r.players.containsKey(name)){
+				mp = r.players.get(name);
+				r.players.remove(name);
+				r.players.get(name).setArena(arena);
+				break;
+			}
+		if (mp == null)
+			mp = new MGPlayer(plugin, arena); // otherwise make a new one
+		mp.setDead(false); // make sure they're not dead the second they join
+		players.put(name, mp);
+		Location spawn = spawns.get(new Random(spawns.size()).nextInt()); // pick a random spawn
+		p.teleport(spawn); // teleport the player to it
+		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+	}
+	
+	/**
+	 * Removes a given player from this {@link Round round} and teleports them to the given location.
+	 * @param name The player to remove from this {@link Round round).
+	 * @param location The location to teleport the player to.
+	 * @throws IllegalArgumentException if the given player is not online, or if they are not in this round.
+	 * @since 0.1
+	 */
+	public void removePlayer(String name, Location location) throws IllegalArgumentException {
+		Player p = Bukkit.getPlayer(name);
+		if (p == null) // check that the specified player is online
+			throw new IllegalArgumentException("\"" + name + "\" is not presently online");
+		MGPlayer mp = players.get(name);
+		if (mp == null)
+			throw new IllegalArgumentException("\"" + name + "\" is not in the specified round");
+		mp.setArena(null);
+		mp.setDead(false); // make sure they're not dead when they join a new round
+		players.remove(name);
+		p.teleport(location); // teleport the player to it
+		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+	}
+	
+	/**
+	 * Removes a given player from this {@link Round round} and teleports them to the main world's spawn.
+	 * @param name The player to remove from this {@link Round round}.
+	 * @since 0.1
+	 */
+	public void removePlayer(String name){
+		removePlayer(name, Bukkit.getWorlds().get(0).getSpawnLocation());
 	}
 
 	public boolean equals(Object p){
