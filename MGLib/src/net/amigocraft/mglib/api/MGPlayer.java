@@ -120,7 +120,7 @@ public class MGPlayer {
 		if (p == null) // check that the specified player is online
 			throw new IllegalArgumentException("\"" + name + "\" is not presently online");
 		Round round = null;
-		for (Round r : Minigame.getMinigameInstance(plugin).getRounds()) // reuse the old MGPlayer if it exists
+		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
 				round = r;
 				r.getPlayers().remove(name);

@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev13
+ * @version 0.1-dev14
  * @since 0.1
  */
 public class Minigame {
@@ -139,11 +139,20 @@ public class Minigame {
 	}
 
 	/**
-	 * Gets a list containing all rounds associated with the instance which registered this API instance.
+	 * Retrieves a hashmap containing all rounds associated with the instance which registered this API instance.
+	 * @return A hashmap containing all rounds associated with the instance which registered this API instance.
+	 * @since 0.1
+	 */
+	public HashMap<String, Round> getRounds(){
+		return rounds;
+	}
+
+	/**
+	 * Retrieves a list containing all rounds associated with the instance which registered this API instance.
 	 * @return A list containing all rounds associated with the instance which registered this API instance.
 	 * @since 0.1
 	 */
-	public List<Round> getRounds(){
+	public List<Round> getRoundList(){
 		return Lists.newArrayList(rounds.values());
 	}
 

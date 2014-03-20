@@ -88,7 +88,7 @@ public class Round {
 		this.plugin = plugin;
 		this.arena = arena;
 		stage = Stage.WAITING;
-		Minigame.getMinigameInstance(plugin).getRounds().add(this);
+		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this);
 	}
 
 	/**
@@ -319,7 +319,7 @@ public class Round {
 		for (MGPlayer mp : getPlayerList())
 			removePlayer(mp.getName());
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
-		RollbackManager.rollback(this);
+		RollbackManager.rollback(getArena());
 	}
 
 	/**
@@ -393,7 +393,7 @@ public class Round {
 		if (p == null) // check that the specified player is online
 			throw new IllegalArgumentException("\"" + name + "\" is not presently online");
 		MGPlayer mp = null;
-		for (Round r : Minigame.getMinigameInstance(plugin).getRounds()) // reuse the old MGPlayer if it exists
+		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.players.containsKey(name)){
 				mp = r.players.get(name);
 				r.players.remove(name);

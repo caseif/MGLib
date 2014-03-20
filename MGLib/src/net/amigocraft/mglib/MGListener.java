@@ -10,6 +10,7 @@ import net.amigocraft.mglib.api.Round;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,6 +25,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,7 +34,6 @@ class MGListener implements Listener {
 
 	private static List<String> worlds = new ArrayList<String>();
 
-	private static boolean PREVENT_BREAK = true;
 	private static boolean PREVENT_BURN = true;
 	private static boolean PREVENT_FADE = true;
 	private static boolean PREVENT_GROW = true;
@@ -40,11 +41,9 @@ class MGListener implements Listener {
 	private static boolean PREVENT_LIQUIDFLOW = false;
 	private static boolean PREVENT_PHYSICS = true;
 	private static boolean PREVENT_PISTON = false;
-	private static boolean PREVENT_PLACE = true;
 	private static boolean PREVENT_SPREAD = true;
 
 	public static void initialize(){
-		PREVENT_BREAK = MGLib.plugin.getConfig().getBoolean("protections.break");
 		PREVENT_BURN = MGLib.plugin.getConfig().getBoolean("protections.burn");
 		PREVENT_FADE = MGLib.plugin.getConfig().getBoolean("protections.fade");
 		PREVENT_GROW = MGLib.plugin.getConfig().getBoolean("protections.grow");
@@ -52,7 +51,6 @@ class MGListener implements Listener {
 		PREVENT_LIQUIDFLOW = MGLib.plugin.getConfig().getBoolean("protections.liquidFlow");
 		PREVENT_PHYSICS = MGLib.plugin.getConfig().getBoolean("protections.physics");
 		PREVENT_PISTON = MGLib.plugin.getConfig().getBoolean("protections.piston");
-		PREVENT_PLACE = MGLib.plugin.getConfig().getBoolean("protections.place");
 		PREVENT_SPREAD = MGLib.plugin.getConfig().getBoolean("protections.spread");
 		for (Minigame mg : Minigame.getMinigameInstances())
 			MGListener.addWorlds(mg.getPlugin());
@@ -79,7 +77,7 @@ class MGListener implements Listener {
 		Bukkit.getScheduler().runTaskAsynchronously(MGLib.plugin, new Runnable(){
 			public void run(){
 				for (Minigame mg : Minigame.getMinigameInstances())
-					for (Round r : mg.getRounds())
+					for (Round r : mg.getRoundList())
 						if (r.getPlayers().containsKey(p)){
 							try {
 								r.removePlayer(p);
@@ -109,7 +107,7 @@ class MGListener implements Listener {
 		Bukkit.getScheduler().runTaskAsynchronously(MGLib.plugin, new Runnable(){
 			public void run(){
 				for (Minigame mg : Minigame.getMinigameInstances())
-					for (Round r : mg.getRounds())
+					for (Round r : mg.getRoundList())
 						if (r.getPlayers().containsKey(p)){
 							try {
 								YamlConfiguration y = new YamlConfiguration();
@@ -136,25 +134,28 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onBlockPlace(BlockPlaceEvent e){
-		if (PREVENT_PLACE && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
-		else
-			for (Minigame mg : Minigame.getMinigameInstances()){
-				MGPlayer p = mg.getMGPlayer(e.getPlayer().getName());
-				RollbackManager.logPhysical(e.getBlock(), e.getBlockReplacedState().getType().toString(), p.getArena());
+	public void onInventoryClick(InventoryClickEvent e){
+		for (Minigame mg : Minigame.getMinigameInstances())
+			for (Round r : mg.getRoundList()){
+				if (r.getPlayerList().contains(e.getWhoClicked().getName()) && e.getInventory().getHolder() instanceof Block)
+					RollbackManager.logInventoryChange(e.getInventory(), (Block)e.getInventory().getHolder(), r.getArena());
 			}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockPlace(BlockPlaceEvent e){
+		for (Minigame mg : Minigame.getMinigameInstances())
+			for (Round r : mg.getRoundList())
+				if (r.getPlayers().containsKey(e.getPlayer().getName()))
+					RollbackManager.logBlockChange(e.getBlock(), e.getBlockReplacedState().getType().toString(), r.getArena());
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent e){
-		if (PREVENT_BREAK && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
-		else
-			for (Minigame mg : Minigame.getMinigameInstances()){
-				MGPlayer p = mg.getMGPlayer(e.getPlayer().getName());
-				RollbackManager.logPhysical(e.getBlock(), e.getBlock().getType().toString(), p.getArena());
-			}
+		for (Minigame mg : Minigame.getMinigameInstances())
+			for (Round r : mg.getRoundList())
+				if (r.getPlayers().containsKey(e.getPlayer().getName()))
+					RollbackManager.logBlockChange(e.getBlock(), e.getBlock().getType().toString(), r.getArena());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
