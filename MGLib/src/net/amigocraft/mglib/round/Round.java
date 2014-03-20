@@ -20,6 +20,7 @@ import net.amigocraft.mglib.event.MinigameRoundEndEvent;
 import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
 import net.amigocraft.mglib.event.MinigameRoundStartEvent;
 import net.amigocraft.mglib.event.PlayerJoinMinigameRoundEvent;
+import net.amigocraft.mglib.event.PlayerLeaveMinigameRoundEvent;
 
 /**
  * Represents a round within a minigame.
@@ -314,6 +315,8 @@ public class Round {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		stage = Stage.WAITING;
 		timerHandle = -1;
+		for (MGPlayer mp : getPlayerList())
+			removePlayer(mp.getName());
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
 	}
 
@@ -421,8 +424,8 @@ public class Round {
 		mp.setArena(null);
 		mp.setDead(false); // make sure they're not dead when they join a new round
 		players.remove(name);
-		p.teleport(location); // teleport the player to it
-		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+		mp.reset(location);
+		Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(this, mp));
 	}
 	
 	/**
@@ -431,7 +434,7 @@ public class Round {
 	 * @since 0.1
 	 */
 	public void removePlayer(String name){
-		removePlayer(name, Bukkit.getWorlds().get(0).getSpawnLocation());
+		removePlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
 	}
 
 	public boolean equals(Object p){

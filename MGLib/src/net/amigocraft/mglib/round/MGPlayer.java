@@ -133,8 +133,48 @@ public class MGPlayer {
 		setArena(null);
 		setDead(false); // make sure they're not dead when they join a new round
 		round.getPlayers().remove(name);
-		p.teleport(location); // teleport the player to it
+		reset(location);
 		Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(round, this));
+	}
+	
+	/**
+	 * Removes this {@link MGPlayer} from the round they are currently in.
+	 * @throws IllegalArgumentException if the given player is not online, or if they are not in a round.
+	 * @since 0.1
+	 */
+	public void removeFromRound(){
+		removeFromRound(Minigame.getMinigameInstance(plugin).getExitLocation());
+	}
+	
+	/**
+	 * Resets the {@link Player Bukkit player} after they've left a round.
+	 * @param location The location to teleport the player to, or null to skip teleportation.
+	 * @since 0.1
+	 */
+	public void reset(Location location){
+		MGPlayer.resetPlayer(name, location);
+	}
+	
+	/**
+	 * Resets the {@link Player Bukkit player} after they've left a round.
+	 * @since 0.1
+	 */
+	public void reset(){
+		MGPlayer.resetPlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
+	}
+	
+	/**
+	 * Resets the given {@link Player Bukkit player} after they've left a round.
+	 * @param player The player to reset.
+	 * @param location The location to teleport the player to, or null to skip teleportation.
+	 * @since 0.1
+	 */
+	public static void resetPlayer(String player, Location location){
+		Player p = Bukkit.getPlayer(player);
+		if (p == null) // check that the specified player is online
+			throw new IllegalArgumentException("\"" + player + "\" is not presently online");
+		if (location != null)
+			p.teleport(location); // teleport the player
 	}
 
 	public boolean equals(Object p){

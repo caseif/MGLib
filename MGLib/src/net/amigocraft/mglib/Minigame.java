@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev11
+ * @version 0.1-dev12
  * @since 0.1
  */
 public class Minigame {
@@ -36,6 +36,8 @@ public class Minigame {
 
 	private HashMap<String, Round> rounds = new HashMap<String, Round>();
 
+	private Location exitLocation = null;
+
 	/**
 	 * Creates a new instance of the MGLib API. This object may be used for all API methods
 	 * @param plugin An instance of your plugin.
@@ -43,15 +45,9 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public Minigame(JavaPlugin plugin, String approvedVersion){
-		if (!registeredInstances.containsKey(plugin.getName())){
-			List<String> list = new ArrayList<String>();
-			list.add(approvedVersion);
-			registeredInstances.put(plugin.getName(), new Minigame(plugin, list));
-			MGLib.log.info(plugin + " has hooked into MGLib!");
-		}
-		else
-			MGLib.log.warning(plugin + " attempted to hook into MGLib while an instance of the API was already " +
-					"registered. Please report this to the plugin author.");
+		List<String> list = new ArrayList<String>();
+		list.add(approvedVersion);
+		new Minigame(plugin, list);
 	}
 
 	/**
@@ -61,26 +57,34 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public Minigame(JavaPlugin plugin, List<String> approvedVersions){
-		this.plugin = plugin;
-		boolean dev = true;
-		List<String> compatibleVersions = new ArrayList<String>();
-		for (String v : approvedVersions){
-			if (isCompatible(v)){
-				compatibleVersions.add(v);
-				if (!v.contains("dev"))
-					dev = false;
+		if (!registeredInstances.containsKey(plugin.getName())){
+			this.plugin = plugin;
+			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
+			boolean dev = true;
+			List<String> compatibleVersions = new ArrayList<String>();
+			for (String v : approvedVersions){
+				if (isCompatible(v)){
+					compatibleVersions.add(v);
+					if (!v.contains("dev"))
+						dev = false;
+				}
 			}
+			if (compatibleVersions.size() == 0){
+				MGLib.log.warning(plugin + " was built for a newer or incompatible version of MGLib. As such, it is " +
+						"likely that it wlil not work correctly.");
+				MGLib.log.info("Type /mglib v" + plugin.getName() + " to see a list of compatible MGLib versions");
+				//TODO: Actually implement this ^
+			}
+			if (dev)
+				MGLib.log.warning(plugin + " was tested only against development version(s) of MGLib. " +
+						"As such, it may not be fully compatible with the installed instance of the library. Please " +
+						"notify the developer of " + plugin.getName() + " so he/she may take appropriate action.");
+			registeredInstances.put(plugin.getName(), this);
+			MGLib.log.info(plugin + " has successfully hooked into MGLib!");
 		}
-		if (compatibleVersions.size() == 0){
-			MGLib.log.warning(plugin + " was built for a newer or incompatible version of MGLib. As such, it is " +
-					"likely that it wlil not work correctly.");
-			MGLib.log.info("Type /mglib v" + plugin.getName() + " to see a list of compatible MGLib versions");
-			//TODO: Actually implement this ^
-		}
-		if (dev)
-			MGLib.log.warning(plugin + " was tested only against development version(s) of MGLib. " +
-					"As such, it may not be fully compatible with the installed instance of the library. Please " +
-					"notify the developer of " + plugin.getName() + " so he/she may take appropriate action.");
+		else
+			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
+					"registered. Please report this to the plugin author.");
 	}
 
 	/**
@@ -102,6 +106,15 @@ public class Minigame {
 					return true;
 
 		return false;
+	}
+
+	/**
+	 * Retrieves a {@link List list} of all registered {@link Minigame minigame} instances.
+	 * @return a {@link List list} of all registered {@link Minigame minigame} instances.
+	 * @since 0.1
+	 */
+	public static List<Minigame> getMinigameInstances(){
+		return Lists.newArrayList(registeredInstances.values());
 	}
 
 	/**
@@ -280,6 +293,11 @@ public class Minigame {
 		if (!y.contains(name))
 			throw new IllegalArgumentException("An arena by the name \"" + name + "\" does not exist");
 		y.set(name, null);
+		Round r = Minigame.getMinigameInstance(plugin).getRound(name);
+		if (r != null){
+			r.endRound();
+			r.destroy();
+		}
 	}
 
 	/**
@@ -366,7 +384,7 @@ public class Minigame {
 		else
 			addSpawn(arena, l.getX(), l.getY(), l.getZ());
 	}
-	
+
 	/**
 	 * Deletes a spawn from the given arena at the given coordinates.
 	 * @param arena The arena to delete the spawn from.
@@ -389,14 +407,41 @@ public class Minigame {
 				yc.set(k, null);
 		MGUtil.saveArenaYaml(plugin.getName(), yc);
 	}
-	
+
 	/**
-	 * Delets a spawn from the given arena at the given {@link Location}.
+	 * Deletes a spawn from the given arena at the given {@link Location}.
 	 * @param l The {@link Location} of the spawn to delete.
 	 * @since 0.1
 	 */
 	public void deleteSpawn(String arena, Location l){
 		deleteSpawn(arena, l.getX(), l.getY(), l.getZ());
+	}
+
+	/**
+	 * Retrieves the {@link Location location} to teleport players to upon exiting a {@link Round round}.
+	 * @return the {@link Location location} to teleport players to upon exiting a {@link Round round}.
+	 * @since 0.1
+	 */
+	public Location getExitLocation(){
+		return exitLocation;
+	}
+
+	/**
+	 * Sets the {@link Location location} to teleport players to upon exiting a {@link Round round}.
+	 * @param location The location to teleport players to upon exiting a {@link Round round}.
+	 * @since 0.1
+	 */
+	public void setExitLocation(Location location){
+		exitLocation = location;
+	}
+	
+	/**
+	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
+	 * everything for everyone.</b>
+	 */
+	public static void clean(){
+		registeredInstances.clear();
+		registeredInstances = null;
 	}
 
 }

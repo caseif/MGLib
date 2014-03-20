@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.amigocraft.mglib.round.MGPlayer;
+import net.amigocraft.mglib.round.Round;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev11
+ * @version 0.1-dev12
  * @since 0.1
  */
 public class MGLib extends JavaPlugin {
@@ -25,7 +30,7 @@ public class MGLib extends JavaPlugin {
 	 * The current (or last, if the current version is a release) development version of MGLib.
 	 * @since 0.1
 	 */
-	public static final int lastDev = 11;
+	public static final int lastDev = 12;
 
 	/**
 	 * The current instance of the plugin.
@@ -50,6 +55,7 @@ public class MGLib extends JavaPlugin {
 	public void onEnable(){
 		plugin = this;
 		log = getLogger();
+		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
 		initialize();
 		saveDefaultConfig();
 		// updater
@@ -79,13 +85,27 @@ public class MGLib extends JavaPlugin {
 	 * @since 0.1
 	 */
 	public void onDisable(){
-		plugin = null;
+		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] Ending all minigames due to server restart/reload");
+		for (Minigame mg : Minigame.getMinigameInstances())
+			for (Round r : mg.getRounds())
+				for (MGPlayer p : r.getPlayerList())
+					p.removeFromRound(mg.getExitLocation());
+		Minigame.clean();
 		log.info(this + " has been disabled!");
-		log = null;
+		MGLib.clean();
 	}
 
 	private static void initialize(){
 		approved.add("0.1");
+	}
+	
+	/**
+	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
+	 * everything for everyone.</b>
+	 */
+	public static void clean(){
+		log = null;
+		plugin = null;
 	}
 
 }
