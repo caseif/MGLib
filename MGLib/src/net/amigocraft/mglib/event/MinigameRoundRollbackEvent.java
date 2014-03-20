@@ -1,6 +1,6 @@
 package net.amigocraft.mglib.event;
 
-import net.amigocraft.mglib.round.Round;
+import net.amigocraft.mglib.api.Round;
 
 /**
  * Fired when an {@link Round MGLib round} is rolled back. When fired from MGLib, it always follows a {@link MinigameRoundEndEvent}.

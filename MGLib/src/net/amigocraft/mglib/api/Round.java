@@ -1,4 +1,4 @@
-package net.amigocraft.mglib.round;
+package net.amigocraft.mglib.api;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +15,8 @@ import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.MGUtil;
-import net.amigocraft.mglib.Minigame;
+import net.amigocraft.mglib.RollbackManager;
+import net.amigocraft.mglib.Stage;
 import net.amigocraft.mglib.event.MinigameRoundEndEvent;
 import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
 import net.amigocraft.mglib.event.MinigameRoundStartEvent;
@@ -318,6 +319,7 @@ public class Round {
 		for (MGPlayer mp : getPlayerList())
 			removePlayer(mp.getName());
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
+		RollbackManager.rollback(this);
 	}
 
 	/**

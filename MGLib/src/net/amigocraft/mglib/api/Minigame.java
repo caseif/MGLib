@@ -1,13 +1,13 @@
-package net.amigocraft.mglib;
+package net.amigocraft.mglib.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import net.amigocraft.mglib.round.MGPlayer;
-import net.amigocraft.mglib.round.Round;
-import net.amigocraft.mglib.round.Stage;
+import net.amigocraft.mglib.MGLib;
+import net.amigocraft.mglib.MGUtil;
+import net.amigocraft.mglib.Stage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev12
+ * @version 0.1-dev13
  * @since 0.1
  */
 public class Minigame {
@@ -85,6 +85,7 @@ public class Minigame {
 		else
 			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
 					"registered. Please report this to the plugin author.");
+		MGLib.registerWorlds(plugin);
 	}
 
 	/**
@@ -268,7 +269,7 @@ public class Minigame {
 		}
 		else
 			c.set("boundaries", false);
-
+		MGLib.registerWorlds(plugin);
 	}
 
 	/**
@@ -439,7 +440,7 @@ public class Minigame {
 	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
 	 * everything for everyone.</b>
 	 */
-	public static void clean(){
+	public static void uninitialize(){
 		registeredInstances.clear();
 		registeredInstances = null;
 	}

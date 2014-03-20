@@ -39,7 +39,7 @@ public class MGLibEvent extends Event {
 	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
 	 * everything for everyone.</b>
 	 */
-	public void clean(){
+	public static void uninitialize(){
 		handlers = null;
 	}
 

@@ -1,6 +1,6 @@
 package net.amigocraft.mglib.event;
 
-import net.amigocraft.mglib.round.MGPlayer;
+import net.amigocraft.mglib.api.MGPlayer;
 
 /**
  * Fired when an {@link Event event} involving a {@link MGPlayer player} occurs.

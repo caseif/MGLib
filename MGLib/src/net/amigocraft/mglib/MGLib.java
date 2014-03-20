@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import net.amigocraft.mglib.round.MGPlayer;
-import net.amigocraft.mglib.round.Round;
+import net.amigocraft.mglib.api.Minigame;
+import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.event.MGLibEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev12
+ * @version 0.1-dev13
  * @since 0.1
  */
 public class MGLib extends JavaPlugin {
@@ -30,7 +31,7 @@ public class MGLib extends JavaPlugin {
 	 * The current (or last, if the current version is a release) development version of MGLib.
 	 * @since 0.1
 	 */
-	public static final int lastDev = 12;
+	public static final int lastDev = 13;
 
 	/**
 	 * The current instance of the plugin.
@@ -47,6 +48,11 @@ public class MGLib extends JavaPlugin {
 	 * @since 0.1
 	 */
 	public static Logger log;
+	
+	/**
+	 * Whether block changes should be logged immediately.
+	 */
+	public static boolean IMMEDIATE_LOGGING;
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override.
@@ -57,7 +63,15 @@ public class MGLib extends JavaPlugin {
 		log = getLogger();
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
 		initialize();
+		try {
+			RollbackManager.initialize();
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+			log.severe("An error occurred while initializing the rollback manager");
+		}
 		saveDefaultConfig();
+		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
 		// updater
 		if (getConfig().getBoolean("enable-updater")){
 			new Updater(this, 74979, this.getFile(), Updater.UpdateType.DEFAULT, true);
@@ -88,11 +102,18 @@ public class MGLib extends JavaPlugin {
 		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] Ending all minigames due to server restart/reload");
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRounds())
-				for (MGPlayer p : r.getPlayerList())
-					p.removeFromRound(mg.getExitLocation());
-		Minigame.clean();
+				r.endRound(false);
+		Minigame.uninitialize();
+		MGLibEvent.uninitialize();
 		log.info(this + " has been disabled!");
-		MGLib.clean();
+		MGLib.uninitialize();
+	}
+	
+	/**
+	 * This method should not be called from your plugin. So don't use it. Please.
+	 */
+	public static void registerWorlds(JavaPlugin plugin){
+		MGListener.addWorlds(plugin);
 	}
 
 	private static void initialize(){
@@ -103,7 +124,7 @@ public class MGLib extends JavaPlugin {
 	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
 	 * everything for everyone.</b>
 	 */
-	public static void clean(){
+	public static void uninitialize(){
 		log = null;
 		plugin = null;
 	}

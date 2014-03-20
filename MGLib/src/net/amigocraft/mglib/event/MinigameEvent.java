@@ -1,6 +1,6 @@
 package net.amigocraft.mglib.event;
 
-import net.amigocraft.mglib.round.Round;
+import net.amigocraft.mglib.api.Round;
 
 /**
  * Fired when an {@link Event event} involving an active {@link Round minigame round} occurs.

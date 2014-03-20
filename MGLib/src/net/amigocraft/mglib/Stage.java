@@ -1,4 +1,6 @@
-package net.amigocraft.mglib.round;
+package net.amigocraft.mglib;
+
+import net.amigocraft.mglib.api.Round;
 
 /**
  * Enum containing possible stages of a {@link Round} object.

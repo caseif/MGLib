@@ -1,7 +1,7 @@
 package net.amigocraft.mglib.event;
 
-import net.amigocraft.mglib.round.MGPlayer;
-import net.amigocraft.mglib.round.Round;
+import net.amigocraft.mglib.api.MGPlayer;
+import net.amigocraft.mglib.api.Round;
 
 /**
  * Thrown when a {@link MGPlayer player} leaves an {@link Round MGLib round}.

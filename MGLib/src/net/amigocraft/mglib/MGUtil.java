@@ -2,11 +2,13 @@ package net.amigocraft.mglib;
 
 import java.io.File;
 
+import net.amigocraft.mglib.api.Minigame;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Utility methods for use within MGLib. You probably shouldn't call them from yours.
+ * Utility methods for use within MGLib. You probably shouldn't call them from your plugin, since this isn't an API class per se.
  * @since 0.1
  */
 public class MGUtil {
@@ -51,6 +53,15 @@ public class MGUtil {
 			ex.printStackTrace();
 			MGLib.log.severe("An exception occurred while saving arena data for plugin " + plugin);
 		}
+	}
+	
+	public static boolean isInteger(String s){
+		try {
+			Integer.parseInt(s);
+			return true;
+		}
+		catch (NumberFormatException ex){}
+		return false;
 	}
 
 }
