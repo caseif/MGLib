@@ -10,7 +10,7 @@ import net.amigocraft.mglib.api.Round;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,12 +22,14 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 class MGListener implements Listener {
@@ -58,16 +60,18 @@ class MGListener implements Listener {
 
 	public static void addWorlds(JavaPlugin plugin){
 		File f = new File(plugin.getDataFolder(), "arenas.yml");
-		YamlConfiguration y = new YamlConfiguration();
-		try {
-			y.load(f);
-			for (String k : y.getKeys(false))
-				if (!worlds.contains(y.getString(k + ".world")))
-					worlds.add(y.getString(k + ".world"));
-		}
-		catch (Exception ex){
-			ex.printStackTrace();
-			MGLib.log.severe("An exception occurred while loading world list for plugin " + plugin.getName());
+		if (f.exists()){
+			YamlConfiguration y = new YamlConfiguration();
+			try {
+				y.load(f);
+				for (String k : y.getKeys(false))
+					if (!worlds.contains(y.getString(k + ".world")))
+						worlds.add(y.getString(k + ".world"));
+			}
+			catch (Exception ex){
+				ex.printStackTrace();
+				MGLib.log.severe("An exception occurred while loading world list for plugin " + plugin.getName());
+			}
 		}
 	}
 
@@ -132,14 +136,55 @@ class MGListener implements Listener {
 			}
 		});
 	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerTeleport(PlayerTeleportEvent e){
+		boolean found = false;
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			for (Round r : mg.getRoundList()){
+				MGPlayer p = r.getMGPlayer(e.getPlayer().getName());
+				if (p != null){
+					Location l = e.getPlayer().getLocation();
+					if (!e.getPlayer().getWorld().getName().equals(r.getWorld()))
+						p.removeFromRound(l);
+					else {
+						Location min = r.getMinimumBoundary();
+						Location max = r.getMaximumBoundary();
+						if (min != null && max != null){
+							if (l.getX() < min.getX() || 
+								l.getY() < min.getY() ||
+								l.getZ() < min.getZ() ||
+								l.getX() > max.getX() ||
+								l.getY() > max.getY() ||
+								l.getZ() > max.getZ())
+								p.removeFromRound(l);
+						}
+					}
+					break;
+				}
+			}
+			if (found)
+				break;
+		}
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent e){
-		for (Minigame mg : Minigame.getMinigameInstances())
+		boolean found = false;
+		for (Minigame mg : Minigame.getMinigameInstances()){
 			for (Round r : mg.getRoundList()){
-				if (r.getPlayerList().contains(e.getWhoClicked().getName()) && e.getInventory().getHolder() instanceof Block)
-					RollbackManager.logInventoryChange(e.getInventory(), (Block)e.getInventory().getHolder(), r.getArena());
+				if (r.getPlayers().containsKey(e.getWhoClicked().getName())){
+					if (e.getInventory().getHolder() instanceof BlockState){
+						mg.getRollbackManager().logInventoryChange(e.getInventory(),
+								((BlockState)e.getInventory().getHolder()).getBlock(), r.getArena());
+						found = true;
+						break;
+					}
+				}
 			}
+			if (found)
+				break;
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -147,7 +192,8 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
 				if (r.getPlayers().containsKey(e.getPlayer().getName()))
-					RollbackManager.logBlockChange(e.getBlock(), e.getBlockReplacedState().getType().toString(), r.getArena());
+					mg.getRollbackManager().logBlockChange(e.getBlock(),
+							e.getBlockReplacedState().getType().toString(), r.getArena());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -155,7 +201,8 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
 				if (r.getPlayers().containsKey(e.getPlayer().getName()))
-					RollbackManager.logBlockChange(e.getBlock(), e.getBlock().getType().toString(), r.getArena());
+					mg.getRollbackManager().logBlockChange(e.getBlock(),
+							e.getBlock().getType().toString(), r.getArena());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -195,7 +242,13 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onBlockPiston(BlockPistonEvent e){
+	public void onBlockPiston(BlockPistonExtendEvent e){
+		if (PREVENT_PISTON && worlds.contains(e.getBlock().getWorld().getName()))
+			e.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockPiston(BlockPistonRetractEvent e){
 		if (PREVENT_PISTON && worlds.contains(e.getBlock().getWorld().getName()))
 			e.setCancelled(true);
 	}

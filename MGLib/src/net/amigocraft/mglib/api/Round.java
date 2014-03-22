@@ -1,5 +1,6 @@
 package net.amigocraft.mglib.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -15,7 +16,6 @@ import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.MGUtil;
-import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.Stage;
 import net.amigocraft.mglib.event.MinigameRoundEndEvent;
 import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
@@ -39,7 +39,7 @@ public class Round {
 
 	private String world;
 	private String arena;
-	private List<Location> spawns;
+	private List<Location> spawns = new ArrayList<Location>();
 	private Location minBound;
 	private Location maxBound;
 
@@ -67,15 +67,20 @@ public class Round {
 			throw new IllegalArgumentException("Error occurred while creating round for " +
 					Minigame.getMinigameInstance(plugin).getPlugin() + ": specified arena does not exist");
 		ConfigurationSection cs = y.getConfigurationSection(arena);
-		world = cs.getString(world);
+		world = cs.getString("world");
 		World w = Bukkit.getWorld(world);
 		if (w == null)
 			throw new IllegalArgumentException("Error occurred while creating round for " +
 					Minigame.getMinigameInstance(plugin).getPlugin() + ": world of the specified arena does not exist");
 		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){
-			Location l = new Location(w, cs.getDouble(k + ".x"), cs.getDouble(k + ".y"), cs.getDouble(k + ".z"));
-			l.setPitch((float)cs.getDouble(k + ".pitch"));
-			l.setYaw((float)cs.getDouble(k + ".yaw"));
+			Location l = new Location(w, cs.getDouble("spawns." + k + ".x"),
+					cs.getDouble("spawns." + k + ".y"),
+					cs.getDouble("spawns." + k + ".z"));
+			if (cs.isSet(k + ".pitch"))
+				l.setPitch((float)cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".pitch"));
+			if (cs.isSet(k + ".yaw"))
+				l.setYaw((float)cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".yaw"));
+			spawns.add(l);
 		}
 		if (cs.getBoolean("boundaries")){
 			minBound = new Location(w, cs.getDouble("minX"), cs.getDouble("minY"), cs.getDouble("minZ"));
@@ -256,7 +261,7 @@ public class Round {
 	public List<MGPlayer> getPlayerList(){
 		return Lists.newArrayList(players.values());
 	}
-	
+
 	/**
 	 * Retrieves a hashmap of {@link MGPlayer}s in this {@link Round}.
 	 * @return A hashmap of {@link MGPlayer}s in this {@link Round}, with their name as a key.
@@ -319,7 +324,7 @@ public class Round {
 		for (MGPlayer mp : getPlayerList())
 			removePlayer(mp.getName());
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
-		RollbackManager.rollback(getArena());
+		getMinigame().getRollbackManager().rollback(getArena());
 	}
 
 	/**
@@ -367,10 +372,7 @@ public class Round {
 	 * @since 0.1
 	 */
 	public MGPlayer getMGPlayer(String player){
-		for (MGPlayer p : getPlayerList())
-			if (p.getName().equals(player))
-				return p;
-		return null;
+		return players.get(player);
 	}
 
 	/**
@@ -401,14 +403,14 @@ public class Round {
 				break;
 			}
 		if (mp == null)
-			mp = new MGPlayer(plugin, arena); // otherwise make a new one
+			mp = new MGPlayer(plugin, name, arena); // otherwise make a new one
 		mp.setDead(false); // make sure they're not dead the second they join
 		players.put(name, mp);
-		Location spawn = spawns.get(new Random(spawns.size()).nextInt()); // pick a random spawn
+		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
 		p.teleport(spawn); // teleport the player to it
 		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 	}
-	
+
 	/**
 	 * Removes a given player from this {@link Round round} and teleports them to the given location.
 	 * @param name The player to remove from this {@link Round round).
@@ -429,7 +431,7 @@ public class Round {
 		mp.reset(location);
 		Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(this, mp));
 	}
-	
+
 	/**
 	 * Removes a given player from this {@link Round round} and teleports them to the main world's spawn.
 	 * @param name The player to remove from this {@link Round round}.

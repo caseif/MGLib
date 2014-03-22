@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev14
+ * @version 0.1-dev15
  * @since 0.1
  */
 public class MGLib extends JavaPlugin {
@@ -31,7 +31,7 @@ public class MGLib extends JavaPlugin {
 	 * The current (or last, if the current version is a release) development version of MGLib.
 	 * @since 0.1
 	 */
-	public static final int lastDev = 14;
+	public static final int lastDev = 15;
 
 	/**
 	 * The current instance of the plugin.
@@ -63,13 +63,6 @@ public class MGLib extends JavaPlugin {
 		log = getLogger();
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
 		initialize();
-		try {
-			RollbackManager.initialize();
-		}
-		catch (Exception ex){
-			ex.printStackTrace();
-			log.severe("An error occurred while initializing the rollback manager");
-		}
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
 		// updater
@@ -119,12 +112,8 @@ public class MGLib extends JavaPlugin {
 	private static void initialize(){
 		approved.add("0.1");
 	}
-	
-	/**
-	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
-	 * everything for everyone.</b>
-	 */
-	public static void uninitialize(){
+
+	private static void uninitialize(){
 		log = null;
 		plugin = null;
 	}

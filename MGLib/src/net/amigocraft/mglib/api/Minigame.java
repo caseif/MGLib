@@ -1,12 +1,12 @@
 package net.amigocraft.mglib.api;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.MGUtil;
+import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.Stage;
 
 import org.bukkit.Bukkit;
@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev14
+ * @version 0.1-dev15
  * @since 0.1
  */
 public class Minigame {
@@ -37,18 +37,8 @@ public class Minigame {
 	private HashMap<String, Round> rounds = new HashMap<String, Round>();
 
 	private Location exitLocation = null;
-
-	/**
-	 * Creates a new instance of the MGLib API. This object may be used for all API methods
-	 * @param plugin An instance of your plugin.
-	 * @param approvedVersion The approved version of MGLib for your plugin.\
-	 * @since 0.1
-	 */
-	public Minigame(JavaPlugin plugin, String approvedVersion){
-		List<String> list = new ArrayList<String>();
-		list.add(approvedVersion);
-		new Minigame(plugin, list);
-	}
+	
+	private RollbackManager rbManager = null;
 
 	/**
 	 * Creates a new instance of the MGLib API. This object may be used for all API methods
@@ -72,7 +62,7 @@ public class Minigame {
 			if (compatibleVersions.size() == 0){
 				MGLib.log.warning(plugin + " was built for a newer or incompatible version of MGLib. As such, it is " +
 						"likely that it wlil not work correctly.");
-				MGLib.log.info("Type /mglib v" + plugin.getName() + " to see a list of compatible MGLib versions");
+				MGLib.log.info("Type /mglib v " + plugin.getName() + " to see a list of compatible MGLib versions");
 				//TODO: Actually implement this ^
 			}
 			if (dev)
@@ -85,7 +75,20 @@ public class Minigame {
 		else
 			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
 					"registered. Please report this to the plugin author.");
+		rbManager = new RollbackManager(plugin);
+		rbManager.checkRollbacks();
 		MGLib.registerWorlds(plugin);
+	}
+
+	/**
+	 * Creates a new instance of the MGLib API. This object may be used for all API methods
+	 * @param plugin An instance of your plugin.
+	 * @param approvedVersion The approved version of MGLib for your plugin.\
+	 * @since 0.1
+	 */
+	@SuppressWarnings("serial")
+	public Minigame(JavaPlugin plugin, final String approvedVersion){
+		this(plugin, new ArrayList<String>(){{add(approvedVersion);}});
 	}
 
 	/**
@@ -99,10 +102,11 @@ public class Minigame {
 	private boolean isCompatible(String version){
 		for (String v : MGLib.approved)
 			if (version.contains(v))
-				if (version.contains("dev")){
+				if (version.contains("dev"))
 					if (Integer.parseInt(version.split("dev")[1]) <= MGLib.lastDev)
 						return true;
-				}
+					else
+						return false;
 				else
 					return true;
 
@@ -162,15 +166,11 @@ public class Minigame {
 	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
 	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
 	 * @return The created round.
-	 * @throws IllegalArgumentException if the specified arena cannot be loaded (due to it or its world being nonexistent),
-	 * or if the given arena is already associated with a {@link Round}.
-	 * @throws IOException if an exception occurs while loading the arenas.yml file from disk
 	 * @throws InvalidConfigurationException if an exception occurs while loading the configuration from arenas.yml
 	 * @since 0.1
 	 */
 	public Round createRound(String arena, boolean discrete, int preparationTime, int roundTime)
-			throws IllegalArgumentException, IOException, InvalidConfigurationException{
-
+			throws IllegalArgumentException {
 		Round r = new Round(plugin.getName(), arena, discrete, preparationTime, roundTime);
 		r.setStage(Stage.WAITING);
 		rounds.put(arena, r);
@@ -213,72 +213,104 @@ public class Minigame {
 	public void createArena(String name, Location spawn, Location corner1, Location corner2)
 			throws IllegalArgumentException {
 
-		if (spawn.getWorld().getName() != corner1.getWorld().getName())
-			throw new IllegalArgumentException("Given locations are not in the same world");
-		if (spawn.getWorld().getName() != corner2.getWorld().getName())
-			throw new IllegalArgumentException("Given locations are not in the same world");
+		double minX = Double.NaN;
+		double minY = Double.NaN;
+		double minZ = Double.NaN;
+		double maxX = Double.NaN;
+		double maxY = Double.NaN;
+		double maxZ = Double.NaN;
+		double x1 = Double.NaN;
+		double y1 = Double.NaN;
+		double z1 = Double.NaN;
+		double x2 = Double.NaN;;
+		double y2 = Double.NaN;
+		double z2 = Double.NaN;
 
-		double x1 = corner1.getX();
-		double y1 = corner1.getY();
-		double z1 = corner1.getZ();
-		double x2 = corner2.getX();
-		double y2 = corner2.getY();
-		double z2 = corner2.getZ();
+		if (corner1 != null && corner2 != null){
+			if (spawn.getWorld().getName() != corner1.getWorld().getName())
+				throw new IllegalArgumentException("Given locations are not in the same world");
+			if (spawn.getWorld().getName() != corner2.getWorld().getName())
+				throw new IllegalArgumentException("Given locations are not in the same world");
 
-		double minX;
-		double minY;
-		double minZ;
-		double maxX;
-		double maxY;
-		double maxZ;
+			x1 = corner1.getX();
+			y1 = corner1.getY();
+			z1 = corner1.getZ();
+			x2 = corner2.getX();
+			y2 = corner2.getY();
+			z2 = corner2.getZ();
 
-		if (x1 < x2){
-			minX = x1;
-			maxX = x2;
-		}
-		else {
-			minX = x2;
-			maxX = x1;
-		}
-		if (y1 < y2){
-			minY = y1;
-			maxY = y2;
-		}
-		else {
-			minY = y2;
-			maxY = y1;
-		}
-		if (z1 < z2){
-			minZ = z1;
-			maxZ = z2;
-		}
-		else {
-			minZ = z2;
-			maxZ = z1;
+			if (x1 < x2){
+				minX = x1;
+				maxX = x2;
+			}
+			else {
+				minX = x2;
+				maxX = x1;
+			}
+			if (y1 < y2){
+				minY = y1;
+				maxY = y2;
+			}
+			else {
+				minY = y2;
+				maxY = y1;
+			}
+			if (z1 < z2){
+				minZ = z1;
+				maxZ = z2;
+			}
+			else {
+				minZ = z2;
+				maxZ = z1;
+			}
 		}
 
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
-		if (y.contains(name))
-			throw new IllegalArgumentException("An arena named \"" + name + "\" already exists");
-		ConfigurationSection c = y.getConfigurationSection(name);
-		c.set("world", spawn.getWorld());
-		c.set("spawns.0.x", spawn.getX());
-		c.set("spawns.0.y", spawn.getY());
-		c.set("spawns.0.z", spawn.getZ());
-		c.set("spawns.0.pitch", spawn.getPitch());
-		c.set("spawns.0.yaw", spawn.getYaw());
-		if (minX != Double.NaN){
-			c.set("boundaries", true);
-			c.set("minX", minX);
-			c.set("minY", minY);
-			c.set("minZ", minZ);
-			c.set("maxX", maxX);
-			c.set("maxY", maxY);
-			c.set("maxZ", maxZ);
+		if (y != null){
+			if (y.contains(name))
+				throw new IllegalArgumentException("An arena named \"" + name + "\" already exists");
+			y.createSection(name);
+			ConfigurationSection c = y.getConfigurationSection(name);
+			c.set("world", spawn.getWorld().getName());
+			c.set("spawns.0.x", spawn.getX());
+			c.set("spawns.0.y", spawn.getY());
+			c.set("spawns.0.z", spawn.getZ());
+			c.set("spawns.0.pitch", spawn.getPitch());
+			c.set("spawns.0.yaw", spawn.getYaw());
+			if (corner1 != null){
+				c.set("boundaries", true);
+				c.set("minX", minX);
+				c.set("minY", minY);
+				c.set("minZ", minZ);
+				c.set("maxX", maxX);
+				c.set("maxY", maxY);
+				c.set("maxZ", maxZ);
+			}
+			else
+				c.set("boundaries", false);
+			MGUtil.saveArenaYaml(plugin.getName(), y);
+			MGLib.registerWorlds(plugin);
 		}
-		else
-			c.set("boundaries", false);
-		MGLib.registerWorlds(plugin);
+	}
+
+	/**
+	 * Creates an arena for use with MGLib.
+	 * @param name The name of the arena (used to identify it).
+	 * @param spawn The initial spawn point of the arena (more may be added later).
+	 * @throws IllegalArgumentException if an arena of the same name already exists.
+	 * <br><br>
+	 * It is recommended that you use {@link String#contains(CharSequence) String#contains()} in the event of
+	 * an IllegalArgumentException to determine and handle the issue rather than just printing the stack trace
+	 * (it scares users).
+	 * <br><br>
+	 * Example:
+	 * <pre>{@code if (ex.getMessage().contains("exist"))
+	 * 	// arena exists; handle appropriately}
+	 * </pre>
+	 * @since 0.1
+	 */
+	public void createArena(String name, Location spawn){
+		createArena(name, spawn, null, null);
 	}
 
 	/**
@@ -446,8 +478,18 @@ public class Minigame {
 	}
 	
 	/**
+	 * Retrieves this minigame's rollback manager
+	 * @return this minigame's rollback manager
+	 * @since 0.1
+	 */
+	public RollbackManager getRollbackManager(){
+		return rbManager;
+	}
+
+	/**
 	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
 	 * everything for everyone.</b>
+	 * @since 0.1
 	 */
 	public static void uninitialize(){
 		registeredInstances.clear();

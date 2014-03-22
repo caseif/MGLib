@@ -23,6 +23,8 @@ public class MGUtil {
 		JavaPlugin jp = Minigame.getMinigameInstance(plugin).getPlugin();
 		File f = new File(jp.getDataFolder(), "arenas.yml");
 		try {
+			if (!jp.getDataFolder().exists())
+				jp.getDataFolder().mkdirs();
 			if (!f.exists())
 				f.createNewFile();
 			YamlConfiguration y = new YamlConfiguration();
@@ -32,8 +34,8 @@ public class MGUtil {
 		catch (Exception ex){
 			ex.printStackTrace();
 			MGLib.log.severe("An exception occurred while loading arena data for plugin " + plugin);
+			return null;
 		}
-		return null;
 	}
 
 	/**

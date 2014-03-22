@@ -19,11 +19,13 @@ public class MGPlayer {
 
 	/**
 	 * Creates a new MGPlayer instance.
+	 * @param plugin The plugin to associate the MGPlayer with.
 	 * @param name The username of the player.
 	 * @param arena The arena of the player (this argument is subject to change).
 	 * @since 0.1
 	 */
-	public MGPlayer(String name, String arena){
+	public MGPlayer(String plugin, String name, String arena){
+		this.plugin = plugin;
 		this.name = name;
 		this.arena = arena;
 	}
