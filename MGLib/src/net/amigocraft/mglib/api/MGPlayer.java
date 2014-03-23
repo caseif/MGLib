@@ -5,6 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import net.amigocraft.mglib.event.PlayerLeaveMinigameRoundEvent;
+import net.amigocraft.mglib.exception.PlayerNotPresentException;
+import net.amigocraft.mglib.exception.PlayerOfflineException;
 
 /**
  * Represents a player participating in a minigame.
@@ -105,22 +107,23 @@ public class MGPlayer {
 	/**
 	 * Adds this {@link MGPlayer} to the given {@link Round round}.
 	 * @param round The name of the round to add the player to.
+	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1
 	 */
-	public void addToRound(String round){
+	public void addToRound(String round) throws PlayerOfflineException {
 		Minigame.getMinigameInstance(plugin).getRound(round).addPlayer(name);
 	}
 	
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
-	 * @param location The {@link Location location} to teleport the player to.
-	 * @throws IllegalArgumentException if the given player is not online, or if they are not in a round.
+	 * @throws PlayerOfflineException if the given player is not online.
+	 * @throws PlayerNotPresentException if the given player is not in a round.
 	 * @since 0.1
 	 */
-	public void removeFromRound(Location location){
+	public void removeFromRound(Location location) throws PlayerOfflineException, PlayerNotPresentException {
 		Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
-			throw new IllegalArgumentException("\"" + name + "\" is not presently online");
+			throw new PlayerOfflineException();
 		Round round = null;
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
@@ -130,7 +133,7 @@ public class MGPlayer {
 				break;
 			}
 		if (round == null)
-			throw new IllegalArgumentException("Player \"" + name + "\" is not in a round");
+			throw new PlayerNotPresentException();
 		setArena(null);
 		setDead(false); // make sure they're not dead when they join a new round
 		round.getPlayers().remove(name);
@@ -140,27 +143,30 @@ public class MGPlayer {
 	
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
-	 * @throws IllegalArgumentException if the given player is not online, or if they are not in a round.
+	 * @throws PlayerOfflineException if the player is not online.
+	 * @throws PlayerNotPresentException if the player is not in a round.
 	 * @since 0.1
 	 */
-	public void removeFromRound(){
+	public void removeFromRound() throws PlayerOfflineException, PlayerNotPresentException{
 		removeFromRound(Minigame.getMinigameInstance(plugin).getExitLocation());
 	}
 	
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
 	 * @param location The location to teleport the player to, or null to skip teleportation.
+	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1
 	 */
-	public void reset(Location location){
+	public void reset(Location location) throws PlayerOfflineException {
 		MGPlayer.resetPlayer(name, location);
 	}
 	
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
+	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1
 	 */
-	public void reset(){
+	public void reset() throws PlayerOfflineException {
 		MGPlayer.resetPlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
 	}
 	
@@ -168,12 +174,13 @@ public class MGPlayer {
 	 * Resets the given {@link Player Bukkit player} after they've left a round.
 	 * @param player The player to reset.
 	 * @param location The location to teleport the player to, or null to skip teleportation.
+	 * @throws PlayerOfflineException if the given player is not online.
 	 * @since 0.1
 	 */
-	public static void resetPlayer(String player, Location location){
+	public static void resetPlayer(String player, Location location) throws PlayerOfflineException {
 		Player p = Bukkit.getPlayer(player);
 		if (p == null) // check that the specified player is online
-			throw new IllegalArgumentException("\"" + player + "\" is not presently online");
+			throw new PlayerOfflineException();
 		if (location != null)
 			p.teleport(location); // teleport the player
 	}

@@ -7,6 +7,8 @@ import java.util.List;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.exception.PlayerNotPresentException;
+import net.amigocraft.mglib.exception.PlayerOfflineException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -136,7 +138,7 @@ class MGListener implements Listener {
 			}
 		});
 	}
-	
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTeleport(PlayerTeleportEvent e){
 		boolean found = false;
@@ -145,19 +147,29 @@ class MGListener implements Listener {
 				MGPlayer p = r.getMGPlayer(e.getPlayer().getName());
 				if (p != null){
 					Location l = e.getPlayer().getLocation();
-					if (!e.getPlayer().getWorld().getName().equals(r.getWorld()))
-						p.removeFromRound(l);
+					if (!e.getPlayer().getWorld().getName().equals(r.getWorld())){
+						try {
+							p.removeFromRound(l);
+						}
+						catch (PlayerNotPresentException ex){}
+						catch (PlayerOfflineException ex2){} // neither of these can happen
+					}
 					else {
 						Location min = r.getMinimumBoundary();
 						Location max = r.getMaximumBoundary();
 						if (min != null && max != null){
 							if (l.getX() < min.getX() || 
-								l.getY() < min.getY() ||
-								l.getZ() < min.getZ() ||
-								l.getX() > max.getX() ||
-								l.getY() > max.getY() ||
-								l.getZ() > max.getZ())
-								p.removeFromRound(l);
+									l.getY() < min.getY() ||
+									l.getZ() < min.getZ() ||
+									l.getX() > max.getX() ||
+									l.getY() > max.getY() ||
+									l.getZ() > max.getZ()){
+								try {
+									p.removeFromRound(l);
+								}
+								catch (PlayerNotPresentException ex){}
+								catch (PlayerOfflineException ex){} // neither of these can happen
+							}
 						}
 					}
 					break;

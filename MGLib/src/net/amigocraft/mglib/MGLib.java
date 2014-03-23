@@ -31,7 +31,7 @@ public class MGLib extends JavaPlugin {
 	 * The current (or last, if the current version is a release) development version of MGLib.
 	 * @since 0.1
 	 */
-	public static final int lastDev = 15;
+	public static final int lastDev = 16;
 
 	/**
 	 * The current instance of the plugin.

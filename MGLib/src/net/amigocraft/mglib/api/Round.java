@@ -22,6 +22,9 @@ import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
 import net.amigocraft.mglib.event.MinigameRoundStartEvent;
 import net.amigocraft.mglib.event.PlayerJoinMinigameRoundEvent;
 import net.amigocraft.mglib.event.PlayerLeaveMinigameRoundEvent;
+import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.PlayerNotPresentException;
+import net.amigocraft.mglib.exception.PlayerOfflineException;
 
 /**
  * Represents a round within a minigame.
@@ -57,21 +60,18 @@ public class Round {
 	 * @param discrete Whether this round will take place in a discrete world (uses a defined arena when false).
 	 * @param preparationTime The round's total preparation time. Use -1 for no limit, or 0 for no preparation phase.
 	 * @param roundTime The round's total playing time. Use -1 for no limit.
-	 * @throws IllegalArgumentException if the specified arena does not exist or the world of the specified arena does not exist.
-	 * @since 0.1
+	 * @throws ArenaNotExistsException if the specified arena does not exist.
 	 */
 	public Round(String plugin, String arena, boolean discrete, int preparationTime, int roundTime)
-			throws IllegalArgumentException {
+			throws ArenaNotExistsException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
 		if (!y.contains(arena))
-			throw new IllegalArgumentException("Error occurred while creating round for " +
-					Minigame.getMinigameInstance(plugin).getPlugin() + ": specified arena does not exist");
+			throw new ArenaNotExistsException();
 		ConfigurationSection cs = y.getConfigurationSection(arena);
 		world = cs.getString("world");
 		World w = Bukkit.getWorld(world);
 		if (w == null)
-			throw new IllegalArgumentException("Error occurred while creating round for " +
-					Minigame.getMinigameInstance(plugin).getPlugin() + ": world of the specified arena does not exist");
+			throw new IllegalArgumentException("World " + world + " cannot be loaded!");
 		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){
 			Location l = new Location(w, cs.getDouble("spawns." + k + ".x"),
 					cs.getDouble("spawns." + k + ".y"),
@@ -321,8 +321,12 @@ public class Round {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		stage = Stage.WAITING;
 		timerHandle = -1;
-		for (MGPlayer mp : getPlayerList())
-			removePlayer(mp.getName());
+		for (MGPlayer mp : getPlayerList()){
+			try {
+				removePlayer(mp.getName());
+			}
+			catch (PlayerOfflineException ex){}
+		}
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
 		getMinigame().getRollbackManager().rollback(getArena());
 	}
@@ -387,13 +391,13 @@ public class Round {
 	/**
 	 * Adds a player by the given name to this {@link Round round}.
 	 * @param name The player to add to this {@link Round round}.
-	 * @throws IllegalArgumentException if the given player is not online
+	 * @throws PlayerOfflineException if the player is not online
 	 * @since 0.1
 	 */
-	public void addPlayer(String name) throws IllegalArgumentException{
+	public void addPlayer(String name) throws PlayerOfflineException {
 		Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
-			throw new IllegalArgumentException("\"" + name + "\" is not presently online");
+			throw new PlayerOfflineException();
 		MGPlayer mp = null;
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.players.containsKey(name)){
@@ -415,30 +419,35 @@ public class Round {
 	 * Removes a given player from this {@link Round round} and teleports them to the given location.
 	 * @param name The player to remove from this {@link Round round).
 	 * @param location The location to teleport the player to.
-	 * @throws IllegalArgumentException if the given player is not online, or if they are not in this round.
+	 * @throws PlayerOfflineException if the player is not online.
+	 * @throws PlayerNotPresentException if the player are not in this round.
 	 * @since 0.1
 	 */
-	public void removePlayer(String name, Location location) throws IllegalArgumentException {
+	public void removePlayer(String name, Location location) throws PlayerOfflineException, PlayerNotPresentException {
 		Player p = Bukkit.getPlayer(name);
-		if (p == null) // check that the specified player is online
-			throw new IllegalArgumentException("\"" + name + "\" is not presently online");
 		MGPlayer mp = players.get(name);
 		if (mp == null)
-			throw new IllegalArgumentException("\"" + name + "\" is not in the specified round");
-		mp.setArena(null);
-		mp.setDead(false); // make sure they're not dead when they join a new round
-		players.remove(name);
-		mp.reset(location);
+			throw new PlayerNotPresentException();
+		if (p != null){
+			mp.setArena(null);
+			mp.setDead(false); // make sure they're not dead when they join a new round
+			players.remove(name);
+			mp.reset(location);
+		}
 		Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(this, mp));
 	}
 
 	/**
 	 * Removes a given player from this {@link Round round} and teleports them to the main world's spawn.
-	 * @param name The player to remove from this {@link Round round}.
+	 * @param name The player to remove from this {@link Round round}. 
 	 * @since 0.1
 	 */
-	public void removePlayer(String name){
-		removePlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
+	public void removePlayer(String name) throws PlayerOfflineException {
+		try {
+			removePlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
+		}
+		catch (PlayerOfflineException ex){}
+		catch (PlayerNotPresentException e2){} // neither of these can happen, and if they do, we have bigger problems to worry about
 	}
 
 	public boolean equals(Object p){
