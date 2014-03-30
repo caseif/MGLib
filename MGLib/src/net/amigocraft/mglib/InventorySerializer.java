@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings("deprecation")
-public class InventorySerializer {
+class InventorySerializer {
 	public static String InventoryToString (Inventory invInventory)
 	{
 		String serialization = invInventory.getSize() + ";";

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.amigocraft.mglib.ArenaFactory;
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.RollbackManager;
@@ -14,7 +15,6 @@ import net.amigocraft.mglib.exception.InvalidLocationException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev17
+ * @version 0.1-dev18
  * @since 0.1
  */
 public class Minigame {
@@ -41,6 +41,8 @@ public class Minigame {
 	private Location exitLocation = null;
 
 	private RollbackManager rbManager = null;
+
+	private HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
 	/**
 	 * Creates a new instance of the MGLib API. This object may be used for all API methods
@@ -197,7 +199,7 @@ public class Minigame {
 	 * @throws ArenaExistsException if an arena of the same name already exists.
 	 * @since 0.1
 	 */
-	public void createArena(String name, Location spawn, Location corner1, Location corner2)
+	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2)
 			throws InvalidLocationException, ArenaExistsException {
 
 		double minX = Double.NaN;
@@ -253,34 +255,13 @@ public class Minigame {
 			}
 		}
 
-		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName()); // call a convenience method for loading the YAML file
-		if (y != null){ // make sure the file was properly loaded
-			if (y.contains(name)) // arena already exists
-				throw new ArenaExistsException();
-			y.createSection(name); // create a key for the arena
-			ConfigurationSection c = y.getConfigurationSection(name); // make it a bit easier to read the code
-			c.set("world", spawn.getWorld().getName());
-			c.set("spawns.0.x", spawn.getX());
-			c.set("spawns.0.y", spawn.getY());
-			c.set("spawns.0.z", spawn.getZ());
-			c.set("spawns.0.pitch", spawn.getPitch());
-			c.set("spawns.0.yaw", spawn.getYaw());
-			if (corner1 != null){ // arena has boundaries
-				c.set("boundaries", true);
-				c.set("minX", minX);
-				c.set("minY", minY);
-				c.set("minZ", minZ);
-				c.set("maxX", maxX);
-				c.set("maxY", maxY);
-				c.set("maxZ", maxZ);
-			}
-			else // no arena boundaries
-				c.set("boundaries", false);
-			MGUtil.saveArenaYaml(plugin.getName(), y); // convenience method for saving the YAML file
-			if (!MGUtil.getWorlds().contains(spawn.getWorld().getName()))
-				MGUtil.getWorlds().add(spawn.getWorld().getName()); // register world with event listener
-		}
-		// no else block because an exception is thrown by the convenience method
+		if (!MGUtil.getWorlds().contains(spawn.getWorld().getName()))
+			MGUtil.getWorlds().add(spawn.getWorld().getName()); // register world with event listener
+
+		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name).addSpawn(spawn);
+		if (minX != Float.NaN)
+			a.setMinBound(minX, minY, minZ).setMaxBound(maxX, maxY, maxZ);
+		return a;
 	}
 
 	/**
@@ -350,92 +331,11 @@ public class Minigame {
 	}
 
 	/**
-	 * Adds a spawn to the given arena with the given coordinates, pitch, and yaw.
-	 * @param arena The arena to add the new spawn to.
-	 * @param x The x-coordinate of the new spawn.
-	 * @param y The y-coordinate of the new spawn.
-	 * @param z The z-coordinate of the new spawn.
-	 * @param pitch The pitch (x- and z-rotation) of the new spawn.
-	 * @param yaw The yaw (y-rotation) of the new spawn.
+	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
 	 * @since 0.1
 	 */
-	public void addSpawn(String arena, double x, double y, double z, float pitch, float yaw){
-		if (rounds.containsKey(arena)){ // check if round is taking place in arena
-			Round r = rounds.get(arena); // get the round object
-			Location l = new Location(Bukkit.getWorld(r.getWorld()), x, y, z); // self-explanatory
-			l.setPitch(pitch);
-			l.setYaw(yaw);
-			r.getSpawns().add(l); // add spawn to the live round
-		}
-		YamlConfiguration yc = MGUtil.loadArenaYaml(plugin.getName()); // convenience method for loading the YAML file
-		int min; // the minimum available spawn number
-		for (min = 0; min > 0; min++) // this feels like a bad idea, but I think it should work
-			if (yc.get("spawns." + min) == null)
-				break;
-		yc.set("spawns." + min + ".x", x);
-		yc.set("spawns." + min + ".y", y);
-		yc.set("spawns." + min + ".z", z);
-		yc.set("spawns." + min + ".pitch", pitch);
-		yc.set("spawns." + min + ".yaw", yaw);
-		MGUtil.saveArenaYaml(plugin.getName(), yc); // convenience method for saving the YAML file
-	}
-
-	/**
-	 * Adds a spawn to the given arena with the given coordinates.
-	 * @param arena The arena to add the new spawn to.
-	 * @param x The x-coordinate of the new spawn.
-	 * @param y The y-coordinate of the new spawn.
-	 * @param z The z-coordinate of the new spawn.
-	 * @since 0.1
-	 */
-	public void addSpawn(String arena, double x, double y, double z){
-		addSpawn(arena, x, y, z, 90f, 0f); // adds spawn with default pitch and yaw
-	}
-
-	/**
-	 * Adds a spawn to the given arena with the given {@link Location}.
-	 * @param arena The arena to add the new spawn to.
-	 * @param l The location of the new spawn.
-	 * @param saveOrientation Whether to save the {@link Location}'s pitch and yaw to the spawn.
-	 * @since 0.1
-	 */
-	public void addSpawn(String arena, Location l, boolean saveOrientation){
-		if (saveOrientation)
-			addSpawn(arena, l.getX(), l.getY(), l.getZ(), l.getPitch(), l.getYaw());
-		else
-			addSpawn(arena, l.getX(), l.getY(), l.getZ());
-	}
-
-	/**
-	 * Deletes a spawn from the given arena at the given coordinates.
-	 * @param arena The arena to delete the spawn from.
-	 * @param x The x-coordinate of the spawn to delete.
-	 * @param y The y-coordinate of the spawn to delete.
-	 * @param z The z-coordinate of the spawn to delete.
-	 * @since 0.1
-	 */
-	public void deleteSpawn(String arena, double x, double y, double z){
-		if (rounds.containsKey(arena)){
-			Round r = rounds.get(arena);
-			for (Location l : r.getSpawns())
-				if (l.getX() == x && l.getY() == y && l.getZ() == z)
-					r.getSpawns().remove(l);
-		}
-		YamlConfiguration yc = MGUtil.loadArenaYaml(plugin.getName());
-		ConfigurationSection spawns = yc.getConfigurationSection("spawns"); // make the code easier to read
-		for (String k : spawns.getKeys(false))
-			if (yc.getDouble(k + ".x") == x && yc.getDouble(k + ".y") == y && yc.getDouble(k + ".z") == z) // it's our spawn
-				yc.set(k, null); // delete it from the config
-		MGUtil.saveArenaYaml(plugin.getName(), yc); // convenience method for sav
-	}
-
-	/**
-	 * Deletes a spawn from the given arena at the given {@link Location}.
-	 * @param l The {@link Location} of the spawn to delete.
-	 * @since 0.1
-	 */
-	public void deleteSpawn(String arena, Location l){
-		deleteSpawn(arena, l.getX(), l.getY(), l.getZ());
+	public ArenaFactory getArenaFactory(String name){
+		return arenaFactories.get(name);
 	}
 
 	/**

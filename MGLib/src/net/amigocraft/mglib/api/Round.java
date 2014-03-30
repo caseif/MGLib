@@ -346,7 +346,7 @@ public class Round {
 	 * null if the arena does not have boundaries.
 	 * @since 0.1
 	 */
-	public Location getMinimumBoundary(){
+	public Location getMinBound(){
 		return minBound;
 	}
 
@@ -356,8 +356,30 @@ public class Round {
 	 * null if the arena does not have boundaries.
 	 * @since 0.1
 	 */
-	public Location getMaximumBoundary(){
+	public Location getMaxBound(){
 		return maxBound;
+	}
+	
+	/**
+	 * Sets the minimum boundary on all three axes of this round object.
+	 * @param x The minimum x-value.
+	 * @param y The minimum y-value.
+	 * @param z The minimum z-value.
+	 * @since 0.1
+	 */
+	public void setMinBound(double x, double y, double z){
+		this.minBound = new Location(this.minBound.getWorld(), x, y, z);
+	}
+	
+	/**
+	 * Sets the maximum boundary on all three axes of this round object.
+	 * @param x The maximum x-value.
+	 * @param y The maximum y-value.
+	 * @param z The maximum z-value.
+	 * @since 0.1
+	 */
+	public void setMaxBound(double x, double y, double z){
+		this.minBound = new Location(this.minBound.getWorld(), x, y, z);
 	}
 
 	/**

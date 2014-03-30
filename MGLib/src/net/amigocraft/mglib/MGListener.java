@@ -155,8 +155,8 @@ class MGListener implements Listener {
 						catch (PlayerOfflineException ex2){} // neither of these can happen
 					}
 					else {
-						Location min = r.getMinimumBoundary();
-						Location max = r.getMaximumBoundary();
+						Location min = r.getMinBound();
+						Location max = r.getMaxBound();
 						if (min != null && max != null){
 							if (l.getX() < min.getX() || 
 									l.getY() < min.getY() ||
