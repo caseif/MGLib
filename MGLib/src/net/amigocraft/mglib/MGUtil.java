@@ -1,6 +1,7 @@
 package net.amigocraft.mglib;
 
 import java.io.File;
+import java.util.List;
 
 import net.amigocraft.mglib.api.Minigame;
 
@@ -64,6 +65,14 @@ public class MGUtil {
 		}
 		catch (NumberFormatException ex){}
 		return false;
+	}
+	
+	/**
+	 * Retrieves worlds registered with MGLib's event listener
+	 * @since 0.1
+	 */
+	public static List<String> getWorlds(){
+		return MGListener.worlds;
 	}
 
 }

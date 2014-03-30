@@ -36,7 +36,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 class MGListener implements Listener {
 
-	private static List<String> worlds = new ArrayList<String>();
+	static List<String> worlds = new ArrayList<String>();
 
 	private static boolean PREVENT_BURN = true;
 	private static boolean PREVENT_FADE = true;

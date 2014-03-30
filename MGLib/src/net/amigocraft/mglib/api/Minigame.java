@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev16
+ * @version 0.1-dev17
  * @since 0.1
  */
 public class Minigame {
@@ -49,37 +49,37 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public Minigame(JavaPlugin plugin, List<String> approvedVersions){
-		if (!registeredInstances.containsKey(plugin.getName())){
+		if (!registeredInstances.containsKey(plugin.getName())){ // 
 			this.plugin = plugin;
-			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
-			boolean dev = true;
-			List<String> compatibleVersions = new ArrayList<String>();
+			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation(); // set the default exit location
+			boolean dev = true; // default to only tested against dev builds
+			List<String> compatibleVersions = new ArrayList<String>(); // list of versions compatible with this one and the plugin
 			for (String v : approvedVersions){
 				if (isCompatible(v)){
 					compatibleVersions.add(v);
-					if (!v.contains("dev"))
+					if (!v.contains("dev")) // if one's not a dev build, they can't all be dev builds
 						dev = false;
 				}
 			}
-			if (compatibleVersions.size() == 0){
+			if (compatibleVersions.size() == 0){ // no compatible versions
 				MGLib.log.warning(plugin + " was built for a newer or incompatible version of MGLib. As such, it is " +
 						"likely that it wlil not work correctly.");
-				MGLib.log.info("Type /mglib v " + plugin.getName() + " to see a list of compatible MGLib versions");
+				MGLib.log.info("Type /mglib v " + plugin.getName() + " to see a list of MGLib versions compatible with this plugin");
 				//TODO: Actually implement this ^
 			}
 			if (dev)
 				MGLib.log.warning(plugin + " was tested only against development version(s) of MGLib. " +
 						"As such, it may not be fully compatible with the installed instance of the library. Please " +
 						"notify the developer of " + plugin.getName() + " so he/she may take appropriate action.");
-			registeredInstances.put(plugin.getName(), this);
+			registeredInstances.put(plugin.getName(), this); // list this Minigame instance for use in other parts of the API
 			MGLib.log.info(plugin + " has successfully hooked into MGLib!");
 		}
 		else
 			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
 					"registered. Please report this to the plugin author.");
-		rbManager = new RollbackManager(plugin);
-		rbManager.checkRollbacks();
-		MGLib.registerWorlds(plugin);
+		rbManager = new RollbackManager(plugin); // register rollback manager
+		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
+		MGLib.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Minigame {
 	 */
 	@SuppressWarnings("serial")
 	public Minigame(JavaPlugin plugin, final String approvedVersion){
-		this(plugin, new ArrayList<String>(){{add(approvedVersion);}});
+		this(plugin, new ArrayList<String>(){{add(approvedVersion);}}); // calls the main constructor with a list the given string
 	}
 
 	/**
@@ -102,17 +102,16 @@ public class Minigame {
 	}
 
 	private boolean isCompatible(String version){
-		for (String v : MGLib.approved)
-			if (version.contains(v))
-				if (version.contains("dev"))
+		for (String v : MGLib.approved) // iterate approved versions
+			if (version.contains(v)) // compatible major version
+				if (version.contains("dev")) // this is a dev build of MGLib
 					if (Integer.parseInt(version.split("dev")[1]) <= MGLib.lastDev)
 						return true;
 					else
-						return false;
+						return false; // built for a newer dev build
 				else
-					return true;
-
-		return false;
+					return true; // using a compatible major version
+		return false; // no compatible versions
 	}
 
 	/**
@@ -172,10 +171,10 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public Round createRound(String arena, boolean discrete, int preparationTime, int roundTime) throws ArenaNotExistsException {
-		Round r = new Round(plugin.getName(), arena, discrete, preparationTime, roundTime);
-		r.setStage(Stage.WAITING);
-		rounds.put(arena, r);
-		return r;
+		Round r = new Round(plugin.getName(), arena, discrete, preparationTime, roundTime); // create the Round object
+		r.setStage(Stage.WAITING); // default to waiting stage
+		rounds.put(arena, r); // register arena with MGLib
+		return r; // give the calling plugin the Round object
 	}
 
 	/**
@@ -185,11 +184,7 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public Round getRound(String name){
-		for (Round r : rounds.values()){
-			if (r.getArena().equals(name))
-				return r;
-		}
-		return null;
+		return rounds.get(name);
 	}
 
 	/**
@@ -219,9 +214,9 @@ public class Minigame {
 		double z2 = Double.NaN;
 
 		if (corner1 != null && corner2 != null){
-			if (spawn.getWorld().getName() != corner1.getWorld().getName())
+			if (spawn.getWorld().getName() != corner1.getWorld().getName()) // spawn's in a different world than the first corner
 				throw new InvalidLocationException();
-			if (spawn.getWorld().getName() != corner2.getWorld().getName())
+			if (spawn.getWorld().getName() != corner2.getWorld().getName()) // spawn's in a different world than the second corner
 				throw new InvalidLocationException();
 
 			x1 = corner1.getX();
@@ -231,6 +226,7 @@ public class Minigame {
 			y2 = corner2.getY();
 			z2 = corner2.getZ();
 
+			// this whole bit just determines which coords are the maxes and mins
 			if (x1 < x2){
 				minX = x1;
 				maxX = x2;
@@ -257,19 +253,19 @@ public class Minigame {
 			}
 		}
 
-		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
-		if (y != null){
-			if (y.contains(name))
+		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName()); // call a convenience method for loading the YAML file
+		if (y != null){ // make sure the file was properly loaded
+			if (y.contains(name)) // arena already exists
 				throw new ArenaExistsException();
-			y.createSection(name);
-			ConfigurationSection c = y.getConfigurationSection(name);
+			y.createSection(name); // create a key for the arena
+			ConfigurationSection c = y.getConfigurationSection(name); // make it a bit easier to read the code
 			c.set("world", spawn.getWorld().getName());
 			c.set("spawns.0.x", spawn.getX());
 			c.set("spawns.0.y", spawn.getY());
 			c.set("spawns.0.z", spawn.getZ());
 			c.set("spawns.0.pitch", spawn.getPitch());
 			c.set("spawns.0.yaw", spawn.getYaw());
-			if (corner1 != null){
+			if (corner1 != null){ // arena has boundaries
 				c.set("boundaries", true);
 				c.set("minX", minX);
 				c.set("minY", minY);
@@ -278,11 +274,13 @@ public class Minigame {
 				c.set("maxY", maxY);
 				c.set("maxZ", maxZ);
 			}
-			else
+			else // no arena boundaries
 				c.set("boundaries", false);
-			MGUtil.saveArenaYaml(plugin.getName(), y);
-			MGLib.registerWorlds(plugin);
+			MGUtil.saveArenaYaml(plugin.getName(), y); // convenience method for saving the YAML file
+			if (!MGUtil.getWorlds().contains(spawn.getWorld().getName()))
+				MGUtil.getWorlds().add(spawn.getWorld().getName()); // register world with event listener
 		}
+		// no else block because an exception is thrown by the convenience method
 	}
 
 	/**
@@ -296,7 +294,7 @@ public class Minigame {
 		try {
 			createArena(name, spawn, null, null);
 		}
-		catch (InvalidLocationException ex){
+		catch (InvalidLocationException ex){ // this can never be thrown since only one location is passed
 			MGLib.log.severe("How the HELL did you get this to throw an exception?");
 			MGLib.log.severe("Like, seriously, it should never be possible for this code to be triggered. " +
 					"You SERIOUSLY screwed something up.");
@@ -312,17 +310,15 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public void deleteArena(String name) throws ArenaNotExistsException {
-		for (Round r : getRoundList())
-			if (r.getArena().equals(name))
-				r.endRound();
-		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
-		if (!y.contains(name))
+		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName()); // convenience method for loading the YAML file
+		if (!y.contains(name)) // arena doesn't exist
 			throw new ArenaNotExistsException();
-		y.set(name, null);
-		Round r = Minigame.getMinigameInstance(plugin).getRound(name);
+		y.set(name, null); // remove the arena from the arenas.yml file 
+		MGUtil.saveArenaYaml(plugin.getName(), y);
+		Round r = Minigame.getMinigameInstance(plugin).getRound(name); // get the Round object if it exists
 		if (r != null){
-			r.endRound();
-			r.destroy();
+			r.endRound(); // end the round
+			r.destroy(); // get rid of the object (or just its assets)
 		}
 	}
 
@@ -333,10 +329,9 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public MGPlayer getMGPlayer(String player){
-		for (Round r : rounds.values())
-			for (MGPlayer p : r.getPlayerList())
-				if (p.getName().equals(player))
-					return p;
+		for (Round r : rounds.values()) // iterate registered rounds
+			if (r.getMGPlayer(player) != null) // check if the player is in the round
+				return r.getMGPlayer(player);
 		return null;
 	}
 
@@ -349,7 +344,7 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public boolean isPlayer(String p){
-		if (getMGPlayer(p) != null)
+		if (getMGPlayer(p) != null) // player object exists
 			return true;
 		return false;
 	}
@@ -365,24 +360,24 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public void addSpawn(String arena, double x, double y, double z, float pitch, float yaw){
-		if (rounds.containsKey(arena)){
-			Round r = rounds.get(arena);
-			Location l = new Location(Bukkit.getWorld(r.getWorld()), x, y, z);
+		if (rounds.containsKey(arena)){ // check if round is taking place in arena
+			Round r = rounds.get(arena); // get the round object
+			Location l = new Location(Bukkit.getWorld(r.getWorld()), x, y, z); // self-explanatory
 			l.setPitch(pitch);
 			l.setYaw(yaw);
-			r.getSpawns().add(l);
+			r.getSpawns().add(l); // add spawn to the live round
 		}
-		YamlConfiguration yc = MGUtil.loadArenaYaml(plugin.getName());
-		int min;
-		for (min = 0; min > 0; min++)
-			if (yc.get("spawns." + min) != null)
+		YamlConfiguration yc = MGUtil.loadArenaYaml(plugin.getName()); // convenience method for loading the YAML file
+		int min; // the minimum available spawn number
+		for (min = 0; min > 0; min++) // this feels like a bad idea, but I think it should work
+			if (yc.get("spawns." + min) == null)
 				break;
 		yc.set("spawns." + min + ".x", x);
 		yc.set("spawns." + min + ".y", y);
 		yc.set("spawns." + min + ".z", z);
 		yc.set("spawns." + min + ".pitch", pitch);
 		yc.set("spawns." + min + ".yaw", yaw);
-		MGUtil.saveArenaYaml(plugin.getName(), yc);
+		MGUtil.saveArenaYaml(plugin.getName(), yc); // convenience method for saving the YAML file
 	}
 
 	/**
@@ -394,7 +389,7 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public void addSpawn(String arena, double x, double y, double z){
-		addSpawn(arena, x, y, z, 90f, 0f);
+		addSpawn(arena, x, y, z, 90f, 0f); // adds spawn with default pitch and yaw
 	}
 
 	/**
@@ -427,11 +422,11 @@ public class Minigame {
 					r.getSpawns().remove(l);
 		}
 		YamlConfiguration yc = MGUtil.loadArenaYaml(plugin.getName());
-		ConfigurationSection spawns = yc.getConfigurationSection("spawns");
+		ConfigurationSection spawns = yc.getConfigurationSection("spawns"); // make the code easier to read
 		for (String k : spawns.getKeys(false))
-			if (yc.getDouble(k + ".x") == x && yc.getDouble(k + ".y") == y && yc.getDouble(k + ".z") == z)
-				yc.set(k, null);
-		MGUtil.saveArenaYaml(plugin.getName(), yc);
+			if (yc.getDouble(k + ".x") == x && yc.getDouble(k + ".y") == y && yc.getDouble(k + ".z") == z) // it's our spawn
+				yc.set(k, null); // delete it from the config
+		MGUtil.saveArenaYaml(plugin.getName(), yc); // convenience method for sav
 	}
 
 	/**
@@ -476,8 +471,8 @@ public class Minigame {
 	 * @since 0.1
 	 */
 	public static void uninitialize(){
-		registeredInstances.clear();
-		registeredInstances = null;
+		registeredInstances.clear(); // unregister all minigame instances
+		registeredInstances = null; // why not?
 	}
 
 }

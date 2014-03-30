@@ -67,12 +67,12 @@ public class Round {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
 		if (!y.contains(arena))
 			throw new ArenaNotExistsException();
-		ConfigurationSection cs = y.getConfigurationSection(arena);
-		world = cs.getString("world");
-		World w = Bukkit.getWorld(world);
-		if (w == null)
-			throw new IllegalArgumentException("World " + world + " cannot be loaded!");
-		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){
+		ConfigurationSection cs = y.getConfigurationSection(arena); // make the code easier to read
+		world = cs.getString("world"); // get the name of the world of the arena
+		World w = Bukkit.getWorld(world); // convert it to a Bukkit world
+		if (w == null) // but what if world is kill?
+			throw new IllegalArgumentException("World " + world + " cannot be loaded!"); // then round is kill
+		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){ // load spawns into round object
 			Location l = new Location(w, cs.getDouble("spawns." + k + ".x"),
 					cs.getDouble("spawns." + k + ".y"),
 					cs.getDouble("spawns." + k + ".z"));
@@ -80,20 +80,20 @@ public class Round {
 				l.setPitch((float)cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".pitch"));
 			if (cs.isSet(k + ".yaw"))
 				l.setYaw((float)cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".yaw"));
-			spawns.add(l);
+			spawns.add(l); // register spawn
 		}
-		if (cs.getBoolean("boundaries")){
+		if (cs.getBoolean("boundaries")){ // check if arena has boundaries defined
 			minBound = new Location(w, cs.getDouble("minX"), cs.getDouble("minY"), cs.getDouble("minZ"));
-			minBound = new Location(w, cs.getDouble("maxX"), cs.getDouble("maxY"), cs.getDouble("maxZ"));
+			maxBound = new Location(w, cs.getDouble("maxX"), cs.getDouble("maxY"), cs.getDouble("maxZ"));
 		}
 		else {
 			minBound = null;
 			maxBound = null;
 		}
-		this.plugin = plugin;
+		this.plugin = plugin; // set globals
 		this.arena = arena;
-		stage = Stage.WAITING;
-		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this);
+		stage = Stage.WAITING; // default to waiting stage
+		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
 
 	/**
@@ -282,27 +282,27 @@ public class Round {
 	 * @since 0.1
 	 */
 	public void startRound(){
-		if (stage != Stage.PLAYING){
+		if (stage != Stage.PLAYING){ // make sure the round isn't already started
 			final Round r = this;
-			r.setTime(r.getPreparationTime());
-			r.setStage(Stage.PREPARING);
-			Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r));
-			if (time != -1){
+			r.setTime(r.getPreparationTime()); // reset time
+			r.setStage(Stage.PREPARING); // set stage to preparing
+			//TODO: Skip straight to playing if necessary and check this method for bugs
+			Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
+			if (time != -1){ // I'm pretty sure this is wrong, but I'm also pretty tired
 				timerHandle = Bukkit.getScheduler().runTaskTimer(MGLib.plugin, new Runnable(){
 					public void run(){
-						r.tickDown();
-						if (r.getTime() <= 0){
-							if (r.getStage() == Stage.PREPARING){
-								r.setStage(Stage.PLAYING);
-								r.setTime(r.getPlayingTime());
+						r.tickDown(); // tick timer down by one
+						if (r.getTime() <= 0){ // timer ran out
+							if (r.getStage() == Stage.PREPARING){ // if we're still preparing...
+								r.setStage(Stage.PLAYING); // ...set stage to playing
+								r.setTime(r.getPlayingTime()); // reset timer
 								Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
 							}
-							else {
+							else // we're playing and the round just ended
 								endRound(true);
-							}
 						}
 					}
-				}, 0L, 20L).getTaskId();
+				}, 0L, 20L).getTaskId(); // iterates once per second
 			}
 		}
 		else
@@ -318,17 +318,17 @@ public class Round {
 	public void endRound(boolean timeUp){
 		setTime(-1);
 		if (timerHandle != -1)
-			Bukkit.getScheduler().cancelTask(timerHandle);
-		stage = Stage.WAITING;
-		timerHandle = -1;
-		for (MGPlayer mp : getPlayerList()){
+			Bukkit.getScheduler().cancelTask(timerHandle); // cancel the round's timer task
+		stage = Stage.WAITING; // set stage back to waiting
+		timerHandle = -1; // reset timer handle since the task no longer exists
+		for (MGPlayer mp : getPlayerList()){ // iterate and remove players
 			try {
 				removePlayer(mp.getName());
 			}
 			catch (PlayerOfflineException ex){}
 		}
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
-		getMinigame().getRollbackManager().rollback(getArena());
+		getMinigame().getRollbackManager().rollback(getArena()); // roll back arena
 	}
 
 	/**
@@ -409,7 +409,7 @@ public class Round {
 		if (mp == null)
 			mp = new MGPlayer(plugin, name, arena); // otherwise make a new one
 		mp.setDead(false); // make sure they're not dead the second they join
-		players.put(name, mp);
+		players.put(name, mp); // register player with round object
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
 		p.teleport(spawn); // teleport the player to it
 		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
@@ -429,10 +429,10 @@ public class Round {
 		if (mp == null)
 			throw new PlayerNotPresentException();
 		if (p != null){
-			mp.setArena(null);
+			mp.setArena(null); // they're not in an arena anymore
 			mp.setDead(false); // make sure they're not dead when they join a new round
-			players.remove(name);
-			mp.reset(location);
+			players.remove(name); // remove player from round
+			mp.reset(location); // reset the object and send the player to the exit point
 		}
 		Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(this, mp));
 	}

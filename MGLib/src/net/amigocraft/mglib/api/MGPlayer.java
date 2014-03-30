@@ -31,7 +31,7 @@ public class MGPlayer {
 		this.name = name;
 		this.arena = arena;
 	}
-	
+
 	/**
 	 * Gets the minigame plugin associated with this {@link MGPlayer}.
 	 * @return The minigame plugin associated with this {@link MGPlayer}.
@@ -40,7 +40,7 @@ public class MGPlayer {
 	public String getPlugin(){
 		return plugin;
 	}
-	
+
 	/**
 	 * Gets the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
 	 * @return The MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
@@ -67,7 +67,7 @@ public class MGPlayer {
 	public String getArena(){
 		return arena;
 	}
-	
+
 	/**
 	 * Sets the arena of this {@link MGPlayer}. Please do not call this method unless you understand the implications of doing so.
 	 * @since 0.1
@@ -85,7 +85,7 @@ public class MGPlayer {
 	public boolean isDead(){
 		return dead;
 	}
-	
+
 	/**
 	 * Gets the {@link Round} associated with this player.
 	 * @return The {@link Round} associated with this player.
@@ -103,7 +103,7 @@ public class MGPlayer {
 	public void setDead(boolean dead){
 		this.dead = dead;
 	}
-	
+
 	/**
 	 * Adds this {@link MGPlayer} to the given {@link Round round}.
 	 * @param round The name of the round to add the player to.
@@ -113,7 +113,7 @@ public class MGPlayer {
 	public void addToRound(String round) throws PlayerOfflineException {
 		Minigame.getMinigameInstance(plugin).getRound(round).addPlayer(name);
 	}
-	
+
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @throws PlayerOfflineException if the given player is not online.
@@ -127,20 +127,16 @@ public class MGPlayer {
 		Round round = null;
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
-				round = r;
-				r.getPlayers().remove(name);
-				r.getPlayers().get(name).setArena(arena);
-				break;
+				setArena(null); // clear the arena from the object
+				setDead(false); // make sure they're not dead when they join a new round
+				r.getPlayers().remove(name); // remove the player from the round object
+				reset(location); // reset the object and send the player to the exit point
+				Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(round, this));
+				return;
 			}
-		if (round == null)
-			throw new PlayerNotPresentException();
-		setArena(null);
-		setDead(false); // make sure they're not dead when they join a new round
-		round.getPlayers().remove(name);
-		reset(location);
-		Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(round, this));
+		throw new PlayerNotPresentException();
 	}
-	
+
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @throws PlayerOfflineException if the player is not online.
@@ -150,7 +146,7 @@ public class MGPlayer {
 	public void removeFromRound() throws PlayerOfflineException, PlayerNotPresentException{
 		removeFromRound(Minigame.getMinigameInstance(plugin).getExitLocation());
 	}
-	
+
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
 	 * @param location The location to teleport the player to, or null to skip teleportation.
@@ -160,7 +156,7 @@ public class MGPlayer {
 	public void reset(Location location) throws PlayerOfflineException {
 		MGPlayer.resetPlayer(name, location);
 	}
-	
+
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
 	 * @throws PlayerOfflineException if the player is not online.
@@ -169,7 +165,7 @@ public class MGPlayer {
 	public void reset() throws PlayerOfflineException {
 		MGPlayer.resetPlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
 	}
-	
+
 	/**
 	 * Resets the given {@link Player Bukkit player} after they've left a round.
 	 * @param player The player to reset.
