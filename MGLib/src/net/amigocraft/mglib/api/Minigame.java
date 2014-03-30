@@ -50,7 +50,7 @@ public class Minigame {
 	 * @param approvedVersions The approved versions of MGLib for your plugin.
 	 * @since 0.1
 	 */
-	public Minigame(JavaPlugin plugin, List<String> approvedVersions){
+	public Minigame(JavaPlugin plugin, String[] approvedVersions){
 		if (!registeredInstances.containsKey(plugin.getName())){ // 
 			this.plugin = plugin;
 			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation(); // set the default exit location
@@ -82,17 +82,6 @@ public class Minigame {
 		rbManager = new RollbackManager(plugin); // register rollback manager
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
 		MGLib.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
-	}
-
-	/**
-	 * Creates a new instance of the MGLib API. This object may be used for all API methods
-	 * @param plugin An instance of your plugin.
-	 * @param approvedVersion The approved version of MGLib for your plugin.\
-	 * @since 0.1
-	 */
-	@SuppressWarnings("serial")
-	public Minigame(JavaPlugin plugin, final String approvedVersion){
-		this(plugin, new ArrayList<String>(){{add(approvedVersion);}}); // calls the main constructor with a list the given string
 	}
 
 	/**
