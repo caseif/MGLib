@@ -1,6 +1,5 @@
 package net.amigocraft.mglib.api;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,7 +26,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev18
+ * @version 0.1-dev19
  * @since 0.1
  */
 public class Minigame {
@@ -44,35 +43,10 @@ public class Minigame {
 
 	private HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
-	/**
-	 * Creates a new instance of the MGLib API. This object may be used for all API methods
-	 * @param plugin An instance of your plugin.
-	 * @param approvedVersions The approved versions of MGLib for your plugin.
-	 * @since 0.1
-	 */
-	public Minigame(JavaPlugin plugin, String[] approvedVersions){
+	private Minigame(JavaPlugin plugin){
 		if (!registeredInstances.containsKey(plugin.getName())){ // 
 			this.plugin = plugin;
 			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation(); // set the default exit location
-			boolean dev = true; // default to only tested against dev builds
-			List<String> compatibleVersions = new ArrayList<String>(); // list of versions compatible with this one and the plugin
-			for (String v : approvedVersions){
-				if (isCompatible(v)){
-					compatibleVersions.add(v);
-					if (!v.contains("dev")) // if one's not a dev build, they can't all be dev builds
-						dev = false;
-				}
-			}
-			if (compatibleVersions.size() == 0){ // no compatible versions
-				MGLib.log.warning(plugin + " was built for a newer or incompatible version of MGLib. As such, it is " +
-						"likely that it wlil not work correctly.");
-				MGLib.log.info("Type /mglib v " + plugin.getName() + " to see a list of MGLib versions compatible with this plugin");
-				//TODO: Actually implement this ^
-			}
-			if (dev)
-				MGLib.log.warning(plugin + " was tested only against development version(s) of MGLib. " +
-						"As such, it may not be fully compatible with the installed instance of the library. Please " +
-						"notify the developer of " + plugin.getName() + " so he/she may take appropriate action.");
 			registeredInstances.put(plugin.getName(), this); // list this Minigame instance for use in other parts of the API
 			MGLib.log.info(plugin + " has successfully hooked into MGLib!");
 		}
@@ -83,6 +57,16 @@ public class Minigame {
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
 		MGLib.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
 	}
+	
+	/**
+	 * Registers a plugin with the MGLib API.
+	 * @return This object may be used for most API methods, with the exception of some pertaining exclusively to players or rounds.
+	 * @param plugin An instance of your plugin (can be substituted with this if called from your main class).
+	 * @since 0.1
+	 */
+	public Minigame registerPlugin(JavaPlugin plugin){
+		return new Minigame(plugin);
+	}
 
 	/**
 	 * Retrieves the {@link JavaPlugin} associated with this {@link Minigame} instance.
@@ -90,19 +74,6 @@ public class Minigame {
 	 */
 	public JavaPlugin getPlugin(){
 		return plugin;
-	}
-
-	private boolean isCompatible(String version){
-		for (String v : MGLib.approved) // iterate approved versions
-			if (version.contains(v)) // compatible major version
-				if (version.contains("dev")) // this is a dev build of MGLib
-					if (Integer.parseInt(version.split("dev")[1]) <= MGLib.lastDev)
-						return true;
-					else
-						return false; // built for a newer dev build
-				else
-					return true; // using a compatible major version
-		return false; // no compatible versions
 	}
 
 	/**
