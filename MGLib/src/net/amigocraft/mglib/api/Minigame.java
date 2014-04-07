@@ -64,7 +64,7 @@ public class Minigame {
 	 * @param plugin An instance of your plugin (can be substituted with this if called from your main class).
 	 * @since 0.1
 	 */
-	public Minigame registerPlugin(JavaPlugin plugin){
+	public static Minigame registerPlugin(JavaPlugin plugin){
 		return new Minigame(plugin);
 	}
 
