@@ -1,8 +1,6 @@
 package net.amigocraft.mglib;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import net.amigocraft.mglib.api.Minigame;
@@ -16,22 +14,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev19
+ * @version 0.1-dev20
  * @since 0.1
  */
 public class MGLib extends JavaPlugin {
-
-	/**
-	 * A list containing compatible versions of MGLib.
-	 * @since 0.1
-	 */
-	public static List<String> approved = new ArrayList<String>();
-
-	/**
-	 * The current (or last, if the current version is a release) development version of MGLib.
-	 * @since 0.1
-	 */
-	public static final int lastDev = 19;
 
 	/**
 	 * The current instance of the plugin.
@@ -62,7 +48,6 @@ public class MGLib extends JavaPlugin {
 		plugin = this;
 		log = getLogger();
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
-		initialize();
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
 		// updater
@@ -95,7 +80,7 @@ public class MGLib extends JavaPlugin {
 		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] Ending all minigames due to server restart/reload");
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
-				r.endRound(false);
+				r.end(false);
 		Minigame.uninitialize();
 		MGLibEvent.uninitialize();
 		log.info(this + " has been disabled!");
@@ -107,10 +92,6 @@ public class MGLib extends JavaPlugin {
 	 */
 	public static void registerWorlds(JavaPlugin plugin){
 		MGListener.addWorlds(plugin);
-	}
-
-	private static void initialize(){
-		approved.add("0.1");
 	}
 
 	private static void uninitialize(){

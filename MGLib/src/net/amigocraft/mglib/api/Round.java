@@ -17,11 +17,12 @@ import com.google.common.collect.Lists;
 import net.amigocraft.mglib.MGLib;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Stage;
-import net.amigocraft.mglib.event.MinigameRoundEndEvent;
-import net.amigocraft.mglib.event.MinigameRoundPrepareEvent;
-import net.amigocraft.mglib.event.MinigameRoundStartEvent;
-import net.amigocraft.mglib.event.PlayerJoinMinigameRoundEvent;
-import net.amigocraft.mglib.event.PlayerLeaveMinigameRoundEvent;
+import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
+import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundEndEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundPrepareEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundStartEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundTickEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
@@ -281,7 +282,7 @@ public class Round {
 	 * @throws IllegalStateException if the stage is already {@link Stage#PLAYING}.
 	 * @since 0.1
 	 */
-	public void startRound(){
+	public void start(){
 		if (stage != Stage.PLAYING){ // make sure the round isn't already started
 			final Round r = this;
 			r.setTime(r.getPreparationTime()); // reset time
@@ -291,15 +292,21 @@ public class Round {
 			if (time != -1){ // I'm pretty sure this is wrong, but I'm also pretty tired
 				timerHandle = Bukkit.getScheduler().runTaskTimer(MGLib.plugin, new Runnable(){
 					public void run(){
+						int oldTime = r.getTime();
+						boolean stageChange = false;
 						r.tickDown(); // tick timer down by one
 						if (r.getTime() <= 0){ // timer ran out
 							if (r.getStage() == Stage.PREPARING){ // if we're still preparing...
 								r.setStage(Stage.PLAYING); // ...set stage to playing
+								stageChange = true;
 								r.setTime(r.getPlayingTime()); // reset timer
 								Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
 							}
-							else // we're playing and the round just ended
-								endRound(true);
+							else { // we're playing and the round just ended
+								end(true);
+								stageChange = true;
+							}
+							Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
 						}
 					}
 				}, 0L, 20L).getTaskId(); // iterates once per second
@@ -315,7 +322,7 @@ public class Round {
 	 * @throws IllegalStateException if the timer has not been started.
 	 * @since 0.1
 	 */
-	public void endRound(boolean timeUp){
+	public void end(boolean timeUp){
 		setTime(-1);
 		if (timerHandle != -1)
 			Bukkit.getScheduler().cancelTask(timerHandle); // cancel the round's timer task
@@ -336,8 +343,8 @@ public class Round {
 	 * @throws IllegalStateException if the timer has not been started.
 	 * @since 0.1
 	 */
-	public void endRound(){
-		endRound(false);
+	public void end(){
+		end(false);
 	}
 
 	/**

@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class RollbackManager {
 
-	private static boolean IMMEDIATE_LOGGING;
+	private static boolean LOGGING;
 	private File f = null;
 	private YamlConfiguration y = null;
 	private JavaPlugin plugin = null;
@@ -42,7 +42,7 @@ public class RollbackManager {
 			ex.printStackTrace();
 			MGLib.log.severe("An exception occurred while initializing the rollback manager for plugin " + plugin.getName());
 		}
-		IMMEDIATE_LOGGING = MGLib.plugin.getConfig().getBoolean("immediate-logging");
+		LOGGING = MGLib.plugin.getConfig().getBoolean("immediate-logging");
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class RollbackManager {
 			cs.set("type", origType);
 			cs.set("data", block.getData());
 		}
-		if (IMMEDIATE_LOGGING){
+		if (LOGGING){
 			try {
 				y.save(f);
 			}
@@ -96,7 +96,7 @@ public class RollbackManager {
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("inventory")) // make sure it hasn't already been changed
 			cs.set("inventory", InventorySerializer.InventoryToString(inventory));
-		if (IMMEDIATE_LOGGING){
+		if (LOGGING){
 			try {
 				y.save(f);
 			}

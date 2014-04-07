@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev19
+ * @version 0.1-dev20
  * @since 0.1
  */
 public class Minigame {
@@ -258,7 +258,7 @@ public class Minigame {
 		MGUtil.saveArenaYaml(plugin.getName(), y);
 		Round r = Minigame.getMinigameInstance(plugin).getRound(name); // get the Round object if it exists
 		if (r != null){
-			r.endRound(); // end the round
+			r.end(); // end the round
 			r.destroy(); // get rid of the object (or just its assets)
 		}
 	}
