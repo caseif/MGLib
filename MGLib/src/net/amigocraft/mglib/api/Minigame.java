@@ -3,8 +3,7 @@ package net.amigocraft.mglib.api;
 import java.util.HashMap;
 import java.util.List;
 
-import net.amigocraft.mglib.ArenaFactory;
-import net.amigocraft.mglib.MGLib;
+import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.Stage;
@@ -26,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev20
+ * @version 0.1-dev21
  * @since 0.1
  */
 public class Minigame {
@@ -48,14 +47,14 @@ public class Minigame {
 			this.plugin = plugin;
 			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation(); // set the default exit location
 			registeredInstances.put(plugin.getName(), this); // list this Minigame instance for use in other parts of the API
-			MGLib.log.info(plugin + " has successfully hooked into MGLib!");
+			Main.log.info(plugin + " has successfully hooked into MGLib!");
 		}
 		else
 			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
 					"registered. Please report this to the plugin author.");
 		rbManager = new RollbackManager(plugin); // register rollback manager
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
-		MGLib.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
+		Main.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
 	}
 	
 	/**
@@ -132,8 +131,8 @@ public class Minigame {
 	 * @throws ArenaNotExistsException if the given arena does not exist.
 	 * @since 0.1
 	 */
-	public Round createRound(String arena, boolean discrete, int preparationTime, int roundTime) throws ArenaNotExistsException {
-		Round r = new Round(plugin.getName(), arena, discrete, preparationTime, roundTime); // create the Round object
+	public Round createRound(String arena, int preparationTime, int roundTime) throws ArenaNotExistsException {
+		Round r = new Round(plugin.getName(), arena, preparationTime, roundTime); // create the Round object
 		r.setStage(Stage.WAITING); // default to waiting stage
 		rounds.put(arena, r); // register arena with MGLib
 		return r; // give the calling plugin the Round object
@@ -218,8 +217,8 @@ public class Minigame {
 		if (!MGUtil.getWorlds().contains(spawn.getWorld().getName()))
 			MGUtil.getWorlds().add(spawn.getWorld().getName()); // register world with event listener
 
-		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name).addSpawn(spawn);
-		if (minX != Float.NaN)
+		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName()).addSpawn(spawn);
+		if (minX == minX)
 			a.setMinBound(minX, minY, minZ).setMaxBound(maxX, maxY, maxZ);
 		return a;
 	}
@@ -236,10 +235,10 @@ public class Minigame {
 			createArena(name, spawn, null, null);
 		}
 		catch (InvalidLocationException ex){ // this can never be thrown since only one location is passed
-			MGLib.log.severe("How the HELL did you get this to throw an exception?");
-			MGLib.log.severe("Like, seriously, it should never be possible for this code to be triggered. " +
+			Main.log.severe("How the HELL did you get this to throw an exception?");
+			Main.log.severe("Like, seriously, it should never be possible for this code to be triggered. " +
 					"You SERIOUSLY screwed something up.");
-			MGLib.log.severe("And hello to the person reading the library's source, " +
+			Main.log.severe("And hello to the person reading the library's source, " +
 					"since that's the only place this is ever going to be read. Now get back to work.");
 		}
 	}
@@ -296,6 +295,13 @@ public class Minigame {
 	 */
 	public ArenaFactory getArenaFactory(String name){
 		return arenaFactories.get(name);
+	}
+	
+	/**
+	 * For use within the library <b>only</b>. Please do not modify the returned map.
+	 */
+	public HashMap<String, ArenaFactory> getArenaFactories(){
+		return arenaFactories;
 	}
 
 	/**

@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
 
-import net.amigocraft.mglib.MGLib;
+import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Stage;
 import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
@@ -63,7 +63,7 @@ public class Round {
 	 * @param roundTime The round's total playing time. Use -1 for no limit.
 	 * @throws ArenaNotExistsException if the specified arena does not exist.
 	 */
-	public Round(String plugin, String arena, boolean discrete, int preparationTime, int roundTime)
+	public Round(String plugin, String arena, int preparationTime, int roundTime)
 			throws ArenaNotExistsException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
 		if (!y.contains(arena))
@@ -290,7 +290,7 @@ public class Round {
 			//TODO: Skip straight to playing if necessary and check this method for bugs
 			Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
 			if (time != -1){ // I'm pretty sure this is wrong, but I'm also pretty tired
-				timerHandle = Bukkit.getScheduler().runTaskTimer(MGLib.plugin, new Runnable(){
+				timerHandle = Bukkit.getScheduler().runTaskTimer(Main.plugin, new Runnable(){
 					public void run(){
 						int oldTime = r.getTime();
 						boolean stageChange = false;
@@ -306,8 +306,8 @@ public class Round {
 								end(true);
 								stageChange = true;
 							}
-							Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
 						}
+						Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
 					}
 				}, 0L, 20L).getTaskId(); // iterates once per second
 			}
@@ -432,7 +432,10 @@ public class Round {
 			if (r.players.containsKey(name)){
 				mp = r.players.get(name);
 				r.players.remove(name);
-				r.players.get(name).setArena(arena);
+				r
+				.players
+				.get(name)
+				.setArena(arena);
 				break;
 			}
 		if (mp == null)

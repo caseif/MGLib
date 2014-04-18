@@ -14,10 +14,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev20
+ * @version 0.1-dev21
  * @since 0.1
  */
-public class MGLib extends JavaPlugin {
+public class Main extends JavaPlugin {
 
 	/**
 	 * The current instance of the plugin.
@@ -25,7 +25,7 @@ public class MGLib extends JavaPlugin {
 	 * This is for use within the library; please do not modify this in your plugin or everything will break.
 	 * @since 0.1
 	 */
-	public static MGLib plugin;
+	public static Main plugin;
 
 	/**
 	 * MGLib's logger.
@@ -84,7 +84,7 @@ public class MGLib extends JavaPlugin {
 		Minigame.uninitialize();
 		MGLibEvent.uninitialize();
 		log.info(this + " has been disabled!");
-		MGLib.uninitialize();
+		Main.uninitialize();
 	}
 	
 	/**

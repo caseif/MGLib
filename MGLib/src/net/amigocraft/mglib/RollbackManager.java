@@ -40,9 +40,9 @@ public class RollbackManager {
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
-			MGLib.log.severe("An exception occurred while initializing the rollback manager for plugin " + plugin.getName());
+			Main.log.severe("An exception occurred while initializing the rollback manager for plugin " + plugin.getName());
 		}
-		LOGGING = MGLib.plugin.getConfig().getBoolean("immediate-logging");
+		LOGGING = Main.plugin.getConfig().getBoolean("immediate-logging");
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class RollbackManager {
 				y.save(f);
 			}
 			catch (Exception ex){
-				MGLib.log.severe("An exception occurred while saving data for arena " + arena);
+				Main.log.severe("An exception occurred while saving data for arena " + arena);
 			}
 		}
 	}
@@ -101,7 +101,7 @@ public class RollbackManager {
 				y.save(f);
 			}
 			catch (Exception ex){
-				MGLib.log.severe("An exception occurred while saving data for arena " + arena);
+				Main.log.severe("An exception occurred while saving data for arena " + arena);
 			}
 		}
 	}
@@ -170,7 +170,7 @@ public class RollbackManager {
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
-			MGLib.log.severe("An exception occurred while saving data for arena " + arena);
+			Main.log.severe("An exception occurred while saving data for arena " + arena);
 		}
 		if (r != null)
 			r.setStage(Stage.WAITING);

@@ -34,7 +34,7 @@ public class MGUtil {
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
-			MGLib.log.severe("An exception occurred while loading arena data for plugin " + plugin);
+			Main.log.severe("An exception occurred while loading arena data for plugin " + plugin);
 			return null;
 		}
 	}
@@ -54,7 +54,7 @@ public class MGUtil {
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
-			MGLib.log.severe("An exception occurred while saving arena data for plugin " + plugin);
+			Main.log.severe("An exception occurred while saving arena data for plugin " + plugin);
 		}
 	}
 	

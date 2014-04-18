@@ -48,14 +48,14 @@ class MGListener implements Listener {
 	private static boolean PREVENT_SPREAD = true;
 
 	public static void initialize(){
-		PREVENT_BURN = MGLib.plugin.getConfig().getBoolean("protections.burn");
-		PREVENT_FADE = MGLib.plugin.getConfig().getBoolean("protections.fade");
-		PREVENT_GROW = MGLib.plugin.getConfig().getBoolean("protections.grow");
-		PREVENT_IGNITE = MGLib.plugin.getConfig().getBoolean("protections.ignite");
-		PREVENT_LIQUIDFLOW = MGLib.plugin.getConfig().getBoolean("protections.liquidFlow");
-		PREVENT_PHYSICS = MGLib.plugin.getConfig().getBoolean("protections.physics");
-		PREVENT_PISTON = MGLib.plugin.getConfig().getBoolean("protections.piston");
-		PREVENT_SPREAD = MGLib.plugin.getConfig().getBoolean("protections.spread");
+		PREVENT_BURN = Main.plugin.getConfig().getBoolean("protections.burn");
+		PREVENT_FADE = Main.plugin.getConfig().getBoolean("protections.fade");
+		PREVENT_GROW = Main.plugin.getConfig().getBoolean("protections.grow");
+		PREVENT_IGNITE = Main.plugin.getConfig().getBoolean("protections.ignite");
+		PREVENT_LIQUIDFLOW = Main.plugin.getConfig().getBoolean("protections.liquidFlow");
+		PREVENT_PHYSICS = Main.plugin.getConfig().getBoolean("protections.physics");
+		PREVENT_PISTON = Main.plugin.getConfig().getBoolean("protections.piston");
+		PREVENT_SPREAD = Main.plugin.getConfig().getBoolean("protections.spread");
 		for (Minigame mg : Minigame.getMinigameInstances())
 			MGListener.addWorlds(mg.getPlugin());
 	}
@@ -72,7 +72,7 @@ class MGListener implements Listener {
 			}
 			catch (Exception ex){
 				ex.printStackTrace();
-				MGLib.log.severe("An exception occurred while loading world list for plugin " + plugin.getName());
+				Main.log.severe("An exception occurred while loading world list for plugin " + plugin.getName());
 			}
 		}
 	}
@@ -80,7 +80,7 @@ class MGListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent e){
 		final String p = e.getPlayer().getName();
-		Bukkit.getScheduler().runTaskAsynchronously(MGLib.plugin, new Runnable(){
+		Bukkit.getScheduler().runTaskAsynchronously(Main.plugin, new Runnable(){
 			public void run(){
 				for (Minigame mg : Minigame.getMinigameInstances())
 					for (Round r : mg.getRoundList())
@@ -88,7 +88,7 @@ class MGListener implements Listener {
 							try {
 								r.removePlayer(p);
 								YamlConfiguration y = new YamlConfiguration();
-								File f = new File(MGLib.plugin.getDataFolder(), "offlineplayers.yml");
+								File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
 								if (!f.exists())
 									f.createNewFile();
 								y.load(f);
@@ -100,7 +100,7 @@ class MGListener implements Listener {
 							}
 							catch (Exception ex){
 								ex.printStackTrace();
-								MGLib.log.severe("An exception occurred while saving data for " + p);
+								Main.log.severe("An exception occurred while saving data for " + p);
 							}
 						}
 			}
@@ -110,14 +110,14 @@ class MGListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent e){
 		final String p = e.getPlayer().getName();
-		Bukkit.getScheduler().runTaskAsynchronously(MGLib.plugin, new Runnable(){
+		Bukkit.getScheduler().runTaskAsynchronously(Main.plugin, new Runnable(){
 			public void run(){
 				for (Minigame mg : Minigame.getMinigameInstances())
 					for (Round r : mg.getRoundList())
 						if (r.getPlayers().containsKey(p)){
 							try {
 								YamlConfiguration y = new YamlConfiguration();
-								File f = new File(MGLib.plugin.getDataFolder(), "offlineplayers.yml");
+								File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
 								if (!f.exists())
 									f.createNewFile();
 								y.load(f);
@@ -132,7 +132,7 @@ class MGListener implements Listener {
 							}
 							catch (Exception ex){
 								ex.printStackTrace();
-								MGLib.log.severe("An exception occurred while loading data for " + p);
+								Main.log.severe("An exception occurred while loading data for " + p);
 							}
 						}
 			}
