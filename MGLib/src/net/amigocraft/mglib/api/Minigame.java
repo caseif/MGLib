@@ -3,6 +3,7 @@ package net.amigocraft.mglib.api;
 import java.util.HashMap;
 import java.util.List;
 
+import net.amigocraft.mglib.LobbyManager;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.RollbackManager;
@@ -25,7 +26,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev21
+ * @version 0.1-dev22
  * @since 0.1
  */
 public class Minigame {
@@ -36,15 +37,21 @@ public class Minigame {
 
 	private HashMap<String, Round> rounds = new HashMap<String, Round>();
 
-	private Location exitLocation = null;
-
 	private RollbackManager rbManager = null;
+	private LobbyManager lobbyManager = null;
 
 	private HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
+
+	private Location exitLocation = null;
+	private int maxPlayers = 32;
+	private String signId;
+	private int roundPrepareTime = 90;
+	private int roundPlayTime = 300;
 
 	private Minigame(JavaPlugin plugin){
 		if (!registeredInstances.containsKey(plugin.getName())){ // 
 			this.plugin = plugin;
+			this.signId = "[" + plugin.getName() + "]";
 			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation(); // set the default exit location
 			registeredInstances.put(plugin.getName(), this); // list this Minigame instance for use in other parts of the API
 			Main.log.info(plugin + " has successfully hooked into MGLib!");
@@ -54,6 +61,8 @@ public class Minigame {
 					"registered. Please report this to the plugin author.");
 		rbManager = new RollbackManager(plugin); // register rollback manager
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
+		lobbyManager = new LobbyManager(plugin.getName());
+		lobbyManager.loadSigns();
 		Main.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
 	}
 	
@@ -137,6 +146,19 @@ public class Minigame {
 		rounds.put(arena, r); // register arena with MGLib
 		return r; // give the calling plugin the Round object
 	}
+	
+	/**
+	 * Creates and stores a new round with the given parameters and default time periods.
+	 * @param arena The name of the arena to create the round in.
+	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
+	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
+	 * @return The created round.
+	 * @throws ArenaNotExistsException if the given arena does not exist.
+	 * @since 0.1
+	 */
+	public Round createRound(String arena) throws ArenaNotExistsException {
+		return createRound(arena, roundPrepareTime, roundPlayTime);
+	}
 
 	/**
 	 * Gets the instance of the round associated with the given world.
@@ -214,9 +236,6 @@ public class Minigame {
 			}
 		}
 
-		if (!MGUtil.getWorlds().contains(spawn.getWorld().getName()))
-			MGUtil.getWorlds().add(spawn.getWorld().getName()); // register world with event listener
-
 		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName()).addSpawn(spawn);
 		if (minX == minX)
 			a.setMinBound(minX, minY, minZ).setMaxBound(maxX, maxY, maxZ);
@@ -238,7 +257,7 @@ public class Minigame {
 			Main.log.severe("How the HELL did you get this to throw an exception?");
 			Main.log.severe("Like, seriously, it should never be possible for this code to be triggered. " +
 					"You SERIOUSLY screwed something up.");
-			Main.log.severe("And hello to the person reading the library's source, " +
+			Main.log.warning("And hello to the person reading the library's source, " +
 					"since that's the only place this is ever going to be read. Now get back to work.");
 		}
 	}
@@ -288,6 +307,24 @@ public class Minigame {
 			return true;
 		return false;
 	}
+	
+	/**
+	 * Retrieves the maximum number of players allowed in a single round.
+	 * @return The maximum number of players allowed in a single round.
+	 * @since 0.1
+	 */
+	public int getMaxPlayers(){
+		return maxPlayers;
+	}
+	
+	/**
+	 * Sets the maximum number of players allowed in a single round.
+	 * @param maxPlayers the maximum number of players allowed in a single round.
+	 * @since 0.1
+	 */
+	public void setMaxPlayers(int maxPlayers){
+		this.maxPlayers = maxPlayers;
+	}
 
 	/**
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
@@ -321,14 +358,77 @@ public class Minigame {
 	public void setExitLocation(Location location){
 		exitLocation = location;
 	}
+	
+	/**
+	 * Retrieves this minigame's sign identifier (the string which triggers lobby sign creation).
+	 * @return This minigame's sign identifier.
+	 * @since 0.1
+	 */
+	public String getSignId(){
+		return signId;
+	}
+	
+	/**
+	 * Sets this minigame's sign identifier (the string which triggers lobby sign creation). This string will default to [PLUGIN_NAME]
+	 * if not explicitly set. For example, a plugin called "Spleef" would default to [Spleef].
+	 * @since 0.1
+	 */
+	public void setSignId(String signId){
+		this.signId = signId;
+	}
+	
+	/**
+	 * Retrives the default round preparation time.
+	 * @return the default round preparation time.
+	 * @since 0.1
+	 */
+	public int getDefaultPrepTime(){
+		return roundPrepareTime;
+	}
+	
+	/**
+	 * Sets the default round preparation time.
+	 * @param time the new round preparation time.
+	 * @since 0.1
+	 */
+	public void setDefaultPrepTime(int time){
+		this.roundPrepareTime = time;
+	}
+	
+	/**
+	 * Retrives the default round playing time.
+	 * @return the default round playing time.
+	 * @since 0.1
+	 */
+	public int getDefaultPlayTime(){
+		return roundPlayTime;
+	}
+	
+	/**
+	 * Sets the default round playing time.
+	 * @param time the new round playing time.
+	 * @since 0.1
+	 */
+	public void setDefaultPlayTime(int time){
+		this.roundPlayTime = time;
+	}
 
 	/**
-	 * Retrieves this minigame's rollback manager
-	 * @return this minigame's rollback manager
+	 * Retrieves this minigame's rollback manager.
+	 * @return this minigame's rollback manager.
 	 * @since 0.1
 	 */
 	public RollbackManager getRollbackManager(){
 		return rbManager;
+	}
+	
+	/**
+	 * Retrieves this minigame's lobby manager.
+	 * @return this minigame's lobby manager.
+	 * @since 0.1
+	 */
+	public LobbyManager getLobbyManager(){
+		return lobbyManager;
 	}
 
 	/**

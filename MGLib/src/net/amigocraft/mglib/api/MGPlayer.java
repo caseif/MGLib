@@ -17,7 +17,8 @@ public class MGPlayer {
 	private String plugin;
 	private String name;
 	private String arena;
-	private boolean dead;
+	private boolean dead = false;
+	private String prefix = "";
 
 	/**
 	 * Creates a new MGPlayer instance.
@@ -67,6 +68,15 @@ public class MGPlayer {
 	public String getArena(){
 		return arena;
 	}
+	
+	/**
+	 * Retrieves the prefix of this player.
+	 * @return the prefix of this player.
+	 * @since 0.1
+	 */
+	public String getPrefix(){
+		return prefix;
+	}
 
 	/**
 	 * Sets the arena of this {@link MGPlayer}. Please do not call this method unless you understand the implications of doing so.
@@ -103,6 +113,15 @@ public class MGPlayer {
 	public void setDead(boolean dead){
 		this.dead = dead;
 	}
+	
+	/**
+	 * Sets the prefix of this player.
+	 * @param prefix the new prefix of this player.
+	 * @since 0.1
+	 */
+	public void setPrefix(String prefix){
+		this.prefix = prefix;
+	}
 
 	/**
 	 * Adds this {@link MGPlayer} to the given {@link Round round}.
@@ -124,14 +143,13 @@ public class MGPlayer {
 		Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
-		Round round = null;
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
 				setArena(null); // clear the arena from the object
 				setDead(false); // make sure they're not dead when they join a new round
 				r.getPlayers().remove(name); // remove the player from the round object
 				reset(location); // reset the object and send the player to the exit point
-				Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(round, this));
+				Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(r, this));
 				return;
 			}
 		throw new PlayerNotPresentException();

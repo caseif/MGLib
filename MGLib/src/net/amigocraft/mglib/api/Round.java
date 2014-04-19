@@ -33,6 +33,8 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
  * @since 0.1
  */
 public class Round {
+	
+	private static int maxPlayers = 32;
 
 	private int prepareTime;
 	private int roundTime;
@@ -285,16 +287,21 @@ public class Round {
 	public void start(){
 		if (stage != Stage.PLAYING){ // make sure the round isn't already started
 			final Round r = this;
-			r.setTime(r.getPreparationTime()); // reset time
-			r.setStage(Stage.PREPARING); // set stage to preparing
-			//TODO: Skip straight to playing if necessary and check this method for bugs
-			Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
+			if (r.getPreparationTime() > 0){
+				r.setTime(r.getPreparationTime()); // reset time
+				r.setStage(Stage.PREPARING); // set stage to preparing
+				Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
+			}
+			else {
+				r.setTime(r.getPlayingTime()); // reset timer
+				r.setStage(Stage.PLAYING);
+				Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
+			}
 			if (time != -1){ // I'm pretty sure this is wrong, but I'm also pretty tired
 				timerHandle = Bukkit.getScheduler().runTaskTimer(Main.plugin, new Runnable(){
 					public void run(){
 						int oldTime = r.getTime();
 						boolean stageChange = false;
-						r.tickDown(); // tick timer down by one
 						if (r.getTime() <= 0){ // timer ran out
 							if (r.getStage() == Stage.PREPARING){ // if we're still preparing...
 								r.setStage(Stage.PLAYING); // ...set stage to playing
@@ -307,7 +314,10 @@ public class Round {
 								stageChange = true;
 							}
 						}
-						Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
+						if (!stageChange)
+							r.tickDown(); //TODO: Increment timer instead to enable more flexibility for unlimited rounds
+						if (r.getStage() == Stage.PLAYING || r.getStage() == Stage.PREPARING)
+							Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
 					}
 				}, 0L, 20L).getTaskId(); // iterates once per second
 			}
@@ -328,12 +338,8 @@ public class Round {
 			Bukkit.getScheduler().cancelTask(timerHandle); // cancel the round's timer task
 		stage = Stage.WAITING; // set stage back to waiting
 		timerHandle = -1; // reset timer handle since the task no longer exists
-		for (MGPlayer mp : getPlayerList()){ // iterate and remove players
-			try {
-				removePlayer(mp.getName());
-			}
-			catch (PlayerOfflineException ex){}
-		}
+		for (MGPlayer mp : getPlayerList()) // iterate and remove players
+			removePlayer(mp.getName());
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
 		getMinigame().getRollbackManager().rollback(getArena()); // roll back arena
 	}
@@ -366,7 +372,7 @@ public class Round {
 	public Location getMaxBound(){
 		return maxBound;
 	}
-	
+
 	/**
 	 * Sets the minimum boundary on all three axes of this round object.
 	 * @param x The minimum x-value.
@@ -377,7 +383,7 @@ public class Round {
 	public void setMinBound(double x, double y, double z){
 		this.minBound = new Location(this.minBound.getWorld(), x, y, z);
 	}
-	
+
 	/**
 	 * Sets the maximum boundary on all three axes of this round object.
 	 * @param x The maximum x-value.
@@ -431,16 +437,13 @@ public class Round {
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.players.containsKey(name)){
 				mp = r.players.get(name);
-				r.players.remove(name);
-				r
-				.players
-				.get(name)
-				.setArena(arena);
+				r.removePlayer(name);
+				r.players.get(name).setArena(arena);
 				break;
 			}
 		if (mp == null)
 			mp = new MGPlayer(plugin, name, arena); // otherwise make a new one
-		mp.setDead(false); // make sure they're not dead the second they join
+		mp.setDead(false); // make sure they're not dead the second they join.
 		players.put(name, mp); // register player with round object
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
 		p.teleport(spawn); // teleport the player to it
@@ -466,7 +469,8 @@ public class Round {
 			players.remove(name); // remove player from round
 			mp.reset(location); // reset the object and send the player to the exit point
 		}
-		Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(this, mp));
+		PlayerLeaveMinigameRoundEvent event = new PlayerLeaveMinigameRoundEvent(this, mp);
+		Bukkit.getPluginManager().callEvent(event);
 	}
 
 	/**
@@ -474,7 +478,7 @@ public class Round {
 	 * @param name The player to remove from this {@link Round round}. 
 	 * @since 0.1
 	 */
-	public void removePlayer(String name) throws PlayerOfflineException {
+	public void removePlayer(String name){
 		try {
 			removePlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
 		}

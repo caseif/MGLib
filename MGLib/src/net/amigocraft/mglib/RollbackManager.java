@@ -62,9 +62,9 @@ public class RollbackManager {
 	 */
 	@SuppressWarnings("deprecation")
 	public void logBlockChange(Block block, String origType, String arena){
-		if (!y.isSet(arena + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
-			y.createSection(arena + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
-		ConfigurationSection cs = y.getConfigurationSection(arena + ".blockChanges." +
+		if (!y.isSet(arena.toLowerCase() + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
+			y.createSection(arena.toLowerCase() + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
+		ConfigurationSection cs = y.getConfigurationSection(arena.toLowerCase() + ".blockChanges." +
 				block.getX() + "," + block.getY() + "," + block.getZ());
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("type")){ // make sure it hasn't already been changed
@@ -89,9 +89,9 @@ public class RollbackManager {
 	 * @since 0.1
 	 */
 	public void logInventoryChange(Inventory inventory, Block block, String arena){
-		if (!y.isSet(arena + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
-			y.createSection(arena + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
-		ConfigurationSection cs = y.getConfigurationSection(arena + ".inventoryChanges." +
+		if (!y.isSet(arena.toLowerCase() + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
+			y.createSection(arena.toLowerCase() + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
+		ConfigurationSection cs = y.getConfigurationSection(arena.toLowerCase() + ".inventoryChanges." +
 				block.getX() + "," + block.getY() + "," + block.getZ());
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("inventory")) // make sure it hasn't already been changed
@@ -117,10 +117,7 @@ public class RollbackManager {
 	public void rollback(String arena){
 		Round r = null;
 		for (Minigame mg : Minigame.getMinigameInstances())
-			r = mg
-			.getRounds()
-			.get(
-					arena);
+			r = mg.getRound(arena);
 		if (r != null)
 			r.setStage(Stage.RESETTING);
 		ConfigurationSection cs = y.getConfigurationSection(arena + ".blockChanges");

@@ -7,16 +7,20 @@ import java.util.List;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -28,7 +32,9 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -269,6 +275,82 @@ class MGListener implements Listener {
 	public void onBlockSpread(BlockSpreadEvent e){
 		if (PREVENT_SPREAD && worlds.contains(e.getBlock().getWorld().getName()))
 			e.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onSignChange(SignChangeEvent e){
+		Main.log.info("event");
+		if (e.getBlock().getState() instanceof Sign){ // just in case
+			Main.log.info("sign");
+			for (Minigame mg : Minigame.getMinigameInstances()){ // iterate registered minigames
+				Main.log.info(mg.getSignId() + ", " + e.getLine(0));
+				if (e.getLine(0).equalsIgnoreCase(mg.getSignId())){ // it's a lobby sign-to-be
+					Main.log.info("lobby");
+					if (e.getPlayer().hasPermission(mg.getPlugin().getName() + ".lobby.create")){
+						Main.log.info("permission");
+						if (!e.getLine(1).equalsIgnoreCase("players") ||
+								MGUtil.isInteger(e.getLine(3))){ // make sure last line (sign index) is a number if it's a player sign
+							try {
+								int index = MGUtil.isInteger(e.getLine(3)) ? Integer.parseInt(e.getLine(3)) : 0;
+								mg.getLobbyManager().addSign(e.getBlock().getLocation(), e.getLine(2), e.getLine(1), index);
+							}
+							catch (ArenaNotExistsException ex){
+								e.getPlayer().sendMessage(ChatColor.RED + "The specified arena does not exist!");
+							}
+							catch (IllegalArgumentException ex){
+								if (ex.getMessage().contains("index"))
+									e.getPlayer().sendMessage(ChatColor.RED + "The specified player sign index is not valid!");
+								else if (ex.getMessage().contains("type"))
+									e.getPlayer().sendMessage(ChatColor.RED + "The specified sign type is not valid!");
+								else
+									ex.printStackTrace();
+							}
+						}
+						else
+							e.getPlayer().sendMessage(ChatColor.RED + "The specified player sign index is not valid!");
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent e){
+		if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK){
+			if (e.getClickedBlock().getState() instanceof Sign){
+				for (Minigame mg : Minigame.getMinigameInstances()){
+					LobbySign ls = mg.getLobbyManager().getSign(e.getClickedBlock().getLocation());
+					if (ls != null){
+						e.setCancelled(true);
+						if (e.getAction() == Action.LEFT_CLICK_BLOCK && e.getPlayer().isSneaking()){
+							if (e.getPlayer().hasPermission(ls.getPlugin() + ".lobby.destroy")){
+								ls.remove();
+								return;
+							}
+						}
+						MGPlayer p = mg.getMGPlayer(e.getPlayer().getName());
+						if (p == null || p.getRound() == null){
+							Round r = mg.getRound(ls.getArena());
+							if (r == null){
+								try {
+									r = mg.createRound(ls.getArena());
+								}
+								catch (ArenaNotExistsException ex){
+									e.getPlayer().sendMessage(ChatColor.RED + "Could not load arena " + ls.getArena() + "!");
+								}
+							}
+							try {
+								r.addPlayer(e.getPlayer().getName());
+							}
+							catch (PlayerOfflineException ex){} // this can never happen
+						}
+						else
+							e.getPlayer().sendMessage(ChatColor.RED + "You are already in a round!");
+					}
+				}
+			}
+		}
 	}
 
 }

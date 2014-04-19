@@ -30,7 +30,9 @@ public class ArenaFactory {
 		this.plugin = plugin;
 		this.arena = arena;
 		this.world = world;
-		setWorld(world);
+		setWorld(world).setMaxPlayers(32);
+		if (!MGUtil.getWorlds().contains(world))
+			MGUtil.getWorlds().add(world); // register world with event listener
 	}
 
 	public static ArenaFactory createArenaFactory(String plugin, String name, String world){
@@ -76,6 +78,26 @@ public class ArenaFactory {
 		else
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		yaml.set(arena + ".world", world);
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Minigame.getMinigameInstance(plugin).getPlugin(), new Runnable(){
+			public void run(){
+				writeChanges();
+			}
+		}, 1L).getTaskId();
+		return this;
+	}
+	
+	/**
+	 * Sets the maximum number of players allowed in this arena per round.
+	 * @param maxPlayers The maximum number of players allowed in this arena.
+	 * @return This ArenaFactory.
+	 * @since 0.1
+	 */
+	public ArenaFactory setMaxPlayers(int maxPlayers){
+		if (yaml == null)
+			yaml = MGUtil.loadArenaYaml(plugin);
+		else
+			Bukkit.getScheduler().cancelTask(timerHandle);
+		yaml.set(arena + ".max-players", maxPlayers);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Minigame.getMinigameInstance(plugin).getPlugin(), new Runnable(){
 			public void run(){
 				writeChanges();
