@@ -12,6 +12,7 @@ public class MinigameRoundTickEvent extends MinigameEvent {
 	
 	/**
 	 * You probably shouldn't call this from your plugin. Let MGLib handle that.
+	 * @since 0,1
 	 */
 	public MinigameRoundTickEvent(Round round, int oldTime, boolean stageChange){
 		super(round);
@@ -22,6 +23,7 @@ public class MinigameRoundTickEvent extends MinigameEvent {
 	/**
 	 * Returns the round time before the tick.
 	 * @return the time remaining in the round before the tick.
+	 * @since 0.1
 	 */
 	public int getTimeBefore(){
 		return oldTime;
@@ -30,6 +32,7 @@ public class MinigameRoundTickEvent extends MinigameEvent {
 	/**
 	 * Returns whether the tick resulted in a stage change for the round (e.g. from "PREPARING" to "PLAYING").
 	 * @return whether the tick resulted in a stage change for the round.
+	 * @since 0.1
 	 */
 	public boolean isStageChange(){
 		return stageChange;

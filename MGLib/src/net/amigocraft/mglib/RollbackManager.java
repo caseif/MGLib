@@ -4,6 +4,8 @@ import java.io.File;
 
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.api.Stage;
+import net.amigocraft.mglib.event.round.MinigameRoundRollbackEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -118,8 +120,10 @@ public class RollbackManager {
 		Round r = null;
 		for (Minigame mg : Minigame.getMinigameInstances())
 			r = mg.getRound(arena);
-		if (r != null)
+		if (r != null){
 			r.setStage(Stage.RESETTING);
+			Bukkit.getPluginManager().callEvent(new MinigameRoundRollbackEvent(r));
+		}
 		ConfigurationSection cs = y.getConfigurationSection(arena + ".blockChanges");
 		if (cs != null){
 			for (String k : cs.getKeys(false)){
@@ -171,6 +175,7 @@ public class RollbackManager {
 		}
 		if (r != null)
 			r.setStage(Stage.WAITING);
+		r.getMinigame().getLobbyManager().update(arena);
 	}
 
 	/**

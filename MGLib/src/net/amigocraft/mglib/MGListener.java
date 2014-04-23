@@ -4,9 +4,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.amigocraft.mglib.api.LobbySign;
+import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
+import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundEndEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundRollbackEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundStartEvent;
+import net.amigocraft.mglib.event.round.MinigameRoundTickEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
@@ -292,7 +300,7 @@ class MGListener implements Listener {
 								MGUtil.isInteger(e.getLine(3))){ // make sure last line (sign index) is a number if it's a player sign
 							try {
 								int index = MGUtil.isInteger(e.getLine(3)) ? Integer.parseInt(e.getLine(3)) : 0;
-								mg.getLobbyManager().addSign(e.getBlock().getLocation(), e.getLine(2), e.getLine(1), index);
+								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(1), LobbyType.fromString(e.getLine(2)), index);
 							}
 							catch (ArenaNotExistsException ex){
 								e.getPlayer().sendMessage(ChatColor.RED + "The specified arena does not exist!");
@@ -325,6 +333,7 @@ class MGListener implements Listener {
 						e.setCancelled(true);
 						if (e.getAction() == Action.LEFT_CLICK_BLOCK && e.getPlayer().isSneaking()){
 							if (e.getPlayer().hasPermission(ls.getPlugin() + ".lobby.destroy")){
+								e.setCancelled(false);
 								ls.remove();
 								return;
 							}
@@ -353,4 +362,34 @@ class MGListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onPlayerJoinMinigameRound(PlayerJoinMinigameRoundEvent e){
+		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	}
+
+	@EventHandler
+	public void onPlayerLeaveMinigameRound(PlayerLeaveMinigameRoundEvent e){
+		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	}
+
+	@EventHandler
+	public void onMinigameRoundStart(MinigameRoundStartEvent e){
+		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	}
+
+	@EventHandler
+	public void onMinigameRoundEnd(MinigameRoundEndEvent e){
+		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	}
+
+	@EventHandler
+	public void onMinigameRoundTick(MinigameRoundTickEvent e){
+		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	}
+
+	@EventHandler
+	public void onMinigameRoundRollback(MinigameRoundRollbackEvent e){
+		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	}
+	
 }

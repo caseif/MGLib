@@ -3,7 +3,10 @@ package net.amigocraft.mglib;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 
+import net.amigocraft.mglib.api.LobbySign;
+import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
@@ -16,9 +19,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class LobbyManager {
+import com.google.common.collect.Lists;
 
-	private static DecimalFormat df = new DecimalFormat("##");
+public class LobbyManager {
 
 	private String plugin;
 
@@ -34,34 +37,52 @@ public class LobbyManager {
 	}
 
 	/**
+	 * Retrieves a hashmap mapping locations to lobby signs registered with this lobby manager.
+	 * @return a hashmap of signs registered with this lobby manager.
+	 * @since 0.1
+	 */
+	public HashMap<Location, LobbySign> getSigns(){
+		return signs;
+	}
+
+	/**
+	 * Retrieves a list of lobby signs registered with this lobby manager.
+	 * @return a list of lobby signs registered with this lobby manager.
+	 * @since 0.1
+	 */
+	public List<LobbySign> getSignList(){
+		return Lists.newArrayList(signs.values());
+	}
+
+	/**
 	 * Creates a new LobbySign to be managed
 	 * @param l The location to create the sign at.
 	 * @param arena The name of the arena the sign will be linked to.
 	 * @param type The type of the sign ("status" or "players")
-	 * @param number The number of the sign (applicable only for "players" signs)
-	 * @throws ArenaNotExistsException  if the specified arena does not exist.
+	 * @param index The number of the sign (applicable only for "players" signs)
 	 * @throws IllegalArgumentException if the specified location does not contain a sign.
-	 * @throws IllegalArgumentException if the specified sign type is not valid.
+	 * @throws ArenaNotExistsException if the specified arena does not exist.
+	 * @throws IllegalArgumentException if {@code type} is null.
 	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
 	 * @since 0.1
 	 */
-	public void addSign(Location l, String arena, String type, int number) throws ArenaNotExistsException {
+	public void add(Location l, String arena, LobbyType type, int index) throws ArenaNotExistsException, IllegalArgumentException {
 		if (l.getBlock().getState() instanceof Sign){
 			if (MGUtil.loadArenaYaml(plugin).getConfigurationSection(arena) != null){
 				LobbySign ls;
-				if (type.equalsIgnoreCase("status"))
-					ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(), arena, 0, type.toLowerCase());
-				else if (type.equalsIgnoreCase("players")){
-					if (number >= 1)
-						ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(), arena, 0, type.toLowerCase());
+				if (type == LobbyType.STATUS)
+					ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(), arena, 0, type);
+				else if (type == LobbyType.PLAYERS){
+					if (index >= 1)
+						ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(), arena, index, type);
 					else
 						throw new IllegalArgumentException("Invalid player sign index for arena " + arena);
 				}
 				else
-					throw new IllegalArgumentException("Invalid sign type for arena " + arena);
-				saveSign(ls);
+					throw new IllegalArgumentException("No sign type provided!");
+				save(ls);
 				signs.put(l, ls);
-				updateSigns(arena);
+				update(arena);
 			}
 			else
 				throw new ArenaNotExistsException();
@@ -75,129 +96,31 @@ public class LobbyManager {
 	 * @param arena The arena to update signs for.
 	 * @since 0.1
 	 */
-	public void updateSigns(String arena){
-		Round r = Minigame.getMinigameInstance(plugin).getRound(arena);
+	public void update(String arena){
 		for (LobbySign s : signs.values()){
 			if (s.getArena().equals(arena)){
-				World w = Bukkit.getWorld(s.getWorld());
-				if (w != null){
-					Block b = w.getBlockAt(s.getX(), s.getY(), s.getZ());
-					if (b != null){
-						if (b.getState() instanceof Sign){
-							final Sign sign = (Sign)b.getState();
-							if (s.getType().equals("status")){
-								sign.setLine(0, "§4" + s.getArena());
-								String max = Minigame.getMinigameInstance(plugin).getMaxPlayers() + "";
-								if (Minigame.getMinigameInstance(plugin).getMaxPlayers() <= 0)
-									max = "∞";
-								String playerCount = r != null ? (r.getPlayers().size() + "/" + max) : (playerCount = "0/" + max);
-								if (!max.equals("∞")){
-									if (r != null && r.getPlayers().size() >= Minigame.getMinigameInstance(plugin).getMaxPlayers())
-										playerCount = "§c" + playerCount;
-									else
-										playerCount = "§a" + playerCount;
-								}
-								else
-									playerCount = "§6" + playerCount;
-								sign.setLine(1, playerCount);
-								Stage status = r == null ? Stage.WAITING : r.getStage();
-								String color = null;
-								if (status.equals("PLAYING"))
-									color = "§c";
-								else if (status == Stage.WAITING || status == Stage.RESETTING)
-									color = "§7";
-								else if (status.equals("PREPARING"))
-									color = "§a";
-								sign.setLine(2, color + status.toString());
-								String time = "";
-								if (status != Stage.WAITING && status != Stage.RESETTING){
-									String seconds = Integer.toString(r.getTime() % 60);
-									if (seconds.length() == 1)
-										seconds = "0" + seconds;
-									time = df.format(r.getTime() / 60) + ":" + seconds;
-									if (r.getTime() <= 60)
-										time = "§c" + time;
-									else if (r.getPlayingTime() <= 0)
-										time = "§a" + "∞:∞";
-									else
-										time = "§a" + time;
-								}
-								sign.setLine(3, time);
-							}
-							else if (s.getType().equals("players") && s.getNumber() > 0){
-								for (int i = 0; i <= 3; i++){
-									if (r != null){
-										if (r.getPlayers().size() >= (s.getNumber() - 1) * 4 + i + 1){
-											MGPlayer p = r.getPlayerList().get((s.getNumber() - 1) * 4 + i);
-											String name = p.getPrefix() + p.getName();
-											if (name.length() > 16)
-												name = name.substring(0, 16);
-											sign.setLine(i, name);
-										}
-										else
-											sign.setLine(i, "");
-									}
-									else
-										sign.setLine(i, "");
-								}
-							}
-							if (Main.plugin.isEnabled())
-								Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
-									public void run(){
-										sign.update();
-									}
-								});
-						}
-						else
-							removeSign(s);
-					}
-				}
+				s.update();
 			}
 		}
 	}
 
-	public void resetSigns(){
+	/**
+	 * Resets all lobby signs to their default state ({@link LobbyManager#WAITING waiting stage} for {@link LobbyType#STATUS status} signs,
+	 * blank for {@link LobbyType#PLAYERS player signs}).
+	 * @since 0.1
+	 */
+	public void reset(){
 		for (LobbySign s : signs.values()){
-			World w = Bukkit.getWorld(s.getWorld());
-			if (w != null){
-				Block b = w.getBlockAt(s.getX(), s.getY(), s.getZ());
-				if (b != null){
-					if (b.getState() instanceof Sign){
-						final Sign sign = (Sign)b.getState();
-						if (s.getType().equals("status")){
-							sign.setLine(0, "§4" + s.getArena());
-							String max = Minigame.getMinigameInstance(plugin).getMaxPlayers() + "";
-							if (max.equals("-1"))
-								max = "∞";
-							String playerCount = "0/" + max;
-							if (!max.equals("∞") && 0 >= Integer.parseInt(max))
-								playerCount = "§c" + playerCount;
-							else
-								playerCount = "§a" + playerCount;
-							sign.setLine(1, playerCount);
-							String status = "§7" + "WAITING";
-							sign.setLine(2, status);
-							sign.setLine(3, "");								
-						}
-						else if (s.getType().equals("players") && s.getNumber() > 0){
-							for (int i = 0; i <= 3; i++){
-								sign.setLine(i, "");
-							}
-						}
-						Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
-							public void run(){
-								sign.update();
-							}
-						});
-					}
-					else
-						removeSign(s);
-				}
-			}
+			s.reset();
 		}
 	}
 
-	public void removeSign(LobbySign s){
+	/**
+	 * Removes the given lobby sign.
+	 * @param s the lobby sign to remove.
+	 * @since 0.1
+	 */
+	public void remove(LobbySign s){
 		try {
 			YamlConfiguration y = new YamlConfiguration();
 			File f = new File(Minigame.getMinigameInstance(plugin).getPlugin().getDataFolder(), "lobbies.yml");
@@ -214,7 +137,13 @@ public class LobbyManager {
 		}
 	}
 
-	public int saveSign(LobbySign l){
+	/**
+	 * Saves a lobby sign's data to disk.
+	 * @param l the lobby sign to save to disk.
+	 * @return the index of the sign in the YAML file used for storage.
+	 * @since 0.1
+	 */
+	public int save(LobbySign l){
 		int nextKey = 0;
 		try {
 			YamlConfiguration y = new YamlConfiguration();
@@ -231,7 +160,7 @@ public class LobbyManager {
 			y.set(key + ".y", l.getY());
 			y.set(key + ".z", l.getZ());
 			y.set(key + ".arena", l.getArena());
-			y.set(key + ".type", l.getType());
+			y.set(key + ".type", l.getType().toString());
 			y.set(key + ".number", l.getNumber());
 			l.setIndex(nextKey);
 			y.save(f);
@@ -267,9 +196,20 @@ public class LobbyManager {
 			for (String k : y.getKeys(false)){
 				World w = Bukkit.getWorld(y.getString(k + ".world"));
 				if (w != null){
-					Location l = new Location(w, y.getInt(k + ".x"), y.getInt(k + ".y"), y.getInt(k + ".z"));
-					signs.put(l, new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, w.getName(),
-							y.getString(k + ".arena"), y.getInt(k + ".number"), y.getString(k + ".type")));
+					if (
+							y.get(k + ".arena") != null && 
+							y.get(k + ".x") != null && 
+							y.get(k + ".y") != null && 
+							y.get(k + ".z") != null &&
+							y.get(k + ".type") != null &&
+							LobbyType.fromString(y.getString(k + ".type").toUpperCase()) != null &&
+							(LobbyType.fromString(y.getString(k + ".type").toUpperCase()) == LobbyType.STATUS || y.get(k + ".number") != null)){
+						Location l = new Location(w, y.getInt(k + ".x"), y.getInt(k + ".y"), y.getInt(k + ".z"));
+						signs.put(l, new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, w.getName(),
+								y.getString(k + ".arena"), y.getInt(k + ".number"), LobbyType.fromString(y.getString(k + ".type").toUpperCase())));
+					}
+					else
+						Main.log.warning("Incomplete data for lobby sign with index of " + k + "! Removing from disk...");
 				}
 			}
 		}

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,7 +17,6 @@ import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
-import net.amigocraft.mglib.Stage;
 import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundEndEvent;
@@ -33,8 +33,8 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
  * @since 0.1
  */
 public class Round {
-	
-	private static int maxPlayers = 32;
+
+	private int maxPlayers = 32;
 
 	private int prepareTime;
 	private int roundTime;
@@ -95,6 +95,8 @@ public class Round {
 		}
 		this.plugin = plugin; // set globals
 		this.arena = arena;
+		this.prepareTime = preparationTime;
+		this.roundTime = roundTime;
 		stage = Stage.WAITING; // default to waiting stage
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
@@ -136,12 +138,35 @@ public class Round {
 	}
 
 	/**
-	 * Gets the current time remaining in this {@link Round}.
-	 * @return The current time remaining in this {@link Round}.
+	 * Gets the current time in seconds of this {@link Round}, where 0 represents the first second of it.
+	 * @return the current time in seconds of this {@link Round}, where 0 represents the first second of it.
 	 * @since 0.1
 	 */
 	public int getTime(){
 		return time;
+	}
+
+	/**
+	 * Gets the time remaining in this round.
+	 * @return the time remaining in this round, or -1 if there is no time limit or if the {@link Stage stage} is not
+	 * {@link Stage#PLAYING PLAYING} or {@link Stage#PREPARING PREPARING}
+	 * @since 0.1
+	 */
+	public int getRemainingTime(){
+		switch (this.getStage()){
+		case PREPARING:
+			if (this.getPreparationTime() > 0)
+				return this.getPreparationTime() - this.getTime();
+			else
+				return -1;
+		case PLAYING:
+			if (this.getPlayingTime() > 0)
+				return this.getPlayingTime() - this.getTime();
+			else
+				return -1;
+		default:
+			return -1;
+		}
 	}
 
 	/**
@@ -224,8 +249,8 @@ public class Round {
 	 * the timer.
 	 * @since 0.1
 	 */
-	public void tickDown(){
-		time -= 1;
+	public void tick(){
+		time += 1;
 	}
 
 	/**
@@ -285,15 +310,15 @@ public class Round {
 	 * @since 0.1
 	 */
 	public void start(){
-		if (stage != Stage.PLAYING){ // make sure the round isn't already started
+		if (stage == Stage.WAITING){ // make sure the round isn't already started
 			final Round r = this;
 			if (r.getPreparationTime() > 0){
-				r.setTime(r.getPreparationTime()); // reset time
+				r.setTime(0); // reset time
 				r.setStage(Stage.PREPARING); // set stage to preparing
 				Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
 			}
 			else {
-				r.setTime(r.getPlayingTime()); // reset timer
+				r.setTime(0); // reset timer
 				r.setStage(Stage.PLAYING);
 				Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
 			}
@@ -302,11 +327,12 @@ public class Round {
 					public void run(){
 						int oldTime = r.getTime();
 						boolean stageChange = false;
-						if (r.getTime() <= 0){ // timer ran out
+						int limit = r.getStage() == Stage.PLAYING ? r.getPlayingTime() : r.getPreparationTime();
+						if (r.getTime() >= limit && limit > 0){ // timer reached its limit
 							if (r.getStage() == Stage.PREPARING){ // if we're still preparing...
 								r.setStage(Stage.PLAYING); // ...set stage to playing
 								stageChange = true;
-								r.setTime(r.getPlayingTime()); // reset timer
+								r.setTime(0); // reset timer
 								Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
 							}
 							else { // we're playing and the round just ended
@@ -315,7 +341,7 @@ public class Round {
 							}
 						}
 						if (!stageChange)
-							r.tickDown(); //TODO: Increment timer instead to enable more flexibility for unlimited rounds
+							r.tick();
 						if (r.getStage() == Stage.PLAYING || r.getStage() == Stage.PREPARING)
 							Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
 					}
@@ -433,16 +459,14 @@ public class Round {
 		Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
-		MGPlayer mp = null;
-		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
-			if (r.players.containsKey(name)){
-				mp = r.players.get(name);
-				r.removePlayer(name);
-				r.players.get(name).setArena(arena);
-				break;
-			}
+		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null)
-			mp = new MGPlayer(plugin, name, arena); // otherwise make a new one
+			mp = new MGPlayer(plugin, name, arena);
+		else if (mp.getArena() == null)
+			mp.setArena(arena);
+		else {
+			throw new IllegalArgumentException("Player " + name + " is already in arena " + mp.getArena());
+		}
 		mp.setDead(false); // make sure they're not dead the second they join.
 		players.put(name, mp); // register player with round object
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
@@ -484,6 +508,46 @@ public class Round {
 		}
 		catch (PlayerOfflineException ex){}
 		catch (PlayerNotPresentException e2){} // neither of these can happen, and if they do, we have bigger problems to worry about
+	}
+
+	/**
+	 * Retrieves the maximum number of players allowed in a round at once.
+	 * @return the maximum number of players allowed in a round at once.
+	 * @since 0.1
+	 */
+	public int getMaxPlayers(){
+		return maxPlayers;
+	}
+
+	/**
+	 * Sets the maximum number of players allowed in a round at once.
+	 * @param players the maximum number of players allowed in a round at once.
+	 * @since 0.1
+	 */
+	public void setMaxPlayers(int players){
+		this.maxPlayers = players;
+	}
+
+	/**
+	 * Creates a new LobbySign to be managed
+	 * @param l The location to create the sign at.
+	 * @param type The type of the sign ("status" or "players")
+	 * @param number The number of the sign (applicable only for "players" signs)
+	 * @throws ArenaNotExistsException  if the specified arena does not exist.
+	 * @throws IllegalArgumentException if the specified location does not contain a sign.
+	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
+	 * @since 0.1
+	 */
+	public void addSign(Location l, LobbyType type, int index) throws ArenaNotExistsException, IllegalArgumentException {
+		this.getMinigame().getLobbyManager().add(l, this.getArena(), type, index);
+	}
+
+	/**
+	 * Updates all lobby signs linked to this round's arena.
+	 * @since 0.1
+	 */
+	public void updateSigns(){
+		this.getMinigame().getLobbyManager().update(arena);
 	}
 
 	public boolean equals(Object p){

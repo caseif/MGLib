@@ -7,7 +7,6 @@ import net.amigocraft.mglib.LobbyManager;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.RollbackManager;
-import net.amigocraft.mglib.Stage;
 import net.amigocraft.mglib.exception.ArenaExistsException;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
@@ -26,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev22
+ * @version 0.1-dev23
  * @since 0.1
  */
 public class Minigame {
@@ -63,6 +62,7 @@ public class Minigame {
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
 		lobbyManager = new LobbyManager(plugin.getName());
 		lobbyManager.loadSigns();
+		lobbyManager.reset();
 		Main.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
 	}
 	
