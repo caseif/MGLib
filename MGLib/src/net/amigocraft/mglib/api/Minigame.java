@@ -11,7 +11,6 @@ import net.amigocraft.mglib.exception.ArenaExistsException;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,7 +24,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev23
+ * @version 0.1-dev24
  * @since 0.1
  */
 public class Minigame {
@@ -36,28 +35,22 @@ public class Minigame {
 
 	private HashMap<String, Round> rounds = new HashMap<String, Round>();
 
-	private RollbackManager rbManager = null;
-	private LobbyManager lobbyManager = null;
+	private ConfigManager configManager;
+	private RollbackManager rbManager;
+	private LobbyManager lobbyManager;
 
 	private HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
-	private Location exitLocation = null;
-	private int maxPlayers = 32;
-	private String signId;
-	private int roundPrepareTime = 90;
-	private int roundPlayTime = 300;
-
 	private Minigame(JavaPlugin plugin){
-		if (!registeredInstances.containsKey(plugin.getName())){ // 
+		if (!registeredInstances.containsKey(plugin.getName())){
 			this.plugin = plugin;
-			this.signId = "[" + plugin.getName() + "]";
-			this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation(); // set the default exit location
 			registeredInstances.put(plugin.getName(), this); // list this Minigame instance for use in other parts of the API
 			Main.log.info(plugin + " has successfully hooked into MGLib!");
 		}
 		else
 			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
-					"registered. Please report this to the plugin author.");
+					"registered. This is a bug, and should be reported this to the author of the hooking plugin.");
+		configManager = new ConfigManager(plugin.getName());
 		rbManager = new RollbackManager(plugin); // register rollback manager
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
 		lobbyManager = new LobbyManager(plugin.getName());
@@ -134,30 +127,15 @@ public class Minigame {
 	/**
 	 * Creates and stores a new round with the given parameters.
 	 * @param arena The name of the arena to create the round in.
-	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
-	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
-	 * @return The created round.
-	 * @throws ArenaNotExistsException if the given arena does not exist.
-	 * @since 0.1
-	 */
-	public Round createRound(String arena, int preparationTime, int roundTime) throws ArenaNotExistsException {
-		Round r = new Round(plugin.getName(), arena, preparationTime, roundTime); // create the Round object
-		r.setStage(Stage.WAITING); // default to waiting stage
-		rounds.put(arena, r); // register arena with MGLib
-		return r; // give the calling plugin the Round object
-	}
-	
-	/**
-	 * Creates and stores a new round with the given parameters and default time periods.
-	 * @param arena The name of the arena to create the round in.
-	 * @param preparationTime The time (in seconds) the round should be kept in the preparation stage for)
-	 * @param roundTime The time (in seconds) the round should last for. Set to 0 for no limit.
 	 * @return The created round.
 	 * @throws ArenaNotExistsException if the given arena does not exist.
 	 * @since 0.1
 	 */
 	public Round createRound(String arena) throws ArenaNotExistsException {
-		return createRound(arena, roundPrepareTime, roundPlayTime);
+		Round r = new Round(plugin.getName(), arena); // create the Round object
+		r.setStage(Stage.WAITING); // default to waiting stage
+		rounds.put(arena, r); // register arena with MGLib
+		return r; // give the calling plugin the Round object
 	}
 
 	/**
@@ -307,24 +285,6 @@ public class Minigame {
 			return true;
 		return false;
 	}
-	
-	/**
-	 * Retrieves the maximum number of players allowed in a single round.
-	 * @return The maximum number of players allowed in a single round.
-	 * @since 0.1
-	 */
-	public int getMaxPlayers(){
-		return maxPlayers;
-	}
-	
-	/**
-	 * Sets the maximum number of players allowed in a single round.
-	 * @param maxPlayers the maximum number of players allowed in a single round.
-	 * @since 0.1
-	 */
-	public void setMaxPlayers(int maxPlayers){
-		this.maxPlayers = maxPlayers;
-	}
 
 	/**
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
@@ -339,78 +299,6 @@ public class Minigame {
 	 */
 	public HashMap<String, ArenaFactory> getArenaFactories(){
 		return arenaFactories;
-	}
-
-	/**
-	 * Retrieves the {@link Location location} to teleport players to upon exiting a {@link Round round}.
-	 * @return the {@link Location location} to teleport players to upon exiting a {@link Round round}.
-	 * @since 0.1
-	 */
-	public Location getExitLocation(){
-		return exitLocation;
-	}
-
-	/**
-	 * Sets the {@link Location location} to teleport players to upon exiting a {@link Round round}.
-	 * @param location The location to teleport players to upon exiting a {@link Round round}.
-	 * @since 0.1
-	 */
-	public void setExitLocation(Location location){
-		exitLocation = location;
-	}
-	
-	/**
-	 * Retrieves this minigame's sign identifier (the string which triggers lobby sign creation).
-	 * @return This minigame's sign identifier.
-	 * @since 0.1
-	 */
-	public String getSignId(){
-		return signId;
-	}
-	
-	/**
-	 * Sets this minigame's sign identifier (the string which triggers lobby sign creation). This string will default to [PLUGIN_NAME]
-	 * if not explicitly set. For example, a plugin called "Spleef" would default to [Spleef].
-	 * @since 0.1
-	 */
-	public void setSignId(String signId){
-		this.signId = signId;
-	}
-	
-	/**
-	 * Retrives the default round preparation time.
-	 * @return the default round preparation time.
-	 * @since 0.1
-	 */
-	public int getDefaultPrepTime(){
-		return roundPrepareTime;
-	}
-	
-	/**
-	 * Sets the default round preparation time.
-	 * @param time the new round preparation time.
-	 * @since 0.1
-	 */
-	public void setDefaultPrepTime(int time){
-		this.roundPrepareTime = time;
-	}
-	
-	/**
-	 * Retrives the default round playing time.
-	 * @return the default round playing time.
-	 * @since 0.1
-	 */
-	public int getDefaultPlayTime(){
-		return roundPlayTime;
-	}
-	
-	/**
-	 * Sets the default round playing time.
-	 * @param time the new round playing time.
-	 * @since 0.1
-	 */
-	public void setDefaultPlayTime(int time){
-		this.roundPlayTime = time;
 	}
 
 	/**
@@ -429,6 +317,15 @@ public class Minigame {
 	 */
 	public LobbyManager getLobbyManager(){
 		return lobbyManager;
+	}
+	
+	/**
+	 * Retrieves this minigame's config manager.
+	 * @return this minigame's config manager.
+	 * @since 0.1
+	 */
+	public ConfigManager getConfigManager(){
+		return configManager;
 	}
 
 	/**

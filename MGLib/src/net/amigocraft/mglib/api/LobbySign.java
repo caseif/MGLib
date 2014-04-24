@@ -122,12 +122,12 @@ public class LobbySign {
 						final Sign sign = (Sign)b.getState();
 						if (this.getType() == LobbyType.STATUS){
 							sign.setLine(0, "§4" + this.getArena());
-							String max = Minigame.getMinigameInstance(plugin).getMaxPlayers() + "";
-							if (Minigame.getMinigameInstance(plugin).getMaxPlayers() <= 0)
+							String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
+							if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0)
 								max = "∞";
 							String playerCount = r != null ? (r.getPlayers().size() + "/" + max) : (playerCount = "0/" + max);
 							if (!max.equals("∞")){
-								if (r != null && r.getPlayers().size() >= Minigame.getMinigameInstance(plugin).getMaxPlayers())
+								if (r != null && r.getPlayers().size() >= Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers())
 									playerCount = "§c" + playerCount;
 								else
 									playerCount = "§a" + playerCount;
@@ -138,7 +138,7 @@ public class LobbySign {
 							Stage status = r == null ? Stage.WAITING : r.getStage();
 							String color = null;
 							if (status == Stage.PLAYING)
-								color = "§c";
+								color = "§5";
 							else if (status == Stage.WAITING || status == Stage.RESETTING)
 								color = "§7";
 							else if (status == Stage.PREPARING)
@@ -203,7 +203,7 @@ public class LobbySign {
 					final Sign sign = (Sign)b.getState();
 					if (this.getType() == LobbyType.STATUS){
 						sign.setLine(0, "§4" + this.getArena());
-						String max = Minigame.getMinigameInstance(plugin).getMaxPlayers() + "";
+						String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
 						if (max.equals("-1"))
 							max = "∞";
 						String playerCount = "0/" + max;
@@ -212,8 +212,7 @@ public class LobbySign {
 						else
 							playerCount = "§a" + playerCount;
 						sign.setLine(1, playerCount);
-						String status = "§7" + "WAITING";
-						sign.setLine(2, status);
+						sign.setLine(2, "§7WAITING");
 						sign.setLine(3, "");
 					}
 					else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0){

@@ -106,10 +106,11 @@ class MGListener implements Listener {
 								if (!f.exists())
 									f.createNewFile();
 								y.load(f);
-								y.set(p + ".w", mg.getExitLocation().getWorld().getName());
-								y.set(p + ".x", mg.getExitLocation().getX());
-								y.set(p + ".y", mg.getExitLocation().getY());
-								y.set(p + ".z", mg.getExitLocation().getZ());
+								Location el = mg.getConfigManager().getDefaultExitLocation();
+								y.set(p + ".w", el.getWorld().getName());
+								y.set(p + ".x", el.getX());
+								y.set(p + ".y", el.getY());
+								y.set(p + ".z", el.getZ());
 								y.save(f);
 							}
 							catch (Exception ex){
@@ -291,8 +292,8 @@ class MGListener implements Listener {
 		if (e.getBlock().getState() instanceof Sign){ // just in case
 			Main.log.info("sign");
 			for (Minigame mg : Minigame.getMinigameInstances()){ // iterate registered minigames
-				Main.log.info(mg.getSignId() + ", " + e.getLine(0));
-				if (e.getLine(0).equalsIgnoreCase(mg.getSignId())){ // it's a lobby sign-to-be
+				Main.log.info(mg.getConfigManager().getSignId() + ", " + e.getLine(0));
+				if (e.getLine(0).equalsIgnoreCase(mg.getConfigManager().getSignId())){ // it's a lobby sign-to-be
 					Main.log.info("lobby");
 					if (e.getPlayer().hasPermission(mg.getPlugin().getName() + ".lobby.create")){
 						Main.log.info("permission");

@@ -162,7 +162,7 @@ public class MGPlayer {
 	 * @since 0.1
 	 */
 	public void removeFromRound() throws PlayerOfflineException, PlayerNotPresentException{
-		removeFromRound(Minigame.getMinigameInstance(plugin).getExitLocation());
+		removeFromRound(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class MGPlayer {
 	 * @since 0.1
 	 */
 	public void reset() throws PlayerOfflineException {
-		MGPlayer.resetPlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
+		MGPlayer.resetPlayer(name, Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
 
 	/**

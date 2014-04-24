@@ -34,10 +34,10 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
  */
 public class Round {
 
-	private int maxPlayers = 32;
-
+	private int maxPlayers;
 	private int prepareTime;
 	private int roundTime;
+	private Location exitLocation;
 
 	private String plugin;
 	private int time = 0;
@@ -65,7 +65,7 @@ public class Round {
 	 * @param roundTime The round's total playing time. Use -1 for no limit.
 	 * @throws ArenaNotExistsException if the specified arena does not exist.
 	 */
-	public Round(String plugin, String arena, int preparationTime, int roundTime)
+	public Round(String plugin, String arena)
 			throws ArenaNotExistsException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
 		if (!y.contains(arena))
@@ -95,8 +95,11 @@ public class Round {
 		}
 		this.plugin = plugin; // set globals
 		this.arena = arena;
-		this.prepareTime = preparationTime;
-		this.roundTime = roundTime;
+		ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
+		this.prepareTime = cm.getDefaultPreparationTime();
+		this.roundTime = cm.getDefaultPlayingTime();
+		this.maxPlayers = cm.getMaxPlayers();
+		this.exitLocation = cm.getDefaultExitLocation();
 		stage = Stage.WAITING; // default to waiting stage
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
@@ -498,13 +501,14 @@ public class Round {
 	}
 
 	/**
-	 * Removes a given player from this {@link Round round} and teleports them to the main world's spawn.
+	 * Removes a given player from this {@link Round round} and teleports them to the round or plugin's default exit location
+	 * (defaults to the main world's spawn point).
 	 * @param name The player to remove from this {@link Round round}. 
 	 * @since 0.1
 	 */
 	public void removePlayer(String name){
 		try {
-			removePlayer(name, Minigame.getMinigameInstance(plugin).getExitLocation());
+			removePlayer(name, Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 		}
 		catch (PlayerOfflineException ex){}
 		catch (PlayerNotPresentException e2){} // neither of these can happen, and if they do, we have bigger problems to worry about
@@ -548,6 +552,24 @@ public class Round {
 	 */
 	public void updateSigns(){
 		this.getMinigame().getLobbyManager().update(arena);
+	}
+	
+	/**
+	 * Retrieves this round's exit location.
+	 * @return this round's exit location.
+	 * @since 0.1
+	 */
+	public Location getExitLocation(){
+		return exitLocation;
+	}
+	
+	/**
+	 * Sets this round's exit location.
+	 * @param location the new exit location for this round.
+	 * @since 0.1
+	 */
+	public void setExitLocation(Location location){
+		this.exitLocation = location;
 	}
 
 	public boolean equals(Object p){
