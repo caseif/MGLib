@@ -288,20 +288,15 @@ class MGListener implements Listener {
 
 	@EventHandler
 	public void onSignChange(SignChangeEvent e){
-		Main.log.info("event");
 		if (e.getBlock().getState() instanceof Sign){ // just in case
-			Main.log.info("sign");
 			for (Minigame mg : Minigame.getMinigameInstances()){ // iterate registered minigames
-				Main.log.info(mg.getConfigManager().getSignId() + ", " + e.getLine(0));
 				if (e.getLine(0).equalsIgnoreCase(mg.getConfigManager().getSignId())){ // it's a lobby sign-to-be
-					Main.log.info("lobby");
 					if (e.getPlayer().hasPermission(mg.getPlugin().getName() + ".lobby.create")){
-						Main.log.info("permission");
 						if (!e.getLine(1).equalsIgnoreCase("players") ||
 								MGUtil.isInteger(e.getLine(3))){ // make sure last line (sign index) is a number if it's a player sign
 							try {
 								int index = MGUtil.isInteger(e.getLine(3)) ? Integer.parseInt(e.getLine(3)) : 0;
-								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(1), LobbyType.fromString(e.getLine(2)), index);
+								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(2), LobbyType.fromString(e.getLine(1)), index);
 							}
 							catch (ArenaNotExistsException ex){
 								e.getPlayer().sendMessage(ChatColor.RED + "The specified arena does not exist!");
@@ -311,6 +306,8 @@ class MGListener implements Listener {
 									e.getPlayer().sendMessage(ChatColor.RED + "The specified player sign index is not valid!");
 								else if (ex.getMessage().contains("type"))
 									e.getPlayer().sendMessage(ChatColor.RED + "The specified sign type is not valid!");
+								else if (ex.getMessage().contains("Invalid string!"))
+									e.getPlayer().sendMessage(ChatColor.RED + "Invalid sign type!");
 								else
 									ex.printStackTrace();
 							}

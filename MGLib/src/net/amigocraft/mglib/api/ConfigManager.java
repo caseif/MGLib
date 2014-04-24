@@ -74,5 +74,6 @@ public class ConfigManager {
 	}
 	
 	//TODO: More lobby sign configuration
+	//TODO: And white/blacklisted actions
 	
 }

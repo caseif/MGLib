@@ -142,7 +142,7 @@ public class LobbySign {
 							else if (status == Stage.WAITING || status == Stage.RESETTING)
 								color = "§7";
 							else if (status == Stage.PREPARING)
-								color = "§a";
+								color = "§c";
 							sign.setLine(2, color + status.toString());
 							String time = "";
 							if (status != Stage.WAITING && status != Stage.RESETTING){
@@ -206,12 +206,7 @@ public class LobbySign {
 						String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
 						if (max.equals("-1"))
 							max = "∞";
-						String playerCount = "0/" + max;
-						if (!max.equals("∞") && 0 >= Integer.parseInt(max))
-							playerCount = "§c" + playerCount;
-						else
-							playerCount = "§a" + playerCount;
-						sign.setLine(1, playerCount);
+						sign.setLine(1, "§a0/" + max);
 						sign.setLine(2, "§7WAITING");
 						sign.setLine(3, "");
 					}
