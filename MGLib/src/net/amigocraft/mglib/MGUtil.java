@@ -69,6 +69,7 @@ public class MGUtil {
 	
 	/**
 	 * Retrieves worlds registered with MGLib's event listener
+	 * @return worlds registered with MGLib's event listener
 	 * @since 0.1
 	 */
 	public static List<String> getWorlds(){

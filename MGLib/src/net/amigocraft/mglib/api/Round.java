@@ -354,7 +354,7 @@ public class Round {
 
 	/**
 	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
-	 * @param Whether the round was ended due to its timer expiring. This will default to false if omitted.
+	 * @param timeUp Whether the round was ended due to its timer expiring. This will default to false if omitted.
 	 * @throws IllegalStateException if the timer has not been started.
 	 * @since 0.1
 	 */

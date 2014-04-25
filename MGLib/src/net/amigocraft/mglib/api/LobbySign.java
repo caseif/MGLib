@@ -76,7 +76,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical y-coordinate of this lobby sign.
-	 * @param x the physical y-coordinate of this lobby sign.
+	 * @param y the physical y-coordinate of this lobby sign.
 	 * @since 0.1
 	 */
 	public void setY(int y){
@@ -94,7 +94,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical z-coordinate of this lobby sign.
-	 * @param x the physical z-coordinate of this lobby sign.
+	 * @param z the physical z-coordinate of this lobby sign.
 	 * @since 0.1
 	 */
 	public void setZ(int z){
