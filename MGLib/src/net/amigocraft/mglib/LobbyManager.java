@@ -1,21 +1,18 @@
 package net.amigocraft.mglib;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 
 import net.amigocraft.mglib.api.LobbySign;
 import net.amigocraft.mglib.api.LobbyType;
-import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
-import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.api.Stage;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 
