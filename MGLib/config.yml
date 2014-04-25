@@ -5,23 +5,9 @@
 # When true, MGLib will save block changes in arenas to disk in real time.
 # When false, block change data is saved only to memory.
 # If you set this to false, you may see a slight performance increase, but if the server crashes or is uncleanly
-# shut down (e.g. hitting the "X" button), block change data for active rounds will be lost.
+# shut down (e.g. hitting the "X" button), block change data for active rounds *will be lost*.
 # We highly recommend you leave this at its default value (true).
 rollback-logging: true
-
-# When the following protections are enabled, certain block events will be cancelled in worlds containing arenas.
-# Please note that if left as false, these actions *will not be rolled back*. However, if made true, physical
-# gameplay elements dependent on these mechanics will not work properly (e.g. a volcano or a piston door).
-protections:
-    burn: true
-    fade: true
-    grow: true
-    ignite: true
-    liquidFlow: false
-    melt: true
-    physics: true
-    piston: false
-    spread: true
 
 # Should MGLib silently download and install updates when available?
 # We highly recommend you set this to true so you may run plugins using new features.

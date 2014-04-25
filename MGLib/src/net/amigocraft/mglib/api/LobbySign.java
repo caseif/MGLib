@@ -3,6 +3,7 @@ package net.amigocraft.mglib.api;
 import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -231,43 +232,48 @@ public class LobbySign {
 				if (b != null){
 					if (b.getState() instanceof Sign){
 						final Sign sign = (Sign)b.getState();
+						ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
 						if (this.getType() == LobbyType.STATUS){
-							sign.setLine(0, "§4" + this.getArena());
+							sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
 							String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
 							if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0)
 								max = "∞";
 							String playerCount = r != null ? (r.getPlayers().size() + "/" + max) : (playerCount = "0/" + max);
 							if (!max.equals("∞")){
 								if (r != null && r.getPlayers().size() >= Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers())
-									playerCount = "§c" + playerCount;
+									playerCount = cm.getLobbyPlayerCountFullColor() + playerCount;
 								else
-									playerCount = "§a" + playerCount;
+									playerCount = cm.getLobbyPlayerCountColor() + playerCount;
 							}
 							else
-								playerCount = "§6" + playerCount;
+								playerCount = cm.getLobbyPlayerCountColor() + playerCount;
 							sign.setLine(1, playerCount);
 							Stage status = r == null ? Stage.WAITING : r.getStage();
-							String color = null;
-							if (status == Stage.PLAYING)
-								color = "§5";
-							else if (status == Stage.WAITING || status == Stage.RESETTING)
-								color = "§7";
-							else if (status == Stage.PREPARING)
-								color = "§c";
+							ChatColor color = null;
+							switch (status){
+							case WAITING:
+								color = cm.getLobbyWaitingColor();
+							case PREPARING:
+								color = cm.getLobbyPreparingColor();
+							case PLAYING:
+								color = cm.getLobbyPlayingColor();
+							case RESETTING:
+								color = cm.getLobbyResettingColor();
+							}
 							sign.setLine(2, color + status.toString());
 							String time = "";
 							if (status != Stage.WAITING && status != Stage.RESETTING){
 								if (r.getRemainingTime() == -1)
-									time = "§a" + "∞:∞";
+									time = cm.getLobbyTimeInfiniteColor() + "∞:∞";
 								else {
 									String seconds = Integer.toString(r.getRemainingTime() % 60);
 									if (seconds.length() == 1)
 										seconds = "0" + seconds;
 									time = df.format(r.getRemainingTime() / 60) + ":" + seconds;
 									if (r.getRemainingTime() <= 60)
-										time = "§c" + time;
+										time = cm.getLobbyTimeWarningColor() + time;
 									else
-										time = "§a" + time;
+										time = cm.getLobbyTimeColor() + time;
 								}
 							}
 							sign.setLine(3, time);
@@ -316,13 +322,14 @@ public class LobbySign {
 			if (b != null){
 				if (b.getState() instanceof Sign){
 					final Sign sign = (Sign)b.getState();
+					ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
 					if (this.getType() == LobbyType.STATUS){
-						sign.setLine(0, "§4" + this.getArena());
+						sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
 						String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
 						if (max.equals("-1"))
 							max = "∞";
-						sign.setLine(1, "§a0/" + max);
-						sign.setLine(2, "§7WAITING");
+						sign.setLine(1, cm.getLobbyPlayerCountColor() + "0/" + max);
+						sign.setLine(2, cm.getLobbyWaitingColor() + "WAITING");
 						sign.setLine(3, "");
 					}
 					else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0){

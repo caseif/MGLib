@@ -70,7 +70,7 @@ public class MGPlayer {
 	}
 	
 	/**
-	 * Retrieves the prefix of this player.
+	 * Retrieves the prefix of this player (used on lobby signs).
 	 * @return the prefix of this player.
 	 * @since 0.1
 	 */
@@ -116,7 +116,7 @@ public class MGPlayer {
 	}
 	
 	/**
-	 * Sets the prefix of this player.
+	 * Sets the prefix of this player (used on lobby signs).
 	 * @param prefix the new prefix of this player.
 	 * @since 0.1
 	 */

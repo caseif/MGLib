@@ -51,25 +51,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 class MGListener implements Listener {
 
 	static List<String> worlds = new ArrayList<String>();
-
-	private static boolean PREVENT_BURN = true;
-	private static boolean PREVENT_FADE = true;
-	private static boolean PREVENT_GROW = true;
-	private static boolean PREVENT_IGNITE = true;
-	private static boolean PREVENT_LIQUIDFLOW = false;
-	private static boolean PREVENT_PHYSICS = true;
-	private static boolean PREVENT_PISTON = false;
-	private static boolean PREVENT_SPREAD = true;
+	static List<String> plugins = new ArrayList<String>();
 
 	public static void initialize(){
-		PREVENT_BURN = Main.plugin.getConfig().getBoolean("protections.burn");
-		PREVENT_FADE = Main.plugin.getConfig().getBoolean("protections.fade");
-		PREVENT_GROW = Main.plugin.getConfig().getBoolean("protections.grow");
-		PREVENT_IGNITE = Main.plugin.getConfig().getBoolean("protections.ignite");
-		PREVENT_LIQUIDFLOW = Main.plugin.getConfig().getBoolean("protections.liquidFlow");
-		PREVENT_PHYSICS = Main.plugin.getConfig().getBoolean("protections.physics");
-		PREVENT_PISTON = Main.plugin.getConfig().getBoolean("protections.piston");
-		PREVENT_SPREAD = Main.plugin.getConfig().getBoolean("protections.spread");
 		for (Minigame mg : Minigame.getMinigameInstances())
 			MGListener.addWorlds(mg.getPlugin());
 	}
@@ -81,8 +65,10 @@ class MGListener implements Listener {
 			try {
 				y.load(f);
 				for (String k : y.getKeys(false))
-					if (!worlds.contains(y.getString(k + ".world")))
+					if (!worlds.contains(y.getString(k + ".world"))){
 						worlds.add(y.getString(k + ".world"));
+						plugins.add(plugin.getName());
+					}
 			}
 			catch (Exception ex){
 				ex.printStackTrace();
@@ -107,10 +93,11 @@ class MGListener implements Listener {
 									f.createNewFile();
 								y.load(f);
 								Location el = mg.getConfigManager().getDefaultExitLocation();
-								y.set(p + ".w", el.getWorld().getName());
-								y.set(p + ".x", el.getX());
-								y.set(p + ".y", el.getY());
-								y.set(p + ".z", el.getZ());
+								String pUUID = UUIDFetcher.getUUID(p).toString();
+								y.set(pUUID + ".w", el.getWorld().getName());
+								y.set(pUUID + ".x", el.getX());
+								y.set(pUUID + ".y", el.getY());
+								y.set(pUUID + ".z", el.getZ());
 								y.save(f);
 							}
 							catch (Exception ex){
@@ -137,12 +124,21 @@ class MGListener implements Listener {
 									f.createNewFile();
 								y.load(f);
 								if (y.isSet("players")){
-									if (y.isSet(p))
-										MGPlayer.resetPlayer(p, new Location(
-												Bukkit.getWorld(y.getString(p + ".w")),
-												y.getDouble(p + ".x"),
-												y.getDouble(p + ".y"),
-												y.getDouble(p + ".z")));
+									String pUUID = UUIDFetcher.getUUID(p).toString();
+									if (y.isSet(p)){
+										final String ww = y.getString(pUUID + ".w");
+										final double xx = y.getDouble(pUUID + ".x");
+										final double yy = y.getDouble(pUUID + ".y");
+										final double zz = y.getDouble(pUUID + ".z");
+										Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
+											public void run(){
+												try {
+													MGPlayer.resetPlayer(p, new Location(Bukkit.getWorld(ww), xx, yy, zz));
+												}
+												catch (PlayerOfflineException ex){} // this can never happen
+											}
+										});
+									}
 								}
 							}
 							catch (Exception ex){
@@ -219,8 +215,11 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
 				if (r.getPlayers().containsKey(e.getPlayer().getName()))
-					mg.getRollbackManager().logBlockChange(e.getBlock(),
-							e.getBlockReplacedState().getType().toString(), r.getArena());
+					if (mg.getConfigManager().isBlockPlaceAllowed())
+						mg.getRollbackManager().logBlockChange(e.getBlock(),
+								e.getBlockReplacedState().getType().toString(), r.getArena());
+					else
+						e.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -228,62 +227,119 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
 				if (r.getPlayers().containsKey(e.getPlayer().getName()))
-					mg.getRollbackManager().logBlockChange(e.getBlock(),
-							e.getBlock().getType().toString(), r.getArena());
+					if (mg.getConfigManager().isBlockBreakAllowed())
+						mg.getRollbackManager().logBlockChange(e.getBlock(),
+								e.getBlock().getType().toString(), r.getArena());
+					else
+						e.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBurn(BlockBurnEvent e){
-		if (PREVENT_BURN && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockBurnAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent e){
-		if (PREVENT_FADE && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFadeAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockGrow(BlockGrowEvent e){
-		if (PREVENT_GROW && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockGrowAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent e){
-		if (PREVENT_IGNITE && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockIgniteAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFlow(BlockFromToEvent e){
-		if (PREVENT_LIQUIDFLOW && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFlowAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent e){
-		if (PREVENT_PHYSICS && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPhysicsAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPiston(BlockPistonExtendEvent e){
-		if (PREVENT_PISTON && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPiston(BlockPistonRetractEvent e){
-		if (PREVENT_PISTON && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockSpread(BlockSpreadEvent e){
-		if (PREVENT_SPREAD && worlds.contains(e.getBlock().getWorld().getName()))
-			e.setCancelled(true);
+		String w = e.getBlock().getWorld().getName();
+		if (worlds.contains(w))
+		for (int i = 0; i < worlds.size(); i++)
+			if (worlds.get(i).equals(w))
+				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockSpreadAllowed()){
+					e.setCancelled(true);
+					return;
+				}
 	}
 
 	@EventHandler
@@ -389,5 +445,5 @@ class MGListener implements Listener {
 	public void onMinigameRoundRollback(MinigameRoundRollbackEvent e){
 		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
 	}
-	
+
 }
