@@ -238,108 +238,108 @@ class MGListener implements Listener {
 	public void onBlockBurn(BlockBurnEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockBurnAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockBurnAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFadeAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFadeAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockGrow(BlockGrowEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockGrowAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockGrowAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockIgniteAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockIgniteAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFlow(BlockFromToEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFlowAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFlowAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPhysicsAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPhysicsAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPiston(BlockPistonExtendEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPiston(BlockPistonRetractEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockSpread(BlockSpreadEvent e){
 		String w = e.getBlock().getWorld().getName();
 		if (worlds.contains(w))
-		for (int i = 0; i < worlds.size(); i++)
-			if (worlds.get(i).equals(w))
-				if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockSpreadAllowed()){
-					e.setCancelled(true);
-					return;
-				}
+			for (int i = 0; i < worlds.size(); i++)
+				if (worlds.get(i).equals(w))
+					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockSpreadAllowed()){
+						e.setCancelled(true);
+						return;
+					}
 	}
 
 	@EventHandler
@@ -379,6 +379,14 @@ class MGListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e){
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			MGPlayer p = mg.getMGPlayer(e.getPlayer().getName());
+			if (p != null)
+				if (p.isDead()){
+					e.setCancelled(true);
+					return;
+				}
+		}
 		if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK){
 			if (e.getClickedBlock().getState() instanceof Sign){
 				for (Minigame mg : Minigame.getMinigameInstances()){

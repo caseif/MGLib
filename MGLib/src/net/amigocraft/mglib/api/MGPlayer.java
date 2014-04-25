@@ -3,7 +3,9 @@ package net.amigocraft.mglib.api;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
@@ -22,9 +24,9 @@ public class MGPlayer {
 
 	/**
 	 * Creates a new MGPlayer instance.
-	 * @param plugin The plugin to associate the MGPlayer with.
-	 * @param name The username of the player.
-	 * @param arena The arena of the player (this argument is subject to change).
+	 * @param plugin the plugin to associate the MGPlayer with.
+	 * @param name the username of the player.
+	 * @param arena the arena of the player (this argument is subject to change).
 	 * @since 0.1
 	 */
 	public MGPlayer(String plugin, String name, String arena){
@@ -35,7 +37,7 @@ public class MGPlayer {
 
 	/**
 	 * Gets the minigame plugin associated with this {@link MGPlayer}.
-	 * @return The minigame plugin associated with this {@link MGPlayer}.
+	 * @return the minigame plugin associated with this {@link MGPlayer}.
 	 * @since 0.1
 	 */
 	public String getPlugin(){
@@ -44,7 +46,7 @@ public class MGPlayer {
 
 	/**
 	 * Gets the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
-	 * @return The MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
+	 * @return the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
 	 * @since 0.1
 	 */
 	public Minigame getMinigame(){
@@ -53,7 +55,7 @@ public class MGPlayer {
 
 	/**
 	 * Gets the username of this {@link MGPlayer}.
-	 * @return The username of this {@link MGPlayer}.
+	 * @return the username of this {@link MGPlayer}.
 	 * @since 0.1
 	 */
 	public String getName(){
@@ -62,13 +64,13 @@ public class MGPlayer {
 
 	/**
 	 * Gets the arena associated with this {@link MGPlayer}.
-	 * @return The arena associated with this {@link MGPlayer}.
+	 * @return the arena associated with this {@link MGPlayer}.
 	 * @since 0.1
 	 */
 	public String getArena(){
 		return arena;
 	}
-	
+
 	/**
 	 * Retrieves the prefix of this player (used on lobby signs).
 	 * @return the prefix of this player.
@@ -89,7 +91,7 @@ public class MGPlayer {
 
 	/**
 	 * Gets whether this player is "dead" in the minigame.
-	 * @return Whether this player is "dead" in the minigame (can return true even if {@link Player#isDead()} returns
+	 * @return whether this player is "dead" in the minigame (can return true even if {@link Player#isDead()} returns
 	 * false).
 	 * @since 0.1
 	 */
@@ -99,7 +101,7 @@ public class MGPlayer {
 
 	/**
 	 * Gets the {@link Round} associated with this player.
-	 * @return The {@link Round} associated with this player.
+	 * @return the {@link Round} associated with this player.
 	 * @since 0.1
 	 */
 	public Round getRound(){
@@ -108,13 +110,25 @@ public class MGPlayer {
 
 	/**
 	 * Changes the alive status of this {@link MGPlayer}.
-	 * @param dead Whether the player is "dead."
+	 * @param dead whether the player is "dead."
 	 * @since 0.1
 	 */
 	public void setDead(boolean dead){
 		this.dead = dead;
+		if (dead){
+			Player p = Bukkit.getPlayer(name);
+			for (Player pl : Bukkit.getOnlinePlayers())
+				pl.hidePlayer(p); //TODO: Set gamemode to 3 (SPECTATOR) if supported
+		}
+		else {
+			Player p = Bukkit.getPlayer(name);
+			for (Player pl : Bukkit.getOnlinePlayers())
+				pl.showPlayer(p);
+		}
+		Minigame.getMinigameInstance(plugin).getLobbyManager().update(this.getArena());
+		Bukkit.getPluginManager().callEvent(new MGPlayerDeathEvent(this.getRound(), this));
 	}
-	
+
 	/**
 	 * Sets the prefix of this player (used on lobby signs).
 	 * @param prefix the new prefix of this player.
@@ -148,7 +162,7 @@ public class MGPlayer {
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
 				setArena(null); // clear the arena from the object
-				setDead(false); // make sure they're not dead when they join a new round
+				setDead(false); // make sure they're not dead when they join a new round (or invisible)
 				r.getPlayers().remove(name); // remove the player from the round object
 				reset(location); // reset the object and send the player to the exit point
 				Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(r, this));
@@ -198,7 +212,7 @@ public class MGPlayer {
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
 		if (location != null)
-			p.teleport(location); // teleport the player
+			p.teleport(location, TeleportCause.PLUGIN); // teleport the player
 	}
 
 	public boolean equals(Object p){

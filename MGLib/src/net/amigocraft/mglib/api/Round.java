@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.collect.Lists;
 
@@ -340,6 +341,27 @@ public class Round {
 						}
 						if (!stageChange)
 							r.tick();
+						//TODO: Allow for a grace period upon player disconnect
+						if (r.getMinBound() != null){
+							// this whole bit handles keeping player inside the arena
+							//TODO: Possibly make an event for when a player wanders out of an arena
+							for (MGPlayer p : r.getPlayerList()){
+								Player pl = Bukkit.getPlayer(p.getName());
+								Location l = pl.getLocation();
+								if (l.getX() < r.getMinBound().getX())
+									pl.teleport(new Location(l.getWorld(), r.getMinBound().getX(), l.getY(), l.getZ()), TeleportCause.PLUGIN);
+								else if (l.getX() > r.getMaxBound().getX())
+									pl.teleport(new Location(l.getWorld(), r.getMaxBound().getX(), l.getY(), l.getZ()), TeleportCause.PLUGIN);
+								else if (l.getY() < r.getMinBound().getY())
+									pl.teleport(new Location(l.getWorld(), l.getX(), r.getMinBound().getY(), l.getZ()), TeleportCause.PLUGIN);
+								else if (l.getY() > r.getMaxBound().getY())
+									pl.teleport(new Location(l.getWorld(), l.getX(), r.getMinBound().getY(), l.getZ()), TeleportCause.PLUGIN);
+								else if (l.getZ() < r.getMinBound().getZ())
+									pl.teleport(new Location(l.getWorld(), l.getX(), l.getY(), r.getMinBound().getZ()), TeleportCause.PLUGIN);
+								else if (l.getZ() > r.getMaxBound().getZ())
+									pl.teleport(new Location(l.getWorld(), l.getX(), l.getY(), r.getMinBound().getZ()), TeleportCause.PLUGIN);
+							}
+						}
 						if (r.getStage() == Stage.PLAYING || r.getStage() == Stage.PREPARING)
 							Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
 					}
@@ -469,7 +491,7 @@ public class Round {
 		mp.setDead(false); // make sure they're not dead the second they join.
 		players.put(name, mp); // register player with round object
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
-		p.teleport(spawn); // teleport the player to it
+		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
 		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 	}
 
@@ -549,7 +571,7 @@ public class Round {
 	public void updateSigns(){
 		this.getMinigame().getLobbyManager().update(arena);
 	}
-	
+
 	/**
 	 * Retrieves this round's exit location.
 	 * @return this round's exit location.
@@ -558,7 +580,7 @@ public class Round {
 	public Location getExitLocation(){
 		return exitLocation;
 	}
-	
+
 	/**
 	 * Sets this round's exit location.
 	 * @param location the new exit location for this round.
