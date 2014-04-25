@@ -1,6 +1,7 @@
 package net.amigocraft.mglib.event.round;
 
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.api.Stage;
 
 /**
  * Fired once per second or 20 ticks, when a round "ticks"
@@ -12,7 +13,10 @@ public class MinigameRoundTickEvent extends MinigameEvent {
 	
 	/**
 	 * You probably shouldn't call this from your plugin. Let MGLib handle that.
-	 * @since 0,1
+	 * @param round the round which has ticked.
+	 * @param oldTime the round time before the tick.
+	 * @param stageChange whether the tick resulted in a stage change (e.g. from {@link Stage#PREPARING} to {@link Stage#PLAYING}.
+	 * @since 0.1
 	 */
 	public MinigameRoundTickEvent(Round round, int oldTime, boolean stageChange){
 		super(round);

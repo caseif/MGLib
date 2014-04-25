@@ -30,7 +30,7 @@ public class ArenaFactory {
 		this.plugin = plugin;
 		this.arena = arena;
 		this.world = world;
-		setWorld(world).setMaxPlayers(32);
+		setWorld(world);
 		if (!MGUtil.getWorlds().contains(world))
 			MGUtil.getWorlds().add(world); // register world with event listener
 	}
@@ -85,26 +85,6 @@ public class ArenaFactory {
 		}, 1L).getTaskId();
 		return this;
 	}
-	
-	/**
-	 * Sets the maximum number of players allowed in this arena per round.
-	 * @param maxPlayers The maximum number of players allowed in this arena.
-	 * @return This ArenaFactory.
-	 * @since 0.1
-	 */
-	public ArenaFactory setMaxPlayers(int maxPlayers){
-		if (yaml == null)
-			yaml = MGUtil.loadArenaYaml(plugin);
-		else
-			Bukkit.getScheduler().cancelTask(timerHandle);
-		yaml.set(arena + ".max-players", maxPlayers);
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Minigame.getMinigameInstance(plugin).getPlugin(), new Runnable(){
-			public void run(){
-				writeChanges();
-			}
-		}, 1L).getTaskId();
-		return this;
-	}
 
 	/**
 	 * Adds a spawn to the given arena with the given coordinates, pitch, and yaw.
@@ -113,6 +93,7 @@ public class ArenaFactory {
 	 * @param z The z-coordinate of the new spawn.
 	 * @param pitch The pitch (x- and z-rotation) of the new spawn.
 	 * @param yaw The yaw (y-rotation) of the new spawn.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @since 0.1
 	 */
 	public ArenaFactory addSpawn(double x, double y, double z, float pitch, float yaw){
@@ -158,7 +139,7 @@ public class ArenaFactory {
 	 * @param x The x-coordinate of the new spawn.
 	 * @param y The y-coordinate of the new spawn.
 	 * @param z The z-coordinate of the new spawn.
-	 * @return This {@link ArenaFactory} object.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @since 0.1
 	 */
 	public ArenaFactory addSpawn(double x, double y, double z){
@@ -167,21 +148,20 @@ public class ArenaFactory {
 
 	/**
 	 * Adds a spawn to the given arena with the given {@link Location}.
-	 * @param arena The arena to add the new spawn to.
 	 * <br><br>
 	 * <b>Note:</b> it is recommended that you use {@link ArenaFactory#addSpawn(Location, boolean) addSpawn(Location, booelan)} if an instance
 	 * of a Location at these coordinates already exists.
-	 * @param l The location of the new spawn.
+	 * @param location The location of the new spawn.
 	 * @param saveOrientation Whether to save the {@link Location}'s pitch and yaw to the spawn (Defaults to false if omitted).
-	 * @return This {@link ArenaFactory} object.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
 	 * @since 0.1
 	 */
-	public ArenaFactory addSpawn(Location l, boolean saveOrientation) throws InvalidLocationException {
-		if (l.getWorld().getName().equals(world)){
+	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException {
+		if (location.getWorld().getName().equals(world)){
 			if (saveOrientation)
-				return addSpawn(l.getX(), l.getY(), l.getZ(), l.getPitch(), l.getYaw());
-			return addSpawn(l.getX(), l.getY(), l.getZ());
+				return addSpawn(location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getYaw());
+			return addSpawn(location.getX(), location.getY(), location.getZ());
 		}
 		else
 			throw new InvalidLocationException();
@@ -189,23 +169,21 @@ public class ArenaFactory {
 
 	/**
 	 * Adds a spawn to the given arena with the given {@link Location}.
-	 * @param arena The arena to add the new spawn to.
-	 * @param l The location of the new spawn.
-	 * @return This {@link ArenaFactory} object.
+	 * @param location The location of the new spawn.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
 	 * @since 0.1
 	 */
-	public ArenaFactory addSpawn(Location l) throws InvalidLocationException {
-		return addSpawn(l, false);
+	public ArenaFactory addSpawn(Location location) throws InvalidLocationException {
+		return addSpawn(location, false);
 	}
 
 	/**
 	 * Deletes a spawn from the given arena at the given coordinates.
-	 * @param arena The arena to delete the spawn from.
 	 * @param x The x-coordinate of the spawn to delete.
 	 * @param y The y-coordinate of the spawn to delete.
 	 * @param z The z-coordinate of the spawn to delete.
-	 * @return This {@link ArenaFactory} object.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @since 0.1
 	 */
 	public ArenaFactory deleteSpawn(double x, double y, double z){
@@ -234,18 +212,18 @@ public class ArenaFactory {
 
 	/**
 	 * Deletes a spawn from the given arena at the given {@link Location}.
-	 * @param l The {@link Location} of the spawn to delete.
-	 * @return This {@link ArenaFactory} object.
+	 * @param location The {@link Location} of the spawn to delete.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @since 0.1
 	 */
-	public ArenaFactory deleteSpawn(Location l){
-		return deleteSpawn(l.getX(), l.getY(), l.getZ());
+	public ArenaFactory deleteSpawn(Location location){
+		return deleteSpawn(location.getX(), location.getY(), location.getZ());
 	}
 
 	/**
 	 * Deletes a spawn from the given arena at the given {@link Location}.
-	 * @param l The {@link Location} of the spawn to delete.
-	 * @return This {@link ArenaFactory} object.
+	 * @param index The internal index of the spawn to delete.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @since 0.1
 	 */
 	public ArenaFactory deleteSpawn(int index){
@@ -280,7 +258,7 @@ public class ArenaFactory {
 	 * @param x The minimum x-value.
 	 * @param y The minimum y-value.
 	 * @param z The minimum z-value.
-	 * @return This {@link ArenaFactory} object.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @since 0.1
 	 */
 	public ArenaFactory setMinBound(double x, double y, double z){
@@ -307,16 +285,14 @@ public class ArenaFactory {
 	
 	/**
 	 * Sets the minimum boundary of this arena.
-	 * @param x The minimum x-value.
-	 * @param y The minimum y-value.
-	 * @param z The minimum z-value.
-	 * @return This {@link ArenaFactory} object.
+	 * @param location the {@link Location} representing the maximum boundary.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
 	 * @since 0.1
 	 */
-	public ArenaFactory setMinBound(Location l) throws InvalidLocationException {
-		if (l.getWorld().getName().equals(yaml.get(arena + ".world"))){
-			return setMinBound(l.getX(), l.getY(), l.getZ());
+	public ArenaFactory setMinBound(Location location) throws InvalidLocationException {
+		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))){
+			return setMinBound(location.getX(), location.getY(), location.getZ());
 		}
 		else
 			throw new InvalidLocationException();
@@ -327,7 +303,7 @@ public class ArenaFactory {
 	 * @param x The maximum x-value.
 	 * @param y The maximum y-value.
 	 * @param z The maximum z-value.
-	 * @return This {@link ArenaFactory} object.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @since 0.1
 	 */
 	public ArenaFactory setMaxBound(double x, double y, double z){
@@ -354,16 +330,14 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the maximum boundary of this arena.
-	 * @param x The maximum x-value.
-	 * @param y The maximum y-value.
-	 * @param z The maximum z-value.
-	 * @return This {@link ArenaFactory} object.
+	 * @param location the {@link Location} representing the maximum boundary.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
 	 * @since 0.1
 	 */
-	public ArenaFactory setMaxBound(Location l) throws InvalidLocationException {
-		if (l.getWorld().getName().equals(yaml.get(arena + ".world"))){
-			return setMaxBound(l.getX(), l.getY(), l.getZ());
+	public ArenaFactory setMaxBound(Location location) throws InvalidLocationException {
+		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))){
+			return setMaxBound(location.getX(), location.getY(), location.getZ());
 		}
 		else
 			throw new InvalidLocationException();
@@ -375,8 +349,9 @@ public class ArenaFactory {
 	}
 
 	/**
-	 * Returns whether this instance is newly created. This will permanently return false after the 
-	 * {@link ArenaFactory#createArenaFactory(String, String) createArenaFactory()} method is called a second time.
+	 * Determines whether this instance is newly created. This will permanently return false after the 
+	 * {@link ArenaFactory#createArenaFactory(String, String, String) createArenaFactory()} method is called a second time.
+	 * @return whether this instance is newly created.
 	 * @since 0.1
 	 */
 	public boolean isNewInstance(){

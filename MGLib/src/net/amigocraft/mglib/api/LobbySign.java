@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
+import net.amigocraft.mglib.LobbyManager;
 import net.amigocraft.mglib.Main;
 
 public class LobbySign {
@@ -23,7 +24,18 @@ public class LobbySign {
 	private LobbyType type;
 	private int index;
 
-	//TODO: Document all this. I *really* don't feel like doing that right now.
+	/**
+	 * Creates a new {@link LobbySign} object.
+	 * @param x the x-coordinate of the physical sign.
+	 * @param y the y-coordinate of the physical sign.
+	 * @param z the z-coordinate of the physical sign.
+	 * @param plugin the name of the plugin the sign is to be associated with.
+	 * @param world the world containing the physical sign.
+	 * @param arena the arena the sign should track.
+	 * @param number the number of the sign (used for {@link LobbyType#PLAYERS player signs}).
+	 * @param type the {@link LobbyType type} of the sign.
+	 * @since 0.1
+	 */
 	public LobbySign(int x, int y, int z, String plugin, String world, String arena, int number, LobbyType type){
 		this.x = x;
 		this.y = y;
@@ -35,82 +47,181 @@ public class LobbySign {
 		this.type = type;
 	}
 
+	/**
+	 * Retrieves the physical x-coordinate of this lobby sign.
+	 * @return the physical x-coordinate of this lobby sign.
+	 * @since 0.1
+	 */
 	public int getX(){
 		return x;
 	}
 
+	/**
+	 * Sets the physical x-coordinate of this lobby sign.
+	 * @param x the physical x-coordinate of this lobby sign.
+	 * @since 0.1
+	 */
 	public void setX(int x){
 		this.x = x;
 	}
 
+	/**
+	 * Retrieves the physical y-coordinate of this lobby sign.
+	 * @return the physical y-coordinate of this lobby sign.
+	 * @since 0.1
+	 */
 	public int getY(){
 		return y;
 	}
 
+	/**
+	 * Sets the physical y-coordinate of this lobby sign.
+	 * @param x the physical y-coordinate of this lobby sign.
+	 * @since 0.1
+	 */
 	public void setY(int y){
 		this.y = y;
 	}
 
+	/**
+	 * Retrieves the physical z-coordinate of this lobby sign.
+	 * @return the physical z-coordinate of this lobby sign.
+	 * @since 0.1
+	 */
 	public int getZ(){
 		return z;
 	}
 
+	/**
+	 * Sets the physical z-coordinate of this lobby sign.
+	 * @param x the physical z-coordinate of this lobby sign.
+	 * @since 0.1
+	 */
 	public void setZ(int z){
 		this.z = z;
 	}
 
+	/**
+	 * Retrieves the plugin this lobby sign is associated with.
+	 * @return the plugin this lobby sign is associated with.
+	 * @since 0.1
+	 */
 	public String getPlugin(){
 		return plugin;
 	}
 
+	/**
+	 * Retrieves the name of the world containing this physical lobby sign.
+	 * @return the name of the world containing this physical lobby sign.
+	 * @since 0.1
+	 */
 	public String getWorld(){
 		return world;
 	}
 
+	/**
+	 * Sets the name of the world containing this physical lobby sign.
+	 * @param world the name of the world containing this physical lobby sign.
+	 * @since 0.1
+	 */
 	public void setWorld(String world){
 		this.world = world;
 	}
 
+	/**
+	 * Retrieves the arena associated with this lobby sign.
+	 * @return the arena associated with this lobby sign.
+	 * @since 0.1
+	 */
 	public String getArena(){
 		return arena;
 	}
 
+	/**
+	 * Sets the arena associated with this lobby sign.
+	 * @param arena the arena associated with this lobby sign.
+	 * @since 0.1
+	 */
 	public void setArena(String arena){
 		this.arena = arena;
 	}
 
+	/**
+	 * Retrieves the number of this lobby sign.
+	 * @return the number of this lobby sign.
+	 * @since 0.1
+	 */
 	public int getNumber(){
 		return number;
 	}
 
+	/**
+	 * Sets the number of this lobby sign.
+	 * @param number the number of this lobby sign.
+	 * @since 0.1
+	 */
 	public void setNumber(int number){
 		this.number = number;
 	}
 
+	/**
+	 * Retrieves the {@link LobbyType type} of this lobby sign.
+	 * @return the {@link LobbyType type} of this lobby sign.
+	 * @since 0.1
+	 */
 	public LobbyType getType(){
 		return type;
 	}
 
+	/**
+	 * Sets the {@link LobbyType type} of this lobby sign.
+	 * @param type the {@link LobbyType type} of this lobby sign.
+	 * @since 0.1
+	 */
 	public void setType(LobbyType type){
 		this.type = type;
 	}
 
+	/**
+	 * Retrieves the internal index of this lobby sign.
+	 * @return the internal index of this lobby sign.
+	 * @since 0.1
+	 */
 	public int getIndex(){
 		return index;
 	}
 
+	/**
+	 * Sets the internal index of this lobby sign.
+	 * @param index the internal index of this lobby sign.
+	 * @since 0.1
+	 */
 	public void setIndex(int index){
 		this.index = index;
 	}
 
+	/**
+	 * Saves this lobby sign's data to disk.
+	 * @since 0.1
+	 */
 	public void save(){
 		Minigame.getMinigameInstance(plugin).getLobbyManager().save(this);
 	}
 
+	/**
+	 * Saves this lobby sign's data to disk and removes it from memory.
+	 * @since 0.1
+	 */
 	public void remove(){
-		Minigame.getMinigameInstance(plugin).getLobbyManager().save(this);
+		LobbyManager lm = Minigame.getMinigameInstance(plugin).getLobbyManager();
+		lm.save(this);
+		lm.remove(this);
 	}
 
+	/**
+	 * Updates this lobby sign's text based on its arena's current status.
+	 * @since 0.1
+	 */
 	public void update(){
 		Round r = Minigame.getMinigameInstance(plugin).getRound(arena);
 		if (r != null){
@@ -194,6 +305,10 @@ public class LobbySign {
 			reset();
 	}
 
+	/**
+	 * Resets this lobby sign's text as if its arena was empty and in {@link Stage#WAITING}.
+	 * @since 0.1
+	 */
 	public void reset(){
 		World w = Bukkit.getWorld(this.getWorld());
 		if (w != null){

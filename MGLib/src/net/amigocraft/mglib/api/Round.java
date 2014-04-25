@@ -56,17 +56,13 @@ public class Round {
 	/**
 	 * Creates a new {@link Round} with the given parameters.
 	 * <br><br>
-	 * Please use {@link Minigame#createRound(String, boolean, int, int) Minigame#createRound()} unless you
+	 * Please use {@link Minigame#createRound(String)} unless you
 	 * understand the implications of using this constructor.
-	 * @param plugin The plugin which this round should be associated with.
-	 * @param arena The name of the arena in which this round takes place in.
-	 * @param discrete Whether this round will take place in a discrete world (uses a defined arena when false).
-	 * @param preparationTime The round's total preparation time. Use -1 for no limit, or 0 for no preparation phase.
-	 * @param roundTime The round's total playing time. Use -1 for no limit.
+	 * @param plugin the plugin which this round should be associated with.
+	 * @param arena the name of the arena in which this round takes place in.
 	 * @throws ArenaNotExistsException if the specified arena does not exist.
 	 */
-	public Round(String plugin, String arena)
-			throws ArenaNotExistsException {
+	public Round(String plugin, String arena) throws ArenaNotExistsException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
 		if (!y.contains(arena))
 			throw new ArenaNotExistsException();
@@ -358,6 +354,7 @@ public class Round {
 
 	/**
 	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
+	 * @param Whether the round was ended due to its timer expiring. This will default to false if omitted.
 	 * @throws IllegalStateException if the timer has not been started.
 	 * @since 0.1
 	 */
@@ -479,7 +476,7 @@ public class Round {
 
 	/**
 	 * Removes a given player from this {@link Round round} and teleports them to the given location.
-	 * @param name The player to remove from this {@link Round round).
+	 * @param name The player to remove from this {@link Round round}.
 	 * @param location The location to teleport the player to.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerNotPresentException if the player are not in this round.
@@ -534,16 +531,16 @@ public class Round {
 
 	/**
 	 * Creates a new LobbySign to be managed
-	 * @param l The location to create the sign at.
+	 * @param location The location to create the sign at.
 	 * @param type The type of the sign ("status" or "players")
-	 * @param number The number of the sign (applicable only for "players" signs)
+	 * @param index The number of the sign (applicable only for "players" signs)
 	 * @throws ArenaNotExistsException  if the specified arena does not exist.
 	 * @throws IllegalArgumentException if the specified location does not contain a sign.
 	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
 	 * @since 0.1
 	 */
-	public void addSign(Location l, LobbyType type, int index) throws ArenaNotExistsException, IllegalArgumentException {
-		this.getMinigame().getLobbyManager().add(l, this.getArena(), type, index);
+	public void addSign(Location location, LobbyType type, int index) throws ArenaNotExistsException, IllegalArgumentException {
+		this.getMinigame().getLobbyManager().add(location, this.getArena(), type, index);
 	}
 
 	/**

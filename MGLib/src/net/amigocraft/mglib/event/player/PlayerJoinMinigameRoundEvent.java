@@ -12,9 +12,9 @@ public class PlayerJoinMinigameRoundEvent extends MGPlayerEvent {
 	protected Round round;
 	
 	/**
-	 * Creates a new instance of this {@link Event event}.
-	 * @param round
-	 * @param player
+	 * Creates a new instance of this event.
+	 * @param round the round the player has joined.
+	 * @param player the player involved in this event.
 	 * @since 0.1
 	 */
 	public PlayerJoinMinigameRoundEvent(Round round, MGPlayer player){
@@ -23,8 +23,8 @@ public class PlayerJoinMinigameRoundEvent extends MGPlayerEvent {
 	}
 	
 	/**
-	 * Returns the {@link Round round} involved in this {@link PlayerJoinMinigameRoundEvent event}.
-	 * @return the {@link Round round} involved in this {@link PlayerJoinMinigameRoundEvent event}.
+	 * Returns the {@link Round round} involved in this event.
+	 * @return the {@link Round round} involved in this event.
 	 * @since 0.1
 	 */
 	public Round getRound(){

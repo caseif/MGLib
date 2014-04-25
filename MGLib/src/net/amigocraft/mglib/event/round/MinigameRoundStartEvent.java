@@ -11,8 +11,8 @@ public class MinigameRoundStartEvent extends MinigameEvent {
 	private boolean prepared;
 	
 	/**
-	 * Creates a new instance of this {@link Event event}.
-	 * @param round The {@link Round} associated with this {@link MinigameRoundStartEvent event}.
+	 * Creates a new instance of this event.
+	 * @param round The {@link Round} associated with this event.
 	 * @param prepared Whether the round start was on account of its preparation period ending.
 	 * @since 0.1
 	 */
@@ -22,8 +22,8 @@ public class MinigameRoundStartEvent extends MinigameEvent {
 	}
 	
 	/**
-	 * Creates an instance of this {@link Event event}.
-	 * @param round The {@link Round} associated with this {@link MinigameRoundStartEvent}.
+	 * Creates an instance of this event.
+	 * @param round The {@link Round} associated with this {@link org.bukkit.event.Event}.
 	 * @since 0.1
 	 */
 	public MinigameRoundStartEvent(Round round){

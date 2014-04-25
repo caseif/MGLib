@@ -9,8 +9,8 @@ import net.amigocraft.mglib.api.Round;
 public class MinigameRoundPrepareEvent extends MinigameEvent {
 	
 	/**
-	 * Creates a new instance of this {@link Event event}.
-	 * @param round The round associated with this {@link MinigameRoundPrepareEvent event}.
+	 * Creates a new instance of this event.
+	 * @param round The round associated with this event.
 	 * @since 0.1
 	 */
 	public MinigameRoundPrepareEvent(Round round){

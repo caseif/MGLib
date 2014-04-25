@@ -10,7 +10,7 @@ public class MinigameRoundEndEvent extends MinigameEvent {
 	private boolean outOfTime;
 	
 	/**
-	 * Creates a new instance of this {@link Event event}.
+	 * Creates a new instance of this event.
 	 * @param round The {@link Round} which has ended.
 	 * @param outOfTime Whether the round ended because its timer reached 0.
 	 * @since 0.1

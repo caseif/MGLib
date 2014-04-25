@@ -4,7 +4,7 @@ import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.event.MGLibEvent;
 
 /**
- * Fired when an {@link Event event} involving a {@link MGPlayer player} occurs.
+ * Fired when an event involving a {@link MGPlayer player} occurs.
  * @since 0.1
  */
 public class MGPlayerEvent extends MGLibEvent {

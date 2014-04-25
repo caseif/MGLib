@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev24
+ * @version 0.1-dev25
  * @since 0.1
  */
 public class Minigame {
@@ -154,6 +154,7 @@ public class Minigame {
 	 * @param spawn The initial spawn point of the arena (more may be added later).
 	 * @param corner1 A corner of the arena.
 	 * @param corner2 The corner of the arena opposite <b>corner1</b>.
+	 * @return the new arena's {@link ArenaFactory}.
 	 * @throws InvalidLocationException if the given locations are not in the same world.
 	 * @throws ArenaExistsException if an arena of the same name already exists.
 	 * @since 0.1
@@ -288,6 +289,8 @@ public class Minigame {
 
 	/**
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
+	 * @param name the name of the arena to retrieve an {@link ArenaFactory} for.
+	 * @return the arena's {@link ArenaFactory}, or null if one does not exist.
 	 * @since 0.1
 	 */
 	public ArenaFactory getArenaFactory(String name){
@@ -295,7 +298,8 @@ public class Minigame {
 	}
 	
 	/**
-	 * For use within the library <b>only</b>. Please do not modify the returned map.
+	 * For use within the library <b><i>only</i></b>. Please do not modify the returned map.
+	 * @return a map of arena names and their corresponding {@link ArenaFactory ArenaFactories}.
 	 */
 	public HashMap<String, ArenaFactory> getArenaFactories(){
 		return arenaFactories;

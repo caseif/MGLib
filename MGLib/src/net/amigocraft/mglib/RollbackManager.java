@@ -48,7 +48,8 @@ public class RollbackManager {
 	}
 
 	/**
-	 * Retrieves the plugin associated with this rollback manager
+	 * Retrieves the plugin associated with this rollback manager.
+	 * @return the plugin associated with this rollback manager.
 	 * @since 0.1
 	 */
 	public JavaPlugin getPlugin(){
@@ -58,8 +59,8 @@ public class RollbackManager {
 	/**
 	 * Logs a block change.
 	 * @param block The block which was changed.
-	 * @param origType The original type of the block
-	 * @param arena The arena in which the block is contained
+	 * @param origType The original type of the block.
+	 * @param arena The arena in which the block is contained.
 	 * @since 0.1
 	 */
 	@SuppressWarnings("deprecation")

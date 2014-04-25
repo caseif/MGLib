@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev24
+ * @version 0.1-dev25
  * @since 0.1
  */
 public class Main extends JavaPlugin {
@@ -89,6 +89,7 @@ public class Main extends JavaPlugin {
 	
 	/**
 	 * This method should not be called from your plugin. So don't use it. Please.
+	 * @param plugin the plugin to register worlds for.
 	 */
 	public static void registerWorlds(JavaPlugin plugin){
 		MGListener.addWorlds(plugin);

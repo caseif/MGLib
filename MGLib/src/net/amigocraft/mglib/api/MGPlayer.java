@@ -80,6 +80,7 @@ public class MGPlayer {
 
 	/**
 	 * Sets the arena of this {@link MGPlayer}. Please do not call this method unless you understand the implications of doing so.
+	 * @param arena the new arena of this {@link MGPlayer}.
 	 * @since 0.1
 	 */
 	public void setArena(String arena){
@@ -135,6 +136,7 @@ public class MGPlayer {
 
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
+	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the round's default exit point.
 	 * @throws PlayerOfflineException if the given player is not online.
 	 * @throws PlayerNotPresentException if the given player is not in a round.
 	 * @since 0.1
