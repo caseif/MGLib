@@ -105,7 +105,7 @@ public class LobbyManager {
 	}
 
 	/**
-	 * Resets all lobby signs to their default state ({@link State#WAITING waiting stage} for {@link LobbyType#STATUS status} signs,
+	 * Resets all lobby signs to their default state ({@link Stage#WAITING waiting stage} for {@link LobbyType#STATUS status} signs,
 	 * blank for {@link LobbyType#PLAYERS player signs}).
 	 * @since 0.1
 	 */

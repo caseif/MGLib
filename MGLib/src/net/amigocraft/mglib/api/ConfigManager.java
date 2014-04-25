@@ -39,7 +39,7 @@ public class ConfigManager {
 
 	/**
 	 * Retrieves the name of the plugin associated with this config manager.
-	 * @param plugin the name of the plugin associated with this config manager.
+	 * return the name of the plugin associated with this config manager.
 	 * @since 0.1
 	 */
 	public String getPlugin(){
