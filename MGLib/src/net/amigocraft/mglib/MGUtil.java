@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @since 0.1
  */
 public class MGUtil {
-
+	
 	/**
 	 * Loads and returns the given plugin's arenas.yml file.
 	 * @param plugin The plugin to load the YAML file from.

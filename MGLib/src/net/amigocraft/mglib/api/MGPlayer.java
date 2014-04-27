@@ -1,10 +1,19 @@
 package net.amigocraft.mglib.api;
 
+import java.io.File;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
+import net.amigocraft.mglib.MGUtil;
+import net.amigocraft.mglib.Main;
+import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
@@ -119,11 +128,14 @@ public class MGPlayer {
 			Player p = Bukkit.getPlayer(name);
 			for (Player pl : Bukkit.getOnlinePlayers())
 				pl.hidePlayer(p); //TODO: Set gamemode to 3 (SPECTATOR) if supported
+			p.setFlying(true);
+			p.sendMessage("You are now dead! You have been made invisible to all players and are capable of flight.");
 		}
 		else {
 			Player p = Bukkit.getPlayer(name);
 			for (Player pl : Bukkit.getOnlinePlayers())
 				pl.showPlayer(p);
+			p.setFlying(false);
 		}
 		Minigame.getMinigameInstance(plugin).getLobbyManager().update(this.getArena());
 		Bukkit.getPluginManager().callEvent(new MGPlayerDeathEvent(this.getRound(), this));
@@ -151,20 +163,23 @@ public class MGPlayer {
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the round's default exit point.
-	 * @throws PlayerOfflineException if the given player is not online.
 	 * @throws PlayerNotPresentException if the given player is not in a round.
 	 * @since 0.1
 	 */
-	public void removeFromRound(Location location) throws PlayerOfflineException, PlayerNotPresentException {
+	public void removeFromRound(final Location location) throws PlayerNotPresentException {
 		Player p = Bukkit.getPlayer(name);
-		if (p == null) // check that the specified player is online
-			throw new PlayerOfflineException();
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
 				setArena(null); // clear the arena from the object
 				setDead(false); // make sure they're not dead when they join a new round (or invisible)
 				r.getPlayers().remove(name); // remove the player from the round object
-				reset(location); // reset the object and send the player to the exit point
+				Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
+					public void run(){
+						if (Bukkit.getPlayer(name) != null)
+							reset(location); // reset the object and send the player to the exit point (and reset the player's inventory
+					}
+				});
+
 				Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(r, this));
 				return;
 			}
@@ -173,22 +188,56 @@ public class MGPlayer {
 
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
-	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerNotPresentException if the player is not in a round.
 	 * @since 0.1
 	 */
-	public void removeFromRound() throws PlayerOfflineException, PlayerNotPresentException{
+	public void removeFromRound() throws PlayerNotPresentException {
 		removeFromRound(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
 
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
 	 * @param location The location to teleport the player to, or null to skip teleportation.
-	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1
 	 */
-	public void reset(Location location) throws PlayerOfflineException {
-		MGPlayer.resetPlayer(name, location);
+	@SuppressWarnings("deprecation")
+	public void reset(Location location){
+		final Player p = Bukkit.getPlayer(name);
+		if (p == null) // check that the specified player is online
+			return;
+		p.getInventory().clear();
+		try {
+			final File invF = new File(Main.plugin.getDataFolder() + File.separator + "inventories"
+					+ File.separator + UUIDFetcher.getUUIDOf(p.getName()) + ".dat");
+			if (invF.exists()){
+				YamlConfiguration invY = new YamlConfiguration();
+				invY.load(invF);
+				ItemStack[] invI = new ItemStack[36];
+				PlayerInventory pInv = (PlayerInventory)p.getInventory();
+				for (String k : invY.getKeys(false)){
+					if (MGUtil.isInteger(k))
+						invI[Integer.parseInt(k)] = invY.getItemStack(k);
+					else if (k.equalsIgnoreCase("h"))
+						pInv.setHelmet(invY.getItemStack(k));
+					else if (k.equalsIgnoreCase("c"))
+						pInv.setChestplate(invY.getItemStack(k));
+					else if (k.equalsIgnoreCase("l"))
+						pInv.setLeggings(invY.getItemStack(k));
+					else if (k.equalsIgnoreCase("b"))
+						pInv.setBoots(invY.getItemStack(k));
+				}
+				invF.delete();
+				p.getInventory().setContents(invI);
+				p.updateInventory();
+			}
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+			p.sendMessage(ChatColor.RED + "Failed to load inventory from disk!");
+		}
+		if (location != null){
+			p.teleport(location, TeleportCause.PLUGIN); // teleport the player
+		}
 	}
 
 	/**
@@ -197,22 +246,7 @@ public class MGPlayer {
 	 * @since 0.1
 	 */
 	public void reset() throws PlayerOfflineException {
-		MGPlayer.resetPlayer(name, Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
-	}
-
-	/**
-	 * Resets the given {@link Player Bukkit player} after they've left a round.
-	 * @param player The player to reset.
-	 * @param location The location to teleport the player to, or null to skip teleportation.
-	 * @throws PlayerOfflineException if the given player is not online.
-	 * @since 0.1
-	 */
-	public static void resetPlayer(String player, Location location) throws PlayerOfflineException {
-		Player p = Bukkit.getPlayer(player);
-		if (p == null) // check that the specified player is online
-			throw new PlayerOfflineException();
-		if (location != null)
-			p.teleport(location, TeleportCause.PLUGIN); // teleport the player
+		reset(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
 
 	public boolean equals(Object p){

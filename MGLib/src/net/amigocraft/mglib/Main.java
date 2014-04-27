@@ -1,6 +1,8 @@
 package net.amigocraft.mglib;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import net.amigocraft.mglib.api.Minigame;
@@ -9,12 +11,13 @@ import net.amigocraft.mglib.event.MGLibEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev28
+ * @version 0.1-dev29
  * @since 0.1
  */
 public class Main extends JavaPlugin {
@@ -69,6 +72,19 @@ public class Main extends JavaPlugin {
 			log.warning("You are running a development build of MGLib. As such, plugins using the library may not " +
 					"work correctly. If you're a developer, we strongly recommend building against a alpha/beta/release" +
 					"build of the library.");
+		
+		// store UUIDs of online players
+		List<String> names = new ArrayList<String>();
+		for (Player p : Bukkit.getOnlinePlayers())
+			names.add(p.getName());
+		try {
+			new UUIDFetcher(names).call();
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+			Main.log.severe("Failed to fetch UUIDs of online players");
+		}
+		
 		log.info(this + " is now ready!");
 	}
 
@@ -83,6 +99,7 @@ public class Main extends JavaPlugin {
 				r.end(false);
 		Minigame.uninitialize();
 		MGLibEvent.uninitialize();
+		UUIDFetcher.uninitialize();
 		log.info(this + " has been disabled!");
 		Main.uninitialize();
 	}

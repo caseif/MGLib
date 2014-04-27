@@ -23,8 +23,11 @@ public class ConfigManager {
 	private int roundPlayTime = 300;
 	private boolean joinRiP = false;
 	private boolean joinRwP = false;
+	private boolean pmsAllowed = true;
+	private boolean kitsAllowed = true;
 	private HashMap<String, ChatColor> lobbyColors = new HashMap<String, ChatColor>();
 	private HashMap<String, Boolean> actions = new HashMap<String, Boolean>();
+	private Class<? extends MGPlayer> playerClass = MGPlayer.class;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -431,6 +434,43 @@ public class ConfigManager {
 	public void setTeleportationAllowed(boolean allowed){
 		actions.put("teleport", allowed);
 	}
+	
+	/**
+	 * Retrieves whether players partaking in a minigame are permitted to send private messages or use the /pm command (default: true).
+	 * This can help limit communication of volatile information between teams, such as in <a href="http://dev.bukkit.org/bukkit-plugins/TTT">TTT</a>.
+	 * @return whether players partaking in a minigame are permitted to send private messages or use the /pm command.
+	 * @since 0.1
+	 */
+	public boolean arePMsAllowed(){
+		return pmsAllowed;
+	}
+	
+	/**
+	 * Sets whether players partaking in a minigame are permitted to send private messages or use the /pm command (default: true).
+	 * @param allowed whether players partaking in a minigame are permitted to send private messages or use the /pm command.
+	 * @since 0.1
+	 */
+	public void setPMsAllowed(boolean allowed){
+		this.pmsAllowed = allowed;
+	}
+	
+	/**
+	 * Retrieves whether players are permitted to use the /kit command while partaking in a minigame (default: true).
+	 * @return whether players are permitted to use the /kit command while partaking in a minigame.
+	 * @since 0.1
+	 */
+	public boolean areKitsAllowed(){
+		return kitsAllowed;
+	}
+	
+	/**
+	 * Sets whether players are permitted to use the /kit command while partaking in a minigame (default: true).
+	 * @param allowed whether players are permitted to use the /kit command while partaking in a minigame.
+	 * @since 0.1
+	 */
+	public void setKitsAllowed(boolean allowed){
+		this.kitsAllowed = allowed;
+	}
 
 	/**
 	 * Retrieves whether block placing is permitted for players in a {@link Round round}. (Default: false)
@@ -612,7 +652,22 @@ public class ConfigManager {
 		actions.put("block-spread", allowed);
 	}
 	
+	/**
+	 * Retrieves the {@link Class class} object used to store information about players in minigame rounds.
+	 * @return the {@link Class class} object used to store information about players in minigame rounds.
+	 * @since 0.1
+	 */
+	public Class<? extends MGPlayer> getPlayerClass(){
+		return playerClass;
+	}
 	
-	//TODO: And white/blacklisted actions
+	/**
+	 * Sets the {@link Class class} object used to store information about players in minigame rounds.
+	 * This may be used to add additional fields to MGLib's default {@link MGPlayer} class.
+	 * @since 0.1
+	 */
+	public void setPlayerClass(Class<? extends MGPlayer> clazz){
+		this.playerClass = clazz;
+	}
 	
 }

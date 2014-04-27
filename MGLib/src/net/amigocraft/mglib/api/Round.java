@@ -1,5 +1,7 @@
 package net.amigocraft.mglib.api;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +15,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
+import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundEndEvent;
@@ -478,8 +483,9 @@ public class Round {
 	 * @throws IllegalArgumentException if the round is preparing or in progress and the minigame prohibits joining.
 	 * @since 0.1
 	 */
+	@SuppressWarnings("deprecation")
 	public void addPlayer(String name) throws PlayerOfflineException {
-		Player p = Bukkit.getPlayer(name);
+		final Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
 		if (getStage() == Stage.PREPARING)
@@ -492,19 +498,74 @@ public class Round {
 				p.sendMessage(ChatColor.RED + "You may not join a round in progress!");
 				return;
 			}
-			MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
-			if (mp == null)
-				mp = new MGPlayer(plugin, name, arena);
-			else if (mp.getArena() == null)
-				mp.setArena(arena);
-			else {
-				throw new IllegalArgumentException("Player " + name + " is already in arena " + mp.getArena());
+		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
+		if (mp == null){
+			try {
+				mp = (MGPlayer)Minigame.getMinigameInstance(plugin).getConfigManager().getPlayerClass().getDeclaredConstructors()[0]
+						.newInstance(plugin, name, arena);
 			}
-			mp.setDead(false); // make sure they're not dead the second they join.
-			players.put(name, mp); // register player with round object
-			Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
-			p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
-			Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+			catch (InvocationTargetException ex){ // any error thrown from the called constructor
+				ex.getTargetException().printStackTrace();
+			}
+			catch (IllegalArgumentException ex){ // thrown when the overriding constructor doesn't match what's expected
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed");
+				ex.printStackTrace();
+			}
+			catch (SecurityException ex){ // I have no idea why this would happen.
+				ex.printStackTrace();
+			}
+			catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is seriously wack. Fix it, developer.");
+				ex.printStackTrace();
+			}
+			catch (IllegalAccessException ex){
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible");
+				ex.printStackTrace();
+			}
+		}
+		else if (mp.getArena() == null)
+			mp.setArena(arena);
+		else
+			throw new IllegalArgumentException("Player " + name + " is already in arena " + mp.getArena());
+		ItemStack[] contents = p.getInventory().getContents();
+		PlayerInventory pInv = (PlayerInventory)p.getInventory();
+		ItemStack helmet = pInv.getHelmet(), chestplate = pInv.getChestplate(), leggings = pInv.getLeggings(), boots = pInv.getBoots();
+		try {
+			File invDir = new File(Main.plugin.getDataFolder(), "inventories");
+			File invF = new File(Main.plugin.getDataFolder() + File.separator +
+					"inventories" + File.separator +
+					UUIDFetcher.getUUIDOf(p.getName()) + ".dat");
+			if (!invF.exists()){
+				invDir.mkdirs();
+				invF.createNewFile();
+			}
+			YamlConfiguration invY = new YamlConfiguration();
+			invY.load(invF);
+			for (int i = 0; i < contents.length; i++)
+				invY.set(Integer.toString(i), contents[i]);
+			if (helmet != null)
+				invY.set("h", helmet);
+			if (chestplate != null)
+				invY.set("c", chestplate);
+			if (leggings != null)
+				invY.set("l", leggings);
+			if (boots != null)
+				invY.set("b", boots);
+			invY.save(invF);
+			((PlayerInventory)p.getInventory()).clear();
+			((PlayerInventory)p.getInventory()).setArmorContents(new ItemStack[]{null, null, null, null});
+			p.updateInventory();
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+			p.sendMessage(ChatColor.RED + "Failed to save inventory to disk!");
+			return;
+		}
+		mp.setDead(false); // make sure they're not dead the second they join.
+		players.put(name, mp); // register player with round object
+		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
+		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
+		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 	}
 
 	/**

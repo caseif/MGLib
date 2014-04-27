@@ -42,6 +42,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -80,74 +81,67 @@ class MGListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent e){
 		final String p = e.getPlayer().getName();
-		Bukkit.getScheduler().runTaskAsynchronously(Main.plugin, new Runnable(){
-			public void run(){
-				for (Minigame mg : Minigame.getMinigameInstances())
-					for (Round r : mg.getRoundList())
-						if (r.getPlayers().containsKey(p)){
-							try {
-								r.removePlayer(p);
-								YamlConfiguration y = new YamlConfiguration();
-								File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
-								if (!f.exists())
-									f.createNewFile();
-								y.load(f);
-								Location el = mg.getConfigManager().getDefaultExitLocation();
-								String pUUID = UUIDFetcher.getUUID(p).toString();
-								y.set(pUUID + ".w", el.getWorld().getName());
-								y.set(pUUID + ".x", el.getX());
-								y.set(pUUID + ".y", el.getY());
-								y.set(pUUID + ".z", el.getZ());
-								y.save(f);
-							}
-							catch (Exception ex){
-								ex.printStackTrace();
-								Main.log.severe("An exception occurred while saving data for " + p);
-							}
-						}
+		for (Minigame mg : Minigame.getMinigameInstances())
+			for (Round r : mg.getRoundList()){
+				MGPlayer mp = r.getMGPlayer(p);
+				if (mp != null){
+					try {
+						String pUUID = UUIDFetcher.getUUIDOf(p).toString();
+						UUIDFetcher.removeUUID(p);
+						mp.removeFromRound();
+						YamlConfiguration y = new YamlConfiguration();
+						File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
+						if (!f.exists())
+							f.createNewFile();
+						y.load(f);
+						Location el = mg.getConfigManager().getDefaultExitLocation();
+						y.set(pUUID + ".w", el.getWorld().getName());
+						y.set(pUUID + ".x", el.getX());
+						y.set(pUUID + ".y", el.getY());
+						y.set(pUUID + ".z", el.getZ());
+						y.save(f);
+					}
+					catch (Exception ex){
+						ex.printStackTrace();
+						Main.log.severe("An exception occurred while saving data for " + p);
+					}
+				}
 			}
-		});
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent e){
 		final String p = e.getPlayer().getName();
-		Bukkit.getScheduler().runTaskAsynchronously(Main.plugin, new Runnable(){
-			public void run(){
-				for (Minigame mg : Minigame.getMinigameInstances())
-					for (Round r : mg.getRoundList())
-						if (r.getPlayers().containsKey(p)){
-							try {
-								YamlConfiguration y = new YamlConfiguration();
-								File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
-								if (!f.exists())
-									f.createNewFile();
-								y.load(f);
-								if (y.isSet("players")){
-									String pUUID = UUIDFetcher.getUUID(p).toString();
-									if (y.isSet(p)){
-										final String ww = y.getString(pUUID + ".w");
-										final double xx = y.getDouble(pUUID + ".x");
-										final double yy = y.getDouble(pUUID + ".y");
-										final double zz = y.getDouble(pUUID + ".z");
-										Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
-											public void run(){
-												try {
-													MGPlayer.resetPlayer(p, new Location(Bukkit.getWorld(ww), xx, yy, zz));
-												}
-												catch (PlayerOfflineException ex){} // this can never happen
-											}
-										});
-									}
-								}
-							}
-							catch (Exception ex){
-								ex.printStackTrace();
-								Main.log.severe("An exception occurred while loading data for " + p);
-							}
-						}
+		try {
+			UUIDFetcher.addUUID(p, UUIDFetcher.getUUIDOf(p));
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+			Main.log.severe("Failed to fetch UUID for player " + p);
+		}
+		try {
+			YamlConfiguration y = new YamlConfiguration();
+			File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
+			if (!f.exists())
+				f.createNewFile();
+			y.load(f);
+			String pUUID = UUIDFetcher.getUUIDOf(p).toString();
+			if (y.isSet(pUUID)){
+				final String ww = y.getString(pUUID + ".w");
+				final double xx = y.getDouble(pUUID + ".x");
+				final double yy = y.getDouble(pUUID + ".y");
+				final double zz = y.getDouble(pUUID + ".z");
+				MGPlayer mp = new MGPlayer("MGLib", p, "null");
+				mp.reset(new Location(Bukkit.getWorld(ww), xx, yy, zz));
+				mp = null;
+				y.set(pUUID, null);
+				y.save(f);
 			}
-		});
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+			Main.log.severe("An exception occurred while loading data for " + p);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -162,8 +156,7 @@ class MGListener implements Listener {
 						try {
 							p.removeFromRound(l);
 						}
-						catch (PlayerNotPresentException ex){}
-						catch (PlayerOfflineException ex2){} // neither of these can happen
+						catch (PlayerNotPresentException ex){} // this can never happen
 					}
 					else {
 						Location min = r.getMinBound();
@@ -178,8 +171,7 @@ class MGListener implements Listener {
 								try {
 									p.removeFromRound(l);
 								}
-								catch (PlayerNotPresentException ex){}
-								catch (PlayerOfflineException ex){} // neither of these can happen
+								catch (PlayerNotPresentException ex){} // this can never happen
 							}
 						}
 					}
@@ -452,6 +444,29 @@ class MGListener implements Listener {
 	@EventHandler
 	public void onMinigameRoundRollback(MinigameRoundRollbackEvent e){
 		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	}
+
+	@EventHandler
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e){
+		if (e.getMessage().startsWith("kit")){
+			for (Minigame mg : Minigame.getMinigameInstances())
+				if (mg.isPlayer(e.getPlayer().getName())){
+					if (!mg.getConfigManager().areKitsAllowed()){
+						e.setCancelled(true);
+						e.getPlayer().sendMessage(ChatColor.RED + "You may not use kits during an active round!");
+					}
+				}
+		}
+		else if (e.getMessage().startsWith("msg") || e.getMessage().startsWith("tell") || e.getMessage().startsWith("r ") ||
+				e.getMessage().startsWith("me")){
+			for (Minigame mg : Minigame.getMinigameInstances())
+				if (mg.isPlayer(e.getPlayer().getName())){
+					if (!mg.getConfigManager().arePMsAllowed()){
+						e.setCancelled(true);
+						e.getPlayer().sendMessage(ChatColor.RED + "You may not send private messages during an active round!");
+					}
+				}
+		}
 	}
 
 }
