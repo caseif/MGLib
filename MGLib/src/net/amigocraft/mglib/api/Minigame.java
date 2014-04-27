@@ -11,6 +11,7 @@ import net.amigocraft.mglib.exception.ArenaExistsException;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev27
+ * @version 0.1-dev28
  * @since 0.1
  */
 public class Minigame {
@@ -55,10 +56,14 @@ public class Minigame {
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
 		lobbyManager = new LobbyManager(plugin.getName());
 		lobbyManager.loadSigns();
-		lobbyManager.reset();
+		Bukkit.getScheduler().runTask(plugin, new Runnable(){
+			public void run(){
+				lobbyManager.reset();
+			}
+		});
 		Main.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
 	}
-	
+
 	/**
 	 * Registers a plugin with the MGLib API.
 	 * @return This object may be used for most API methods, with the exception of some pertaining exclusively to players or rounds.
@@ -296,7 +301,7 @@ public class Minigame {
 	public ArenaFactory getArenaFactory(String name){
 		return arenaFactories.get(name);
 	}
-	
+
 	/**
 	 * For use within the library <b><i>only</i></b>. Please do not modify the returned map.
 	 * @return a map of arena names and their corresponding {@link ArenaFactory ArenaFactories}.
@@ -313,7 +318,7 @@ public class Minigame {
 	public RollbackManager getRollbackManager(){
 		return rbManager;
 	}
-	
+
 	/**
 	 * Retrieves this minigame's lobby manager.
 	 * @return this minigame's lobby manager.
@@ -322,7 +327,7 @@ public class Minigame {
 	public LobbyManager getLobbyManager(){
 		return lobbyManager;
 	}
-	
+
 	/**
 	 * Retrieves this minigame's config manager.
 	 * @return this minigame's config manager.

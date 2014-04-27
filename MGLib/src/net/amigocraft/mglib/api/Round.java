@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -473,26 +474,37 @@ public class Round {
 	/**
 	 * Adds a player by the given name to this {@link Round round}.
 	 * @param name The player to add to this {@link Round round}.
-	 * @throws PlayerOfflineException if the player is not online
+	 * @throws PlayerOfflineException if the player is not online.
+	 * @throws IllegalArgumentException if the round is preparing or in progress and the minigame prohibits joining.
 	 * @since 0.1
 	 */
 	public void addPlayer(String name) throws PlayerOfflineException {
 		Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
-		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
-		if (mp == null)
-			mp = new MGPlayer(plugin, name, arena);
-		else if (mp.getArena() == null)
-			mp.setArena(arena);
-		else {
-			throw new IllegalArgumentException("Player " + name + " is already in arena " + mp.getArena());
-		}
-		mp.setDead(false); // make sure they're not dead the second they join.
-		players.put(name, mp); // register player with round object
-		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
-		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
-		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+		if (getStage() == Stage.PREPARING)
+			if (!Minigame.getMinigameInstance(plugin).getConfigManager().getAllowJoinRoundInProgress()){
+				p.sendMessage(ChatColor.RED + "You may not join a round in preparation!");
+				return;
+			}
+		if (getStage() == Stage.PLAYING)
+			if (!Minigame.getMinigameInstance(plugin).getConfigManager().getAllowJoinRoundInProgress()){
+				p.sendMessage(ChatColor.RED + "You may not join a round in progress!");
+				return;
+			}
+			MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
+			if (mp == null)
+				mp = new MGPlayer(plugin, name, arena);
+			else if (mp.getArena() == null)
+				mp.setArena(arena);
+			else {
+				throw new IllegalArgumentException("Player " + name + " is already in arena " + mp.getArena());
+			}
+			mp.setDead(false); // make sure they're not dead the second they join.
+			players.put(name, mp); // register player with round object
+			Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
+			p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
+			Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 	}
 
 	/**

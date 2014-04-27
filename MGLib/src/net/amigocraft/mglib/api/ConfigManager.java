@@ -21,6 +21,8 @@ public class ConfigManager {
 	private String signId;
 	private int roundPrepareTime = 90;
 	private int roundPlayTime = 300;
+	private boolean joinRiP = false;
+	private boolean joinRwP = false;
 	private HashMap<String, ChatColor> lobbyColors = new HashMap<String, ChatColor>();
 	private HashMap<String, Boolean> actions = new HashMap<String, Boolean>();
 	
@@ -77,7 +79,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrives the default exit location for players upon round end.
+	 * Retrives the default exit location for players upon round end (default: the spawn point of the main world).
 	 * @return the default exit location for players upon round end.
 	 * @since 0.1
 	 */
@@ -86,7 +88,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Sets this default exit location for players upon a {@link Round round} ending.
+	 * Sets this default exit location for players upon a {@link Round round} ending (default: the spawn point of the main world).
 	 * @param exitLocation this default exit location for players upon a {@link Round round} ending.
 	 * @since 0.1
 	 */
@@ -95,7 +97,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves the default maximum number of players allowed in a {@link Round round} at one time.
+	 * Retrieves the default maximum number of players allowed in a {@link Round round} at one time (default: 32).
 	 * @return the default maximum number of players allowed in a {@link Round round} at one time.
 	 * @since 0.1
 	 */
@@ -104,7 +106,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Sets the default maximum number of players allowed in a {@link Round round} at one time.
+	 * Sets the default maximum number of players allowed in a {@link Round round} at one time (default: 32).
 	 * @param maxPlayers the default maximum number of players allowed in a {@link Round round} at one time.
 	 * @since 0.1
 	 */
@@ -131,7 +133,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Sets the default time allotted to a round's {@link Stage#PREPARING preparation} period.
+	 * Sets the default time allotted to a round's {@link Stage#PREPARING preparation} period (default: 90).
 	 * @return the default time allotted to a round's {@link Stage#PREPARING preparation} period.
 	 * @since 0.1
 	 */
@@ -140,7 +142,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Sets the default time allotted to a round's {@link Stage#PREPARING preparation} period.
+	 * Sets the default time allotted to a round's {@link Stage#PREPARING preparation} period (default: 90).
 	 * Set to a value less than or equal to zero to skip the preparation period.
 	 * @param preparationTime the default time allotted to a round's {@link Stage#PREPARING preparation} period.
 	 * @since 0.1
@@ -150,7 +152,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves the default time allotted to a round's {@link Stage#PLAYING playing} period.
+	 * Retrieves the default time allotted to a round's {@link Stage#PLAYING playing} period (default: 300).
 	 * @return the default time allotted to a round's {@link Stage#PLAYING playing} period.
 	 * @since 0.1
 	 */
@@ -159,7 +161,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets the default time allotted to a round's {@link Stage#PLAYING playing} period.
+	 * Sets the default time allotted to a round's {@link Stage#PLAYING playing} period (default: 300).
 	 * Set to a value less than or equal to zero for an indefinite (infinite) time limit.
 	 * @param playingTime the default time allotted to a round's {@link Stage#PLAYING playing} period.
 	 * @since 0.1
@@ -168,6 +170,38 @@ public class ConfigManager {
 		this.roundPlayTime = playingTime;
 	}
 	
+	/**
+	 * Retrieves whether players are allowed to join a round which {@link Stage#PLAYING has already started} (default: true).
+	 * @return whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
+	 */
+	public boolean getAllowJoinRoundInProgress(){
+		return joinRiP;
+	}
+	
+	/**
+	 * Sets whether players are allowed to join a round which {@link Stage#PLAYING has already started} (default: true).
+	 * @param allow whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
+	 */
+	public void setAllowJoinRoundInProgress(boolean allow){
+		this.joinRiP = allow;
+	}
+	
+	/**
+	 * Retrieves whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage} (default: true).
+	 * @return whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage.}
+	 */
+	public boolean getAllowJoinRoundWhilePreparing(){
+		return joinRwP;
+	}
+	
+	/**
+	 * Sets whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage} (default: true).
+	 * @param allow whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}.
+	 */
+	public void setAllowJoinRoundWhilePreparing(boolean allow){
+		this.joinRwP = allow;
+	}
+
 	/**
 	 * Retrieves the color of the top line (the arena name) of a lobby sign.
 	 * @return the color of the top line (the arena name) of a lobby sign.
