@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,8 +29,9 @@ public class MGPlayer {
 	private String plugin;
 	private String name;
 	private String arena;
-	private boolean dead = false;
+	private boolean spectating = false;
 	private String prefix = "";
+	private GameMode prevGameMode;
 
 	/**
 	 * Creates a new MGPlayer instance.
@@ -99,13 +101,13 @@ public class MGPlayer {
 	}
 
 	/**
-	 * Gets whether this player is "dead" in the minigame.
-	 * @return whether this player is "dead" in the minigame (can return true even if {@link Player#isDead()} returns
+	 * Gets whether this player is spectating their round, as opposed to participating in it.
+	 * @return whether this player is spectating their round (can return true even if {@link Player#isDead()} returns
 	 * false).
 	 * @since 0.1
 	 */
-	public boolean isDead(){
-		return dead;
+	public boolean isSpectating(){
+		return spectating;
 	}
 
 	/**
@@ -118,18 +120,25 @@ public class MGPlayer {
 	}
 
 	/**
-	 * Changes the alive status of this {@link MGPlayer}.
-	 * @param dead whether the player is "dead."
+	 * Sets whether this player is spectating or not.
+	 * @param dead whether the player is spectating.
 	 * @since 0.1
 	 */
-	public void setDead(boolean dead){
-		this.dead = dead;
-		if (dead){
+	public void setSpectating(boolean spectating){
+		this.spectating = spectating;
+		if (spectating){
 			Player p = Bukkit.getPlayer(name);
+			p.closeInventory();
 			for (Player pl : Bukkit.getOnlinePlayers())
 				pl.hidePlayer(p); //TODO: Set gamemode to 3 (SPECTATOR) if supported
-			p.setFlying(true);
-			p.sendMessage("You are now dead! You have been made invisible to all players and are capable of flight.");
+			String message = "You are now spectating! You have been hidden from all players";
+			if (Bukkit.getAllowFlight()){
+				p.setFlying(true);
+				message += " and are capable of flight.";
+			}
+			else
+				message += ".";
+			p.sendMessage(message);
 		}
 		else {
 			Player p = Bukkit.getPlayer(name);
@@ -171,8 +180,9 @@ public class MGPlayer {
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
 				setArena(null); // clear the arena from the object
-				setDead(false); // make sure they're not dead when they join a new round (or invisible)
+				setSpectating(false); // make sure they're not effectively dead when they join a new round (or invisible)
 				r.getPlayers().remove(name); // remove the player from the round object
+				p.setGameMode(getPrevGameMode());
 				Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
 					public void run(){
 						if (Bukkit.getPlayer(name) != null)
@@ -248,14 +258,32 @@ public class MGPlayer {
 	public void reset() throws PlayerOfflineException {
 		reset(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
+	
+	/**
+	 * You probably shouldn't use this unless you know what it does.
+	 * @return the player's previous gamemode.
+	 * @since 0.1
+	 */
+	public GameMode getPrevGameMode(){
+		return prevGameMode;
+	}
+	
+	/**
+	 * You probably shouldn't use this unless you know what it does.
+	 * @param gameMode the player's previous gamemode.
+	 * @since 0.1
+	 */
+	public void setPrevGameMode(GameMode gameMode){
+		this.prevGameMode = gameMode;
+	}
 
 	public boolean equals(Object p){
 		MGPlayer t = (MGPlayer)p;
-		return name.equals(t.getName()) && arena.equals(t.getArena()) && dead == t.isDead();
+		return name.equals(t.getName()) && arena.equals(t.getArena()) && isSpectating() == t.isSpectating();
 	}
 
 	public int hashCode(){
-		return 41 * (plugin.hashCode() + name.hashCode() + arena.hashCode() + Boolean.valueOf(dead).hashCode() + 41);
+		return 41 * (plugin.hashCode() + name.hashCode() + arena.hashCode() + Boolean.valueOf(isSpectating()).hashCode() + 41);
 	}
 
 }

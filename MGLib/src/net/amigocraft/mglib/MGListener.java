@@ -25,6 +25,9 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -41,6 +44,8 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -107,6 +112,37 @@ class MGListener implements Listener {
 					}
 				}
 			}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onEntityDamage(EntityDamageEvent e){
+		Player pl = null;
+		Player p2 = null;
+		if (e.getEntity() instanceof Player)
+			p2 = (Player)e.getEntity(); // don't ask why it's named like this
+		if (e instanceof EntityDamageByEntityEvent){
+			Entity damager = ((EntityDamageByEntityEvent)e).getDamager();
+			if (damager instanceof Player) // damager is a player
+				pl = (Player)damager;
+			else if (damager instanceof Projectile) // damager is an arrow or something
+				if (((Projectile)damager).getShooter() instanceof Player)
+					pl = (Player)((Projectile)damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow)
+
+			if (pl != null || p2 != null){
+				for (Minigame mg : Minigame.getMinigameInstances()){
+					if (pl != null){
+						MGPlayer p = mg.getMGPlayer(pl.getName());
+						if (p.isSpectating())
+							e.setCancelled(true); // we don't want any spooky ghosts meddling in the affairs of the living
+					}
+					if (p2 != null){
+						MGPlayer p = mg.getMGPlayer(p2.getName());
+						if (p.isSpectating())
+							e.setCancelled(true); // we don't want any spooky ghosts getting harassed by the living
+					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -374,7 +410,7 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			MGPlayer p = mg.getMGPlayer(e.getPlayer().getName());
 			if (p != null)
-				if (p.isDead()){
+				if (p.isSpectating()){
 					e.setCancelled(true);
 					return;
 				}

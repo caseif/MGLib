@@ -552,16 +552,22 @@ public class Round {
 			if (boots != null)
 				invY.set("b", boots);
 			invY.save(invF);
-			((PlayerInventory)p.getInventory()).clear();
-			((PlayerInventory)p.getInventory()).setArmorContents(new ItemStack[]{null, null, null, null});
-			p.updateInventory();
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
 			p.sendMessage(ChatColor.RED + "Failed to save inventory to disk!");
 			return;
 		}
-		mp.setDead(false); // make sure they're not dead the second they join.
+		((PlayerInventory)p.getInventory()).clear();
+		((PlayerInventory)p.getInventory()).setArmorContents(new ItemStack[]{null, null, null, null});
+		p.updateInventory();
+		if ((getStage() == Stage.PREPARING || getStage() == Stage.PLAYING) &&
+				Minigame.getMinigameInstance(plugin).getConfigManager().getSpectateOnJoin())
+			mp.setSpectating(true);
+		else
+			mp.setSpectating(false);
+		mp.setPrevGameMode(p.getGameMode());
+		p.setGameMode(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultGameMode());
 		players.put(name, mp); // register player with round object
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
 		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
@@ -583,8 +589,9 @@ public class Round {
 			throw new PlayerNotPresentException();
 		if (p != null){
 			mp.setArena(null); // they're not in an arena anymore
-			mp.setDead(false); // make sure they're not dead when they join a new round
+			mp.setSpectating(false); // make sure they're not dead when they join a new round
 			players.remove(name); // remove player from round
+			p.setGameMode(mp.getPrevGameMode()); // restore the player's gamemode
 			mp.reset(location); // reset the object and send the player to the exit point
 		}
 		PlayerLeaveMinigameRoundEvent event = new PlayerLeaveMinigameRoundEvent(this, mp);

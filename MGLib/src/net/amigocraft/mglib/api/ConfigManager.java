@@ -6,6 +6,7 @@ import net.amigocraft.mglib.api.Stage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 
 /**
@@ -25,9 +26,11 @@ public class ConfigManager {
 	private boolean joinRwP = false;
 	private boolean pmsAllowed = true;
 	private boolean kitsAllowed = true;
+	private boolean spectateJoin = true;
 	private HashMap<String, ChatColor> lobbyColors = new HashMap<String, ChatColor>();
 	private HashMap<String, Boolean> actions = new HashMap<String, Boolean>();
 	private Class<? extends MGPlayer> playerClass = MGPlayer.class;
+	private GameMode gameMode = GameMode.SURVIVAL;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -40,10 +43,10 @@ public class ConfigManager {
 		this.signId = "[" + plugin + "]";
 		
 		lobbyColors.put("arena", ChatColor.DARK_RED);
-		lobbyColors.put("waiting", ChatColor.GRAY);
+		lobbyColors.put("waiting", ChatColor.DARK_GRAY);
 		lobbyColors.put("preparing", ChatColor.RED);
 		lobbyColors.put("playing", ChatColor.DARK_PURPLE);
-		lobbyColors.put("resetting", ChatColor.GRAY);
+		lobbyColors.put("resetting", ChatColor.DARK_GRAY);
 		lobbyColors.put("time", ChatColor.GREEN);
 		lobbyColors.put("time-warning", ChatColor.RED);
 		lobbyColors.put("time-infinite", ChatColor.GREEN);
@@ -176,6 +179,7 @@ public class ConfigManager {
 	/**
 	 * Retrieves whether players are allowed to join a round which {@link Stage#PLAYING has already started} (default: true).
 	 * @return whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
+	 * @since 0.1
 	 */
 	public boolean getAllowJoinRoundInProgress(){
 		return joinRiP;
@@ -184,6 +188,7 @@ public class ConfigManager {
 	/**
 	 * Sets whether players are allowed to join a round which {@link Stage#PLAYING has already started} (default: true).
 	 * @param allow whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
+	 * @since 0.1
 	 */
 	public void setAllowJoinRoundInProgress(boolean allow){
 		this.joinRiP = allow;
@@ -192,6 +197,7 @@ public class ConfigManager {
 	/**
 	 * Retrieves whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage} (default: true).
 	 * @return whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage.}
+	 * @since 0.1
 	 */
 	public boolean getAllowJoinRoundWhilePreparing(){
 		return joinRwP;
@@ -200,9 +206,29 @@ public class ConfigManager {
 	/**
 	 * Sets whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage} (default: true).
 	 * @param allow whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}.
+	 * @since 0.1
 	 */
 	public void setAllowJoinRoundWhilePreparing(boolean allow){
 		this.joinRwP = allow;
+	}
+	
+	/**
+	 * Retrieves whether players will be set to spectator mode upon joining around in progress.
+	 * @return whether players will be set to spectator mode upon joining around in progress.
+	 * @since 0.1
+	 */
+	public boolean getSpectateOnJoin(){
+		return spectateJoin;
+	}
+	
+	/**
+	 * Sets whether players will be set to spectator mode upon joining around in progress. This will have no effect if both
+	 * {@link ConfigManager#getAllowJoinRoundWhilePreparing()} and {@link ConfigManager#getAllowJoinRoundInProgress()} return false.
+	 * @param allowed whether players will be set to spectator mode upon joining around in progress.
+	 * @since 0.1
+	 */
+	public void setSpectateOnJoin(boolean allowed){
+		this.spectateJoin = allowed;
 	}
 
 	/**
@@ -668,6 +694,24 @@ public class ConfigManager {
 	 */
 	public void setPlayerClass(Class<? extends MGPlayer> clazz){
 		this.playerClass = clazz;
+	}
+	
+	/**
+	 * Retrieves the default gamemode for players entering minigame rounds.
+	 * @return the default gamemode for players entering minigame rounds.
+	 * @since 0.1
+	 */
+	public GameMode getDefaultGameMode(){
+		return gameMode;
+	}
+
+	/**
+	 * Sets the default gamemode for players entering minigame rounds.
+	 * @param gameMode the default gamemode for players entering minigame rounds.
+	 * @since 0.1
+	 */
+	public void setDefaultGameMode(GameMode gameMode){
+		this.gameMode = gameMode;
 	}
 	
 }
