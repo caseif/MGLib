@@ -28,7 +28,7 @@ public class RollbackManager {
 	/**
 	 * Creates a new rollback manager for the specified plugin
 	 * @param plugin The plugin to create the rollback manager for
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public RollbackManager(JavaPlugin plugin){
 		f = new File(plugin.getDataFolder(), "rollback.yml");
@@ -50,7 +50,7 @@ public class RollbackManager {
 	/**
 	 * Retrieves the plugin associated with this rollback manager.
 	 * @return the plugin associated with this rollback manager.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public JavaPlugin getPlugin(){
 		return plugin;
@@ -61,7 +61,7 @@ public class RollbackManager {
 	 * @param block The block which was changed.
 	 * @param origType The original type of the block.
 	 * @param arena The arena in which the block is contained.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
 	public void logBlockChange(Block block, String origType, String arena){
@@ -89,7 +89,7 @@ public class RollbackManager {
 	 * @param inventory The inventory to log
 	 * @param block The block containing the inventory
 	 * @param arena The arena in which the block is contained
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void logInventoryChange(Inventory inventory, Block block, String arena){
 		if (!y.isSet(arena.toLowerCase() + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
@@ -114,7 +114,7 @@ public class RollbackManager {
 	 * <br><br>
 	 * This method <b>should not</b> be called from your plugin unless you understand the implications.
 	 * @param arena The arena to roll back.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
 	public void rollback(String arena){
@@ -181,7 +181,7 @@ public class RollbackManager {
 
 	/**
 	 * Rolls back arenas which have not been rolled back due to a crash or unclean shutdown
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void checkRollbacks(){
 		for (String k : y.getKeys(false))

@@ -25,8 +25,8 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1-dev30
- * @since 0.1
+ * @version 0.1.0
+ * @since 0.1.0
  */
 public class Minigame {
 
@@ -68,7 +68,7 @@ public class Minigame {
 	 * Registers a plugin with the MGLib API.
 	 * @return This object may be used for most API methods, with the exception of some pertaining exclusively to players or rounds.
 	 * @param plugin An instance of your plugin (can be substituted with this if called from your main class).
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static Minigame registerPlugin(JavaPlugin plugin){
 		return new Minigame(plugin);
@@ -85,7 +85,7 @@ public class Minigame {
 	/**
 	 * Retrieves a {@link List list} of all registered {@link Minigame minigame} instances.
 	 * @return a {@link List list} of all registered {@link Minigame minigame} instances.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static List<Minigame> getMinigameInstances(){
 		return Lists.newArrayList(registeredInstances.values());
@@ -95,7 +95,7 @@ public class Minigame {
 	 * Finds the instance of the MGLib API associated with a given plugin
 	 * @param plugin The name of the plugin to search for
 	 * @return The instance of the MGLib API (Minigame.class) associated with the given plugin
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static Minigame getMinigameInstance(String plugin){
 		return registeredInstances.get(plugin);
@@ -105,7 +105,7 @@ public class Minigame {
 	 * Finds the instance of the MGLib API associated with a given plugin
 	 * @param plugin The plugin to search for
 	 * @return The instance of the MGLib API (Minigame.class) associated with the given plugin
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static Minigame getMinigameInstance(JavaPlugin plugin){
 		return getMinigameInstance(plugin.getName());
@@ -114,7 +114,7 @@ public class Minigame {
 	/**
 	 * Retrieves a hashmap containing all rounds associated with the instance which registered this API instance.
 	 * @return A hashmap containing all rounds associated with the instance which registered this API instance.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public HashMap<String, Round> getRounds(){
 		return rounds;
@@ -123,7 +123,7 @@ public class Minigame {
 	/**
 	 * Retrieves a list containing all rounds associated with the instance which registered this API instance.
 	 * @return A list containing all rounds associated with the instance which registered this API instance.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public List<Round> getRoundList(){
 		return Lists.newArrayList(rounds.values());
@@ -134,7 +134,7 @@ public class Minigame {
 	 * @param arena The name of the arena to create the round in.
 	 * @return The created round.
 	 * @throws ArenaNotExistsException if the given arena does not exist.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Round createRound(String arena) throws ArenaNotExistsException {
 		Round r = new Round(plugin.getName(), arena); // create the Round object
@@ -147,7 +147,7 @@ public class Minigame {
 	 * Gets the instance of the round associated with the given world.
 	 * @param name The name of the round to retrieve.
 	 * @return The instance of the round associated with the given world.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Round getRound(String name){
 		return rounds.get(name);
@@ -162,7 +162,7 @@ public class Minigame {
 	 * @return the new arena's {@link ArenaFactory}.
 	 * @throws InvalidLocationException if the given locations are not in the same world.
 	 * @throws ArenaExistsException if an arena of the same name already exists.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2)
 			throws InvalidLocationException, ArenaExistsException {
@@ -231,7 +231,7 @@ public class Minigame {
 	 * @param name The name of the arena (used to identify it).
 	 * @param spawn The initial spawn point of the arena (more may be added later).
 	 * @throws ArenaExistsException if an arena of the same name already exists.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void createArena(String name, Location spawn) throws ArenaExistsException {
 		try {
@@ -250,7 +250,7 @@ public class Minigame {
 	 * Removes an arena from the plugin's config, effectively deleting it.
 	 * @param name The arena to delete.
 	 * @throws ArenaNotExistsException if an arena by the specified name does not exist.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void deleteArena(String name) throws ArenaNotExistsException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName()); // convenience method for loading the YAML file
@@ -269,7 +269,7 @@ public class Minigame {
 	 * Returns the {@link MGPlayer} associated with the given username.
 	 * @param player The username to search for.
 	 * @return The {@link MGPlayer} associated with the given username, or <b>null</b> if none is found.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public MGPlayer getMGPlayer(String player){
 		for (Round r : rounds.values()) // iterate registered rounds
@@ -284,7 +284,7 @@ public class Minigame {
 	 * This method simply checks if {@link Minigame#getMGPlayer(String) Minigame#getMGPlayer(p)} is <b>null</b>.
 	 * @param p The username to search for.
 	 * @return Whether an associated {@link MGPlayer} was found.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public boolean isPlayer(String p){
 		if (getMGPlayer(p) != null) // player object exists
@@ -296,7 +296,7 @@ public class Minigame {
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
 	 * @param name the name of the arena to retrieve an {@link ArenaFactory} for.
 	 * @return the arena's {@link ArenaFactory}, or null if one does not exist.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory getArenaFactory(String name){
 		return arenaFactories.get(name);
@@ -313,7 +313,7 @@ public class Minigame {
 	/**
 	 * Retrieves this minigame's rollback manager.
 	 * @return this minigame's rollback manager.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public RollbackManager getRollbackManager(){
 		return rbManager;
@@ -322,7 +322,7 @@ public class Minigame {
 	/**
 	 * Retrieves this minigame's lobby manager.
 	 * @return this minigame's lobby manager.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public LobbyManager getLobbyManager(){
 		return lobbyManager;
@@ -331,7 +331,7 @@ public class Minigame {
 	/**
 	 * Retrieves this minigame's config manager.
 	 * @return this minigame's config manager.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ConfigManager getConfigManager(){
 		return configManager;
@@ -340,7 +340,7 @@ public class Minigame {
 	/**
 	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
 	 * everything for everyone.</b>
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static void uninitialize(){
 		registeredInstances.clear(); // unregister all minigame instances

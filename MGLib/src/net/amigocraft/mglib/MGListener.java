@@ -132,13 +132,17 @@ class MGListener implements Listener {
 				for (Minigame mg : Minigame.getMinigameInstances()){
 					if (pl != null){
 						MGPlayer p = mg.getMGPlayer(pl.getName());
-						if (p.isSpectating())
+						if (p != null || p.isSpectating() || !p.getRound().isPvPAllowed()){
 							e.setCancelled(true); // we don't want any spooky ghosts meddling in the affairs of the living
+							return;
+						}
 					}
 					if (p2 != null){
 						MGPlayer p = mg.getMGPlayer(p2.getName());
-						if (p.isSpectating())
-							e.setCancelled(true); // we don't want any spooky ghosts getting harassed by the living
+						if (p != null || p.isSpectating() || p.getRound().isDamageAllowed()){
+							e.setCancelled(true); // we don't want any spooky ghosts being harassed by the living
+							return;
+						}
 					}
 				}
 			}
@@ -224,14 +228,15 @@ class MGListener implements Listener {
 		boolean found = false;
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			for (Round r : mg.getRoundList()){
-				if (r.getPlayers().containsKey(e.getWhoClicked().getName())){
-					if (e.getInventory().getHolder() instanceof BlockState){
-						mg.getRollbackManager().logInventoryChange(e.getInventory(),
-								((BlockState)e.getInventory().getHolder()).getBlock(), r.getArena());
-						found = true;
-						break;
+				if (r.getTime() != -1)
+					if (r.getPlayers().containsKey(e.getWhoClicked().getName())){
+						if (e.getInventory().getHolder() instanceof BlockState){
+							mg.getRollbackManager().logInventoryChange(e.getInventory(),
+									((BlockState)e.getInventory().getHolder()).getBlock(), r.getArena());
+							found = true;
+							break;
+						}
 					}
-				}
 			}
 			if (found)
 				break;
@@ -242,24 +247,26 @@ class MGListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
-				if (r.getPlayers().containsKey(e.getPlayer().getName()))
-					if (mg.getConfigManager().isBlockPlaceAllowed())
-						mg.getRollbackManager().logBlockChange(e.getBlock(),
-								e.getBlockReplacedState().getType().toString(), r.getArena());
-					else
-						e.setCancelled(true);
+				if (r.getTime() != -1)
+					if (r.getPlayers().containsKey(e.getPlayer().getName()))
+						if (mg.getConfigManager().isBlockPlaceAllowed())
+							mg.getRollbackManager().logBlockChange(e.getBlock(),
+									e.getBlockReplacedState().getType().toString(), r.getArena());
+						else
+							e.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
-				if (r.getPlayers().containsKey(e.getPlayer().getName()))
-					if (mg.getConfigManager().isBlockBreakAllowed())
-						mg.getRollbackManager().logBlockChange(e.getBlock(),
-								e.getBlock().getType().toString(), r.getArena());
-					else
-						e.setCancelled(true);
+				if (r.getTime() != -1)
+					if (r.getPlayers().containsKey(e.getPlayer().getName()))
+						if (mg.getConfigManager().isBlockBreakAllowed())
+							mg.getRollbackManager().logBlockChange(e.getBlock(),
+									e.getBlock().getType().toString(), r.getArena());
+						else
+							e.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

@@ -25,7 +25,7 @@ public class ArenaFactory {
 	 * Creates a new {@link ArenaFactory arena} object, used to modify an arena's assets.
 	 * @param plugin The plugin this arena is owned by.
 	 * @param arena The name of this arena.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	private ArenaFactory(String plugin, String arena, String world){
 		this.plugin = plugin;
@@ -49,7 +49,7 @@ public class ArenaFactory {
 	/**
 	 * Retrieves the name of the plugin associated with this {@link ArenaFactory}.
 	 * @return the name of the plugin associated with this {@link ArenaFactory}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getPlugin(){
 		return plugin;
@@ -58,7 +58,7 @@ public class ArenaFactory {
 	/**
 	 * Retrieves the name of the arena associated with this {@link ArenaFactory}.
 	 * @return the name of the arena associated with this {@link ArenaFactory}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getArena(){
 		return arena;
@@ -67,7 +67,7 @@ public class ArenaFactory {
 	/**
 	 * Retrieves the name of the world associated with this {@link ArenaFactory}'s arena.
 	 * @return the name of the world associated with this {@link ArenaFactory}'s arena.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getWorld(){
 		return world;
@@ -95,7 +95,7 @@ public class ArenaFactory {
 	 * @param pitch The pitch (x- and z-rotation) of the new spawn.
 	 * @param yaw The yaw (y-rotation) of the new spawn.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(double x, double y, double z, float pitch, float yaw){
 		if (yaml == null)
@@ -141,7 +141,7 @@ public class ArenaFactory {
 	 * @param y The y-coordinate of the new spawn.
 	 * @param z The z-coordinate of the new spawn.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(double x, double y, double z){
 		return addSpawn(x, y, z, 90f, 0f);
@@ -156,7 +156,7 @@ public class ArenaFactory {
 	 * @param saveOrientation Whether to save the {@link Location}'s pitch and yaw to the spawn (Defaults to false if omitted).
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException {
 		if (location.getWorld().getName().equals(world)){
@@ -173,7 +173,7 @@ public class ArenaFactory {
 	 * @param location The location of the new spawn.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(Location location) throws InvalidLocationException {
 		return addSpawn(location, false);
@@ -185,7 +185,7 @@ public class ArenaFactory {
 	 * @param y The y-coordinate of the spawn to delete.
 	 * @param z The z-coordinate of the spawn to delete.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory deleteSpawn(double x, double y, double z){
 		if (yaml == null)
@@ -215,7 +215,7 @@ public class ArenaFactory {
 	 * Deletes a spawn from the given arena at the given {@link Location}.
 	 * @param location The {@link Location} of the spawn to delete.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory deleteSpawn(Location location){
 		return deleteSpawn(location.getX(), location.getY(), location.getZ());
@@ -225,7 +225,7 @@ public class ArenaFactory {
 	 * Deletes a spawn from the given arena at the given {@link Location}.
 	 * @param index The internal index of the spawn to delete.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory deleteSpawn(int index){
 		if (yaml == null)
@@ -260,7 +260,7 @@ public class ArenaFactory {
 	 * @param y The minimum y-value.
 	 * @param z The minimum z-value.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory setMinBound(double x, double y, double z){
 		if (yaml == null)
@@ -289,7 +289,7 @@ public class ArenaFactory {
 	 * @param location the {@link Location} representing the maximum boundary.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory setMinBound(Location location) throws InvalidLocationException {
 		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))){
@@ -305,7 +305,7 @@ public class ArenaFactory {
 	 * @param y The maximum y-value.
 	 * @param z The maximum z-value.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory setMaxBound(double x, double y, double z){
 		if (yaml == null)
@@ -334,7 +334,7 @@ public class ArenaFactory {
 	 * @param location the {@link Location} representing the maximum boundary.
 	 * @return the instance of {@link ArenaFactory} which this method was called from.
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public ArenaFactory setMaxBound(Location location) throws InvalidLocationException {
 		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))){
@@ -353,7 +353,7 @@ public class ArenaFactory {
 	 * Determines whether this instance is newly created. This will permanently return false after the 
 	 * {@link ArenaFactory#createArenaFactory(String, String, String) createArenaFactory()} method is called a second time.
 	 * @return whether this instance is newly created.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public boolean isNewInstance(){
 		return newInstance;
@@ -361,7 +361,7 @@ public class ArenaFactory {
 
 	/**
 	 * Destroys this arena factory.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void destroy(){
 		Minigame.getMinigameInstance(plugin).getArenaFactories().remove(arena);

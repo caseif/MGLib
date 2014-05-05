@@ -4,7 +4,7 @@ import net.amigocraft.mglib.api.Round;
 
 /**
  * Fired when an MGLib round begins.
- * @since 0.1
+ * @since 0.1.0
  */
 public class MinigameRoundStartEvent extends MinigameEvent {
 	
@@ -14,7 +14,7 @@ public class MinigameRoundStartEvent extends MinigameEvent {
 	 * Creates a new instance of this event.
 	 * @param round The {@link Round} associated with this event.
 	 * @param prepared Whether the round start was on account of its preparation period ending.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public MinigameRoundStartEvent(Round round, boolean prepared){
 		super(round);
@@ -24,7 +24,7 @@ public class MinigameRoundStartEvent extends MinigameEvent {
 	/**
 	 * Creates an instance of this event.
 	 * @param round The {@link Round} associated with this {@link org.bukkit.event.Event}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public MinigameRoundStartEvent(Round round){
 		super(round);
@@ -34,7 +34,7 @@ public class MinigameRoundStartEvent extends MinigameEvent {
 	/**
 	 * Gets whether the round start was on account of its preparation period ending.
 	 * @return Whether the round start was on account of its preparation period ending.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public boolean wasPrepared(){
 		return prepared;

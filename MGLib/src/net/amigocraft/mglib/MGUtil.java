@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Utility methods for use within MGLib. You probably shouldn't call them from your plugin, since this isn't an API class per se.
- * @since 0.1
+ * @since 0.1.0
  */
 public class MGUtil {
 	
@@ -18,7 +18,7 @@ public class MGUtil {
 	 * Loads and returns the given plugin's arenas.yml file.
 	 * @param plugin The plugin to load the YAML file from.
 	 * @return The loaded {@link YamlConfiguration}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static YamlConfiguration loadArenaYaml(String plugin){
 		JavaPlugin jp = Minigame.getMinigameInstance(plugin).getPlugin();
@@ -70,7 +70,7 @@ public class MGUtil {
 	/**
 	 * Retrieves worlds registered with MGLib's event listener
 	 * @return worlds registered with MGLib's event listener
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static List<String> getWorlds(){
 		return MGListener.worlds;

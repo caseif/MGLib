@@ -22,7 +22,7 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
 
 /**
  * Represents a player participating in a minigame.
- * @since 0.1
+ * @since 0.1.0
  */
 public class MGPlayer {
 
@@ -38,7 +38,7 @@ public class MGPlayer {
 	 * @param plugin the plugin to associate the MGPlayer with.
 	 * @param name the username of the player.
 	 * @param arena the arena of the player (this argument is subject to change).
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public MGPlayer(String plugin, String name, String arena){
 		this.plugin = plugin;
@@ -49,7 +49,7 @@ public class MGPlayer {
 	/**
 	 * Gets the minigame plugin associated with this {@link MGPlayer}.
 	 * @return the minigame plugin associated with this {@link MGPlayer}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getPlugin(){
 		return plugin;
@@ -58,7 +58,7 @@ public class MGPlayer {
 	/**
 	 * Gets the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
 	 * @return the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Minigame getMinigame(){
 		return Minigame.getMinigameInstance(plugin);
@@ -67,7 +67,7 @@ public class MGPlayer {
 	/**
 	 * Gets the username of this {@link MGPlayer}.
 	 * @return the username of this {@link MGPlayer}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getName(){
 		return name;
@@ -76,7 +76,7 @@ public class MGPlayer {
 	/**
 	 * Gets the arena associated with this {@link MGPlayer}.
 	 * @return the arena associated with this {@link MGPlayer}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getArena(){
 		return arena;
@@ -85,7 +85,7 @@ public class MGPlayer {
 	/**
 	 * Retrieves the prefix of this player (used on lobby signs).
 	 * @return the prefix of this player.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getPrefix(){
 		return prefix;
@@ -94,7 +94,7 @@ public class MGPlayer {
 	/**
 	 * Sets the arena of this {@link MGPlayer}. Please do not call this method unless you understand the implications of doing so.
 	 * @param arena the new arena of this {@link MGPlayer}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setArena(String arena){
 		this.arena = arena;
@@ -104,7 +104,7 @@ public class MGPlayer {
 	 * Gets whether this player is spectating their round, as opposed to participating in it.
 	 * @return whether this player is spectating their round (can return true even if {@link Player#isDead()} returns
 	 * false).
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public boolean isSpectating(){
 		return spectating;
@@ -113,7 +113,7 @@ public class MGPlayer {
 	/**
 	 * Gets the {@link Round} associated with this player.
 	 * @return the {@link Round} associated with this player.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Round getRound(){
 		return Minigame.getMinigameInstance(plugin).getRound(arena);
@@ -122,7 +122,7 @@ public class MGPlayer {
 	/**
 	 * Sets whether this player is spectating or not.
 	 * @param dead whether the player is spectating.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setSpectating(boolean spectating){
 		this.spectating = spectating;
@@ -153,7 +153,7 @@ public class MGPlayer {
 	/**
 	 * Sets the prefix of this player (used on lobby signs).
 	 * @param prefix the new prefix of this player.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setPrefix(String prefix){
 		this.prefix = prefix;
@@ -163,7 +163,7 @@ public class MGPlayer {
 	 * Adds this {@link MGPlayer} to the given {@link Round round}.
 	 * @param round The name of the round to add the player to.
 	 * @throws PlayerOfflineException if the player is not online.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void addToRound(String round) throws PlayerOfflineException {
 		Minigame.getMinigameInstance(plugin).getRound(round).addPlayer(name);
@@ -173,7 +173,7 @@ public class MGPlayer {
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the round's default exit point.
 	 * @throws PlayerNotPresentException if the given player is not in a round.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void removeFromRound(final Location location) throws PlayerNotPresentException {
 		Player p = Bukkit.getPlayer(name);
@@ -199,7 +199,7 @@ public class MGPlayer {
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @throws PlayerNotPresentException if the player is not in a round.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void removeFromRound() throws PlayerNotPresentException {
 		removeFromRound(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
@@ -208,7 +208,7 @@ public class MGPlayer {
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
 	 * @param location The location to teleport the player to, or null to skip teleportation.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
 	public void reset(Location location){
@@ -253,7 +253,7 @@ public class MGPlayer {
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
 	 * @throws PlayerOfflineException if the player is not online.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void reset() throws PlayerOfflineException {
 		reset(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
@@ -262,7 +262,7 @@ public class MGPlayer {
 	/**
 	 * You probably shouldn't use this unless you know what it does.
 	 * @return the player's previous gamemode.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public GameMode getPrevGameMode(){
 		return prevGameMode;
@@ -271,7 +271,7 @@ public class MGPlayer {
 	/**
 	 * You probably shouldn't use this unless you know what it does.
 	 * @param gameMode the player's previous gamemode.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setPrevGameMode(GameMode gameMode){
 		this.prevGameMode = gameMode;

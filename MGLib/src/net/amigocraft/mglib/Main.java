@@ -17,8 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1-dev30
- * @since 0.1
+ * @version 0.1.0
+ * @since 0.1.0
  */
 public class Main extends JavaPlugin {
 
@@ -26,7 +26,7 @@ public class Main extends JavaPlugin {
 	 * The current instance of the plugin.
 	 * <br><br>
 	 * This is for use within the library; please do not modify this in your plugin or everything will break.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static Main plugin;
 
@@ -34,7 +34,7 @@ public class Main extends JavaPlugin {
 	 * MGLib's logger.
 	 * <br><br>
 	 * This is for use within the library; please do not use this in your plugin or you'll confuse the server owner.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static Logger log;
 	
@@ -45,7 +45,7 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void onEnable(){
 		plugin = this;
@@ -90,7 +90,7 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Standard {@link JavaPlugin#onDisable()} override.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void onDisable(){
 		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] Ending all minigames due to server restart/reload");

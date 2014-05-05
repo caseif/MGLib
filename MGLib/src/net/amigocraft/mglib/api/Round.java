@@ -36,7 +36,7 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
 /**
  * Represents a round within a minigame.
  * @author Maxim Roncacé
- * @since 0.1
+ * @since 0.1.0
  */
 public class Round {
 
@@ -58,6 +58,9 @@ public class Round {
 	private HashMap<String, MGPlayer> players = new HashMap<String, MGPlayer>();
 
 	private int timerHandle = -1;
+	
+	private boolean damage;
+	private boolean pvp;
 
 	/**
 	 * Creates a new {@link Round} with the given parameters.
@@ -102,6 +105,8 @@ public class Round {
 		this.roundTime = cm.getDefaultPlayingTime();
 		this.maxPlayers = cm.getMaxPlayers();
 		this.exitLocation = cm.getDefaultExitLocation();
+		this.damage = Minigame.getMinigameInstance(plugin).getConfigManager().isDamageAllowed();
+		this.pvp = Minigame.getMinigameInstance(plugin).getConfigManager().isPvPAllowed();
 		stage = Stage.WAITING; // default to waiting stage
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
@@ -109,7 +114,7 @@ public class Round {
 	/**
 	 * Gets the name of the minigame plugin associated with this {@link Round}.
 	 * @return The name of the minigame plugin associated with this {@link Round}. 
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getPlugin(){
 		return plugin;
@@ -118,7 +123,7 @@ public class Round {
 	/**
 	 * Gets the instance of the MGLib API registered by the plugin associated with this {@link Round}.
 	 * @return The instance of the MGLib API registered by the plugin associated with this {@link Round}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Minigame getMinigame(){
 		return Minigame.getMinigameInstance(plugin);
@@ -127,7 +132,7 @@ public class Round {
 	/**
 	 * Gets the name of the arena associated with this {@link Round}.
 	 * @return The name of the arena associated with this {@link Round}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getArena(){
 		return arena;
@@ -136,7 +141,7 @@ public class Round {
 	/**
 	 * Gets the current {@link Stage} of this {@link Round}.
 	 * @return The current {@link Stage} of this {@link Round}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Stage getStage(){
 		return stage;
@@ -145,7 +150,7 @@ public class Round {
 	/**
 	 * Gets the current time in seconds of this {@link Round}, where 0 represents the first second of it.
 	 * @return the current time in seconds of this {@link Round}, where 0 represents the first second of it.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getTime(){
 		return time;
@@ -155,7 +160,7 @@ public class Round {
 	 * Gets the time remaining in this round.
 	 * @return the time remaining in this round, or -1 if there is no time limit or if the {@link Stage stage} is not
 	 * {@link Stage#PLAYING PLAYING} or {@link Stage#PREPARING PREPARING}
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getRemainingTime(){
 		switch (this.getStage()){
@@ -177,7 +182,7 @@ public class Round {
 	/**
 	 * Gets the round's preparation time.
 	 * @return The round's preparation time.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getPreparationTime(){
 		return prepareTime;
@@ -186,7 +191,7 @@ public class Round {
 	/**
 	 * Gets the round's playing time.
 	 * @return The round's playing time.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getPlayingTime(){
 		return roundTime;
@@ -195,7 +200,7 @@ public class Round {
 	/**
 	 * Gets the round's timer's task's handle, or -1 if a timer is not started.
 	 * @return The round's timer's task's handle, or -1 if a timer is not started.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getTimerHandle(){
 		return timerHandle;
@@ -204,7 +209,7 @@ public class Round {
 	/**
 	 * Sets the associated arena of this {@link Round}.
 	 * @param arena The arena to associate with this {@link Round}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setArena(String arena){
 		this.arena = arena;
@@ -213,7 +218,7 @@ public class Round {
 	/**
 	 * Sets the current stage of this {@link Round}.
 	 * @param s The stage to set this {@link Round} to.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setStage(Stage s){
 		stage = s;
@@ -222,7 +227,7 @@ public class Round {
 	/**
 	 * Sets the remaining time of this {@link Round}.
 	 * @param t The time to set this {@link Round} to.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setTime(int t){
 		time = t;
@@ -232,7 +237,7 @@ public class Round {
 	 * Sets the round's preparation time.
 	 * @param t The number of seconds to set the preparation time to. Use -1 for no limit, or 0 for
 	 * no preparation phase.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setPreparationTime(int t){
 		prepareTime = t;
@@ -241,7 +246,7 @@ public class Round {
 	/**
 	 * Sets the round's playing time.
 	 * @param t The number of seconds to set the preparation time to. Use -1 for no limit.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setPlayingTime(int t){
 		roundTime = t;
@@ -252,7 +257,7 @@ public class Round {
 	 * <br><br>
 	 * Please do not call this method from your plugin unless you understand the implications. Let MGLib handle
 	 * the timer.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void tick(){
 		time += 1;
@@ -261,7 +266,7 @@ public class Round {
 	/**
 	 * Subtracts <b>t</b> seconds from the remaining time in the round.
 	 * @param t The number of seconds to subtract.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void subtractTime(int t){
 		time -= t;
@@ -270,7 +275,7 @@ public class Round {
 	/**
 	 * Adds <b>t</b> seconds from the remaining time in the round.
 	 * @param t The number of seconds to add.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void addTime(int t){
 		time += t;
@@ -280,7 +285,7 @@ public class Round {
 	 * Destroys this {@link Round}.
 	 * <br><br>
 	 * Please do not call this method from your plugin unless you understand the implications.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void destroy(){
 		Minigame.getMinigameInstance(plugin).getRounds().remove(this);
@@ -289,7 +294,7 @@ public class Round {
 	/**
 	 * Retrieves a list of {@link MGPlayer}s in this {@link Round}.
 	 * @return A list of {@link MGPlayer}s in this {@link Round}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public List<MGPlayer> getPlayerList(){
 		return Lists.newArrayList(players.values());
@@ -298,7 +303,7 @@ public class Round {
 	/**
 	 * Retrieves a hashmap of {@link MGPlayer}s in this {@link Round}.
 	 * @return A hashmap of {@link MGPlayer}s in this {@link Round}, with their name as a key.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public HashMap<String, MGPlayer> getPlayers(){
 		return players;
@@ -312,7 +317,7 @@ public class Round {
 	 * After it finishes its preparation, it will begin as it would if this method were called again (don't
 	 * actually call it again though, or you'll trigger an exception).
 	 * @throws IllegalStateException if the stage is already {@link Stage#PLAYING}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void start(){
 		if (stage == Stage.WAITING){ // make sure the round isn't already started
@@ -383,7 +388,7 @@ public class Round {
 	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
 	 * @param timeUp Whether the round was ended due to its timer expiring. This will default to false if omitted.
 	 * @throws IllegalStateException if the timer has not been started.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void end(boolean timeUp){
 		setTime(-1);
@@ -400,7 +405,7 @@ public class Round {
 	/**
 	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
 	 * @throws IllegalStateException if the timer has not been started.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void end(){
 		end(false);
@@ -410,7 +415,7 @@ public class Round {
 	 * Retrieves the location representing the minimum boundary on all three axes of the arena this round takes place in.
 	 * @return the location representing the minimum boundary on all three axes of the arena this round takes place in, or
 	 * null if the arena does not have boundaries.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Location getMinBound(){
 		return minBound;
@@ -420,7 +425,7 @@ public class Round {
 	 * Retrieves the location representing the maximum boundary on all three axes of the arena this round takes place in.
 	 * @return the location representing the maximum boundary on all three axes of the arena this round takes place in, or
 	 * null if the arena does not have boundaries.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Location getMaxBound(){
 		return maxBound;
@@ -431,7 +436,7 @@ public class Round {
 	 * @param x The minimum x-value.
 	 * @param y The minimum y-value.
 	 * @param z The minimum z-value.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setMinBound(double x, double y, double z){
 		this.minBound = new Location(this.minBound.getWorld(), x, y, z);
@@ -442,7 +447,7 @@ public class Round {
 	 * @param x The maximum x-value.
 	 * @param y The maximum y-value.
 	 * @param z The maximum z-value.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setMaxBound(double x, double y, double z){
 		this.minBound = new Location(this.minBound.getWorld(), x, y, z);
@@ -451,7 +456,7 @@ public class Round {
 	/**
 	 * Retrieves a list of possible spawns for this round's arena.
 	 * @return a list of possible spawns for this round's arena.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public List<Location> getSpawns(){
 		return spawns;
@@ -461,7 +466,7 @@ public class Round {
 	 * Returns the {@link MGPlayer} in this round associated with the given username.
 	 * @param player The username to search for.
 	 * @return The {@link MGPlayer} in this round associated with the given username, or <b>null</b> if none is found.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public MGPlayer getMGPlayer(String player){
 		return players.get(player);
@@ -470,7 +475,7 @@ public class Round {
 	/**
 	 * Retrieves the world of this arena.
 	 * @return The name of the world containing this arena.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getWorld(){
 		return world;
@@ -481,7 +486,7 @@ public class Round {
 	 * @param name The player to add to this {@link Round round}.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws IllegalArgumentException if the round is preparing or in progress and the minigame prohibits joining.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
 	public void addPlayer(String name) throws PlayerOfflineException {
@@ -580,7 +585,7 @@ public class Round {
 	 * @param location The location to teleport the player to.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerNotPresentException if the player are not in this round.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void removePlayer(String name, Location location) throws PlayerOfflineException, PlayerNotPresentException {
 		Player p = Bukkit.getPlayer(name);
@@ -602,7 +607,7 @@ public class Round {
 	 * Removes a given player from this {@link Round round} and teleports them to the round or plugin's default exit location
 	 * (defaults to the main world's spawn point).
 	 * @param name The player to remove from this {@link Round round}. 
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void removePlayer(String name){
 		try {
@@ -615,7 +620,7 @@ public class Round {
 	/**
 	 * Retrieves the maximum number of players allowed in a round at once.
 	 * @return the maximum number of players allowed in a round at once.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getMaxPlayers(){
 		return maxPlayers;
@@ -624,7 +629,7 @@ public class Round {
 	/**
 	 * Sets the maximum number of players allowed in a round at once.
 	 * @param players the maximum number of players allowed in a round at once.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setMaxPlayers(int players){
 		this.maxPlayers = players;
@@ -638,7 +643,7 @@ public class Round {
 	 * @throws ArenaNotExistsException  if the specified arena does not exist.
 	 * @throws IllegalArgumentException if the specified location does not contain a sign.
 	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void addSign(Location location, LobbyType type, int index) throws ArenaNotExistsException, IllegalArgumentException {
 		this.getMinigame().getLobbyManager().add(location, this.getArena(), type, index);
@@ -646,7 +651,7 @@ public class Round {
 
 	/**
 	 * Updates all lobby signs linked to this round's arena.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void updateSigns(){
 		this.getMinigame().getLobbyManager().update(arena);
@@ -655,7 +660,7 @@ public class Round {
 	/**
 	 * Retrieves this round's exit location.
 	 * @return this round's exit location.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public Location getExitLocation(){
 		return exitLocation;
@@ -664,10 +669,46 @@ public class Round {
 	/**
 	 * Sets this round's exit location.
 	 * @param location the new exit location for this round.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setExitLocation(Location location){
 		this.exitLocation = location;
+	}
+	
+	/**
+	 * Retrieves whether PvP is allowed.
+	 * @return whether PvP is allowed.
+	 * @since 0.1.0
+	 */
+	public boolean isPvPAllowed(){
+		return pvp;
+	}
+	
+	/**
+	 * Sets whether PvP is allowed.
+	 * @return whether PvP is allowed.
+	 * @since 0.1.0
+	 */
+	public void setPvPAllowed(boolean allowed){
+		this.pvp = allowed;
+	}
+	
+	/**
+	 * Retrieves whether players in rounds may receive damage. (default: true)
+	 * @return whether players in rounds may receive damage.
+	 * @since 0.1.0
+	 */
+	public boolean isDamageAllowed(){
+		return damage;
+	}
+	
+	/**
+	 * Sets whether players in rounds may receive damage. (default: false)
+	 * @param allowed whether players in rounds may receive damage.
+	 * @since 0.1.0 
+	 */
+	public void setDamageAllowed(boolean allowed){
+		this.damage = allowed;
 	}
 
 	public boolean equals(Object p){

@@ -9,7 +9,7 @@ public enum LobbyType {
 	 * Retrieves a LobbySign value corresponding to the given string.
 	 * @param s the string to match.
 	 * @return a LobbySign value corresponding to the given string.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public static LobbyType fromString(String s){
 		if (s.equalsIgnoreCase("STATUS"))

@@ -35,7 +35,7 @@ public class LobbySign {
 	 * @param arena the arena the sign should track.
 	 * @param number the number of the sign (used for {@link LobbyType#PLAYERS player signs}).
 	 * @param type the {@link LobbyType type} of the sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public LobbySign(int x, int y, int z, String plugin, String world, String arena, int number, LobbyType type){
 		this.x = x;
@@ -51,7 +51,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the physical x-coordinate of this lobby sign.
 	 * @return the physical x-coordinate of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getX(){
 		return x;
@@ -60,7 +60,7 @@ public class LobbySign {
 	/**
 	 * Sets the physical x-coordinate of this lobby sign.
 	 * @param x the physical x-coordinate of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setX(int x){
 		this.x = x;
@@ -69,7 +69,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the physical y-coordinate of this lobby sign.
 	 * @return the physical y-coordinate of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getY(){
 		return y;
@@ -78,7 +78,7 @@ public class LobbySign {
 	/**
 	 * Sets the physical y-coordinate of this lobby sign.
 	 * @param y the physical y-coordinate of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setY(int y){
 		this.y = y;
@@ -87,7 +87,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the physical z-coordinate of this lobby sign.
 	 * @return the physical z-coordinate of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getZ(){
 		return z;
@@ -96,7 +96,7 @@ public class LobbySign {
 	/**
 	 * Sets the physical z-coordinate of this lobby sign.
 	 * @param z the physical z-coordinate of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setZ(int z){
 		this.z = z;
@@ -105,7 +105,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the plugin this lobby sign is associated with.
 	 * @return the plugin this lobby sign is associated with.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getPlugin(){
 		return plugin;
@@ -114,7 +114,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the name of the world containing this physical lobby sign.
 	 * @return the name of the world containing this physical lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getWorld(){
 		return world;
@@ -123,7 +123,7 @@ public class LobbySign {
 	/**
 	 * Sets the name of the world containing this physical lobby sign.
 	 * @param world the name of the world containing this physical lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setWorld(String world){
 		this.world = world;
@@ -132,7 +132,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the arena associated with this lobby sign.
 	 * @return the arena associated with this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public String getArena(){
 		return arena;
@@ -141,7 +141,7 @@ public class LobbySign {
 	/**
 	 * Sets the arena associated with this lobby sign.
 	 * @param arena the arena associated with this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setArena(String arena){
 		this.arena = arena;
@@ -150,7 +150,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the number of this lobby sign.
 	 * @return the number of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getNumber(){
 		return number;
@@ -159,7 +159,7 @@ public class LobbySign {
 	/**
 	 * Sets the number of this lobby sign.
 	 * @param number the number of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setNumber(int number){
 		this.number = number;
@@ -168,7 +168,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the {@link LobbyType type} of this lobby sign.
 	 * @return the {@link LobbyType type} of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public LobbyType getType(){
 		return type;
@@ -177,7 +177,7 @@ public class LobbySign {
 	/**
 	 * Sets the {@link LobbyType type} of this lobby sign.
 	 * @param type the {@link LobbyType type} of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setType(LobbyType type){
 		this.type = type;
@@ -186,7 +186,7 @@ public class LobbySign {
 	/**
 	 * Retrieves the internal index of this lobby sign.
 	 * @return the internal index of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public int getIndex(){
 		return index;
@@ -195,7 +195,7 @@ public class LobbySign {
 	/**
 	 * Sets the internal index of this lobby sign.
 	 * @param index the internal index of this lobby sign.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void setIndex(int index){
 		this.index = index;
@@ -203,7 +203,7 @@ public class LobbySign {
 
 	/**
 	 * Saves this lobby sign's data to disk.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void save(){
 		Minigame.getMinigameInstance(plugin).getLobbyManager().save(this);
@@ -211,7 +211,7 @@ public class LobbySign {
 
 	/**
 	 * Saves this lobby sign's data to disk and removes it from memory.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void remove(){
 		LobbyManager lm = Minigame.getMinigameInstance(plugin).getLobbyManager();
@@ -221,7 +221,7 @@ public class LobbySign {
 
 	/**
 	 * Updates this lobby sign's text based on its arena's current status.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void update(){
 		Round r = Minigame.getMinigameInstance(plugin).getRound(arena);
@@ -313,7 +313,7 @@ public class LobbySign {
 
 	/**
 	 * Resets this lobby sign's text as if its arena was empty and in {@link Stage#WAITING}.
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public void reset(){
 		World w = Bukkit.getWorld(this.getWorld());
@@ -326,7 +326,7 @@ public class LobbySign {
 					if (this.getType() == LobbyType.STATUS){
 						sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
 						String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
-						if (max.equals("-1"))
+						if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0)
 							max = "∞";
 						sign.setLine(1, cm.getLobbyPlayerCountColor() + "0/" + max);
 						sign.setLine(2, cm.getLobbyWaitingColor() + "WAITING");
