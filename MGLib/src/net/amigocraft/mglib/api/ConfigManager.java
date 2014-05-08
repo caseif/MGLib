@@ -33,6 +33,7 @@ public class ConfigManager {
 	private GameMode gameMode = GameMode.SURVIVAL;
 	private boolean pvp = false;
 	private boolean damage = true;
+	private boolean rollback = true;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -682,7 +683,7 @@ public class ConfigManager {
 	
 	/**
 	 * Retrieves the {@link Class class} object used to store information about players in minigame rounds.
-	 * @return the {@link Class class} object used to store information about players in minigame rounds.
+	 * @return the static class to use for player storage (e.g. CustomPlayer.class).
 	 * @since 0.1.0
 	 */
 	public Class<? extends MGPlayer> getPlayerClass(){
@@ -692,6 +693,7 @@ public class ConfigManager {
 	/**
 	 * Sets the {@link Class class} object used to store information about players in minigame rounds.
 	 * This may be used to add additional fields to MGLib's default {@link MGPlayer} class.
+	 * @param the static class to use for player storage (e.g. CustomPlayer.class).
 	 * @since 0.1.0
 	 */
 	public void setPlayerClass(Class<? extends MGPlayer> clazz){
@@ -727,7 +729,7 @@ public class ConfigManager {
 	
 	/**
 	 * Sets whether PvP is allowed by default.
-	 * @return whether PvP is allowed by default.
+	 * @param allowed whether PvP is allowed by default.
 	 * @since 0.1.0
 	 */
 	public void setPvPAllowed(boolean allowed){
@@ -750,6 +752,24 @@ public class ConfigManager {
 	 */
 	public void setDamageAllowed(boolean allowed){
 		this.damage = allowed;
+	}
+	
+	/**
+	 * Retrieves whether rollback is enabled by default.
+	 * @return whether rollback is enabled by default.
+	 * @since 0.1.1
+	 */
+	public boolean isRollbackEnabled(){
+		return rollback;
+	}
+	
+	/**
+	 * Sets whether rollback is enabled by default.
+	 * @param enabled whether rollback is enabled by default.
+	 * @since 0.1.1
+	 */
+	public void setRollbackEnabled(boolean enabled){
+		this.rollback = enabled;
 	}
 	
 }

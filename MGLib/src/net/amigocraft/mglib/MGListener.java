@@ -247,7 +247,7 @@ class MGListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
-				if (r.getTime() != -1)
+				if (r.getTime() != -1 && r.isRollbackEnabled())
 					if (r.getPlayers().containsKey(e.getPlayer().getName()))
 						if (mg.getConfigManager().isBlockPlaceAllowed())
 							mg.getRollbackManager().logBlockChange(e.getBlock(),
@@ -260,7 +260,7 @@ class MGListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
-				if (r.getTime() != -1)
+				if (r.getTime() != -1 && r.isRollbackEnabled())
 					if (r.getPlayers().containsKey(e.getPlayer().getName()))
 						if (mg.getConfigManager().isBlockBreakAllowed())
 							mg.getRollbackManager().logBlockChange(e.getBlock(),

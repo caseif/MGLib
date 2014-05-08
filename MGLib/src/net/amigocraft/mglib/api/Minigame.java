@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1.0
+ * @version 0.1.1-dev1
  * @since 0.1.0
  */
 public class Minigame {
@@ -42,7 +42,7 @@ public class Minigame {
 
 	private HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
-	private Minigame(JavaPlugin plugin){
+	private Minigame(final JavaPlugin plugin){
 		if (!registeredInstances.containsKey(plugin.getName())){
 			this.plugin = plugin;
 			registeredInstances.put(plugin.getName(), this); // list this Minigame instance for use in other parts of the API
@@ -50,7 +50,7 @@ public class Minigame {
 		}
 		else
 			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
-					"registered. This is a bug, and should be reported this to the author of the hooking plugin.");
+					"registered. This is a bug, and should be reported this to the author of the hooking plugin (" + plugin + ").");
 		configManager = new ConfigManager(plugin.getName());
 		rbManager = new RollbackManager(plugin); // register rollback manager
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
@@ -66,8 +66,8 @@ public class Minigame {
 
 	/**
 	 * Registers a plugin with the MGLib API.
-	 * @return This object may be used for most API methods, with the exception of some pertaining exclusively to players or rounds.
 	 * @param plugin An instance of your plugin (can be substituted with this if called from your main class).
+	 * @return A minigame object which may be used for most core API methods, with the exception of some pertaining exclusively to players or rounds.
 	 * @since 0.1.0
 	 */
 	public static Minigame registerPlugin(JavaPlugin plugin){

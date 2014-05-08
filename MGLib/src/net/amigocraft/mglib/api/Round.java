@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
+import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
@@ -61,6 +62,7 @@ public class Round {
 	
 	private boolean damage;
 	private boolean pvp;
+	private boolean rollback;
 
 	/**
 	 * Creates a new {@link Round} with the given parameters.
@@ -100,13 +102,14 @@ public class Round {
 		}
 		this.plugin = plugin; // set globals
 		this.arena = arena;
-		ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
+		ConfigManager cm = getConfigManager();
 		this.prepareTime = cm.getDefaultPreparationTime();
 		this.roundTime = cm.getDefaultPlayingTime();
 		this.maxPlayers = cm.getMaxPlayers();
 		this.exitLocation = cm.getDefaultExitLocation();
-		this.damage = Minigame.getMinigameInstance(plugin).getConfigManager().isDamageAllowed();
-		this.pvp = Minigame.getMinigameInstance(plugin).getConfigManager().isPvPAllowed();
+		this.damage = cm.isDamageAllowed();
+		this.pvp = cm.isPvPAllowed();
+		this.pvp = cm.isRollbackEnabled();
 		stage = Stage.WAITING; // default to waiting stage
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
@@ -399,7 +402,8 @@ public class Round {
 		for (MGPlayer mp : getPlayerList()) // iterate and remove players
 			removePlayer(mp.getName());
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
-		getMinigame().getRollbackManager().rollback(getArena()); // roll back arena
+		if (getConfigManager().isRollbackEnabled()) // check if rollbacks are enabled
+			getRollbackManager().rollback(getArena()); // roll back arena
 	}
 
 	/**
@@ -494,19 +498,19 @@ public class Round {
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
 		if (getStage() == Stage.PREPARING)
-			if (!Minigame.getMinigameInstance(plugin).getConfigManager().getAllowJoinRoundInProgress()){
+			if (!getConfigManager().getAllowJoinRoundInProgress()){
 				p.sendMessage(ChatColor.RED + "You may not join a round in preparation!");
 				return;
 			}
 		if (getStage() == Stage.PLAYING)
-			if (!Minigame.getMinigameInstance(plugin).getConfigManager().getAllowJoinRoundInProgress()){
+			if (!getConfigManager().getAllowJoinRoundInProgress()){
 				p.sendMessage(ChatColor.RED + "You may not join a round in progress!");
 				return;
 			}
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null){
 			try {
-				mp = (MGPlayer)Minigame.getMinigameInstance(plugin).getConfigManager().getPlayerClass().getDeclaredConstructors()[0]
+				mp = (MGPlayer)getConfigManager().getPlayerClass().getDeclaredConstructors()[0]
 						.newInstance(plugin, name, arena);
 			}
 			catch (InvocationTargetException ex){ // any error thrown from the called constructor
@@ -567,12 +571,12 @@ public class Round {
 		((PlayerInventory)p.getInventory()).setArmorContents(new ItemStack[]{null, null, null, null});
 		p.updateInventory();
 		if ((getStage() == Stage.PREPARING || getStage() == Stage.PLAYING) &&
-				Minigame.getMinigameInstance(plugin).getConfigManager().getSpectateOnJoin())
+				getConfigManager().getSpectateOnJoin())
 			mp.setSpectating(true);
 		else
 			mp.setSpectating(false);
 		mp.setPrevGameMode(p.getGameMode());
-		p.setGameMode(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultGameMode());
+		p.setGameMode(getConfigManager().getDefaultGameMode());
 		players.put(name, mp); // register player with round object
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
 		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
@@ -611,7 +615,7 @@ public class Round {
 	 */
 	public void removePlayer(String name){
 		try {
-			removePlayer(name, Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
+			removePlayer(name, getConfigManager().getDefaultExitLocation());
 		}
 		catch (PlayerOfflineException ex){}
 		catch (PlayerNotPresentException e2){} // neither of these can happen, and if they do, we have bigger problems to worry about
@@ -686,7 +690,7 @@ public class Round {
 	
 	/**
 	 * Sets whether PvP is allowed.
-	 * @return whether PvP is allowed.
+	 * @param allowed whether PvP is allowed.
 	 * @since 0.1.0
 	 */
 	public void setPvPAllowed(boolean allowed){
@@ -709,6 +713,42 @@ public class Round {
 	 */
 	public void setDamageAllowed(boolean allowed){
 		this.damage = allowed;
+	}
+	
+	/**
+	 * Retrieves whether rollback is enabled in this round.
+	 * @return whether rollback is enabled in this round.
+	 * @since 0.1.1
+	 */
+	public boolean isRollbackEnabled(){
+		return rollback;
+	}
+	
+	/**
+	 * Sets whether rollback is enabled by default.
+	 * @param enabled whether rollback is enabled by default.
+	 * @since 0.1.1
+	 */
+	public void setRollbackEnabled(boolean enabled){
+		this.rollback = enabled;
+	}
+	
+	/**
+	 * Retrieves the {@link ConfigManager} of the plugin owning this round.
+	 * @return the {@link ConfigManager} of the plugin owning this round.
+	 * @since 0.1.1
+	 */
+	public ConfigManager getConfigManager(){
+		return getMinigame().getConfigManager();
+	}
+	
+	/**
+	 * Retrieves the {@link RollbackManager} of the plugin owning this round.
+	 * @return the {@link RollbackManager} of the plugin owning this round.
+	 * @since 0.1.1
+	 */
+	public RollbackManager getRollbackManager(){
+		return getMinigame().getRollbackManager();
 	}
 
 	public boolean equals(Object p){

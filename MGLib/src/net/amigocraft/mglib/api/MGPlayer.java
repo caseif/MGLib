@@ -121,7 +121,7 @@ public class MGPlayer {
 
 	/**
 	 * Sets whether this player is spectating or not.
-	 * @param dead whether the player is spectating.
+	 * @param spectating whether the player is spectating.
 	 * @since 0.1.0
 	 */
 	public void setSpectating(boolean spectating){
