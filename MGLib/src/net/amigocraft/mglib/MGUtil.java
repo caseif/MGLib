@@ -1,6 +1,7 @@
 package net.amigocraft.mglib;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.amigocraft.mglib.api.Minigame;
@@ -68,12 +69,32 @@ public class MGUtil {
 	}
 	
 	/**
-	 * Retrieves worlds registered with MGLib's event listener
-	 * @return worlds registered with MGLib's event listener
+	 * Retrieves worlds registered with MGLib's event listener.
+	 * @return worlds registered with MGLib's event listener.
 	 * @since 0.1.0
 	 */
 	public static List<String> getWorlds(){
-		return MGListener.worlds;
+		List<String> worlds = new ArrayList<String>();
+		for (List<String> l : MGListener.worlds.values())
+			for (String w : l)
+				if (!worlds.contains(w))
+					worlds.add(w);
+		return worlds;
+	}
+	
+	/**
+	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
+	 * @return worlds registered with MGLib's event listener for the given plugin.
+	 * @since 0.1.1
+	 */
+	public static List<String> getWorlds(String plugin){
+		if (MGListener.worlds.containsKey(plugin))
+			return MGListener.worlds.get(plugin);
+		else {
+			List<String> l = new ArrayList<String>();
+			MGListener.worlds.put(plugin, l);
+			return l;
+		}
 	}
 
 }

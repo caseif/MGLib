@@ -15,7 +15,7 @@ import org.bukkit.inventory.PlayerInventory;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.UUIDFetcher;
-import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
+import net.amigocraft.mglib.event.player.MGPlayerSpectateEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
@@ -127,6 +127,7 @@ public class MGPlayer {
 	public void setSpectating(boolean spectating){
 		this.spectating = spectating;
 		if (spectating){
+			Bukkit.getPluginManager().callEvent(new MGPlayerSpectateEvent(this.getRound(), this));
 			Player p = Bukkit.getPlayer(name);
 			p.closeInventory();
 			for (Player pl : Bukkit.getOnlinePlayers())
@@ -147,7 +148,6 @@ public class MGPlayer {
 			p.setFlying(false);
 		}
 		Minigame.getMinigameInstance(plugin).getLobbyManager().update(this.getArena());
-		Bukkit.getPluginManager().callEvent(new MGPlayerDeathEvent(this.getRound(), this));
 	}
 
 	/**

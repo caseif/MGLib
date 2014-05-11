@@ -2,6 +2,7 @@ package net.amigocraft.mglib.api;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
+import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 
 import org.bukkit.Bukkit;
@@ -20,26 +21,28 @@ public class ArenaFactory {
 	private YamlConfiguration yaml = null;
 
 	private int timerHandle = -1;
-
-	/**
-	 * Creates a new {@link ArenaFactory arena} object, used to modify an arena's assets.
-	 * @param plugin The plugin this arena is owned by.
-	 * @param arena The name of this arena.
-	 * @since 0.1.0
-	 */
+	
 	private ArenaFactory(String plugin, String arena, String world){
 		this.plugin = plugin;
 		this.arena = arena;
 		this.world = world;
 		setWorld(world);
-		if (!MGUtil.getWorlds().contains(world))
-			MGUtil.getWorlds().add(world); // register world with event listener
+		MGUtil.getWorlds(plugin).add(world); // register world with event listener
 	}
 
-	public static ArenaFactory createArenaFactory(String plugin, String name, String world){
-		ArenaFactory af = Minigame.getMinigameInstance(plugin).getArenaFactory(name);
+	/**
+	 * Creates a new {@link ArenaFactory arena} object, used to modify an arena's assets.
+	 * @param plugin the plugin this arena is owned by.
+	 * @param arena the name of the arena.
+	 * @param world the world containing the arena.
+	 * @return the created ArenaFactory, or the existing one if present.
+	 * @throws ArenaNotExistsException if the given arena does not exist.
+	 * @since 0.1.0
+	 */
+	public static ArenaFactory createArenaFactory(String plugin, String arena, String world){
+		ArenaFactory af = Minigame.getMinigameInstance(plugin).arenaFactories.get(arena);
 		if (af == null)
-			return new ArenaFactory(plugin, name, world);
+			return new ArenaFactory(plugin, arena, world);
 		else {
 			af.newInstance = false;
 			return af;
@@ -116,8 +119,8 @@ public class ArenaFactory {
 			cs = yaml.getConfigurationSection(arena);
 		}
 		int min; // the minimum available spawn number
-		for (min = 0; min > 0; min++) // this feels like a bad idea, but I think it should work
-			if (cs.get("spawns." + min) == null)
+		for (min = 0; min >= 0; min++) // this feels like a bad idea, but I think it should work
+			if (cs.getString("spawns." + min) == null)
 				break;
 		cs.set("spawns." + min + ".x", x);
 		cs.set("spawns." + min + ".y", y);
@@ -199,7 +202,7 @@ public class ArenaFactory {
 				if (l.getX() == x && l.getY() == y && l.getZ() == z)
 					r.getSpawns().remove(l);
 		}
-		ConfigurationSection spawns = yaml.getConfigurationSection("spawns"); // make the code easier to read
+		ConfigurationSection spawns = yaml.getConfigurationSection(arena + ".spawns"); // make the code easier to read
 		for (String k : spawns.getKeys(false))
 			if (spawns.getDouble(k + ".x") == x && spawns.getDouble(k + ".y") == y && spawns.getDouble(k + ".z") == z)
 				spawns.set(k, null); // delete it from the config
@@ -233,7 +236,7 @@ public class ArenaFactory {
 		else
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		Minigame mg = Minigame.getMinigameInstance(plugin);
-		ConfigurationSection spawns = yaml.getConfigurationSection("spawns"); // make the code easier to read
+		ConfigurationSection spawns = yaml.getConfigurationSection(arena + ".spawns"); // make the code easier to read
 		if (spawns.contains(index + "")){
 			int x = spawns.getInt(index + ".x");
 			int y = spawns.getInt(index + ".y");

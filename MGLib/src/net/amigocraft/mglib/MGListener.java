@@ -2,6 +2,7 @@ package net.amigocraft.mglib;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.amigocraft.mglib.api.LobbySign;
@@ -56,25 +57,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 class MGListener implements Listener {
 
-	static List<String> worlds = new ArrayList<String>();
-	static List<String> plugins = new ArrayList<String>();
+	static HashMap<String, List<String>> worlds = new HashMap<String, List<String>>();
 
-	public static void initialize(){
+	static void initialize(){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			MGListener.addWorlds(mg.getPlugin());
 	}
 
-	public static void addWorlds(JavaPlugin plugin){
+	static void addWorlds(JavaPlugin plugin){
 		File f = new File(plugin.getDataFolder(), "arenas.yml");
 		if (f.exists()){
 			YamlConfiguration y = new YamlConfiguration();
 			try {
+				List<String> worldList = new ArrayList<String>();
 				y.load(f);
 				for (String k : y.getKeys(false))
-					if (!worlds.contains(y.getString(k + ".world"))){
-						worlds.add(y.getString(k + ".world"));
-						plugins.add(plugin.getName());
-					}
+					worldList.add(k);
+				worlds.put(plugin.getName(), worldList);
 			}
 			catch (Exception ex){
 				ex.printStackTrace();
@@ -132,14 +131,14 @@ class MGListener implements Listener {
 				for (Minigame mg : Minigame.getMinigameInstances()){
 					if (pl != null){
 						MGPlayer p = mg.getMGPlayer(pl.getName());
-						if (p != null || p.isSpectating() || !p.getRound().isPvPAllowed()){
+						if (p != null && (p.isSpectating() || !p.getRound().isPvPAllowed())){
 							e.setCancelled(true); // we don't want any spooky ghosts meddling in the affairs of the living
 							return;
 						}
 					}
 					if (p2 != null){
 						MGPlayer p = mg.getMGPlayer(p2.getName());
-						if (p != null || p.isSpectating() || p.getRound().isDamageAllowed()){
+						if (p != null && (p.isSpectating() || p.getRound().isDamageAllowed())){
 							e.setCancelled(true); // we don't want any spooky ghosts being harassed by the living
 							return;
 						}
@@ -272,109 +271,136 @@ class MGListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBurn(BlockBurnEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockBurnAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockBurnAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFadeAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockFadeAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockGrow(BlockGrowEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockGrowAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockGrowAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockIgniteAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockIgniteAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFlow(BlockFromToEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockFlowAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockFlowAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPhysicsAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPhysicsAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPiston(BlockPistonExtendEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPistonAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPiston(BlockPistonRetractEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockPistonAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPistonAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockSpread(BlockSpreadEvent e){
 		String w = e.getBlock().getWorld().getName();
-		if (worlds.contains(w))
-			for (int i = 0; i < worlds.size(); i++)
-				if (worlds.get(i).equals(w))
-					if (!Minigame.getMinigameInstance(plugins.get(i)).getConfigManager().isBlockSpreadAllowed()){
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockSpreadAllowed()){
 						e.setCancelled(true);
-						return;
+						break;
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler

@@ -5,9 +5,9 @@ import net.amigocraft.mglib.api.Round;
 
 /**
  * Thrown when a {@link MGPlayer player} is marked as dead.
- * @since 0.1.0
+ * @since 0.1.1
  */
-public class MGPlayerDeathEvent extends MGPlayerEvent {
+public class MGPlayerSpectateEvent extends MGPlayerEvent {
 
 	protected Round round;
 	
@@ -15,9 +15,9 @@ public class MGPlayerDeathEvent extends MGPlayerEvent {
 	 * Creates a new instance of this event.
 	 * @param round the round the player has joined.
 	 * @param player the player involved in this event.
-	 * @since 0.1.0
+	 * @since 0.1.1
 	 */
-	public MGPlayerDeathEvent(Round round, MGPlayer player){
+	public MGPlayerSpectateEvent(Round round, MGPlayer player){
 		super(player);
 		this.round = round;
 	}
@@ -25,7 +25,7 @@ public class MGPlayerDeathEvent extends MGPlayerEvent {
 	/**
 	 * Returns the {@link Round round} involved in this event.
 	 * @return the {@link Round round} involved in this event.
-	 * @since 0.1.0
+	 * @since 0.1.1
 	 */
 	public Round getRound(){
 		return round;

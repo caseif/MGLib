@@ -693,7 +693,7 @@ public class ConfigManager {
 	/**
 	 * Sets the {@link Class class} object used to store information about players in minigame rounds.
 	 * This may be used to add additional fields to MGLib's default {@link MGPlayer} class.
-	 * @param the static class to use for player storage (e.g. CustomPlayer.class).
+	 * @param clazz the static class to use for player storage (e.g. CustomPlayer.class).
 	 * @since 0.1.0
 	 */
 	public void setPlayerClass(Class<? extends MGPlayer> clazz){

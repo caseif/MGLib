@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1.1-dev1
+ * @version 0.1.1-dev2
  * @since 0.1.0
  */
 public class Minigame {
@@ -40,7 +40,7 @@ public class Minigame {
 	private RollbackManager rbManager;
 	private LobbyManager lobbyManager;
 
-	private HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
+	protected HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
 	private Minigame(final JavaPlugin plugin){
 		if (!registeredInstances.containsKey(plugin.getName())){
@@ -238,6 +238,7 @@ public class Minigame {
 			createArena(name, spawn, null, null);
 		}
 		catch (InvalidLocationException ex){ // this can never be thrown since only one location is passed
+			ex.printStackTrace();
 			Main.log.severe("How the HELL did you get this to throw an exception?");
 			Main.log.severe("Like, seriously, it should never be possible for this code to be triggered. " +
 					"You SERIOUSLY screwed something up.");
@@ -294,12 +295,16 @@ public class Minigame {
 
 	/**
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
-	 * @param name the name of the arena to retrieve an {@link ArenaFactory} for.
-	 * @return the arena's {@link ArenaFactory}, or null if one does not exist.
+	 * @param arena the name of the arena to retrieve an {@link ArenaFactory} for.
+	 * @return the arena's {@link ArenaFactory}.
+	 * @throws ArenaNotExistsException if the given arena does not exist.
 	 * @since 0.1.0
 	 */
-	public ArenaFactory getArenaFactory(String name){
-		return arenaFactories.get(name);
+	public ArenaFactory getArenaFactory(String arena) throws ArenaNotExistsException {
+		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
+		if (y.isSet(arena + ".world"))
+			return ArenaFactory.createArenaFactory(plugin.getName(), arena, MGUtil.loadArenaYaml(plugin.getName()).getString(arena + ".world"));
+		throw new ArenaNotExistsException();
 	}
 
 	/**
