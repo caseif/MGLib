@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.1.1-dev2
+ * @version 0.1.1-dev3
  * @since 0.1.0
  */
 public class Minigame {
@@ -297,7 +297,8 @@ public class Minigame {
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
 	 * @param arena the name of the arena to retrieve an {@link ArenaFactory} for.
 	 * @return the arena's {@link ArenaFactory}.
-	 * @throws ArenaNotExistsException if the given arena does not exist.
+	 * @throws ArenaNotExistsException if the given arena does not exist. In this case, you should instead use
+	 * {@link ArenaFactory#createArenaFactory(String, String, String)}.
 	 * @since 0.1.0
 	 */
 	public ArenaFactory getArenaFactory(String arena) throws ArenaNotExistsException {

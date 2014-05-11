@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.1.1-dev2
+ * @version 0.1.1-dev3
  * @since 0.1.0
  */
 public class Main extends JavaPlugin {
@@ -70,7 +70,7 @@ public class Main extends JavaPlugin {
 		}
 		if (this.getDescription().getVersion().contains("dev"))
 			log.warning("You are running a development build of MGLib. As such, plugins using the library may not " +
-					"work correctly. If you're a developer, we strongly recommend building against a alpha/beta/release" +
+					"work correctly. If you're a developer, we strongly recommend building against a alpha/beta/release " +
 					"build of the library.");
 		
 		// store UUIDs of online players

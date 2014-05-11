@@ -138,7 +138,7 @@ class MGListener implements Listener {
 					}
 					if (p2 != null){
 						MGPlayer p = mg.getMGPlayer(p2.getName());
-						if (p != null && (p.isSpectating() || p.getRound().isDamageAllowed())){
+						if (p != null && (p.isSpectating() || !p.getRound().isDamageAllowed())){
 							e.setCancelled(true); // we don't want any spooky ghosts being harassed by the living
 							return;
 						}
@@ -190,8 +190,8 @@ class MGListener implements Listener {
 			for (Round r : mg.getRoundList()){
 				MGPlayer p = r.getMGPlayer(e.getPlayer().getName());
 				if (p != null){
-					Location l = e.getPlayer().getLocation();
-					if (!e.getPlayer().getWorld().getName().equals(r.getWorld())){
+					Location l = e.getTo();
+					if (!l.getWorld().getName().equals(r.getWorld())){
 						try {
 							p.removeFromRound(l);
 						}
