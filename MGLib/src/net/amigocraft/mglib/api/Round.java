@@ -109,7 +109,7 @@ public class Round {
 		this.exitLocation = cm.getDefaultExitLocation();
 		this.damage = cm.isDamageAllowed();
 		this.pvp = cm.isPvPAllowed();
-		this.pvp = cm.isRollbackEnabled();
+		this.rollback = cm.isRollbackEnabled();
 		stage = Stage.WAITING; // default to waiting stage
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}

@@ -2,14 +2,15 @@ package net.amigocraft.mglib.event.player;
 
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.event.round.MGRoundEvent;
 
 /**
  * Thrown when a {@link MGPlayer player} leaves an {@link Round MGLib round}.
  * @since 0.1.0
  */
-public class PlayerLeaveMinigameRoundEvent extends MGPlayerEvent {
+public class PlayerLeaveMinigameRoundEvent extends MGRoundEvent {
 
-	protected Round round;
+	protected MGPlayer player;
 	
 	/**
 	 * Creates a new instance of this event.
@@ -18,8 +19,8 @@ public class PlayerLeaveMinigameRoundEvent extends MGPlayerEvent {
 	 * @since 0.1.0
 	 */
 	public PlayerLeaveMinigameRoundEvent(Round round, MGPlayer player){
-		super(player);
-		this.round = round;
+		super(round);
+		this.player = player;
 	}
 	
 	/**

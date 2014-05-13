@@ -5,18 +5,18 @@ import net.amigocraft.mglib.event.MGLibEvent;
 
 /**
  * Fired when an event involving an active {@link Round minigame round} occurs.
- * @since 0.1.0
+ * @since 0.1.1
  */
-public class MinigameEvent extends MGLibEvent {
+public class MGRoundEvent extends MGLibEvent {
 
 	protected Round round;
 	
 	/**
 	 * Creates a new instance of this event.
 	 * @param round The {@link Round} associated with this event.
-	 * @since 0.1.0
+	 * @since 0.1.1
 	 */
-	public MinigameEvent(Round round){
+	public MGRoundEvent(Round round){
 		super(round.getPlugin());
 		this.round = round;
 	}
@@ -24,7 +24,7 @@ public class MinigameEvent extends MGLibEvent {
 	/**
 	 * Retrieves the {@link Round} associated with this event.
 	 * @return the {@link Round} associated with this event.
-	 * @since 0.1.0
+	 * @since 0.1.1
 	 */
 	public Round getRound(){
 		return round;

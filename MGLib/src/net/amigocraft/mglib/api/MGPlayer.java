@@ -216,6 +216,7 @@ public class MGPlayer {
 		if (p == null) // check that the specified player is online
 			return;
 		p.getInventory().clear();
+		p.getInventory().setArmorContents(new ItemStack[4]);
 		try {
 			final File invF = new File(Main.plugin.getDataFolder() + File.separator + "inventories"
 					+ File.separator + UUIDFetcher.getUUIDOf(p.getName()) + ".dat");
@@ -245,9 +246,8 @@ public class MGPlayer {
 			ex.printStackTrace();
 			p.sendMessage(ChatColor.RED + "Failed to load inventory from disk!");
 		}
-		if (location != null){
+		if (location != null)
 			p.teleport(location, TeleportCause.PLUGIN); // teleport the player
-		}
 	}
 
 	/**

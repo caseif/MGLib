@@ -36,7 +36,6 @@ public class ArenaFactory {
 	 * @param arena the name of the arena.
 	 * @param world the world containing the arena.
 	 * @return the created ArenaFactory, or the existing one if present.
-	 * @throws ArenaNotExistsException if the given arena does not exist.
 	 * @since 0.1.0
 	 */
 	public static ArenaFactory createArenaFactory(String plugin, String arena, String world){

@@ -6,7 +6,7 @@ import net.amigocraft.mglib.api.Stage;
 /**
  * Fired once per second or 20 ticks, when a round "ticks"
  */
-public class MinigameRoundTickEvent extends MinigameEvent {
+public class MinigameRoundTickEvent extends MGRoundEvent {
 
 	private int oldTime;
 	private boolean stageChange;

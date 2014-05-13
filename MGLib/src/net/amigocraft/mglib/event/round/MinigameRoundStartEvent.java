@@ -6,7 +6,7 @@ import net.amigocraft.mglib.api.Round;
  * Fired when an MGLib round begins.
  * @since 0.1.0
  */
-public class MinigameRoundStartEvent extends MinigameEvent {
+public class MinigameRoundStartEvent extends MGRoundEvent {
 	
 	private boolean prepared;
 	

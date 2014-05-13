@@ -84,6 +84,7 @@ public class MGUtil {
 	
 	/**
 	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
+	 * @param plugin the plugin to retrieve worlds for.
 	 * @return worlds registered with MGLib's event listener for the given plugin.
 	 * @since 0.1.1
 	 */

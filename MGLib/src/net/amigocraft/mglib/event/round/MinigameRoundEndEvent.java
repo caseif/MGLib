@@ -6,7 +6,7 @@ import net.amigocraft.mglib.api.Round;
  * Fired when an {@link Round MGLib round} ends.
  * @since 0.1.0
  */
-public class MinigameRoundEndEvent extends MinigameEvent {
+public class MinigameRoundEndEvent extends MGRoundEvent {
 	private boolean outOfTime;
 	
 	/**

@@ -10,12 +10,7 @@ import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
-import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
-import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
-import net.amigocraft.mglib.event.round.MinigameRoundEndEvent;
-import net.amigocraft.mglib.event.round.MinigameRoundRollbackEvent;
-import net.amigocraft.mglib.event.round.MinigameRoundStartEvent;
-import net.amigocraft.mglib.event.round.MinigameRoundTickEvent;
+import net.amigocraft.mglib.event.round.MGRoundEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
@@ -116,9 +111,9 @@ class MGListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityDamage(EntityDamageEvent e){
 		Player pl = null;
-		Player p2 = null;
+		Player p2 = null; // don't ask why it's named like this
 		if (e.getEntity() instanceof Player)
-			p2 = (Player)e.getEntity(); // don't ask why it's named like this
+			p2 = (Player)e.getEntity();
 		if (e instanceof EntityDamageByEntityEvent){
 			Entity damager = ((EntityDamageByEntityEvent)e).getDamager();
 			if (damager instanceof Player) // damager is a player
@@ -227,15 +222,14 @@ class MGListener implements Listener {
 		boolean found = false;
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			for (Round r : mg.getRoundList()){
-				if (r.getTime() != -1)
-					if (r.getPlayers().containsKey(e.getWhoClicked().getName())){
-						if (e.getInventory().getHolder() instanceof BlockState){
-							mg.getRollbackManager().logInventoryChange(e.getInventory(),
-									((BlockState)e.getInventory().getHolder()).getBlock(), r.getArena());
-							found = true;
-							break;
-						}
+				if (r.getPlayers().containsKey(e.getWhoClicked().getName())){
+					if (e.getInventory().getHolder() instanceof BlockState){
+						mg.getRollbackManager().logInventoryChange(e.getInventory(),
+								((BlockState)e.getInventory().getHolder()).getBlock(), r.getArena());
+						found = true;
+						break;
 					}
+				}
 			}
 			if (found)
 				break;
@@ -246,26 +240,26 @@ class MGListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
-				if (r.getTime() != -1 && r.isRollbackEnabled())
-					if (r.getPlayers().containsKey(e.getPlayer().getName()))
-						if (mg.getConfigManager().isBlockPlaceAllowed())
-							mg.getRollbackManager().logBlockChange(e.getBlock(),
-									e.getBlockReplacedState().getType().toString(), r.getArena());
-						else
+				if (r.isRollbackEnabled())
+					if (r.getPlayers().containsKey(e.getPlayer().getName())){
+						if (!mg.getConfigManager().isBlockPlaceAllowed())
 							e.setCancelled(true);
+						mg.getRollbackManager().logBlockChange(e.getBlock(),
+								e.getBlockReplacedState().getType().toString(), r.getArena());
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
-				if (r.getTime() != -1 && r.isRollbackEnabled())
-					if (r.getPlayers().containsKey(e.getPlayer().getName()))
-						if (mg.getConfigManager().isBlockBreakAllowed())
-							mg.getRollbackManager().logBlockChange(e.getBlock(),
-									e.getBlock().getType().toString(), r.getArena());
-						else
+				if (r.isRollbackEnabled())
+					if (r.getPlayers().containsKey(e.getPlayer().getName())){
+						if (!mg.getConfigManager().isBlockBreakAllowed())
 							e.setCancelled(true);
+						mg.getRollbackManager().logBlockChange(e.getBlock(),
+								e.getBlock().getType().toString(), r.getArena());
+					}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -486,32 +480,7 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerJoinMinigameRound(PlayerJoinMinigameRoundEvent e){
-		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
-	}
-
-	@EventHandler
-	public void onPlayerLeaveMinigameRound(PlayerLeaveMinigameRoundEvent e){
-		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
-	}
-
-	@EventHandler
-	public void onMinigameRoundStart(MinigameRoundStartEvent e){
-		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
-	}
-
-	@EventHandler
-	public void onMinigameRoundEnd(MinigameRoundEndEvent e){
-		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
-	}
-
-	@EventHandler
-	public void onMinigameRoundTick(MinigameRoundTickEvent e){
-		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
-	}
-
-	@EventHandler
-	public void onMinigameRoundRollback(MinigameRoundRollbackEvent e){
+	public void onMGLib(MGRoundEvent e){
 		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
 	}
 
