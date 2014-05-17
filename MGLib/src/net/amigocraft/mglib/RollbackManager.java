@@ -176,9 +176,10 @@ public class RollbackManager {
 				Main.log.severe("An exception occurred while saving data for arena " + arena);
 			}
 		}
-		if (r != null)
+		if (r != null){
 			r.setStage(Stage.WAITING);
-		r.getMinigame().getLobbyManager().update(arena);
+			r.getMinigame().getLobbyManager().update(arena);
+		}
 	}
 
 	/**

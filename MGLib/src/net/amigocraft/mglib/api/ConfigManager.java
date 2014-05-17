@@ -18,6 +18,7 @@ public class ConfigManager {
 	private String plugin;
 
 	private Location exitLocation;
+	private int minPlayers = 0;
 	private int maxPlayers = 32;
 	private String signId;
 	private int roundPrepareTime = 90;
@@ -108,6 +109,25 @@ public class ConfigManager {
 	}
 
 	/**
+	 * Retrieves the default minimum number of players required to automatically start a {@link Round round}.
+	 * @return the default minimum number of players required to automatically start a {@link Round round}.
+	 * @since 0.2.0
+	 */
+	public int getMinPlayers(){
+		return minPlayers;
+	}
+
+	/**
+	 * Sets the default minimum number of players required to automatically start a {@link Round round}.
+	 * Set to 0 for no autostart.
+	 * @param minPlayers the default minimum number of players required to automatically start a {@link Round round}.
+	 * @since 0.2.0
+	 */
+	public void setMinPlayers(int minPlayers){
+		this.minPlayers = minPlayers;
+	}
+
+	/**
 	 * Retrieves the default maximum number of players allowed in a {@link Round round} at one time (default: 32).
 	 * @return the default maximum number of players allowed in a {@link Round round} at one time.
 	 * @since 0.1.0
@@ -118,6 +138,7 @@ public class ConfigManager {
 
 	/**
 	 * Sets the default maximum number of players allowed in a {@link Round round} at one time (default: 32).
+	 * Set to 0 for no limit.
 	 * @param maxPlayers the default maximum number of players allowed in a {@link Round round} at one time.
 	 * @since 0.1.0
 	 */

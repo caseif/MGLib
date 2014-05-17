@@ -131,25 +131,30 @@ public class MGPlayer {
 		if (spectating){
 			Bukkit.getPluginManager().callEvent(new MGPlayerSpectateEvent(this.getRound(), this));
 			Player p = getBukkitPlayer();
-			p.closeInventory();
-			for (Player pl : Bukkit.getOnlinePlayers())
-				pl.hidePlayer(p); //TODO: Set gamemode to SPECTATOR if supported (after 1.8 comes out)
-			p.setGameMode(GameMode.ADVENTURE);
-			String message = "You are now spectating! You have been hidden from all players";
-			if (Bukkit.getAllowFlight()){
-				p.setFlying(true);
-				message += " and are capable of flight.";
+			if (p != null){ // check that player is online
+				p.closeInventory(); // close any inventory they have open
+				for (Player pl : Bukkit.getOnlinePlayers())
+					pl.hidePlayer(p); // hide them
+				//TODO: Set gamemode to SPECTATOR if supported (after 1.8 comes out)
+				p.setGameMode(GameMode.ADVENTURE); // disable block breaking
+				String message = "You are now spectating! You have been hidden from all players"; // tell them
+				if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()){
+					p.setFlying(true); // enable flight
+					message += " and are capable of flight.";
+				}
+				else
+					message += ".";
+				p.sendMessage(message);
 			}
-			else
-				message += ".";
-			p.sendMessage(message);
 		}
 		else {
 			Player p = getBukkitPlayer();
-			for (Player pl : Bukkit.getOnlinePlayers())
-				pl.showPlayer(p);
-			p.setGameMode(getRound().getConfigManager().getDefaultGameMode());
-			p.setFlying(false);
+			if (p != null){ // check that player is online
+				for (Player pl : Bukkit.getOnlinePlayers())
+					pl.showPlayer(p); // show them
+				p.setGameMode(getRound().getConfigManager().getDefaultGameMode()); // set them to the default gamemode for arenas
+				p.setFlying(false); // disable flight
+			}
 		}
 		Minigame.getMinigameInstance(plugin).getLobbyManager().update(this.getArena());
 	}
@@ -264,7 +269,7 @@ public class MGPlayer {
 	public void reset() throws PlayerOfflineException {
 		reset(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
-	
+
 	/**
 	 * You probably shouldn't use this unless you know what it does.
 	 * @return the player's previous gamemode.
@@ -273,7 +278,7 @@ public class MGPlayer {
 	public GameMode getPrevGameMode(){
 		return prevGameMode;
 	}
-	
+
 	/**
 	 * You probably shouldn't use this unless you know what it does.
 	 * @param gameMode the player's previous gamemode.
@@ -282,7 +287,7 @@ public class MGPlayer {
 	public void setPrevGameMode(GameMode gameMode){
 		this.prevGameMode = gameMode;
 	}
-	
+
 	/**
 	 * Retrieves the {@link Bukkit Player} object for this {@link MGPlayer}.
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.

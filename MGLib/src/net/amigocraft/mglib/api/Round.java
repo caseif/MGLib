@@ -63,7 +63,7 @@ public class Round {
 	private HashMap<String, MGPlayer> players = new HashMap<String, MGPlayer>();
 
 	private int timerHandle = -1;
-	
+
 	private boolean damage;
 	private boolean pvp;
 	private boolean rollback;
@@ -109,6 +109,7 @@ public class Round {
 		ConfigManager cm = getConfigManager();
 		this.prepareTime = cm.getDefaultPreparationTime();
 		this.roundTime = cm.getDefaultPlayingTime();
+		this.minPlayers = cm.getMinPlayers();
 		this.maxPlayers = cm.getMaxPlayers();
 		this.exitLocation = cm.getDefaultExitLocation();
 		this.damage = cm.isDamageAllowed();
@@ -315,7 +316,7 @@ public class Round {
 	public HashMap<String, MGPlayer> getPlayers(){
 		return players;
 	}
-	
+
 	/**
 	 * Retrieves a list of non-spectating {@link MGPlayers} in this {@link Round}.
 	 * @return a list of non-spectating {@link MGPlayers} in this {@link Round}.
@@ -328,7 +329,7 @@ public class Round {
 				list.add(p);
 		return list;
 	}
-	
+
 	/**
 	 * Retrieves a list of spectating {@link MGPlayers} in this {@link Round}.
 	 * @return a list of spectating {@link MGPlayers} in this {@link Round}.
@@ -341,7 +342,7 @@ public class Round {
 				list.add(p);
 		return list;
 	}
-	
+
 	/**
 	 * Retrieves the number of {@link MGPlayers} in this {@link Round}.
 	 * @return the number of {@link MGPlayers} in this {@link Round}.
@@ -350,7 +351,7 @@ public class Round {
 	public int getPlayerCount(){
 		return players.size();
 	}
-	
+
 	/**
 	 * Retrieves the number of in-game (non-spectating) {@link MGPlayers} in this {@link Round}.
 	 * @return the number of in-game (non-spectating) {@link MGPlayers} in this {@link Round}.
@@ -363,7 +364,7 @@ public class Round {
 				count += 1;
 		return count;
 	}
-	
+
 	/**
 	 * Retrieves the number of spectating {@link MGPlayers} in this {@link Round}.
 	 * @return the number of spectating {@link MGPlayers} in this {@link Round}.
@@ -376,9 +377,9 @@ public class Round {
 				count += 1;
 		return count;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Begin the round and start its timer. If the round's current stage is {@link Stage#PREPARING}, it will
 	 * be set to {@link Stage#PLAYING} and the timer will be reset when it reaches 0. Otherwise, its stage
@@ -466,8 +467,12 @@ public class Round {
 			Bukkit.getScheduler().cancelTask(timerHandle); // cancel the round's timer task
 		stage = Stage.WAITING; // set stage back to waiting
 		timerHandle = -1; // reset timer handle since the task no longer exists
-		for (MGPlayer mp : getPlayerList()) // iterate and remove players
-			removePlayer(mp.getName());
+		for (MGPlayer mp : getPlayerList()){ // iterate and remove players
+			try {
+				removePlayer(mp.getName());
+			}
+			catch (Exception ex){} // I don't care if this happens
+		}
 		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
 		if (getConfigManager().isRollbackEnabled()) // check if rollbacks are enabled
 			getRollbackManager().rollback(getArena()); // roll back arena
@@ -567,16 +572,18 @@ public class Round {
 			throw new PlayerOfflineException();
 		if (getPlayerCount() >= getMaxPlayers())
 			throw new RoundFullException();
-		if (getStage() == Stage.PREPARING)
+		if (getStage() == Stage.PREPARING){
 			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
 				p.sendMessage(ChatColor.RED + "You may not join a round in preparation!");
 				return;
 			}
-		if (getStage() == Stage.PLAYING)
+		}
+		else if (getStage() == Stage.PLAYING){
 			if (!getConfigManager().getAllowJoinRoundInProgress()){
 				p.sendMessage(ChatColor.RED + "You may not join a round in progress!");
 				return;
 			}
+		}
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null){
 			try {
@@ -651,6 +658,8 @@ public class Round {
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
 		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
 		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+		if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers())
+			start();
 	}
 
 	/**
@@ -681,14 +690,30 @@ public class Round {
 	 * Removes a given player from this {@link Round round} and teleports them to the round or plugin's default exit location
 	 * (defaults to the main world's spawn point).
 	 * @param name The player to remove from this {@link Round round}. 
+	 * @throws PlayerNotPresentException if the given player is not in this round.
+	 * @throws PlayerOfflineException if the given player is offline.
 	 * @since 0.1.0
 	 */
-	public void removePlayer(String name){
-		try {
-			removePlayer(name, getConfigManager().getDefaultExitLocation());
-		}
-		catch (PlayerOfflineException ex){}
-		catch (PlayerNotPresentException e2){} // neither of these can happen, and if they do, we have bigger problems to worry about
+	public void removePlayer(String name) throws PlayerOfflineException, PlayerNotPresentException{
+		removePlayer(name, getConfigManager().getDefaultExitLocation());
+	}
+
+	/**
+	 * Retrieves the minimum number of players required to automatically start the round.
+	 * @return the minimum number of players required to automatically start the round.
+	 * @since 0.2.0
+	 */
+	public int getMinPlayers(){
+		return minPlayers;
+	}
+
+	/**
+	 * Sets the minimum number of players required to automatically start the round.
+	 * @param players the minimum number of players required to automatically start the round.
+	 * @since 0.2.0
+	 */
+	public void setMinPlayers(int players){
+		this.minPlayers = players;
 	}
 
 	/**
@@ -749,7 +774,7 @@ public class Round {
 	public void setExitLocation(Location location){
 		this.exitLocation = location;
 	}
-	
+
 	/**
 	 * Retrieves whether PvP is allowed.
 	 * @return whether PvP is allowed.
@@ -758,7 +783,7 @@ public class Round {
 	public boolean isPvPAllowed(){
 		return pvp;
 	}
-	
+
 	/**
 	 * Sets whether PvP is allowed.
 	 * @param allowed whether PvP is allowed.
@@ -767,7 +792,7 @@ public class Round {
 	public void setPvPAllowed(boolean allowed){
 		this.pvp = allowed;
 	}
-	
+
 	/**
 	 * Retrieves whether players in rounds may receive damage. (default: true)
 	 * @return whether players in rounds may receive damage.
@@ -776,7 +801,7 @@ public class Round {
 	public boolean isDamageAllowed(){
 		return damage;
 	}
-	
+
 	/**
 	 * Sets whether players in rounds may receive damage. (default: false)
 	 * @param allowed whether players in rounds may receive damage.
@@ -785,7 +810,7 @@ public class Round {
 	public void setDamageAllowed(boolean allowed){
 		this.damage = allowed;
 	}
-	
+
 	/**
 	 * Retrieves whether rollback is enabled in this round.
 	 * @return whether rollback is enabled in this round.
@@ -794,7 +819,7 @@ public class Round {
 	public boolean isRollbackEnabled(){
 		return rollback;
 	}
-	
+
 	/**
 	 * Sets whether rollback is enabled by default.
 	 * @param enabled whether rollback is enabled by default.
@@ -803,7 +828,7 @@ public class Round {
 	public void setRollbackEnabled(boolean enabled){
 		this.rollback = enabled;
 	}
-	
+
 	/**
 	 * Retrieves the {@link ConfigManager} of the plugin owning this round.
 	 * @return the {@link ConfigManager} of the plugin owning this round.
@@ -812,7 +837,7 @@ public class Round {
 	public ConfigManager getConfigManager(){
 		return getMinigame().getConfigManager();
 	}
-	
+
 	/**
 	 * Retrieves the {@link RollbackManager} of the plugin owning this round.
 	 * @return the {@link RollbackManager} of the plugin owning this round.
@@ -821,8 +846,27 @@ public class Round {
 	public RollbackManager getRollbackManager(){
 		return getMinigame().getRollbackManager();
 	}
-	
-	//TODO: add broadcast method
+
+	/**
+	 * Broadcasts a message to all players in this round.
+	 * @param message the message to broadcast.
+	 * @param broadcastToSpectators whether the message should be broadcast to spectators.
+	 * @since 0.2.0
+	 */
+	public void broadcast(String message, boolean broadcastToSpectators){
+		for (MGPlayer p : players.values())
+			if (!p.isSpectating() || broadcastToSpectators)
+				p.getBukkitPlayer().sendMessage(message);
+	}
+
+	/**
+	 * Broadcasts a message to all players in this round.
+	 * @param message the message to broadcast.
+	 * @since 0.2.0
+	 */
+	public void broadcast(String message){
+		broadcast(message, true);
+	}
 
 	public boolean equals(Object p){
 		Round r = (Round)p;
