@@ -152,7 +152,8 @@ public class MGPlayer {
 			if (p != null){ // check that player is online
 				for (Player pl : Bukkit.getOnlinePlayers())
 					pl.showPlayer(p); // show them
-				p.setGameMode(getRound().getConfigManager().getDefaultGameMode()); // set them to the default gamemode for arenas
+				if (getRound() != null)
+					p.setGameMode(getRound().getConfigManager().getDefaultGameMode()); // set them to the default gamemode for arenas
 				p.setFlying(false); // disable flight
 			}
 		}
@@ -190,8 +191,8 @@ public class MGPlayer {
 		Player p = getBukkitPlayer();
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
-				setArena(null); // clear the arena from the object
 				setSpectating(false); // make sure they're not effectively dead when they join a new round (or invisible)
+				setArena(null); // clear the arena from the object
 				r.getPlayers().remove(name); // remove the player from the round object
 				p.setGameMode(getPrevGameMode());
 				Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
