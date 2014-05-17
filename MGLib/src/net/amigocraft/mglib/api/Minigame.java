@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.2.0-dev6
+ * @version 0.2.0-dev7
  * @since 0.1.0
  */
 public class Minigame {
@@ -49,7 +49,7 @@ public class Minigame {
 			Main.log.info(plugin + " has successfully hooked into MGLib!");
 		}
 		else
-			throw new IllegalArgumentException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
+			throw new IllegalStateException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
 					"registered. This is a bug, and should be reported this to the author of the hooking plugin (" + plugin + ").");
 		configManager = new ConfigManager(plugin.getName());
 		rbManager = new RollbackManager(plugin); // register rollback manager

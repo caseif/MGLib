@@ -9,6 +9,7 @@ import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Stage;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.InvalidLocationException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -57,13 +58,13 @@ public class LobbyManager {
 	 * @param arena The name of the arena the sign will be linked to.
 	 * @param type The type of the sign ("status" or "players")
 	 * @param index The number of the sign (applicable only for "players" signs)
-	 * @throws IllegalArgumentException if the specified location does not contain a sign.
 	 * @throws ArenaNotExistsException if the specified arena does not exist.
-	 * @throws IllegalArgumentException if {@code type} is null.
+	 * @throws InvalidLocationException if the specified location does not contain a sign.
 	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
 	 * @since 0.1.0
 	 */
-	public void add(Location l, String arena, LobbyType type, int index) throws ArenaNotExistsException, IllegalArgumentException {
+	public void add(Location l, String arena, LobbyType type, int index)
+			throws ArenaNotExistsException, InvalidLocationException, IllegalArgumentException {
 		if (l.getBlock().getState() instanceof Sign){
 			if (MGUtil.loadArenaYaml(plugin).getConfigurationSection(arena) != null){
 				LobbySign ls;
@@ -76,7 +77,7 @@ public class LobbyManager {
 						throw new IllegalArgumentException("Invalid player sign index for arena " + arena);
 				}
 				else
-					throw new IllegalArgumentException("No sign type provided!");
+					throw new NullPointerException();
 				save(ls);
 				signs.put(l, ls);
 				update(arena);
@@ -85,7 +86,7 @@ public class LobbyManager {
 				throw new ArenaNotExistsException();
 		}
 		else
-			throw new IllegalArgumentException("Specified location does not contain a sign");
+			throw new InvalidLocationException();
 	}
 
 	/**

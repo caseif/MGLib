@@ -12,8 +12,11 @@ import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.round.MGRoundEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.InvalidLocationException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
+import net.amigocraft.mglib.exception.PlayerPresentException;
+import net.amigocraft.mglib.exception.RoundFullException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -398,7 +401,7 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler
-	public void onSignChange(SignChangeEvent e){
+	public void onSignChange(SignChangeEvent e) throws IndexOutOfBoundsException, InvalidLocationException{
 		if (e.getBlock().getState() instanceof Sign){ // just in case
 			for (Minigame mg : Minigame.getMinigameInstances()){ // iterate registered minigames
 				if (e.getLine(0).equalsIgnoreCase(mg.getConfigManager().getSignId())){ // it's a lobby sign-to-be
@@ -455,24 +458,25 @@ class MGListener implements Listener {
 								return;
 							}
 						}
-						MGPlayer p = mg.getMGPlayer(e.getPlayer().getName());
-						if (p == null || p.getRound() == null){
-							Round r = mg.getRound(ls.getArena());
-							if (r == null){
-								try {
-									r = mg.createRound(ls.getArena());
-								}
-								catch (ArenaNotExistsException ex){
-									e.getPlayer().sendMessage(ChatColor.RED + "Could not load arena " + ls.getArena() + "!");
-								}
-							}
+						Round r = mg.getRound(ls.getArena());
+						if (r == null){
 							try {
-								r.addPlayer(e.getPlayer().getName());
+								r = mg.createRound(ls.getArena());
 							}
-							catch (PlayerOfflineException ex){} // this can never happen
+							catch (ArenaNotExistsException ex){
+								e.getPlayer().sendMessage(ChatColor.RED + "Could not load arena " + ls.getArena() + "!");
+							}
 						}
-						else
+						try {
+							r.addPlayer(e.getPlayer().getName());
+						}
+						catch (PlayerOfflineException ex){} // this can never happen
+						catch (PlayerPresentException e1){
 							e.getPlayer().sendMessage(ChatColor.RED + "You are already in a round!");
+						}
+						catch (RoundFullException e1){
+							e.getPlayer().sendMessage(ChatColor.RED + "This round is full!");
+						}
 					}
 				}
 			}

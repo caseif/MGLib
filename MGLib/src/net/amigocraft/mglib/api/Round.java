@@ -31,9 +31,11 @@ import net.amigocraft.mglib.event.round.MinigameRoundPrepareEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundStartEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundTickEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
-import net.amigocraft.mglib.exception.MGLibException;
+import net.amigocraft.mglib.exception.InvalidLocationException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
+import net.amigocraft.mglib.exception.PlayerPresentException;
+import net.amigocraft.mglib.exception.RoundFullException;
 
 /**
  * Represents a round within a minigame.
@@ -554,17 +556,17 @@ public class Round {
 	 * Adds a player by the given name to this {@link Round round}.
 	 * @param name The player to add to this {@link Round round}.
 	 * @throws PlayerOfflineException if the player is not online.
-	 * @throws IllegalArgumentException if the round is preparing or in progress and the minigame prohibits joining.
-	 * @throws IllegalStateException if the arena is full.
+	 * @throws PlayerPresentException if the player is already in a round.
+	 * @throws RoundFullException if the round is full.
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
-	public void addPlayer(String name) throws PlayerOfflineException {
+	public void addPlayer(String name) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
 		final Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
 		if (getPlayerCount() >= getMaxPlayers())
-			throw new IllegalStateException("The round is full!");
+			throw new RoundFullException();
 		if (getStage() == Stage.PREPARING)
 			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
 				p.sendMessage(ChatColor.RED + "You may not join a round in preparation!");
@@ -603,7 +605,7 @@ public class Round {
 		else if (mp.getArena() == null)
 			mp.setArena(arena);
 		else
-			throw new IllegalArgumentException("Player " + name + " is already in arena " + mp.getArena());
+			throw new PlayerPresentException();
 		ItemStack[] contents = p.getInventory().getContents();
 		PlayerInventory pInv = (PlayerInventory)p.getInventory();
 		ItemStack helmet = pInv.getHelmet(), chestplate = pInv.getChestplate(), leggings = pInv.getLeggings(), boots = pInv.getBoots();
@@ -713,11 +715,12 @@ public class Round {
 	 * @param type The type of the sign ("status" or "players")
 	 * @param index The number of the sign (applicable only for "players" signs)
 	 * @throws ArenaNotExistsException  if the specified arena does not exist.
-	 * @throws IllegalArgumentException if the specified location does not contain a sign.
-	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
+	 * @throws InvalidLocationException if the specified location does not contain a sign.
+	 * @throws IndexOutOfBounds if the specified index for a player sign is less than 1. 
 	 * @since 0.1.0
 	 */
-	public void addSign(Location location, LobbyType type, int index) throws ArenaNotExistsException, IllegalArgumentException {
+	public void addSign(Location location, LobbyType type, int index)
+			throws ArenaNotExistsException, InvalidLocationException, IndexOutOfBoundsException {
 		this.getMinigame().getLobbyManager().add(location, this.getArena(), type, index);
 	}
 
