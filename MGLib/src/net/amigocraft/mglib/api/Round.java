@@ -563,8 +563,8 @@ public class Round {
 		final Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
-		if (getPlayerCount() < getMaxPlayers())
-			throw new IllegalStateException();
+		if (getPlayerCount() >= getMaxPlayers())
+			throw new IllegalStateException("The round is full!");
 		if (getStage() == Stage.PREPARING)
 			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
 				p.sendMessage(ChatColor.RED + "You may not join a round in preparation!");
