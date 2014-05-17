@@ -128,10 +128,11 @@ public class MGPlayer {
 		this.spectating = spectating;
 		if (spectating){
 			Bukkit.getPluginManager().callEvent(new MGPlayerSpectateEvent(this.getRound(), this));
-			Player p = Bukkit.getPlayer(name);
+			Player p = getBukkitPlayer();
 			p.closeInventory();
 			for (Player pl : Bukkit.getOnlinePlayers())
-				pl.hidePlayer(p); //TODO: Set gamemode to 3 (SPECTATOR) if supported
+				pl.hidePlayer(p); //TODO: Set gamemode to SPECTATOR if supported (after 1.8 comes out)
+			p.setGameMode(GameMode.ADVENTURE);
 			String message = "You are now spectating! You have been hidden from all players";
 			if (Bukkit.getAllowFlight()){
 				p.setFlying(true);
@@ -142,9 +143,10 @@ public class MGPlayer {
 			p.sendMessage(message);
 		}
 		else {
-			Player p = Bukkit.getPlayer(name);
+			Player p = getBukkitPlayer();
 			for (Player pl : Bukkit.getOnlinePlayers())
 				pl.showPlayer(p);
+			p.setGameMode(getRound().getConfigManager().getDefaultGameMode());
 			p.setFlying(false);
 		}
 		Minigame.getMinigameInstance(plugin).getLobbyManager().update(this.getArena());
@@ -176,7 +178,7 @@ public class MGPlayer {
 	 * @since 0.1.0
 	 */
 	public void removeFromRound(final Location location) throws PlayerNotPresentException {
-		Player p = Bukkit.getPlayer(name);
+		Player p = getBukkitPlayer();
 		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
 			if (r.getPlayers().containsKey(name)){
 				setArena(null); // clear the arena from the object
@@ -185,7 +187,7 @@ public class MGPlayer {
 				p.setGameMode(getPrevGameMode());
 				Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
 					public void run(){
-						if (Bukkit.getPlayer(name) != null)
+						if (getBukkitPlayer() != null)
 							reset(location); // reset the object and send the player to the exit point (and reset the player's inventory
 					}
 				});
@@ -212,7 +214,7 @@ public class MGPlayer {
 	 */
 	@SuppressWarnings("deprecation")
 	public void reset(Location location){
-		final Player p = Bukkit.getPlayer(name);
+		final Player p = getBukkitPlayer();
 		if (p == null) // check that the specified player is online
 			return;
 		p.getInventory().clear();
@@ -275,6 +277,15 @@ public class MGPlayer {
 	 */
 	public void setPrevGameMode(GameMode gameMode){
 		this.prevGameMode = gameMode;
+	}
+	
+	/**
+	 * Retrieves the {@link Bukkit Player} object for this {@link MGPlayer}.
+	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
+	 * @since 0.2.0
+	 */
+	public Player getBukkitPlayer(){
+		return Bukkit.getPlayer(name);
 	}
 
 	public boolean equals(Object p){

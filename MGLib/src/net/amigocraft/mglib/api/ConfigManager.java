@@ -34,6 +34,8 @@ public class ConfigManager {
 	private boolean pvp = false;
 	private boolean damage = true;
 	private boolean rollback = true;
+	private boolean spectatorsOnSigns = true;
+	private boolean spectatorFlight = true;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -755,21 +757,59 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether rollback is enabled by default.
+	 * Retrieves whether rollback is enabled by default. (default: true)
 	 * @return whether rollback is enabled by default.
-	 * @since 0.1.1
+	 * @since 0.2.0
 	 */
 	public boolean isRollbackEnabled(){
 		return rollback;
 	}
 	
 	/**
-	 * Sets whether rollback is enabled by default.
+	 * Sets whether rollback is enabled by default. (default: true)
 	 * @param enabled whether rollback is enabled by default.
-	 * @since 0.1.1
+	 * @since 0.2.0
 	 */
 	public void setRollbackEnabled(boolean enabled){
 		this.rollback = enabled;
+	}
+	
+	/**
+	 * Retrieves whether spectators' names are displayed on lobby signs. (defualt: true)
+	 * @return whether spectators' names are displayed on lobby signs.
+	 * @since 0.2.0
+	 */
+	public boolean areSpectatorsOnLobbySigns(){
+		return spectatorsOnSigns;
+	}
+	
+	/**
+	 * Sets whether spectators' names are displayed on lobby signs. (default: true)
+	 * @param displayed whether spectators' names are displayed on lobby signs.
+	 * @since 0.2.0
+	 */
+	public void setSpectatorsOnLobbySigns(boolean displayed){
+		this.spectatorsOnSigns = displayed;
+	}
+	
+	/**
+	 * Retrieves whether spectators are permitted to fly.
+	 * This will be overridden if allow-flight is set to false in the server.properties file. (default: true)
+	 * @return whether spectators are permitted to fly.
+	 * @since 0.2.0
+	 */
+	public boolean isSpectatorFlightAllowed(){
+		return spectatorFlight;
+	}
+	
+	/**
+	 * Sets whether spectators are permitted to fly.
+	 * This will be overridden if allow-flight is set to false in the server.properties file. (default: true)
+	 * @param allowed whether spectators are permitted to fly.
+	 * @since 0.2.0
+	 */
+	public void setSpectatorFlightAllowed(boolean allowed){
+		this.spectatorFlight = allowed;
 	}
 	
 }

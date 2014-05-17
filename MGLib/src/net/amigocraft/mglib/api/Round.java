@@ -31,6 +31,7 @@ import net.amigocraft.mglib.event.round.MinigameRoundPrepareEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundStartEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundTickEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.MGLibException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 
@@ -41,6 +42,7 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
  */
 public class Round {
 
+	private int minPlayers; //TODO: do stuff with this
 	private int maxPlayers;
 	private int prepareTime;
 	private int roundTime;
@@ -295,8 +297,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves a list of {@link MGPlayer}s in this {@link Round}.
-	 * @return A list of {@link MGPlayer}s in this {@link Round}.
+	 * Retrieves a list of {@link MGPlayers} in this {@link Round}.
+	 * @return A list of {@link MGPlayers} in this {@link Round}.
 	 * @since 0.1.0
 	 */
 	public List<MGPlayer> getPlayerList(){
@@ -304,14 +306,77 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves a hashmap of {@link MGPlayer}s in this {@link Round}.
-	 * @return A hashmap of {@link MGPlayer}s in this {@link Round}, with their name as a key.
+	 * Retrieves a hashmap of {@link MGPlayers} in this {@link Round}.
+	 * @return A hashmap of {@link MGPlayers} in this {@link Round}, with their name as a key.
 	 * @since 0.1.0
 	 */
 	public HashMap<String, MGPlayer> getPlayers(){
 		return players;
 	}
-
+	
+	/**
+	 * Retrieves a list of non-spectating {@link MGPlayers} in this {@link Round}.
+	 * @return a list of non-spectating {@link MGPlayers} in this {@link Round}.
+	 * @since 0.2.0
+	 */
+	public List<MGPlayer> getAlivePlayerList(){
+		List<MGPlayer> list = new ArrayList<MGPlayer>();
+		for (MGPlayer p : players.values())
+			if (!p.isSpectating())
+				list.add(p);
+		return list;
+	}
+	
+	/**
+	 * Retrieves a list of spectating {@link MGPlayers} in this {@link Round}.
+	 * @return a list of spectating {@link MGPlayers} in this {@link Round}.
+	 * @since 0.2.0
+	 */
+	public List<MGPlayer> getSpectatingPlayerList(){
+		List<MGPlayer> list = new ArrayList<MGPlayer>();
+		for (MGPlayer p : players.values())
+			if (p.isSpectating())
+				list.add(p);
+		return list;
+	}
+	
+	/**
+	 * Retrieves the number of {@link MGPlayers} in this {@link Round}.
+	 * @return the number of {@link MGPlayers} in this {@link Round}.
+	 * @since 0.2.0
+	 */
+	public int getPlayerCount(){
+		return players.size();
+	}
+	
+	/**
+	 * Retrieves the number of in-game (non-spectating) {@link MGPlayers} in this {@link Round}.
+	 * @return the number of in-game (non-spectating) {@link MGPlayers} in this {@link Round}.
+	 * @since 0.2.0
+	 */
+	public int getAlivePlayerCount(){
+		int count = 0;
+		for (MGPlayer p : players.values())
+			if (!p.isSpectating())
+				count += 1;
+		return count;
+	}
+	
+	/**
+	 * Retrieves the number of spectating {@link MGPlayers} in this {@link Round}.
+	 * @return the number of spectating {@link MGPlayers} in this {@link Round}.
+	 * @since 0.2.0
+	 */
+	public int getSpectatingPlayerCount(){
+		int count = 0;
+		for (MGPlayer p : players.values())
+			if (p.isSpectating())
+				count += 1;
+		return count;
+	}
+	
+	
+	
 	/**
 	 * Begin the round and start its timer. If the round's current stage is {@link Stage#PREPARING}, it will
 	 * be set to {@link Stage#PLAYING} and the timer will be reset when it reaches 0. Otherwise, its stage
@@ -360,7 +425,7 @@ public class Round {
 							// this whole bit handles keeping player inside the arena
 							//TODO: Possibly make an event for when a player wanders out of an arena
 							for (MGPlayer p : r.getPlayerList()){
-								Player pl = Bukkit.getPlayer(p.getName());
+								Player pl = p.getBukkitPlayer();
 								Location l = pl.getLocation();
 								if (l.getX() < r.getMinBound().getX())
 									pl.teleport(new Location(l.getWorld(), r.getMinBound().getX(), l.getY(), l.getZ()), TeleportCause.PLUGIN);
@@ -490,6 +555,7 @@ public class Round {
 	 * @param name The player to add to this {@link Round round}.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws IllegalArgumentException if the round is preparing or in progress and the minigame prohibits joining.
+	 * @throws IllegalStateException if the arena is full.
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
@@ -497,8 +563,10 @@ public class Round {
 		final Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
+		if (getPlayerCount() < getMaxPlayers())
+			throw new IllegalStateException();
 		if (getStage() == Stage.PREPARING)
-			if (!getConfigManager().getAllowJoinRoundInProgress()){
+			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
 				p.sendMessage(ChatColor.RED + "You may not join a round in preparation!");
 				return;
 			}
@@ -718,7 +786,7 @@ public class Round {
 	/**
 	 * Retrieves whether rollback is enabled in this round.
 	 * @return whether rollback is enabled in this round.
-	 * @since 0.1.1
+	 * @since 0.2.0
 	 */
 	public boolean isRollbackEnabled(){
 		return rollback;
@@ -727,7 +795,7 @@ public class Round {
 	/**
 	 * Sets whether rollback is enabled by default.
 	 * @param enabled whether rollback is enabled by default.
-	 * @since 0.1.1
+	 * @since 0.2.0
 	 */
 	public void setRollbackEnabled(boolean enabled){
 		this.rollback = enabled;
@@ -736,7 +804,7 @@ public class Round {
 	/**
 	 * Retrieves the {@link ConfigManager} of the plugin owning this round.
 	 * @return the {@link ConfigManager} of the plugin owning this round.
-	 * @since 0.1.1
+	 * @since 0.2.0
 	 */
 	public ConfigManager getConfigManager(){
 		return getMinigame().getConfigManager();
@@ -745,11 +813,13 @@ public class Round {
 	/**
 	 * Retrieves the {@link RollbackManager} of the plugin owning this round.
 	 * @return the {@link RollbackManager} of the plugin owning this round.
-	 * @since 0.1.1
+	 * @since 0.2.0
 	 */
 	public RollbackManager getRollbackManager(){
 		return getMinigame().getRollbackManager();
 	}
+	
+	//TODO: add broadcast method
 
 	public boolean equals(Object p){
 		Round r = (Round)p;

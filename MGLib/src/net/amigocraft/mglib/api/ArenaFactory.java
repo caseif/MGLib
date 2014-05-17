@@ -2,7 +2,6 @@ package net.amigocraft.mglib.api;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
-import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 
 import org.bukkit.Bukkit;

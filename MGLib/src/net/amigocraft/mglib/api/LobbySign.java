@@ -1,6 +1,7 @@
 package net.amigocraft.mglib.api;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -281,8 +282,10 @@ public class LobbySign {
 						else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0){
 							for (int i = 0; i <= 3; i++){
 								if (r != null){
-									if (r.getPlayers().size() >= (this.getNumber() - 1) * 4 + i + 1){
-										MGPlayer p = r.getPlayerList().get((this.getNumber() - 1) * 4 + i);
+									List<MGPlayer> players = Minigame.getMinigameInstance(plugin).getConfigManager().areSpectatorsOnLobbySigns() ?
+											r.getPlayerList() : r.getAlivePlayerList();
+									if (players.size() >= (this.getNumber() - 1) * 4 + i + 1){
+										MGPlayer p = players.get((this.getNumber() - 1) * 4 + i);
 										String name = p.getPrefix() + p.getName();
 										if (name.length() > 16)
 											name = name.substring(0, 16);

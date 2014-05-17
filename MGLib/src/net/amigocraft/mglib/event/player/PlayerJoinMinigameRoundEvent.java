@@ -28,8 +28,8 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent {
 	 * @return the {@link Round round} involved in this event.
 	 * @since 0.1.0
 	 */
-	public Round getRound(){
-		return round;
+	public MGPlayer getPlayer(){
+		return player;
 	}
 	
 }
