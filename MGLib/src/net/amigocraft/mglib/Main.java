@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.2.0-dev9
+ * @version 0.2.0-dev10
  * @since 0.1.0
  */
 public class Main extends JavaPlugin {
@@ -42,6 +42,11 @@ public class Main extends JavaPlugin {
 	 * Whether block changes should be logged immediately.
 	 */
 	public static boolean IMMEDIATE_LOGGING;
+	
+	/**
+	 * Whether MGLib is using verbose logging.
+	 */
+	public static int LOGGING_LEVEL;
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override.
@@ -53,6 +58,7 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
+		LOGGING_LEVEL = getConfig().getInt("logging-level");
 		// updater
 		if (getConfig().getBoolean("enable-updater")){
 			new Updater(this, 74979, this.getFile(), Updater.UpdateType.DEFAULT, true);

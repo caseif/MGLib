@@ -9,6 +9,15 @@
 # We highly recommend you leave this at its default value (true).
 rollback-logging: true
 
+#Defines the level at which MGLib will log. Higher levels mean more messages.
+#Level 0 is the bare minimum. Almost nothing will be logged.
+#Level 1 is a bit more verbose. This may be used by both server owners and developers.
+#Level 2 is much more verbose. This will log technical details about the library's actions.
+#Level 3 is extremely verbose. It will cause almost all actions taken by the library to be logged.
+#Level 0 is recommended for most users. Level 1 may be used if a server owner is experiencing problems with the library or a plugin using it.
+#Level 2 is the recommended level for developers experiencing problems. Level 3 should not be used unless you're prepared for EXTREME log spam.
+logging-level: 0
+
 # Should MGLib silently download and install updates when available?
 # We highly recommend you set this to true so you may run plugins using new features.
 enable-updater: true

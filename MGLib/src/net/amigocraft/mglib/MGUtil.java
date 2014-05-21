@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @since 0.1.0
  */
 public class MGUtil {
-	
+
 	/**
 	 * Loads and returns the given plugin's arenas.yml file.
 	 * @param plugin The plugin to load the YAML file from.
@@ -58,7 +58,7 @@ public class MGUtil {
 			Main.log.severe("An exception occurred while saving arena data for plugin " + plugin);
 		}
 	}
-	
+
 	public static boolean isInteger(String s){
 		try {
 			Integer.parseInt(s);
@@ -67,7 +67,7 @@ public class MGUtil {
 		catch (NumberFormatException ex){}
 		return false;
 	}
-	
+
 	/**
 	 * Retrieves worlds registered with MGLib's event listener.
 	 * @return worlds registered with MGLib's event listener.
@@ -81,7 +81,7 @@ public class MGUtil {
 					worlds.add(w);
 		return worlds;
 	}
-	
+
 	/**
 	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
 	 * @param plugin the plugin to retrieve worlds for.
@@ -96,6 +96,17 @@ public class MGUtil {
 			MGListener.worlds.put(plugin, l);
 			return l;
 		}
+	}
+
+	/**
+	 * Logs the given message if verbose logging is enabled.
+	 * @param message the message to log.
+	 * @param level the level at which to log the message (0-3)
+	 * @since 0.2.0
+	 */
+	public static void log(String message, int level){
+		if (Main.LOGGING_LEVEL >= level)
+			Main.log.info(message);
 	}
 
 }

@@ -1,5 +1,7 @@
 package net.amigocraft.mglib.api;
 
+import static net.amigocraft.mglib.MGUtil.*;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -21,7 +23,6 @@ import org.bukkit.inventory.PlayerInventory;
 import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.Main;
-import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
@@ -78,14 +79,15 @@ public class Round {
 	 * @throws ArenaNotExistsException if the specified arena does not exist.
 	 */
 	public Round(String plugin, String arena) throws ArenaNotExistsException {
-		YamlConfiguration y = MGUtil.loadArenaYaml(plugin);
+		YamlConfiguration y = loadArenaYaml(plugin);
 		if (!y.contains(arena))
 			throw new ArenaNotExistsException();
 		ConfigurationSection cs = y.getConfigurationSection(arena); // make the code easier to read
 		world = cs.getString("world"); // get the name of the world of the arena
 		World w = Bukkit.getWorld(world); // convert it to a Bukkit world
-		if (w == null) // but what if world is kill?
+		if (w == null){ // but what if world is kill?
 			throw new IllegalArgumentException("World " + world + " cannot be loaded!"); // then round is kill
+		}
 		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){ // load spawns into round object
 			Location l = new Location(w, cs.getDouble("spawns." + k + ".x"),
 					cs.getDouble("spawns." + k + ".y"),

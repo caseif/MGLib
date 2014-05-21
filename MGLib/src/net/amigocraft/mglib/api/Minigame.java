@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * and as such, is very prone to change. Methods may be in this version that will disappear in
  * the next release, and existing methods may be temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.2.0-dev9
+ * @version 0.2.0-dev10
  * @since 0.1.0
  */
 public class Minigame {
@@ -144,9 +144,9 @@ public class Minigame {
 	}
 
 	/**
-	 * Gets the instance of the round associated with the given world.
+	 * Gets the instance of the round associated with the given arena.
 	 * @param name The name of the round to retrieve.
-	 * @return The instance of the round associated with the given world.
+	 * @return The instance of the round associated with the given arena.
 	 * @since 0.1.0
 	 */
 	public Round getRound(String name){
@@ -221,6 +221,8 @@ public class Minigame {
 		}
 
 		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName()).addSpawn(spawn);
+		if (!a.isNewInstance())
+			throw new ArenaExistsException();
 		if (minX == minX)
 			a.setMinBound(minX, minY, minZ).setMaxBound(maxX, maxY, maxZ);
 		return a;
@@ -341,6 +343,16 @@ public class Minigame {
 	 */
 	public ConfigManager getConfigManager(){
 		return configManager;
+	}
+
+	/**
+	 * Logs the given message if verbose logging is enabled.
+	 * @param message the message to log.
+	 * @param level the level at which to log the message (0-3)
+	 * @since 0.2.0
+	 */
+	public void log(String message, int level){
+		MGUtil.log("[" + plugin + "]" + message, level);
 	}
 
 	/**
