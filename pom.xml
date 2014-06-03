@@ -35,12 +35,18 @@
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
 	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>ssh-repository</id>
+			<url>scp://amigocraft.net/var/www/repo/mglib/</url>
+		</repository>
+	</distributionManagement>
 	<build>
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh-external</artifactId>
-				<version>1.0-beta-6</version>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.4</version>
 			</extension>
 		</extensions>
 		<defaultGoal>clean install</defaultGoal>
