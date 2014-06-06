@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * MGLib's primary (central) class.
  * @author Maxim Roncacé
- * @version 0.3.0-dev1
+ * @version 0.3.0-SNAPSHOT
  * @since 0.1.0
  */
 public class Main extends JavaPlugin {

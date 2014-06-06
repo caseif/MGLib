@@ -488,7 +488,7 @@ class Metrics {
      * GZip compress a string of bytes
      *
      * @param input
-     * @return
+     * @return the compressed bytes
      */
     public static byte[] gzip(String input) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -302,8 +302,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves a list of {@link MGPlayers} in this {@link Round}.
-	 * @return A list of {@link MGPlayers} in this {@link Round}.
+	 * Retrieves a list of {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * @return A list of {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.1.0
 	 */
 	public List<MGPlayer> getPlayerList(){
@@ -311,8 +311,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves a hashmap of {@link MGPlayers} in this {@link Round}.
-	 * @return A hashmap of {@link MGPlayers} in this {@link Round}, with their name as a key.
+	 * Retrieves a hashmap of {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * @return A hashmap of {@link MGPlayer MGPlayers} in this {@link Round}, with their name as a key.
 	 * @since 0.1.0
 	 */
 	public HashMap<String, MGPlayer> getPlayers(){
@@ -320,8 +320,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves a list of non-spectating {@link MGPlayers} in this {@link Round}.
-	 * @return a list of non-spectating {@link MGPlayers} in this {@link Round}.
+	 * Retrieves a list of non-spectating {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * @return a list of non-spectating {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
 	public List<MGPlayer> getAlivePlayerList(){
@@ -333,8 +333,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves a list of spectating {@link MGPlayers} in this {@link Round}.
-	 * @return a list of spectating {@link MGPlayers} in this {@link Round}.
+	 * Retrieves a list of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * @return a list of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
 	public List<MGPlayer> getSpectatingPlayerList(){
@@ -346,8 +346,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves the number of {@link MGPlayers} in this {@link Round}.
-	 * @return the number of {@link MGPlayers} in this {@link Round}.
+	 * Retrieves the number of {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * @return the number of {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
 	public int getPlayerCount(){
@@ -355,8 +355,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves the number of in-game (non-spectating) {@link MGPlayers} in this {@link Round}.
-	 * @return the number of in-game (non-spectating) {@link MGPlayers} in this {@link Round}.
+	 * Retrieves the number of in-game (non-spectating) {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * @return the number of in-game (non-spectating) {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
 	public int getAlivePlayerCount(){
@@ -368,8 +368,8 @@ public class Round {
 	}
 
 	/**
-	 * Retrieves the number of spectating {@link MGPlayers} in this {@link Round}.
-	 * @return the number of spectating {@link MGPlayers} in this {@link Round}.
+	 * Retrieves the number of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * @return the number of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
 	public int getSpectatingPlayerCount(){
@@ -743,7 +743,7 @@ public class Round {
 	 * @param index The number of the sign (applicable only for "players" signs)
 	 * @throws ArenaNotExistsException  if the specified arena does not exist.
 	 * @throws InvalidLocationException if the specified location does not contain a sign.
-	 * @throws IndexOutOfBounds if the specified index for a player sign is less than 1. 
+	 * @throws IndexOutOfBoundsException if the specified index for a player sign is less than 1. 
 	 * @since 0.1.0
 	 */
 	public void addSign(Location location, LobbyType type, int index)
