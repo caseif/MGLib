@@ -4,7 +4,7 @@
 	<groupId>net.amigocraft.mglib</groupId>
 	<artifactId>MGLib</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<name>MGLib</name>
 	<url>http://dev.bukkit.org/bukkit-plugins/mglib/</url>
 	<description>A high-level API for Bukkit minigame creation</description>
