@@ -38,7 +38,7 @@
 	<distributionManagement>
 		<repository>
 			<id>ssh-repository</id>
-			<url>sftp://amigocraft.net/var/www/repo/mglib/content/repositories/</url>
+			<url>sftp://amigocraft.net/var/www/repo/content/repositories/mglib/</url>
 		</repository>
 	</distributionManagement>
 	<build>
