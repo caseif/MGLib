@@ -34,6 +34,7 @@ public class MGPlayer {
 	private boolean spectating = false;
 	private String prefix = "";
 	private GameMode prevGameMode;
+	private String team = null;
 
 	/**
 	 * Creates a new MGPlayer instance.
@@ -91,6 +92,24 @@ public class MGPlayer {
 	 */
 	public String getPrefix(){
 		return prefix;
+	}
+	
+	/**
+	 * Retrieves the name of the team this player is on, or null if they are not on a team.
+	 * @return the name of the team this player is on, or null if they are not on a team.
+	 * @since 0.3.0
+	 */
+	public String getTeam(){
+		return team;
+	}
+	
+	/**
+	 * Sets the name of the team this player is on.
+	 * @param team the name of the team this player is on. Set to null for no team.
+	 * @since 0.3.0
+	 */
+	public void setTeam(String team){
+		this.team = team;
 	}
 
 	/**

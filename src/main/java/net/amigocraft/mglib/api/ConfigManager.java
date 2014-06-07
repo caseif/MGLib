@@ -10,7 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 
 /**
- * Stores default variables for rounds for convenience purposes.
+ * Stores variables for minigames and defaults for rounds for convenience purposes.
  * @since 0.1.0
  */
 public class ConfigManager {
@@ -37,6 +37,7 @@ public class ConfigManager {
 	private boolean rollback = true;
 	private boolean spectatorsOnSigns = true;
 	private boolean spectatorFlight = true;
+	private boolean teamDamage = true;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -109,7 +110,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves the default minimum number of players required to automatically start a {@link Round round}.
+	 * Retrieves the default minimum number of players required to automatically start a {@link Round round}. (default: 0 (no minimum))
 	 * @return the default minimum number of players required to automatically start a {@link Round round}.
 	 * @since 0.2.0
 	 */
@@ -119,7 +120,7 @@ public class ConfigManager {
 
 	/**
 	 * Sets the default minimum number of players required to automatically start a {@link Round round}.
-	 * Set to 0 for no autostart.
+	 * Set to 0 (default) for no autostart.
 	 * @param minPlayers the default minimum number of players required to automatically start a {@link Round round}.
 	 * @since 0.2.0
 	 */
@@ -148,6 +149,7 @@ public class ConfigManager {
 
 	/**
 	 * Retrieves the associated plugin {@link LobbySign lobby sign} identifier, used to recognize lobby signs.
+	 * (default: your plugin's name in square brackets)
 	 * @return the associated plugin {@link LobbySign lobby sign} identifier, used to recognize lobby signs.
 	 * @since 0.1.0
 	 */
@@ -157,6 +159,7 @@ public class ConfigManager {
 
 	/**
 	 * Sets the associated plugin {@link LobbySign lobby sign} identifier, used to recognize lobby signs.
+	 * (default: your plugin's name in square brackets)
 	 * @param signId the associated plugin {@link LobbySign lobby sign} identifier, used to recognize lobby signs.
 	 * @since 0.1.0
 	 */
@@ -203,7 +206,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players are allowed to join a round which {@link Stage#PLAYING has already started} (default: true).
+	 * Retrieves whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: true)
 	 * @return whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
 	 * @since 0.1.0
 	 */
@@ -212,7 +215,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players are allowed to join a round which {@link Stage#PLAYING has already started} (default: true).
+	 * Sets whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: true)
 	 * @param allow whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
 	 * @since 0.1.0
 	 */
@@ -221,7 +224,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage} (default: true).
+	 * Retrieves whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: true)
 	 * @return whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage.}
 	 * @since 0.1.0
 	 */
@@ -230,7 +233,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage} (default: true).
+	 * Sets whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: true)
 	 * @param allow whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}.
 	 * @since 0.1.0
 	 */
@@ -239,7 +242,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players will be set to spectator mode upon joining around in progress.
+	 * Retrieves whether players will be set to spectator mode upon joining around in progress. (default: true)
 	 * @return whether players will be set to spectator mode upon joining around in progress.
 	 * @since 0.1.0
 	 */
@@ -248,7 +251,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players will be set to spectator mode upon joining around in progress. This will have no effect if both
+	 * Sets whether players will be set to spectator mode upon joining around in progress. (default: true) This will have no effect if both
 	 * {@link ConfigManager#getAllowJoinRoundWhilePreparing()} and {@link ConfigManager#getAllowJoinRoundInProgress()} return false.
 	 * @param allowed whether players will be set to spectator mode upon joining around in progress.
 	 * @since 0.1.0
@@ -470,7 +473,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether teleportation (via ender pearl, command, or another plugin) is permitted for players in a {@link Round round}. (Default: true)
+	 * Retrieves whether teleportation (via ender pearl, command, or another plugin) is permitted for players in a {@link Round round}. (default: true)
 	 * @return whether teleportation is permitted for players in a {@link Round round}.
 	 * @since 0.1.0
 	 */
@@ -479,7 +482,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether teleportation (via ender pearl, command, or another plugin) is permitted for players in a {@link Round round}. (Default: true)
+	 * Sets whether teleportation (via ender pearl, command, or another plugin) is permitted for players in a {@link Round round}. (default: true)
 	 * @param allowed whether teleportation is permitted for players in a {@link Round round}.
 	 * @since 0.1.0
 	 */
@@ -488,7 +491,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players partaking in a minigame are permitted to send private messages or use the /pm command (default: true).
+	 * Retrieves whether players partaking in a minigame are permitted to send private messages or use the /pm command. (default: true)
 	 * This can help limit communication of volatile information between teams, such as in <a href="http://dev.bukkit.org/bukkit-plugins/TTT">TTT</a>.
 	 * @return whether players partaking in a minigame are permitted to send private messages or use the /pm command.
 	 * @since 0.1.0
@@ -498,7 +501,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players partaking in a minigame are permitted to send private messages or use the /pm command (default: true).
+	 * Sets whether players partaking in a minigame are permitted to send private messages or use the /pm command. (default: true)
 	 * @param allowed whether players partaking in a minigame are permitted to send private messages or use the /pm command.
 	 * @since 0.1.0
 	 */
@@ -507,7 +510,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players are permitted to use the /kit command while partaking in a minigame (default: true).
+	 * Retrieves whether players are permitted to use the /kit command while partaking in a minigame. (default: true)
 	 * @return whether players are permitted to use the /kit command while partaking in a minigame.
 	 * @since 0.1.0
 	 */
@@ -516,7 +519,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players are permitted to use the /kit command while partaking in a minigame (default: true).
+	 * Sets whether players are permitted to use the /kit command while partaking in a minigame. (default: true)
 	 * @param allowed whether players are permitted to use the /kit command while partaking in a minigame.
 	 * @since 0.1.0
 	 */
@@ -525,7 +528,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block placing is permitted for players in a {@link Round round}. (Default: false)
+	 * Retrieves whether block placing is permitted for players in a {@link Round round}. (default: false)
 	 * @return whether block placing is permitted for players in a {@link Round round}.
 	 * @since 0.1.0
 	 */
@@ -534,7 +537,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block placing is permitted for players in a {@link Round round}. (Default: false)
+	 * Sets whether block placing is permitted for players in a {@link Round round}. (default: false)
 	 * @param allowed whether block placing is permitted for players in a {@link Round round}.
 	 * @since 0.1.0
 	 */
@@ -543,7 +546,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block breaking is permitted for players in a {@link Round round}. (Default: false)
+	 * Retrieves whether block breaking is permitted for players in a {@link Round round}. (default: false)
 	 * @return whether block breaking is permitted for players in a {@link Round round}.
 	 * @since 0.1.0
 	 */
@@ -552,7 +555,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block breaking is permitted for players in a {@link Round round}. (Default: false)
+	 * Sets whether block breaking is permitted for players in a {@link Round round}. (default: false)
 	 * @param allowed whether block breaking is permitted for players in a {@link Round round}.
 	 * @since 0.1.0
 	 */
@@ -561,7 +564,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block burning is permitted in worlds containing one or more arenas. (Default: false)
+	 * Retrieves whether block burning is permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether block burning is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -570,7 +573,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block burning is permitted in worlds containing one or more arenas. (Default: false)
+	 * Sets whether block burning is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block burning is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -579,7 +582,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas. (Default: false)
+	 * Retrieves whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -588,7 +591,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas. (Default: false)
+	 * Sets whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -597,7 +600,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas. (Default: false)
+	 * Retrieves whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -606,7 +609,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas. (Default: false)
+	 * Sets whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -615,7 +618,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block ignition is permitted in worlds containing one or more arenas. (Default: false)
+	 * Retrieves whether block ignition is permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether block ignition is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -624,7 +627,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block ignition is permitted in worlds containing one or more arenas. (Default: false)
+	 * Sets whether block ignition is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block ignition is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -633,7 +636,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block flowing is permitted in worlds containing one or more arenas. (Default: true)
+	 * Retrieves whether block flowing is permitted in worlds containing one or more arenas. (default: true)
 	 * @return whether block flowing is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -642,7 +645,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block flowing is permitted in worlds containing one or more arenas. (Default: true)
+	 * Sets whether block flowing is permitted in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether block flowing is permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -651,7 +654,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block physics are permitted in worlds containing one or more arenas. (Default: false)
+	 * Retrieves whether block physics are permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether block physics are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -660,7 +663,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block ignition are physics in worlds containing one or more arenas. (Default: false)
+	 * Sets whether block ignition are physics in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block physics are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -669,7 +672,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether pistons are permitted in worlds containing one or more arenas. (Default: true)
+	 * Retrieves whether pistons are permitted in worlds containing one or more arenas. (default: true)
 	 * @return whether pistons are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -678,7 +681,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether pistons are permitted in worlds containing one or more arenas. (Default: true)
+	 * Sets whether pistons are permitted in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether pistons are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -687,7 +690,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas. (Default: false)
+	 * Retrieves whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -696,7 +699,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas. (Default: false)
+	 * Sets whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -705,7 +708,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves the {@link Class class} object used to store information about players in minigame rounds.
+	 * Retrieves the {@link Class class} object used to store information about players in minigame rounds. (default: {@link MGPlayer MGPlayer.class}
 	 * @return the static class to use for player storage (e.g. CustomPlayer.class).
 	 * @since 0.1.0
 	 */
@@ -714,7 +717,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets the {@link Class class} object used to store information about players in minigame rounds.
+	 * Sets the {@link Class class} object used to store information about players in minigame rounds. (default: {@link MGPlayer MGPlayer.class})
 	 * This may be used to add additional fields to MGLib's default {@link MGPlayer} class.
 	 * @param clazz the static class to use for player storage (e.g. CustomPlayer.class).
 	 * @since 0.1.0
@@ -724,8 +727,8 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves the default gamemode for players entering minigame rounds.
-	 * @return the default gamemode for players entering minigame rounds.
+	 * Retrieves the default {@link GameMode gamemode} for players entering minigame rounds. (default: {@link GameMode#SURVIVAL})
+	 * @return the default {@link GameMode gamemode} for players entering minigame rounds.
 	 * @since 0.1.0
 	 */
 	public GameMode getDefaultGameMode(){
@@ -733,8 +736,8 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Sets the default gamemode for players entering minigame rounds.
-	 * @param gameMode the default gamemode for players entering minigame rounds.
+	 * Sets the default {@link GameMode gamemode} for players entering minigame rounds. (default: {@link GameMode#SURVIVAL}
+	 * @param gameMode the default {@link GameMode gamemode} for players entering minigame rounds.
 	 * @since 0.1.0
 	 */
 	public void setDefaultGameMode(GameMode gameMode){
@@ -742,7 +745,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether PvP is allowed by default.
+	 * Retrieves whether PvP is allowed by default. (default: true)
 	 * @return whether PvP is allowed by default.
 	 * @since 0.1.0
 	 */
@@ -751,7 +754,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether PvP is allowed by default.
+	 * Sets whether PvP is allowed by default. (default: true)
 	 * @param allowed whether PvP is allowed by default.
 	 * @since 0.1.0
 	 */
@@ -814,8 +817,8 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether spectators are permitted to fly.
-	 * This will be overridden if allow-flight is set to false in the server.properties file. (default: true)
+	 * Retrieves whether spectators are permitted to fly. (default: true)
+	 * This will be overridden if allow-flight is set to false in the server.properties file.
 	 * @return whether spectators are permitted to fly.
 	 * @since 0.2.0
 	 */
@@ -824,13 +827,31 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether spectators are permitted to fly.
-	 * This will be overridden if allow-flight is set to false in the server.properties file. (default: true)
+	 * Sets whether spectators are permitted to fly. (default: true)
+	 * This will be overridden if allow-flight is set to false in the server.properties file.
 	 * @param allowed whether spectators are permitted to fly.
 	 * @since 0.2.0
 	 */
 	public void setSpectatorFlightAllowed(boolean allowed){
 		this.spectatorFlight = allowed;
+	}
+	
+	/**
+	 * Retrieves whether players are permitted to damage teammates. (default: true)
+	 * @return whether players are permitted to damage teammates.
+	 * @since 0.3.0
+	 */
+	public boolean isTeamDamageAllowed(){
+		return teamDamage;
+	}
+	
+	/**
+	 * Sets whether players are permitted to damage teammates. (default: true)
+	 * @param allowed whether players are permitted to damage teammates.
+	 * @since 0.3.0
+	 */
+	public void setTeamDamageAllowed(boolean allowed){
+		this.teamDamage = allowed;
 	}
 	
 }

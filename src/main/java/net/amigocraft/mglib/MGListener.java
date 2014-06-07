@@ -125,6 +125,7 @@ class MGListener implements Listener {
 				if (((Projectile)damager).getShooter() instanceof Player)
 					pl = (Player)((Projectile)damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow)
 
+			//TODO: probably rewrite this bit at some point
 			if (pl != null || p2 != null){
 				for (Minigame mg : Minigame.getMinigameInstances()){
 					if (pl != null){
@@ -138,6 +139,15 @@ class MGListener implements Listener {
 						MGPlayer p = mg.getMGPlayer(p2.getName());
 						if (p != null && (p.isSpectating() || !p.getRound().isDamageAllowed())){
 							e.setCancelled(true); // we don't want any spooky ghosts being harassed by the living
+							return;
+						}
+					}
+					if (pl != null && p2 != null){
+						MGPlayer m1 = mg.getMGPlayer(pl.getName());
+						MGPlayer m2 = mg.getMGPlayer(p2.getName());
+						if (m1 != null && m2 != null && !mg.getConfigManager().isTeamDamageAllowed() &&
+								m1.getTeam() != null && m2.getTeam() != null && m1.getTeam().equalsIgnoreCase(m2.getTeam())){
+							e.setCancelled(true);
 							return;
 						}
 					}
