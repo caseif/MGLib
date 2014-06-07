@@ -15,30 +15,30 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<repositories>
+		<repository>
+			<id>Bukkit Repo</id>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
+		</repository>
+	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<scope>provided</scope>
 			<version>1.7.9-R0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
-		</repository>
-	</repositories>
 	<distributionManagement>
 		<repository>
 			<id>ssh-repository</id>
-			<url>sftp://amigocraft.net/var/www/repo/mglib/</url>
+			<url>sftp://amigocraft.net/var/www/repo/mglib/content/repositories/</url>
 		</repository>
 	</distributionManagement>
 	<build>
@@ -49,7 +49,7 @@
 				<version>2.4</version>
 			</extension>
 		</extensions>
-		<defaultGoal>clean install</defaultGoal>
+		<defaultGoal>clean package</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
