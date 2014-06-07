@@ -45,7 +45,7 @@ import net.amigocraft.mglib.exception.RoundFullException;
  */
 public class Round {
 
-	private int minPlayers; //TODO: do stuff with this
+	private int minPlayers;
 	private int maxPlayers;
 	private int prepareTime;
 	private int roundTime;
@@ -660,7 +660,7 @@ public class Round {
 		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
 		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
 		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
-		if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers())
+		if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers() && getPlayerCount() > 0)
 			start();
 	}
 

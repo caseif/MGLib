@@ -16,6 +16,7 @@ public class ArenaFactory {
 	private String world;
 
 	private boolean newInstance = true;
+	private boolean newArena = false;
 
 	private YamlConfiguration yaml = null;
 
@@ -39,12 +40,19 @@ public class ArenaFactory {
 	 */
 	public static ArenaFactory createArenaFactory(String plugin, String arena, String world){
 		ArenaFactory af = Minigame.getMinigameInstance(plugin).arenaFactories.get(arena);
-		if (af == null)
-			return new ArenaFactory(plugin, arena, world);
+		if (af == null){
+			boolean nA = false;
+			if (MGUtil.loadArenaYaml(plugin).get(arena) == null)
+				nA = true;
+			af = new ArenaFactory(plugin, arena, world);
+			af.newArena = nA;
+			return af;
+		}
 		else {
 			af.newInstance = false;
 			return af;
 		}
+			
 	}
 	
 	/**
@@ -351,7 +359,7 @@ public class ArenaFactory {
 	}
 
 	/**
-	 * Determines whether this instance is newly created. This will permanently return false after the 
+	 * Determines whether this instance is newly created for the server session. This will return false for the rest of the session after the 
 	 * {@link ArenaFactory#createArenaFactory(String, String, String) createArenaFactory()} method is called a second time.
 	 * @return whether this instance is newly created.
 	 * @since 0.1.0
@@ -359,6 +367,15 @@ public class ArenaFactory {
 	public boolean isNewInstance(){
 		return newInstance;
 	}
+	
+	/**
+	 * Determines whether this arena is newly created. This will permanently return false until the arena is deleted.
+	 * @return whether this arena is newly created.
+	 * @since 0.3.0
+	 */
+	public boolean isNewArena(){
+		return newArena;
+	}	
 
 	/**
 	 * Destroys this arena factory.

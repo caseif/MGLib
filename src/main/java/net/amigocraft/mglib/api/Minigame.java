@@ -221,7 +221,7 @@ public class Minigame {
 		}
 
 		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName()).addSpawn(spawn);
-		if (!a.isNewInstance())
+		if (!a.isNewArena())
 			throw new ArenaExistsException();
 		if (minX == minX)
 			a.setMinBound(minX, minY, minZ).setMaxBound(maxX, maxY, maxZ);
@@ -239,14 +239,7 @@ public class Minigame {
 		try {
 			createArena(name, spawn, null, null);
 		}
-		catch (InvalidLocationException ex){ // this can never be thrown since only one location is passed
-			ex.printStackTrace();
-			Main.log.severe("How the HELL did you get this to throw an exception?");
-			Main.log.severe("Like, seriously, it should never be possible for this code to be triggered. " +
-					"You SERIOUSLY screwed something up.");
-			Main.log.warning("And hello to the person reading the library's source, " +
-					"since that's the only place this is ever going to be read. Now get back to work.");
-		}
+		catch (InvalidLocationException ex){}
 	}
 
 	/**
