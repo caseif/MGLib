@@ -261,7 +261,7 @@ public class LobbySign {
 							case RESETTING:
 								color = cm.getLobbyResettingColor();
 							}
-							sign.setLine(2, color + status.toString());
+							sign.setLine(2, color + Main.locale.getMessage(status.toString()));
 							String time = "";
 							if (status != Stage.WAITING && status != Stage.RESETTING){
 								if (r.getRemainingTime() == -1)
@@ -332,7 +332,7 @@ public class LobbySign {
 						if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0)
 							max = "∞";
 						sign.setLine(1, cm.getLobbyPlayerCountColor() + "0/" + max);
-						sign.setLine(2, cm.getLobbyWaitingColor() + "WAITING");
+						sign.setLine(2, cm.getLobbyWaitingColor() + Main.locale.getMessage("waiting"));
 						sign.setLine(3, "");
 					}
 					else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0){

@@ -24,3 +24,6 @@ enable-updater: true
 
 # Should MGLib submit anonymous statistics to MCStats? (Set to false if you're paranoid.)
 enable-metrics: true
+
+#What locale should MGLib's messages use?
+locale: enUS

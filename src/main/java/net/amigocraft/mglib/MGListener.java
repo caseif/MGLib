@@ -1,5 +1,7 @@
 package net.amigocraft.mglib;
 
+import static net.amigocraft.mglib.Main.locale;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -423,21 +425,19 @@ class MGListener implements Listener {
 								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(2), LobbyType.fromString(e.getLine(1)), index);
 							}
 							catch (ArenaNotExistsException ex){
-								e.getPlayer().sendMessage(ChatColor.RED + "The specified arena does not exist!");
+								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-not-exists"));
 							}
 							catch (IllegalArgumentException ex){
 								if (ex.getMessage().contains("index"))
-									e.getPlayer().sendMessage(ChatColor.RED + "The specified player sign index is not valid!");
-								else if (ex.getMessage().contains("type"))
-									e.getPlayer().sendMessage(ChatColor.RED + "The specified sign type is not valid!");
+									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-index"));
 								else if (ex.getMessage().contains("Invalid string!"))
-									e.getPlayer().sendMessage(ChatColor.RED + "Invalid sign type!");
+									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-type"));
 								else
 									ex.printStackTrace();
 							}
 						}
 						else
-							e.getPlayer().sendMessage(ChatColor.RED + "The specified player sign index is not valid!");
+							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-index"));
 					}
 					break;
 				}
@@ -474,7 +474,7 @@ class MGListener implements Listener {
 								r = mg.createRound(ls.getArena());
 							}
 							catch (ArenaNotExistsException ex){
-								e.getPlayer().sendMessage(ChatColor.RED + "Could not load arena " + ls.getArena() + "!");
+								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-load-fail").replace("%", ls.getArena()));
 							}
 						}
 						try {
@@ -482,10 +482,10 @@ class MGListener implements Listener {
 						}
 						catch (PlayerOfflineException ex){} // this can never happen
 						catch (PlayerPresentException e1){
-							e.getPlayer().sendMessage(ChatColor.RED + "You are already in a round!");
+							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("in-round"));
 						}
 						catch (RoundFullException e1){
-							e.getPlayer().sendMessage(ChatColor.RED + "This round is full!");
+							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("round-full"));
 						}
 					}
 				}
@@ -505,7 +505,7 @@ class MGListener implements Listener {
 				if (mg.isPlayer(e.getPlayer().getName())){
 					if (!mg.getConfigManager().areKitsAllowed()){
 						e.setCancelled(true);
-						e.getPlayer().sendMessage(ChatColor.RED + "You may not use kits during an active round!");
+						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("no-kits"));
 					}
 				}
 		}
@@ -515,7 +515,7 @@ class MGListener implements Listener {
 				if (mg.isPlayer(e.getPlayer().getName())){
 					if (!mg.getConfigManager().arePMsAllowed()){
 						e.setCancelled(true);
-						e.getPlayer().sendMessage(ChatColor.RED + "You may not send private messages during an active round!");
+						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("no-pms"));
 					}
 				}
 		}

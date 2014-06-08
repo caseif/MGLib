@@ -47,6 +47,11 @@ public class Main extends JavaPlugin {
 	 * Whether MGLib is using verbose logging.
 	 */
 	public static int LOGGING_LEVEL;
+	
+	/**
+	 * The locale manager for MGLib itself.
+	 */
+	public static LocaleManager locale;
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override.
@@ -59,6 +64,10 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
 		LOGGING_LEVEL = getConfig().getInt("logging-level");
+		
+		locale = new LocaleManager("MGLib");
+		locale.initialize();
+		
 		// updater
 		if (getConfig().getBoolean("enable-updater")){
 			new Updater(this, 74979, this.getFile(), Updater.UpdateType.DEFAULT, true);
@@ -71,13 +80,11 @@ public class Main extends JavaPlugin {
 				metrics.start();
 			}
 			catch (IOException ex){
-				log.warning("Failed to enable plugin metrics!");
+				log.warning(locale.getMessage("metrics-fail"));
 			}
 		}
 		if (this.getDescription().getVersion().contains("dev"))
-			log.warning("You are running a development build of MGLib. As such, plugins using the library may not " +
-					"work correctly. If you're a developer, we strongly recommend building against a alpha/beta/release " +
-					"build of the library.");
+			log.warning(locale.getMessage("dev-build"));
 		
 		// store UUIDs of online players
 		List<String> names = new ArrayList<String>();
@@ -88,10 +95,10 @@ public class Main extends JavaPlugin {
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
-			Main.log.severe("Failed to fetch UUIDs of online players");
+			Main.log.severe(locale.getMessage("uuid-fail"));
 		}
 		
-		log.info(this + " is now ready!");
+		log.info(this + " " + locale.getMessage("enabled"));
 	}
 
 	/**
@@ -99,14 +106,14 @@ public class Main extends JavaPlugin {
 	 * @since 0.1.0
 	 */
 	public void onDisable(){
-		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] Ending all minigames due to server restart/reload");
+		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("ending-rounds"));
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
 				r.end(false);
 		Minigame.uninitialize();
 		MGLibEvent.uninitialize();
 		UUIDFetcher.uninitialize();
-		log.info(this + " has been disabled!");
+		log.info(this + " " + locale.getMessage("disabled"));
 		Main.uninitialize();
 	}
 	

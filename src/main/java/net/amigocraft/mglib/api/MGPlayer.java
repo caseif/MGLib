@@ -1,5 +1,7 @@
 package net.amigocraft.mglib.api;
 
+import static net.amigocraft.mglib.Main.locale;
+
 import java.io.File;
 
 import org.bukkit.Bukkit;
@@ -156,13 +158,11 @@ public class MGPlayer {
 					pl.hidePlayer(p); // hide them
 				//TODO: Set gamemode to SPECTATOR if supported (after 1.8 comes out)
 				p.setGameMode(GameMode.ADVENTURE); // disable block breaking
-				String message = "You are now spectating! You have been hidden from all players"; // tell them
+				String message = Main.locale.getMessage("spectating"); // tell them
 				if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()){
 					p.setFlying(true); // enable flight
-					message += " and are capable of flight.";
+					message += " " + locale.getMessage("flight-enabled");
 				}
-				else
-					message += ".";
 				p.sendMessage(message);
 			}
 		}
@@ -275,7 +275,7 @@ public class MGPlayer {
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
-			p.sendMessage(ChatColor.RED + "Failed to load inventory from disk!");
+			p.sendMessage(ChatColor.RED + locale.getMessage("inv-load-fail"));
 		}
 		if (location != null)
 			p.teleport(location, TeleportCause.PLUGIN); // teleport the player

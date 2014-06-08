@@ -1,5 +1,6 @@
 package net.amigocraft.mglib.api;
 
+import static net.amigocraft.mglib.Main.locale;
 import static net.amigocraft.mglib.MGUtil.*;
 
 import java.io.File;
@@ -572,17 +573,17 @@ public class Round {
 		final Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
-		if (getPlayerCount() >= getMaxPlayers())
+		if (getPlayerCount() >= getMaxPlayers() && getMaxPlayers() > 0)
 			throw new RoundFullException();
 		if (getStage() == Stage.PREPARING){
 			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
-				p.sendMessage(ChatColor.RED + "You may not join a round in preparation!");
+				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-prepare"));
 				return;
 			}
 		}
 		else if (getStage() == Stage.PLAYING){
 			if (!getConfigManager().getAllowJoinRoundInProgress()){
-				p.sendMessage(ChatColor.RED + "You may not join a round in progress!");
+				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-progress"));
 				return;
 			}
 		}
@@ -643,7 +644,7 @@ public class Round {
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
-			p.sendMessage(ChatColor.RED + "Failed to save inventory to disk!");
+			p.sendMessage(ChatColor.RED + locale.getMessage("inv-save-fail"));
 			return;
 		}
 		((PlayerInventory)p.getInventory()).clear();

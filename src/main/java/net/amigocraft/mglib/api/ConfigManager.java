@@ -38,6 +38,7 @@ public class ConfigManager {
 	private boolean spectatorsOnSigns = true;
 	private boolean spectatorFlight = true;
 	private boolean teamDamage = true;
+	private String locale = "enUS";
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -852,6 +853,24 @@ public class ConfigManager {
 	 */
 	public void setTeamDamageAllowed(boolean allowed){
 		this.teamDamage = allowed;
+	}
+	
+	/**
+	 * Retrieves the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
+	 * @return the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
+	 * @since 0.3.0
+	 */
+	public String getDefaultLocale(){
+		return locale;
+	}
+	
+	/**
+	 * Sets the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
+	 * @param locale the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
+	 * @since 0.3.0
+	 */
+	public void setDefaultLocale(String locale){
+		this.locale = locale;
 	}
 	
 }
