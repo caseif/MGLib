@@ -1,0 +1,26 @@
+key|value|everything after second "|" is ignored
+
+enabled|has been enabled!
+disabled|has been disabled!
+metrics-fail|Failed to enable plugin metrics!
+dev-build|You appear to be running a development build of MGLib. As such, plugins using the library may not work correctly. If you're a developer, we strongly recommend building against a alpha/beta/release version of the library.
+uuid-fail|Failed to fetch UUIDs of online players!
+ending-rounds|Ending all minigames due to server restart/reload
+arena-not-exists|The specified arena does not exist!
+invalid-sign-index|The specified player sign index is not valid!
+invalid-sign-type|Invalid sign type!
+waiting|WAITING
+preparing|PREPARING
+playing|PLAYING
+resetting|RESETTING
+arena-load-fail|Could not load arena %!
+in-round|You are already in a round!
+round-full|This round is full!
+no-kits|You may not use kits during an active round!
+no-pms|You may not send private messages during an active round!
+spectating|You are now spectating and have been made invisible!
+flight-enabled|Additionally, you are now capable of flight.
+inv-load-fail|Failed to load inventory from disk!
+inv-save-fail|Failed to save inventory to disk!
+no-join-prepare|You may not join a round in preparation!
+no-join-progress|You may not join a round in progress!
