@@ -876,7 +876,7 @@ public class ConfigManager {
 	
 	/**
 	 * Retrieves whether players are sent to a random spawn when entered into an arena. (default: true)
-	 * return whether players should be sent to a random spawn.
+	 * @return whether players should be sent to a random spawn.
 	 * @since 0.3.0
 	 */
 	public boolean isRandomSpawning(){
