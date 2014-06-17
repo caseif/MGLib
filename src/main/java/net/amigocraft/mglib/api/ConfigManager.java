@@ -39,6 +39,7 @@ public class ConfigManager {
 	private boolean spectatorFlight = true;
 	private boolean teamDamage = true;
 	private String locale = "enUS";
+	private boolean randomSpawns = true;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -857,7 +858,7 @@ public class ConfigManager {
 	
 	/**
 	 * Retrieves the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
-	 * @return the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
+	 * @return the locale to fall back to if the one defined in the MGLib config cannot be loaded.
 	 * @since 0.3.0
 	 */
 	public String getDefaultLocale(){
@@ -866,11 +867,30 @@ public class ConfigManager {
 	
 	/**
 	 * Sets the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
-	 * @param locale the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
+	 * @param locale the locale to fall back to if the one defined in the MGLib config cannot be loaded.
 	 * @since 0.3.0
 	 */
 	public void setDefaultLocale(String locale){
 		this.locale = locale;
+	}
+	
+	/**
+	 * Retrieves whether players are sent to a random spawn when entered into an arena. (default: true)
+	 * @param random whether players should be sent to a random spawn.
+	 * @since 0.3.0
+	 */
+	public boolean isRandomSpawning(){
+		return randomSpawns;
+	}
+	
+	/**
+	 * Sets whether players are sent to a random spawn when entered into an arena. (default: true)
+	 * When false, the first player to join will be sent to spawn 0, the second to spawn 1, etc.
+	 * @return whether players should be sent to a random spawn.
+	 * @since 0.3.0
+	 */
+	public void setRandomSpawning(boolean random){
+		this.randomSpawns = random;
 	}
 	
 }

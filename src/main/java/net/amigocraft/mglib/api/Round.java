@@ -658,7 +658,9 @@ public class Round {
 		mp.setPrevGameMode(p.getGameMode());
 		p.setGameMode(getConfigManager().getDefaultGameMode());
 		players.put(name, mp); // register player with round object
-		Location spawn = spawns.get(new Random().nextInt(spawns.size())); // pick a random spawn
+		Location spawn = getConfigManager().isRandomSpawning() ?
+				spawns.get(new Random().nextInt(spawns.size())) :
+					spawns.get(players.size() % spawns.size());
 		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
 		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 		if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers() && getPlayerCount() > 0)
