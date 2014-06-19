@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
@@ -248,6 +249,8 @@ public class MGPlayer {
 			return;
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(new ItemStack[4]);
+		for (PotionEffect pe : p.getActivePotionEffects())
+			p.removePotionEffect(pe.getType()); // remove any potion effects before sending them back to the lobby
 		try {
 			final File invF = new File(Main.plugin.getDataFolder() + File.separator + "inventories"
 					+ File.separator + UUIDFetcher.getUUIDOf(p.getName()) + ".dat");

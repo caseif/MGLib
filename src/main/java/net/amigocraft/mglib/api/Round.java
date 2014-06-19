@@ -20,12 +20,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 
 import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.UUIDFetcher;
+import net.amigocraft.mglib.event.player.PlayerHitArenaBorderEvent;
 import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundEndEvent;
@@ -433,6 +435,7 @@ public class Round {
 							for (MGPlayer p : r.getPlayerList()){
 								Player pl = p.getBukkitPlayer();
 								Location l = pl.getLocation();
+								boolean event = true;
 								if (l.getX() < r.getMinBound().getX())
 									pl.teleport(new Location(l.getWorld(), r.getMinBound().getX(), l.getY(), l.getZ()), TeleportCause.PLUGIN);
 								else if (l.getX() > r.getMaxBound().getX())
@@ -445,6 +448,10 @@ public class Round {
 									pl.teleport(new Location(l.getWorld(), l.getX(), l.getY(), r.getMinBound().getZ()), TeleportCause.PLUGIN);
 								else if (l.getZ() > r.getMaxBound().getZ())
 									pl.teleport(new Location(l.getWorld(), l.getX(), l.getY(), r.getMinBound().getZ()), TeleportCause.PLUGIN);
+								else
+									event = false;
+								if (event)
+									Bukkit.getPluginManager().callEvent(new PlayerHitArenaBorderEvent(p));
 							}
 						}
 						if (r.getStage() == Stage.PLAYING || r.getStage() == Stage.PREPARING)
@@ -607,7 +614,7 @@ public class Round {
 				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is seriously wack. Fix it, developer.");
 				ex.printStackTrace();
 			}
-			catch (IllegalAccessException ex){
+			catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
 				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible");
 				ex.printStackTrace();
 			}
@@ -650,6 +657,8 @@ public class Round {
 		((PlayerInventory)p.getInventory()).clear();
 		((PlayerInventory)p.getInventory()).setArmorContents(new ItemStack[]{null, null, null, null});
 		p.updateInventory();
+		for (PotionEffect pe : p.getActivePotionEffects())
+			p.removePotionEffect(pe.getType()); // remove any potion effects before adding the player
 		if ((getStage() == Stage.PREPARING || getStage() == Stage.PLAYING) &&
 				getConfigManager().getSpectateOnJoin())
 			mp.setSpectating(true);
