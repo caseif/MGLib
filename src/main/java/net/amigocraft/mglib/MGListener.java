@@ -12,6 +12,7 @@ import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.round.MGRoundEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
@@ -23,6 +24,7 @@ import net.amigocraft.mglib.exception.RoundFullException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -47,6 +49,7 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -142,6 +145,56 @@ class MGListener implements Listener {
 						if (p != null && (p.isSpectating() || !p.getRound().isDamageAllowed())){
 							e.setCancelled(true); // we don't want any spooky ghosts being harassed by the living
 							return;
+						}
+						else if (p != null && p.getRound() != null && p.getRound().getConfigManager().isOverrideDeathEvent()){
+							int armor = 0;
+							if (e.getCause() == DamageCause.ENTITY_ATTACK ||
+									e.getCause() == DamageCause.PROJECTILE ||
+									e.getCause() == DamageCause.FIRE ||
+									e.getCause() == DamageCause.FIRE_TICK ||
+									e.getCause() == DamageCause.BLOCK_EXPLOSION || 
+									e.getCause() == DamageCause.CONTACT ||
+									e.getCause() == DamageCause.LAVA ||
+									e.getCause() == DamageCause.ENTITY_EXPLOSION){
+								HashMap<Material, Integer> protection = new HashMap<Material, Integer>();
+								protection.put(Material.LEATHER_HELMET, 1);
+								protection.put(Material.LEATHER_CHESTPLATE, 3);
+								protection.put(Material.LEATHER_LEGGINGS, 2);
+								protection.put(Material.LEATHER_BOOTS, 1);
+								protection.put(Material.IRON_HELMET, 2);
+								protection.put(Material.IRON_CHESTPLATE, 5);
+								protection.put(Material.IRON_LEGGINGS, 3);
+								protection.put(Material.IRON_BOOTS, 1);
+								protection.put(Material.CHAINMAIL_HELMET, 2);
+								protection.put(Material.CHAINMAIL_CHESTPLATE, 5);
+								protection.put(Material.CHAINMAIL_LEGGINGS, 3);
+								protection.put(Material.CHAINMAIL_BOOTS, 1);
+								protection.put(Material.GOLD_HELMET, 2);
+								protection.put(Material.GOLD_CHESTPLATE, 6);
+								protection.put(Material.GOLD_LEGGINGS, 5);
+								protection.put(Material.GOLD_BOOTS, 2);
+								protection.put(Material.DIAMOND_HELMET, 3);
+								protection.put(Material.DIAMOND_CHESTPLATE, 8);
+								protection.put(Material.DIAMOND_LEGGINGS, 6);
+								protection.put(Material.DIAMOND_BOOTS, 3);
+								if (p2.getInventory().getArmorContents()[0] != null)
+									if (protection.containsKey(p2.getInventory().getArmorContents()[0].getType()))
+										armor += protection.get(p2.getInventory().getArmorContents()[0].getType());
+								if (p2.getInventory().getArmorContents()[1] != null)
+									if (protection.containsKey(p2.getInventory().getArmorContents()[1].getType()))
+										armor += protection.get(p2.getInventory().getArmorContents()[1].getType());
+								if (p2.getInventory().getArmorContents()[2] != null)
+									if (protection.containsKey(p2.getInventory().getArmorContents()[2].getType()))
+										armor += protection.get(p2.getInventory().getArmorContents()[2].getType());
+								if (p2.getInventory().getArmorContents()[3] != null)
+									if (protection.containsKey(p2.getInventory().getArmorContents()[3].getType()))
+										armor += protection.get(p2.getInventory().getArmorContents()[3].getType());
+							}
+							int actualDamage = (int)(e.getDamage() - ((armor * .04) * e.getDamage()));
+							if (actualDamage >= ((Player)e.getEntity()).getHealth()){
+								e.setCancelled(true);
+								Bukkit.getPluginManager().callEvent(new MGPlayerDeathEvent(p));
+							}
 						}
 					}
 					if (pl != null && p2 != null){

@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 /**
  * Stores variables for minigames and defaults for rounds for convenience purposes.
@@ -40,6 +41,7 @@ public class ConfigManager {
 	private boolean teamDamage = true;
 	private String locale = "enUS";
 	private boolean randomSpawns = true;
+	private boolean overrideDeathEvent = false;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -893,4 +895,20 @@ public class ConfigManager {
 		this.randomSpawns = random;
 	}
 	
+	/**
+	 * Retrieves whether Bukkit's {@link PlayerDeathEvent} will be overridden for players participating in minigame rounds.
+	 * If true, the death event will be cancelled and a custom MGLib event will be thrown instead.
+	 * @return whether Bukkit's {@link PlayerDeathEvent} will be overridden.
+	 * @since 0.3.0
+	 */
+	public boolean isOverrideDeathEvent(){
+		return overrideDeathEvent;
+	}
+	
+	/**
+	 * Sets whether blah blah blah
+	 */
+	public void setOverrideDeathEvent(boolean override){
+		this.overrideDeathEvent = override;
+	}
 }
