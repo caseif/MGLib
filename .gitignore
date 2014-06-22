@@ -1,0 +1,9 @@
+/bin
+/.settings
+/.project
+/.classpath
+/export.jardesc
+/doc
+/target
+/.git
+/MGLib.iml

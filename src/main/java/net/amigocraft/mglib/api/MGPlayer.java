@@ -3,6 +3,7 @@ package net.amigocraft.mglib.api;
 import static net.amigocraft.mglib.Main.locale;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +18,7 @@ import org.bukkit.potion.PotionEffect;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
+import net.amigocraft.mglib.Metadatable;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.MGPlayerSpectateEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
@@ -29,7 +31,7 @@ import net.amigocraft.mglib.exception.RoundFullException;
  * Represents a player participating in a minigame.
  * @since 0.1.0
  */
-public class MGPlayer {
+public class MGPlayer implements Metadatable {
 
 	private String plugin;
 	private String name;
@@ -327,6 +329,31 @@ public class MGPlayer {
 
 	public int hashCode(){
 		return 41 * (plugin.hashCode() + name.hashCode() + arena.hashCode() + Boolean.valueOf(isSpectating()).hashCode() + 41);
+	}
+
+	@Override
+	public Object getMetadata(String key){
+		return metadata.get(key);
+	}
+
+	@Override
+	public void setMetadata(String key, Object value){
+		metadata.put(key, value);
+	}
+
+	@Override
+	public void removeMetadata(String key){
+		metadata.remove(key);
+	}
+
+	@Override
+	public boolean hasMetadata(String key){
+		return metadata.containsKey(key);
+	}
+
+	@Override
+	public HashMap<String, Object> getAllMetadata(){
+		return metadata;
 	}
 
 }
