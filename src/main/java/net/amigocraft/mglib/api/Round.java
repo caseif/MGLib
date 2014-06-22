@@ -883,47 +883,6 @@ public class Round implements Metadatable {
 		broadcast(message, true);
 	}
 	
-	/**
-	 * Adds a key-value pair to the round's metadata.
-	 * <br><br>
-	 * <b>Note:</b> This method consists of a single call to {@link HashMap#put(Object, Object)}, so existing keys will be overwritten.
-	 * @param key the key to store in the round's metadata.
-	 * @param value the value to assign to the given key.
-	 * @since 0.3.0
-	 */
-	public void addMetadata(Object key, Object value){
-		metadata.put(key, value);
-	}
-	
-	/**
-	 * Removes the given key from the round's metadata.
-	 * @param key the key to remove from the round's metadata.
-	 * @since 0.3.0
-	 */
-	public void removeMetadata(Object key){
-		metadata.remove(key);
-	}
-	
-	/**
-	 * Retrieves a given value from the round's metadata by its key.
-	 * @param key the key to retrieve.
-	 * @return the key's mapped value, or null if it is not mapped.
-	 * @since 0.3.0
-	 */
-	public Object getMetadataValue(Object key){
-		return metadata.get(key);
-	}
-	
-	/**
-	 * Retrieves a {@link HashMap} representing the complete round metadata.
-	 * This is not to be confused with {@link Round#getMetadataValue(Object)}, which retrieves a single mapped value from the metadata.
-	 * @return the round's metadata in the form of a {@link HashMap}.
-	 * @since 0.3.0 
-	 */
-	public HashMap<Object, Object> getMetadata(){
-		return metadata;
-	}
-
 	@Override
 	public Object getMetadata(String key){
 		return metadata.get(key);
