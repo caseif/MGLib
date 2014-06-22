@@ -72,8 +72,6 @@ public class Round implements Metadatable {
 	private boolean damage;
 	private boolean pvp;
 	private boolean rollback;
-	
-	private HashMap<Object, Object> metadata = new HashMap<Object, Object>();
 
 	/**
 	 * Creates a new {@link Round} with the given parameters.
