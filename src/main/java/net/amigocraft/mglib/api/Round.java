@@ -298,7 +298,7 @@ public class Round implements Metadatable {
 	/**
 	 * Destroys this {@link Round}.
 	 * <br><br>
-	 * Please do not call this method from your plugin unless you understand the implications.
+	 * <b>Please do not call this method from your plugin unless you understand the implications.</b>
 	 * @since 0.1.0
 	 */
 	public void destroy(){
@@ -306,8 +306,8 @@ public class Round implements Metadatable {
 	}
 
 	/**
-	 * Retrieves a list of {@link MGPlayer MGPlayers} in this {@link Round}.
-	 * @return A list of {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * Retrieves a list of {@link MGPlayer MGPlayers} in this round.
+	 * @return A list of {@link MGPlayer MGPlayers} in this round.
 	 * @since 0.1.0
 	 */
 	public List<MGPlayer> getPlayerList(){
@@ -315,17 +315,32 @@ public class Round implements Metadatable {
 	}
 
 	/**
-	 * Retrieves a hashmap of {@link MGPlayer MGPlayers} in this {@link Round}.
-	 * @return A hashmap of {@link MGPlayer MGPlayers} in this {@link Round}, with their name as a key.
+	 * Retrieves a {@link HashMap} of players in this round.
+	 * @return a {@link HashMap} mapping the names of players in the round to their respective {@link MGPlayer} objects.
 	 * @since 0.1.0
 	 */
 	public HashMap<String, MGPlayer> getPlayers(){
 		return players;
 	}
+	
+	/**
+	 * Retrieves a {@link HashMap} of all players on a given team.
+	 * @param team the team to retrieve players from.
+	 * @return a {@link HashMap} mapping the names of players on a given team to their respective {@link MGPlayer} objects.
+	 * @since 0.3.0
+	 */
+	public HashMap<String, MGPlayer> getTeam(String team){
+		HashMap<String, MGPlayer> t = new HashMap<String, MGPlayer>();
+		for (MGPlayer p : getPlayerList()){
+			if (p.getTeam().equals(team))
+				t.put(p.getName(), p);
+		}
+		return t;
+	}
 
 	/**
-	 * Retrieves a list of non-spectating {@link MGPlayer MGPlayers} in this {@link Round}.
-	 * @return a list of non-spectating {@link MGPlayer MGPlayers} in this {@link Round}.
+	 * Retrieves a list of non-spectating {@link MGPlayer MGPlayers} in this round.
+	 * @return a list of non-spectating {@link MGPlayer MGPlayers} in this round.
 	 * @since 0.2.0
 	 */
 	public List<MGPlayer> getAlivePlayerList(){
@@ -567,17 +582,32 @@ public class Round implements Metadatable {
 	public String getWorld(){
 		return world;
 	}
-
+	
 	/**
 	 * Adds a player by the given name to this {@link Round round}.
-	 * @param name The player to add to this {@link Round round}.
+	 * @param name the player to add to this {@link Round round}.
+	 * (will default to random/sequential (depending on configuration) if out of bounds). 
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerPresentException if the player is already in a round.
 	 * @throws RoundFullException if the round is full.
 	 * @since 0.1.0
 	 */
-	@SuppressWarnings("deprecation")
 	public void addPlayer(String name) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
+		addPlayer(name, -1);
+	}
+
+	/**
+	 * Adds a player by the given name to this {@link Round round}.
+	 * @param name the player to add to this {@link Round round}.
+	 * @param spawn the spawn number to teleport the player to
+	 * (will default to random/sequential (depending on configuration) if out of bounds). 
+	 * @throws PlayerOfflineException if the player is not online.
+	 * @throws PlayerPresentException if the player is already in a round.
+	 * @throws RoundFullException if the round is full.
+	 * @since 0.3.0
+	 */
+	@SuppressWarnings("deprecation")
+	public void addPlayer(String name, int spawn) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
 		final Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
@@ -668,13 +698,14 @@ public class Round implements Metadatable {
 		mp.setPrevGameMode(p.getGameMode());
 		p.setGameMode(getConfigManager().getDefaultGameMode());
 		players.put(name, mp); // register player with round object
-		Location spawn = getConfigManager().isRandomSpawning() ?
-				spawns.get(new Random().nextInt(spawns.size())) :
-					spawns.get(players.size() % spawns.size());
-		p.teleport(spawn, TeleportCause.PLUGIN); // teleport the player to it
-		Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
-		if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers() && getPlayerCount() > 0)
-			start();
+		Location sp = (spawn >= 0 && spawns.size() > spawn) ? spawns.get(spawn) :
+			getConfigManager().isRandomSpawning() ?
+					spawns.get(new Random().nextInt(spawns.size())) :
+						spawns.get(players.size() % spawns.size());
+					p.teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
+					Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+					if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers() && getPlayerCount() > 0)
+						start();
 	}
 
 	/**
@@ -882,7 +913,7 @@ public class Round implements Metadatable {
 	public void broadcast(String message){
 		broadcast(message, true);
 	}
-	
+
 	@Override
 	public Object getMetadata(String key){
 		return metadata.get(key);

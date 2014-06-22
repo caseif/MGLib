@@ -44,6 +44,8 @@ public class ArenaFactory {
 			boolean nA = false;
 			if (MGUtil.loadArenaYaml(plugin).get(arena) == null)
 				nA = true;
+			else
+				world = MGUtil.loadArenaYaml(plugin).getString(arena + ".world");
 			af = new ArenaFactory(plugin, arena, world);
 			af.newArena = nA;
 			return af;

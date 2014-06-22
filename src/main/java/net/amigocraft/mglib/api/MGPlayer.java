@@ -98,7 +98,7 @@ public class MGPlayer implements Metadatable {
 	public String getPrefix(){
 		return prefix;
 	}
-	
+
 	/**
 	 * Retrieves the name of the team this player is on, or null if they are not on a team.
 	 * @return the name of the team this player is on, or null if they are not on a team.
@@ -107,7 +107,7 @@ public class MGPlayer implements Metadatable {
 	public String getTeam(){
 		return team;
 	}
-	
+
 	/**
 	 * Sets the name of the team this player is on.
 	 * @param team the name of the team this player is on. Set to null for no team.
