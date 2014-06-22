@@ -1,5 +1,7 @@
 package net.amigocraft.mglib.event.player;
 
+import org.bukkit.event.entity.PlayerDeathEvent;
+
 import net.amigocraft.mglib.api.MGPlayer;
 
 /**
