@@ -926,7 +926,7 @@ public class ConfigManager {
 	 * @since 0.3.0
 	 */
 	public boolean isForcePreciseDamage(){
-		return forcePreciseDamage
+		return forcePreciseDamage;
 	}
 	
 	/**
