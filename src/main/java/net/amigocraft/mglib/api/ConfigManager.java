@@ -42,6 +42,7 @@ public class ConfigManager {
 	private String locale = "enUS";
 	private boolean randomSpawns = true;
 	private boolean overrideDeathEvent = false;
+	private boolean forcePreciseDamage = false;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -913,5 +914,31 @@ public class ConfigManager {
 	 */
 	public void setOverrideDeathEvent(boolean override){
 		this.overrideDeathEvent = override;
+	}
+	
+	/**
+	 * Retrieves whether damage events for players in rounds will be handled by the plugin. This will remove the random element from damage
+	 * values, but will ensure that pre- or postmature deaths do not occur.
+	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
+	 * <br><br>
+	 * <b>Note: this may break protection potions.</b>
+	 * @return whether damage events for players will be handled by the plugin.
+	 * @since 0.3.0
+	 */
+	public boolean isForcePreciseDamage(){
+		return forcePreciseDamage
+	}
+	
+	/**
+	 * Sets whether damage events for players in rounds will be handled by the plugin. This will remove the random element from damage
+	 * values, but will ensure that pre- or postmature deaths do not occur.
+	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
+	 * <br><br>
+	 * <b>Note: this may break protection potions.</b>
+	 * @param force whether damage events for players will be handled by the plugin.
+	 * @since 0.3.0
+	 */
+	public void setForcePreciseDamage(boolean force){
+		this.forcePreciseDamage = force;
 	}
 }
