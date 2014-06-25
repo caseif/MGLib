@@ -12,6 +12,7 @@ import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.event.player.LobbyClickEvent;
 import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.round.MGRoundEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
@@ -578,6 +579,7 @@ class MGListener implements Listener {
 						}
 						try {
 							r.addPlayer(e.getPlayer().getName());
+							Bukkit.getPluginManager().callEvent(new LobbyClickEvent(r.getMGPlayer(e.getPlayer().getName()), r, ls));
 						}
 						catch (PlayerOfflineException ex){} // this can never happen
 						catch (PlayerPresentException e1){
@@ -593,7 +595,7 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler
-	public void onMGLib(MGRoundEvent e){
+	public void onMGRoundEvent(MGRoundEvent e){
 		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
 	}
 
