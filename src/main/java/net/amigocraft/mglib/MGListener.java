@@ -170,80 +170,87 @@ class MGListener implements Listener {
 				MGPlayer p = mg.getMGPlayer(p2.getName());
 				if (p != null && p.getRound() != null && p.getRound().getConfigManager().isOverrideDeathEvent()){
 					// override the death event with a custom one
-					int armor = 0;
-					// calculate armor-based damage reduction
-					if (e.getCause() == DamageCause.ENTITY_ATTACK ||
-							e.getCause() == DamageCause.PROJECTILE ||
-							e.getCause() == DamageCause.FIRE ||
-							e.getCause() == DamageCause.BLOCK_EXPLOSION || 
-							e.getCause() == DamageCause.CONTACT ||
-							e.getCause() == DamageCause.LAVA ||
-							e.getCause() == DamageCause.ENTITY_EXPLOSION ||
-							e.getCause() == DamageCause.LIGHTNING){
-						HashMap<Material, Integer> protection = new HashMap<Material, Integer>();
-						protection.put(Material.LEATHER_HELMET, 1);
-						protection.put(Material.LEATHER_CHESTPLATE, 3);
-						protection.put(Material.LEATHER_LEGGINGS, 2);
-						protection.put(Material.LEATHER_BOOTS, 1);
-						protection.put(Material.IRON_HELMET, 2);
-						protection.put(Material.IRON_CHESTPLATE, 5);
-						protection.put(Material.IRON_LEGGINGS, 3);
-						protection.put(Material.IRON_BOOTS, 1);
-						protection.put(Material.CHAINMAIL_HELMET, 2);
-						protection.put(Material.CHAINMAIL_CHESTPLATE, 5);
-						protection.put(Material.CHAINMAIL_LEGGINGS, 3);
-						protection.put(Material.CHAINMAIL_BOOTS, 1);
-						protection.put(Material.GOLD_HELMET, 2);
-						protection.put(Material.GOLD_CHESTPLATE, 6);
-						protection.put(Material.GOLD_LEGGINGS, 5);
-						protection.put(Material.GOLD_BOOTS, 2);
-						protection.put(Material.DIAMOND_HELMET, 3);
-						protection.put(Material.DIAMOND_CHESTPLATE, 8);
-						protection.put(Material.DIAMOND_LEGGINGS, 6);
-						protection.put(Material.DIAMOND_BOOTS, 3);
-						if (p2.getInventory().getArmorContents()[0] != null)
-							if (protection.containsKey(p2.getInventory().getArmorContents()[0].getType()))
-								armor += protection.get(p2.getInventory().getArmorContents()[0].getType());
-						if (p2.getInventory().getArmorContents()[1] != null)
-							if (protection.containsKey(p2.getInventory().getArmorContents()[1].getType()))
-								armor += protection.get(p2.getInventory().getArmorContents()[1].getType());
-						if (p2.getInventory().getArmorContents()[2] != null)
-							if (protection.containsKey(p2.getInventory().getArmorContents()[2].getType()))
-								armor += protection.get(p2.getInventory().getArmorContents()[2].getType());
-						if (p2.getInventory().getArmorContents()[3] != null)
-							if (protection.containsKey(p2.getInventory().getArmorContents()[3].getType()))
-								armor += protection.get(p2.getInventory().getArmorContents()[3].getType());
+					double actualDamage = 0;
+					try {
+						e.getClass().getMethod("getFinalDamage", new Class<?>[]{}); // test for new damage API
+						actualDamage = e.getFinalDamage();
 					}
-					double armorMod = armor * .04 * e.getDamage(); // armor-based damage reduction
-					double enchantMod = 0;
-					// calculate enchantment-based damage reduction
-					for (ItemStack a : p2.getInventory().getArmorContents()){
-						for (Enchantment en : a.getEnchantments().keySet()){
-							if (en == Enchantment.PROTECTION_ENVIRONMENTAL)
-								enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 0.75 / 3);
-							else if (en == Enchantment.PROTECTION_EXPLOSIONS &&
-									e.getCause() == DamageCause.BLOCK_EXPLOSION || e.getCause() == DamageCause.ENTITY_EXPLOSION)
-								enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.5 / 3);
-							else if (en == Enchantment.PROTECTION_FALL &&
-									e.getCause() == DamageCause.FALL)
-								enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 2.5 / 3);
-							else if (en == Enchantment.PROTECTION_FIRE &&
-									e.getCause() == DamageCause.FIRE || e.getCause() == DamageCause.FIRE_TICK || e.getCause() == DamageCause.LAVA ||
-									(e.getCause() == DamageCause.PROJECTILE && e instanceof EntityDamageByEntityEvent && // extra reassurance
-									((EntityDamageByEntityEvent)e).getDamager().getType() == EntityType.FIREBALL))
-								enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.25 / 3);
-							else if (en == Enchantment.PROTECTION_PROJECTILE &&
-									e.getCause() == DamageCause.PROJECTILE)
-								enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.5 / 3);
+					catch (NoSuchMethodException ex){ // no support for new damage API so we need to guesstimate it ourselves
+						int armor = 0;
+						// calculate armor-based damage reduction
+						if (e.getCause() == DamageCause.ENTITY_ATTACK ||
+								e.getCause() == DamageCause.PROJECTILE ||
+								e.getCause() == DamageCause.FIRE ||
+								e.getCause() == DamageCause.BLOCK_EXPLOSION || 
+								e.getCause() == DamageCause.CONTACT ||
+								e.getCause() == DamageCause.LAVA ||
+								e.getCause() == DamageCause.ENTITY_EXPLOSION ||
+								e.getCause() == DamageCause.LIGHTNING){
+							HashMap<Material, Integer> protection = new HashMap<Material, Integer>();
+							protection.put(Material.LEATHER_HELMET, 1);
+							protection.put(Material.LEATHER_CHESTPLATE, 3);
+							protection.put(Material.LEATHER_LEGGINGS, 2);
+							protection.put(Material.LEATHER_BOOTS, 1);
+							protection.put(Material.IRON_HELMET, 2);
+							protection.put(Material.IRON_CHESTPLATE, 5);
+							protection.put(Material.IRON_LEGGINGS, 3);
+							protection.put(Material.IRON_BOOTS, 1);
+							protection.put(Material.CHAINMAIL_HELMET, 2);
+							protection.put(Material.CHAINMAIL_CHESTPLATE, 5);
+							protection.put(Material.CHAINMAIL_LEGGINGS, 3);
+							protection.put(Material.CHAINMAIL_BOOTS, 1);
+							protection.put(Material.GOLD_HELMET, 2);
+							protection.put(Material.GOLD_CHESTPLATE, 6);
+							protection.put(Material.GOLD_LEGGINGS, 5);
+							protection.put(Material.GOLD_BOOTS, 2);
+							protection.put(Material.DIAMOND_HELMET, 3);
+							protection.put(Material.DIAMOND_CHESTPLATE, 8);
+							protection.put(Material.DIAMOND_LEGGINGS, 6);
+							protection.put(Material.DIAMOND_BOOTS, 3);
+							if (p2.getInventory().getArmorContents()[0] != null)
+								if (protection.containsKey(p2.getInventory().getArmorContents()[0].getType()))
+									armor += protection.get(p2.getInventory().getArmorContents()[0].getType());
+							if (p2.getInventory().getArmorContents()[1] != null)
+								if (protection.containsKey(p2.getInventory().getArmorContents()[1].getType()))
+									armor += protection.get(p2.getInventory().getArmorContents()[1].getType());
+							if (p2.getInventory().getArmorContents()[2] != null)
+								if (protection.containsKey(p2.getInventory().getArmorContents()[2].getType()))
+									armor += protection.get(p2.getInventory().getArmorContents()[2].getType());
+							if (p2.getInventory().getArmorContents()[3] != null)
+								if (protection.containsKey(p2.getInventory().getArmorContents()[3].getType()))
+									armor += protection.get(p2.getInventory().getArmorContents()[3].getType());
 						}
+						double armorMod = armor * .04 * e.getDamage(); // armor-based damage reduction
+						double enchantMod = 0;
+						// calculate enchantment-based damage reduction
+						for (ItemStack a : p2.getInventory().getArmorContents()){
+							for (Enchantment en : a.getEnchantments().keySet()){
+								if (en == Enchantment.PROTECTION_ENVIRONMENTAL)
+									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 0.75 / 3);
+								else if (en == Enchantment.PROTECTION_EXPLOSIONS &&
+										e.getCause() == DamageCause.BLOCK_EXPLOSION || e.getCause() == DamageCause.ENTITY_EXPLOSION)
+									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.5 / 3);
+								else if (en == Enchantment.PROTECTION_FALL &&
+										e.getCause() == DamageCause.FALL)
+									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 2.5 / 3);
+								else if (en == Enchantment.PROTECTION_FIRE &&
+										e.getCause() == DamageCause.FIRE || e.getCause() == DamageCause.FIRE_TICK || e.getCause() == DamageCause.LAVA ||
+										(e.getCause() == DamageCause.PROJECTILE && e instanceof EntityDamageByEntityEvent && // extra reassurance
+										((EntityDamageByEntityEvent)e).getDamager().getType() == EntityType.FIREBALL))
+									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.25 / 3);
+								else if (en == Enchantment.PROTECTION_PROJECTILE &&
+										e.getCause() == DamageCause.PROJECTILE)
+									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.5 / 3);
+							}
+						}
+						enchantMod = Math.max(Math.ceil(Math.max(enchantMod, 25) * 0.75f), 20) * 0.04 * e.getDamage(); // this is how MC calculates it
+						double potionMod = 1;
+						if (e.getCause() != DamageCause.VOID)
+							for (PotionEffect pe : p2.getActivePotionEffects())
+								if (pe.getType() == PotionEffectType.DAMAGE_RESISTANCE)
+									potionMod = (float)(25 - ((pe.getAmplifier() + 1) * 5)) / 25.0f;
+						actualDamage = (int)(e.getDamage() * potionMod - armorMod - enchantMod);
 					}
-					enchantMod = Math.max(Math.ceil(Math.max(enchantMod, 25) * 0.75f), 20) * 0.04 * e.getDamage(); // this is how MC calculates it
-					double potionMod = 1;
-					if (e.getCause() != DamageCause.VOID)
-						for (PotionEffect pe : p2.getActivePotionEffects())
-							if (pe.getType() == PotionEffectType.DAMAGE_RESISTANCE)
-								potionMod = (float)(25 - ((pe.getAmplifier() + 1) * 5)) / 25.0f;
-					int actualDamage = (int)(e.getDamage() * potionMod - armorMod - enchantMod);
 					if (actualDamage >= ((Player)e.getEntity()).getHealth()){
 						e.setCancelled(true);
 						Bukkit.getPluginManager().callEvent(new MGPlayerDeathEvent(p));
