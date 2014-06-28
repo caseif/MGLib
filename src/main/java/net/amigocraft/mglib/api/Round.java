@@ -24,6 +24,7 @@ import org.bukkit.potion.PotionEffect;
 
 import com.google.common.collect.Lists;
 
+import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.Metadatable;
 import net.amigocraft.mglib.RollbackManager;
@@ -417,12 +418,12 @@ public class Round implements Metadatable {
 			if (r.getPreparationTime() > 0){
 				r.setTime(0); // reset time
 				r.setStage(Stage.PREPARING); // set stage to preparing
-				Bukkit.getPluginManager().callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
+				MGUtil.callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
 			}
 			else {
 				r.setTime(0); // reset timer
 				r.setStage(Stage.PLAYING);
-				Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
+				MGUtil.callEvent(new MinigameRoundStartEvent(r));
 			}
 			if (time != -1){ // I'm pretty sure this is wrong, but I'm also pretty tired
 				timerHandle = Bukkit.getScheduler().runTaskTimer(Main.plugin, new Runnable(){
@@ -435,7 +436,7 @@ public class Round implements Metadatable {
 								r.setStage(Stage.PLAYING); // ...set stage to playing
 								stageChange = true;
 								r.setTime(0); // reset timer
-								Bukkit.getPluginManager().callEvent(new MinigameRoundStartEvent(r));
+								MGUtil.callEvent(new MinigameRoundStartEvent(r));
 							}
 							else { // we're playing and the round just ended
 								end(true);
@@ -467,11 +468,11 @@ public class Round implements Metadatable {
 								else
 									event = false;
 								if (event)
-									Bukkit.getPluginManager().callEvent(new PlayerHitArenaBorderEvent(p));
+									MGUtil.callEvent(new PlayerHitArenaBorderEvent(p));
 							}
 						}
 						if (r.getStage() == Stage.PLAYING || r.getStage() == Stage.PREPARING)
-							Bukkit.getPluginManager().callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
+							MGUtil.callEvent(new MinigameRoundTickEvent(r, oldTime, stageChange));
 					}
 				}, 0L, 20L).getTaskId(); // iterates once per second
 			}
@@ -499,7 +500,7 @@ public class Round implements Metadatable {
 			}
 			catch (Exception ex){} // I don't care if this happens
 		}
-		Bukkit.getPluginManager().callEvent(new MinigameRoundEndEvent(this, timeUp));
+		MGUtil.callEvent(new MinigameRoundEndEvent(this, timeUp));
 		if (getConfigManager().isRollbackEnabled()) // check if rollbacks are enabled
 			getRollbackManager().rollback(getArena()); // roll back arena
 	}
@@ -703,7 +704,7 @@ public class Round implements Metadatable {
 					spawns.get(new Random().nextInt(spawns.size())) :
 						spawns.get(players.size() % spawns.size());
 					p.teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
-					Bukkit.getPluginManager().callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
+					MGUtil.callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 					if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers() && getPlayerCount() > 0)
 						start();
 	}
@@ -729,7 +730,7 @@ public class Round implements Metadatable {
 			mp.reset(location); // reset the object and send the player to the exit point
 		}
 		PlayerLeaveMinigameRoundEvent event = new PlayerLeaveMinigameRoundEvent(this, mp);
-		Bukkit.getPluginManager().callEvent(event);
+		MGUtil.callEvent(event);
 	}
 
 	/**

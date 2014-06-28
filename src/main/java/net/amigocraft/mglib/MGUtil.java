@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.amigocraft.mglib.api.Minigame;
+import net.amigocraft.mglib.event.MGLibEvent;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventException;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -107,6 +111,24 @@ public class MGUtil {
 	public static void log(String message, int level){
 		if (Main.LOGGING_LEVEL >= level)
 			Main.log.info(message);
+	}
+
+	/**
+	 * Calls an event, but sends it only to the appropriate plugin.
+	 * @param event the event to call.
+	 * @since 0.3.0
+	 */
+	public static void callEvent(MGLibEvent event){
+		HandlerList hl = event.getHandlers();
+		for (RegisteredListener rl : hl.getRegisteredListeners())
+			if (rl.getPlugin().getName().equals(event.getPlugin())){
+				try {
+					rl.callEvent(event);
+				}
+				catch (EventException ex){
+					ex.printStackTrace();
+				}
+			}
 	}
 
 }

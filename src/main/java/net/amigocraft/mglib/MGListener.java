@@ -253,7 +253,7 @@ class MGListener implements Listener {
 					}
 					if (actualDamage >= ((Player)e.getEntity()).getHealth()){
 						e.setCancelled(true);
-						Bukkit.getPluginManager().callEvent(new MGPlayerDeathEvent(p));
+						MGUtil.callEvent(new MGPlayerDeathEvent(p));
 					}
 					else if (mg.getConfigManager().isForcePreciseDamage()){
 						e.setCancelled(true);
@@ -586,7 +586,7 @@ class MGListener implements Listener {
 						}
 						try {
 							r.addPlayer(e.getPlayer().getName());
-							Bukkit.getPluginManager().callEvent(new LobbyClickEvent(r.getMGPlayer(e.getPlayer().getName()), r, ls));
+							MGUtil.callEvent(new LobbyClickEvent(r.getMGPlayer(e.getPlayer().getName()), r, ls));
 						}
 						catch (PlayerOfflineException ex){} // this can never happen
 						catch (PlayerPresentException e1){

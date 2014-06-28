@@ -123,7 +123,7 @@ public class RollbackManager {
 			r = mg.getRound(arena);
 		if (r != null){
 			r.setStage(Stage.RESETTING);
-			Bukkit.getPluginManager().callEvent(new MinigameRoundRollbackEvent(r));
+			MGUtil.callEvent(new MinigameRoundRollbackEvent(r));
 		}
 		ConfigurationSection cs = y.getConfigurationSection(arena + ".blockChanges");
 		if (cs != null){

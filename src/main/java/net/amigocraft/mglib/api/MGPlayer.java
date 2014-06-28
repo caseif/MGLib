@@ -153,7 +153,7 @@ public class MGPlayer implements Metadatable {
 	public void setSpectating(boolean spectating){
 		this.spectating = spectating;
 		if (spectating){
-			Bukkit.getPluginManager().callEvent(new MGPlayerSpectateEvent(this.getRound(), this));
+			MGUtil.callEvent(new MGPlayerSpectateEvent(this.getRound(), this));
 			Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
 				p.closeInventory(); // close any inventory they have open
@@ -224,7 +224,7 @@ public class MGPlayer implements Metadatable {
 					}
 				});
 
-				Bukkit.getPluginManager().callEvent(new PlayerLeaveMinigameRoundEvent(r, this));
+				MGUtil.callEvent(new PlayerLeaveMinigameRoundEvent(r, this));
 				return;
 			}
 		throw new PlayerNotPresentException();
