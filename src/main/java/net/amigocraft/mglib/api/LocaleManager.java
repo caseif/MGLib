@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
+import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 
 import org.bukkit.Bukkit;
@@ -85,30 +86,25 @@ public class LocaleManager {
 				}
 				try {
 					if (is != null){
-						Main.log.info("first");
 						BufferedReader br;
 						String line;
 						br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 						while ((line = br.readLine()) != null) {
 							String[] params = line.split("\\|");
 							if (params.length > 1){
-								Main.log.info(params[0] + ", " + params[1]);
 								messages.put(params[0], params[1]);
 							}
 						}
 					}
 					if (defaultIs != null){
-						Main.log.info(defaultLocale);
 						BufferedReader br;
 						String line;
 						br = new BufferedReader(new InputStreamReader(defaultIs, Charset.forName("UTF-8")));
 						while ((line = br.readLine()) != null) {
 							String[] params = line.split("\\|");
 							if (params.length > 1){
-								Main.log.info(params[0] + ", " + params[1]);
 								if (!messages.containsKey(params[0])){
 									messages.put(params[0].toLowerCase(), params[1]);
-									Main.log.info("added");
 								}
 							}
 						}
