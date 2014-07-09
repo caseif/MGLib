@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
-import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 
 import org.bukkit.Bukkit;

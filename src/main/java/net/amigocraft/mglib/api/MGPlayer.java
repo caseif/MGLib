@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
@@ -41,6 +42,7 @@ public class MGPlayer implements Metadatable {
 	private String prefix = "";
 	private GameMode prevGameMode;
 	private String team = null;
+	private boolean frozen = false;
 
 	/**
 	 * Creates a new MGPlayer instance.
@@ -322,6 +324,52 @@ public class MGPlayer implements Metadatable {
 	 */
 	public Player getBukkitPlayer(){
 		return Bukkit.getPlayer(name);
+	}
+
+	/**
+	 * Retrieves whether the player is frozen.
+	 * @return whether the player is frozen.
+	 * @since 0.3.0
+	 */
+	public boolean isFrozen(){
+		return frozen;
+	}
+
+	/**
+	 * Cleanly freezes or unfreezes the player.
+	 * The library will automatically revert the player to their previous speed when unfrozen so as to let them go, <i>let them go!</i>
+	 * @param frozen whether the player should be frozen.
+	 * @since 0.3.0
+	 */
+	public void setFrozen(boolean frozen){
+		if (frozen){
+			if (!this.isFrozen()){
+				this.setMetadata("prev-walk-speed", this.getBukkitPlayer().getWalkSpeed());
+				this.setMetadata("prev-fly-speed", this.getBukkitPlayer().getFlySpeed());
+				for (PotionEffect pe : getBukkitPlayer().getActivePotionEffects())
+					if (pe.getType() == PotionEffectType.JUMP){
+						this.setMetadata("prev-jump-level", pe.getAmplifier());
+						this.setMetadata("prev-jump-duration", pe.getDuration());
+					}
+				this.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
+				this.getBukkitPlayer().setWalkSpeed(0f);
+				this.getBukkitPlayer().setFlySpeed(0f);
+			}
+		}
+		else if (this.isFrozen()){
+			this.getBukkitPlayer().setWalkSpeed(this.hasMetadata("prev-walk-speed") ? (Float)this.getMetadata("prev-walk-speed") : 0.2f);
+			this.getBukkitPlayer().setFlySpeed(this.hasMetadata("prev-fly-speed") ? (Float)this.getMetadata("prev-fly-speed") : 0.2f);
+			this.getBukkitPlayer().removePotionEffect(PotionEffectType.JUMP);
+			if (this.hasMetadata("prev-jump-level")){
+				this.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP,
+						(Integer)this.getMetadata("prev-jump-duration"), (Integer)this.getMetadata("prev-jump-level")));
+			}
+			this.removeMetadata("prev-walk-speed");
+			this.removeMetadata("prev-fly-speed");
+			this.removeMetadata("prev-jump-level");
+			this.removeMetadata("prev-jump-duration");
+		}
+		this.frozen = frozen;
 	}
 
 	public boolean equals(Object p){
