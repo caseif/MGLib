@@ -1,4 +1,4 @@
-package net.amigocraft.mglib;
+package net.amigocraft.mglib.misc;
 
 import java.util.HashMap;
 

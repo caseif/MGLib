@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.amigocraft.mglib.LobbyManager;
-import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.MGUtil;
+import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.exception.ArenaExistsException;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;

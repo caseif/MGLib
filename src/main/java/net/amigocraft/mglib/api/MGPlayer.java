@@ -18,7 +18,6 @@ import org.bukkit.potion.PotionEffect;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
-import net.amigocraft.mglib.Metadatable;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.MGPlayerSpectateEvent;
 import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
@@ -26,6 +25,8 @@ import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
+import net.amigocraft.mglib.misc.JoinResult;
+import net.amigocraft.mglib.misc.Metadatable;
 
 /**
  * Represents a player participating in a minigame.
@@ -194,13 +195,14 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Adds this {@link MGPlayer} to the given {@link Round round}.
 	 * @param round The name of the round to add the player to.
+	 * @return the result of this player being added to the round.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerPresentException if the player is already in a round.
 	 * @throws RoundFullException if the round is full.
 	 * @since 0.1.0
 	 */
-	public void addToRound(String round) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
-		Minigame.getMinigameInstance(plugin).getRound(round).addPlayer(name);
+	public JoinResult addToRound(String round) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
+		return Minigame.getMinigameInstance(plugin).getRound(round).addPlayer(name);
 	}
 
 	/**

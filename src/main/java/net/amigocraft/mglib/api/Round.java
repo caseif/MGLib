@@ -1,7 +1,7 @@
 package net.amigocraft.mglib.api;
 
-import static net.amigocraft.mglib.Main.locale;
 import static net.amigocraft.mglib.MGUtil.*;
+import static net.amigocraft.mglib.Main.locale;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
-import net.amigocraft.mglib.Metadatable;
 import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.PlayerHitArenaBorderEvent;
@@ -42,6 +41,8 @@ import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
+import net.amigocraft.mglib.misc.JoinResult;
+import net.amigocraft.mglib.misc.Metadatable;
 
 /**
  * Represents a round within a minigame.
@@ -333,7 +334,7 @@ public class Round implements Metadatable {
 	public HashMap<String, MGPlayer> getTeam(String team){
 		HashMap<String, MGPlayer> t = new HashMap<String, MGPlayer>();
 		for (MGPlayer p : getPlayerList()){
-			if (p.getTeam().equals(team))
+			if (p.getTeam() != null && p.getTeam().equals(team))
 				t.put(p.getName(), p);
 		}
 		return t;
@@ -588,13 +589,14 @@ public class Round implements Metadatable {
 	 * Adds a player by the given name to this {@link Round round}.
 	 * @param name the player to add to this {@link Round round}.
 	 * (will default to random/sequential (depending on configuration) if out of bounds). 
+	 * @return the result of the player being added to the round. 
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerPresentException if the player is already in a round.
 	 * @throws RoundFullException if the round is full.
 	 * @since 0.1.0
 	 */
-	public void addPlayer(String name) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
-		addPlayer(name, -1);
+	public JoinResult addPlayer(String name) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
+		return addPlayer(name, -1);
 	}
 
 	/**
@@ -602,13 +604,14 @@ public class Round implements Metadatable {
 	 * @param name the player to add to this {@link Round round}.
 	 * @param spawn the spawn number to teleport the player to
 	 * (will default to random/sequential (depending on configuration) if out of bounds). 
+	 * @return the result of the player being added to the round.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerPresentException if the player is already in a round.
 	 * @throws RoundFullException if the round is full.
 	 * @since 0.3.0
 	 */
 	@SuppressWarnings("deprecation")
-	public void addPlayer(String name, int spawn) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
+	public JoinResult addPlayer(String name, int spawn) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
 		final Player p = Bukkit.getPlayer(name);
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
@@ -617,13 +620,13 @@ public class Round implements Metadatable {
 		if (getStage() == Stage.PREPARING){
 			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
 				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-prepare"));
-				return;
+				return JoinResult.ROUND_PREPARING;
 			}
 		}
 		else if (getStage() == Stage.PLAYING){
 			if (!getConfigManager().getAllowJoinRoundInProgress()){
 				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-progress"));
-				return;
+				return JoinResult.ROUND_PLAYING;
 			}
 		}
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
@@ -684,7 +687,7 @@ public class Round implements Metadatable {
 		catch (Exception ex){
 			ex.printStackTrace();
 			p.sendMessage(ChatColor.RED + locale.getMessage("inv-save-fail"));
-			return;
+			return JoinResult.INVENTORY_SAVE_ERROR;
 		}
 		((PlayerInventory)p.getInventory()).clear();
 		((PlayerInventory)p.getInventory()).setArmorContents(new ItemStack[]{null, null, null, null});
@@ -707,6 +710,7 @@ public class Round implements Metadatable {
 					MGUtil.callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 					if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers() && getPlayerCount() > 0)
 						start();
+					return JoinResult.SUCCESS;
 	}
 
 	/**

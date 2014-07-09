@@ -12,8 +12,8 @@ import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
-import net.amigocraft.mglib.event.player.LobbyClickEvent;
 import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
+import net.amigocraft.mglib.event.round.LobbyClickEvent;
 import net.amigocraft.mglib.event.round.MGRoundEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
@@ -21,6 +21,7 @@ import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
+import net.amigocraft.mglib.misc.JoinResult;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -585,8 +586,8 @@ class MGListener implements Listener {
 							}
 						}
 						try {
-							r.addPlayer(e.getPlayer().getName());
-							MGUtil.callEvent(new LobbyClickEvent(r.getMGPlayer(e.getPlayer().getName()), r, ls));
+							JoinResult result = r.addPlayer(e.getPlayer().getName());
+							MGUtil.callEvent(new LobbyClickEvent(e.getPlayer().getName(), r, ls, result));
 						}
 						catch (PlayerOfflineException ex){} // this can never happen
 						catch (PlayerPresentException e1){
