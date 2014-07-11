@@ -27,6 +27,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -367,21 +369,30 @@ class MGListener implements Listener {
 					if (r.getPlayers().containsKey(e.getPlayer().getName())){
 						if (!mg.getConfigManager().isBlockPlaceAllowed())
 							e.setCancelled(true);
-						mg.getRollbackManager().logBlockChange(e.getBlock(),
-								e.getBlockReplacedState().getType().toString(), r.getArena());
+						mg.getRollbackManager().logBlockChange(e.getBlockReplacedState().getBlock(), r.getArena());
 					}
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent e){
+		//Main.log.info("break: " + Bukkit.getWorlds().get(0).getTime() + "");
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
 				if (r.isRollbackEnabled())
 					if (r.getPlayers().containsKey(e.getPlayer().getName())){
-						if (!mg.getConfigManager().isBlockBreakAllowed())
+						if (!mg.getConfigManager().isBlockBreakAllowed()){
 							e.setCancelled(true);
-						mg.getRollbackManager().logBlockChange(e.getBlock(),
-								e.getBlock().getType().toString(), r.getArena());
+						}
+						else {
+							mg.getRollbackManager().logBlockChange(e.getBlock(), r.getArena());
+							//TODO: handle rollback of attached blocks
+							for (int y = 1; e.getBlock().getY() + y < 256; y++){
+								Material type = e.getBlock().getLocation().add(0, y, 0).getBlock().getType();
+								if (type == Material.SAND || type == Material.GRAVEL || type == Material.ANVIL || type == Material.DRAGON_EGG)
+									mg.getRollbackManager().logBlockChange(e.getBlock().getLocation().add(0, y, 0).getBlock(), r.getArena());
+							}
+						}
 					}
 	}
 
@@ -462,6 +473,7 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent e){
+		//Main.log.info("physics: " + Bukkit.getWorlds().get(0).getTime() + "");
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
 			for (int i = 0; i < worlds.get(p).size(); i++){

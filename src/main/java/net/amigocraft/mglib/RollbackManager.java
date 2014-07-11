@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
@@ -59,20 +60,22 @@ public class RollbackManager {
 	/**
 	 * Logs a block change.
 	 * @param block The block which was changed.
-	 * @param origType The original type of the block.
 	 * @param arena The arena in which the block is contained.
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
-	public void logBlockChange(Block block, String origType, String arena){
+	public void logBlockChange(Block block, String arena){
 		if (!y.isSet(arena.toLowerCase() + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
 			y.createSection(arena.toLowerCase() + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
 		ConfigurationSection cs = y.getConfigurationSection(arena.toLowerCase() + ".blockChanges." +
 				block.getX() + "," + block.getY() + "," + block.getZ());
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("type")){ // make sure it hasn't already been changed
-			cs.set("type", origType);
+			cs.set("type", block.getType().toString());
 			cs.set("data", block.getData());
+			if (block.getState() instanceof Sign)
+				for (int i = 0; i < 4; i++)
+				cs.set("sign-text-" + i, ((Sign)block.getState()).getLine(i));
 		}
 		if (LOGGING){
 			try {
@@ -141,6 +144,10 @@ public class RollbackManager {
 					Location l = new Location(w, x, y, z);
 					l.getBlock().setType(Material.getMaterial(cs.getString(k + ".type")));
 					l.getBlock().setData(Byte.parseByte(cs.getString(k + ".data")));
+					if (l.getBlock().getState() instanceof Sign)
+						for (int i = 0; i < 4; i++)
+							if (cs.isSet("sign-text-" + i))
+								((Sign)l.getBlock().getState()).setLine(i, cs.getString("sign-text-" + i));
 				}
 			}
 		}

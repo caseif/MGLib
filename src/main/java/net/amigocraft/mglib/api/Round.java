@@ -589,7 +589,7 @@ public class Round implements Metadatable {
 	 * Adds a player by the given name to this {@link Round round}.
 	 * @param name the player to add to this {@link Round round}.
 	 * (will default to random/sequential (depending on configuration) if out of bounds). 
-	 * @return the result of the player being added to the round. 
+	 * @return the {@link JoinResult result} of the player being added to the round. 
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerPresentException if the player is already in a round.
 	 * @throws RoundFullException if the round is full.
@@ -604,7 +604,7 @@ public class Round implements Metadatable {
 	 * @param name the player to add to this {@link Round round}.
 	 * @param spawn the spawn number to teleport the player to
 	 * (will default to random/sequential (depending on configuration) if out of bounds). 
-	 * @return the result of the player being added to the round.
+	 * @return the {@link JoinResult result} of the player being added to the round.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @throws PlayerPresentException if the player is already in a round.
 	 * @throws RoundFullException if the round is full.
