@@ -33,7 +33,7 @@ public class ConfigManager {
 	private HashMap<String, Boolean> actions = new HashMap<String, Boolean>();
 	private Class<? extends MGPlayer> playerClass = MGPlayer.class;
 	private GameMode gameMode = GameMode.SURVIVAL;
-	private boolean pvp = false;
+	private boolean pvp = true;
 	private boolean damage = true;
 	private boolean rollback = true;
 	private boolean spectatorsOnSigns = true;

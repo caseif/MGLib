@@ -27,8 +27,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -373,7 +371,6 @@ class MGListener implements Listener {
 					}
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent e){
 		//Main.log.info("break: " + Bukkit.getWorlds().get(0).getTime() + "");
@@ -615,8 +612,12 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler
-	public void onMGRoundEvent(MGRoundEvent e){
-		e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+	public void onMGRoundEvent(final MGRoundEvent e){
+		Bukkit.getScheduler().runTaskLater(Main.plugin, new Runnable(){
+			public void run(){
+				e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
+			}
+		}, 2L);
 	}
 
 	@EventHandler

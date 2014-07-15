@@ -708,7 +708,7 @@ public class Round implements Metadatable {
 						spawns.get(players.size() % spawns.size());
 					p.teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
 					MGUtil.callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
-					if (getStage() == Stage.WAITING && getPlayerCount() >= getConfigManager().getMinPlayers() && getPlayerCount() > 0)
+					if (getStage() == Stage.WAITING && getPlayerCount() >= getMinPlayers() && getPlayerCount() > 0)
 						start();
 					return JoinResult.SUCCESS;
 	}

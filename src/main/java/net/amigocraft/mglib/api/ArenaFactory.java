@@ -130,9 +130,9 @@ public class ArenaFactory {
 		for (min = 0; min >= 0; min++) // this feels like a bad idea, but I think it should work
 			if (cs.getString("spawns." + min) == null)
 				break;
-		cs.set("spawns." + min + ".x", x);
-		cs.set("spawns." + min + ".y", y);
-		cs.set("spawns." + min + ".z", z);
+		cs.set("spawns." + min + ".x", (int)Math.floor(x));
+		cs.set("spawns." + min + ".y", (int)Math.floor(y));
+		cs.set("spawns." + min + ".z", (int)Math.floor(z));
 		cs.set("spawns." + min + ".pitch", pitch);
 		cs.set("spawns." + min + ".yaw", yaw);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable(){
@@ -172,8 +172,8 @@ public class ArenaFactory {
 	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException {
 		if (location.getWorld().getName().equals(world)){
 			if (saveOrientation)
-				return addSpawn(location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getYaw());
-			return addSpawn(location.getX(), location.getY(), location.getZ());
+				return addSpawn(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getPitch(), location.getYaw());
+			return addSpawn(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		}
 		else
 			throw new InvalidLocationException();

@@ -48,7 +48,7 @@ public class MGPlayer implements Metadatable {
 	 * Creates a new MGPlayer instance.
 	 * @param plugin the plugin to associate the MGPlayer with.
 	 * @param name the username of the player.
-	 * @param arena the arena of the player (this argument is subject to change).
+	 * @param arena the arena of the player.
 	 * @since 0.1.0
 	 */
 	public MGPlayer(String plugin, String name, String arena){
