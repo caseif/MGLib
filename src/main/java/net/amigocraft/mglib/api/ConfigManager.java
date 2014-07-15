@@ -43,6 +43,7 @@ public class ConfigManager {
 	private boolean randomSpawns = true;
 	private boolean overrideDeathEvent = false;
 	private boolean forcePreciseDamage = false;
+	private boolean hunger = false;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -917,8 +918,8 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether damage events for players in rounds will be handled by the plugin. This will remove the random element from damage
-	 * values, but will ensure that pre- or postmature deaths do not occur.
+	 * Retrieves whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
+	 * values, but will ensure that pre- or postmature deaths do not occur. (default: false)
 	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
 	 * <br><br>
 	 * <b>Note: this may break protection potions.</b>
@@ -930,8 +931,8 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether damage events for players in rounds will be handled by the plugin. This will remove the random element from damage
-	 * values, but will ensure that pre- or postmature deaths do not occur.
+	 * Sets whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
+	 * values, but will ensure that pre- or postmature deaths do not occur. (default: false)
 	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
 	 * <br><br>
 	 * <b>Note: this may break protection potions.</b>
@@ -941,4 +942,23 @@ public class ConfigManager {
 	public void setForcePreciseDamage(boolean force){
 		this.forcePreciseDamage = force;
 	}
+	
+	/**
+	 * Retrieves whether hunger should drain from players in rounds. (default: false)
+	 * @return whether hunger should drain from players in rounds.
+	 * @since 0.3.0
+	 */
+	public boolean isHungerEnabled(){
+		return hunger;
+	}
+	
+	/**
+	 * Retrieves whether hunger should drain from players in rounds. (default: false)
+	 * @param enabled whether hunger should drain from players in rounds.
+	 * @since 0.3.0
+	 */
+	public void isHungerEnabled(boolean enabled){
+		this.hunger = enabled;
+	}
+
 }

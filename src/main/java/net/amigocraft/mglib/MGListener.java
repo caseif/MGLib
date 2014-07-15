@@ -54,6 +54,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -641,6 +642,14 @@ class MGListener implements Listener {
 					}
 				}
 		}
+	}
+
+	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerHungerEvent(FoodLevelChangeEvent e){
+		if (e.getEntityType() == EntityType.PLAYER)
+			for (Minigame mg : Minigame.getMinigameInstances())
+				if (!mg.getConfigManager().isHungerEnabled() && mg.isPlayer(((Player)e.getEntity()).getName()))
+					e.setCancelled(true);
 	}
 
 }
