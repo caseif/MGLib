@@ -22,11 +22,13 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
 import net.amigocraft.mglib.misc.JoinResult;
+import net.amigocraft.mglib.misc.Location3D;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -54,6 +56,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -360,6 +363,7 @@ class MGListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
@@ -368,7 +372,15 @@ class MGListener implements Listener {
 					if (r.getPlayers().containsKey(e.getPlayer().getName())){
 						if (!mg.getConfigManager().isBlockPlaceAllowed())
 							e.setCancelled(true);
-						mg.getRollbackManager().logBlockChange(e.getBlockReplacedState().getBlock(), r.getArena());
+						else if (e.getBlock().getType() == Material.TNT){
+							List<Location3D> list = new ArrayList<Location3D>();
+							if (r.hasMetadata("tntBlocks"))
+								list = (List<Location3D>)r.getMetadata("tntBlocks");
+							list.add(Location3D.valueOf(e.getBlock().getLocation()));
+							r.setMetadata("tntBlocks", list);
+						}
+						else
+							mg.getRollbackManager().logBlockChange(e.getBlockReplacedState().getBlock(), r.getArena());
 					}
 	}
 
@@ -650,6 +662,35 @@ class MGListener implements Listener {
 			for (Minigame mg : Minigame.getMinigameInstances())
 				if (!mg.getConfigManager().isHungerEnabled() && mg.isPlayer(((Player)e.getEntity()).getName()))
 					e.setCancelled(true);
+	}
+
+	@SuppressWarnings("unchecked")
+	@EventHandler
+	public void onEntityExplode(EntityExplodeEvent e){
+		String w = e.getEntity().getWorld().getName();
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isEntityExplosionsAllowed()){
+						e.setCancelled(true);
+						break;
+					}
+				}
+			}
+		}
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			for (Round r : mg.getRoundList()){
+				if (r.hasMetadata("tntBlocks")){
+					List<Location3D> list = (List<Location3D>)r.getMetadata("tntBlocks");
+					if (list.contains(new Location3D(e.getLocation().getBlockX(), e.getLocation().getBlockY(), e.getLocation().getBlockZ()))){
+						for (Block b : e.blockList())
+							mg.getRollbackManager().logBlockChange(b, r.getArena());
+						mg.getRollbackManager().logBlockChange(e.getLocation().getBlock(), r.getArena());
+						break;
+					}
+				}
+			}
+		}
 	}
 
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.event.MGLibEvent;
 
@@ -105,16 +106,20 @@ public class MGUtil {
 	/**
 	 * Logs the given message if verbose logging is enabled.
 	 * @param message the message to log.
-	 * @param level the level at which to log the message (0-3)
-	 * @since 0.2.0
+	 * @param prefix the prefix to place in front of the message. This will automatically be placed within brackets.
+	 * @param level the {@link LogLevel level} at which to log the message.
+	 * @since 0.3.0
 	 */
-	public static void log(String message, int level){
-		if (Main.LOGGING_LEVEL >= level)
-			Main.log.info(message);
+	public static void log(String message, String prefix, LogLevel level){
+		if (Main.LOGGING_LEVEL.compareTo(level) <= 0)
+			System.out.println("[" + level.toString() + "][" + prefix + "] " + message);
 	}
 
 	/**
-	 * Calls an event, but sends it only to the appropriate plugin.
+	 * Calls an event, but sends it only to the appropriate plugin. <strong>Please do not call this from your plugin unless you are
+	 * aware of the implications.</strong>
+	 * <br><br>
+	 * <marquee>CONGRATULATIONS YOU FOUND THE EASTER EGG IN THE DOCUMENTATION ARE YOU PROUD OF YOURSELF?</marquee>
 	 * @param event the event to call.
 	 * @since 0.3.0
 	 */

@@ -1,9 +1,7 @@
 package net.amigocraft.mglib.event.round;
 
 import net.amigocraft.mglib.api.LobbySign;
-import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Round;
-import net.amigocraft.mglib.event.player.MGPlayerEvent;
 import net.amigocraft.mglib.misc.JoinResult;
 
 /**

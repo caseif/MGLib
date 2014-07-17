@@ -71,8 +71,7 @@ public class LocaleManager {
 					File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator + "locales" + File.separator +
 							Main.plugin.getConfig().getString("locale") + ".csv");
 					is = new FileInputStream(file);
-					if (Main.LOGGING_LEVEL >= 1)
-						Main.log.info("Loaded locale from " + file.getAbsolutePath());
+					Main.log("Loaded locale from " + file.getAbsolutePath(), LogLevel.INFO);
 
 				}
 				catch (Exception ex){

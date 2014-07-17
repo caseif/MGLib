@@ -9,14 +9,14 @@
 # We highly recommend you leave this at its default value (true).
 rollback-logging: true
 
-#Defines the level at which MGLib will log. Higher levels mean more messages.
-#Level 0 is the bare minimum. Almost nothing will be logged.
-#Level 1 is a bit more verbose. This may be used by both server owners and developers.
-#Level 2 is much more verbose. This will log technical details about the library's actions.
-#Level 3 is extremely verbose. It will cause almost all actions taken by the library to be logged.
-#Level 0 is recommended for most users. Level 1 may be used if a server owner is experiencing problems with the library or a plugin using it.
-#Level 2 is the recommended level for developers experiencing problems. Level 3 should not be used unless you're prepared for EXTREME log spam.
-logging-level: 0
+# Defines the level at which MGLib and plugins hooking it (if compliant) will log.
+# Each level includes messages logged at it as well as at lower levels. Therefore, higher levels typically means more messages.
+# SEVERE will log only exceptions and other severe messages. This is not recommended.
+# WARNING will log recoverable errors and warnings. This is recommended for most users.
+# INFO will log status messages and other non-important informational messages. This is recommended for server owners troubleshooting MGLib or plugins hooking it.
+# DEBUG will log messages intended for debugging purposes only. This is recommended for developers troubleshooting their own plugin.
+# VERBOSE will log any messages not contained by the above categories, no matter how insignificant. This is not recommended for anyone unless they know exactly what they're getting themselves into.
+logging-level: WARNING
 
 # Should MGLib silently download and install updates when available?
 # We highly recommend you set this to true so you may run plugins using new features.
@@ -25,5 +25,6 @@ enable-updater: true
 # Should MGLib submit anonymous statistics to MCStats? (Set to false if you're paranoid.)
 enable-metrics: true
 
-#What locale should MGLib's messages use?
+# What locale should MGLib's messages use?
+# This will default to enUS if the locale is undefined, and for messages which are not defined within the locale.
 locale: enUS

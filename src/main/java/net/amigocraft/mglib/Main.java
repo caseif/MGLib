@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import net.amigocraft.mglib.api.LocaleManager;
+import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.MGLibEvent;
@@ -45,9 +46,9 @@ public class Main extends JavaPlugin {
 	public static boolean IMMEDIATE_LOGGING;
 	
 	/**
-	 * Whether MGLib is using verbose logging.
+	 * The minimum level at which messages should be logged.
 	 */
-	public static int LOGGING_LEVEL;
+	public static LogLevel LOGGING_LEVEL;
 	
 	/**
 	 * The locale manager for MGLib itself.
@@ -64,7 +65,7 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
-		LOGGING_LEVEL = getConfig().getInt("logging-level");
+		LOGGING_LEVEL = LogLevel.valueOf(getConfig().getString("logging-level"));
 		
 		locale = new LocaleManager("MGLib");
 		locale.initialize();
@@ -129,6 +130,16 @@ public class Main extends JavaPlugin {
 	private static void uninitialize(){
 		log = null;
 		plugin = null;
+	}
+	
+	/**
+	 * Internal convenience method for logging. <strong>Please do not call this from your plugin.</strong>
+	 * @param message the message to log.
+	 * @param level the {@link LogLevel level} at which to log the message.
+	 * @since 0.3.0
+	 */
+	public static void log(String message, LogLevel level){
+		MGUtil.log(message, "MGLib", level);
 	}
 
 }

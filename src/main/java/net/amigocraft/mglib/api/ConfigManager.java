@@ -77,6 +77,7 @@ public class ConfigManager {
 		actions.put("block-physics", false);
 		actions.put("block-piston", true);
 		actions.put("block-spread", false);
+		actions.put("entity-explode", false);
 	}
 
 	/**
@@ -711,6 +712,24 @@ public class ConfigManager {
 	 */
 	public void setBlockSpreadAllowed(boolean allowed){
 		actions.put("block-spread", allowed);
+	}
+
+	/**
+	 * Retrieves whether entity explosions are permitted in worlds containing one or more arenas. (default: false)
+	 * @return whether entity explosions are permitted in worlds containing one or more arenas.
+	 * @since 0.3.0
+	 */
+	public boolean isEntityExplosionsAllowed(){
+		return actions.get("entity-explode");
+	}
+	
+	/**
+	 * Sets whether entity explosions are permitted in worlds containing one or more arenas. (default: false)
+	 * @param allowed whether entity explosions are permitted in worlds containing one or more arenas.
+	 * @since 0.3.0
+	 */
+	public void setEntityExplosionsAllowed(boolean allowed){
+		actions.put("entity-explode", allowed);
 	}
 	
 	/**
