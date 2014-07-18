@@ -6,6 +6,7 @@ import static net.amigocraft.mglib.Main.locale;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -124,6 +125,11 @@ public class Round implements Metadatable {
 		this.pvp = cm.isPvPAllowed();
 		this.rollback = cm.isRollbackEnabled();
 		stage = Stage.WAITING; // default to waiting stage
+		String[] defaultKeysA = new String[]{"world", "spawns", "minX", "minY", "minZ", "maxX", "maxY", "maxZ"};
+		List<String> defaultKeys = Arrays.asList(defaultKeysA);
+		for (String k : cs.getKeys(false))
+			if (!defaultKeys.contains(k))
+				setMetadata(k, cs.get(k));
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
 

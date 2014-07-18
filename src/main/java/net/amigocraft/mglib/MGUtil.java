@@ -118,8 +118,6 @@ public class MGUtil {
 	/**
 	 * Calls an event, but sends it only to the appropriate plugin. <strong>Please do not call this from your plugin unless you are
 	 * aware of the implications.</strong>
-	 * <br><br>
-	 * <marquee>CONGRATULATIONS YOU FOUND THE EASTER EGG IN THE DOCUMENTATION ARE YOU PROUD OF YOURSELF?</marquee>
 	 * @param event the event to call.
 	 * @since 0.3.0
 	 */
