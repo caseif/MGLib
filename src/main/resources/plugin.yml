@@ -1,5 +1,5 @@
 name: MGLib
-version: 0.3.0-jnks$BUILD
+version: 0.3.0-SNAPSHOT-jnks$BUILD
 main: net.amigocraft.mglib.Main
 description: A Bukkit library designed to ease the process of minigame plugin creation.
 author: Maxim Roncacé

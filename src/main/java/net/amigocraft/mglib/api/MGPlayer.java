@@ -325,6 +325,15 @@ public class MGPlayer implements Metadatable {
 	public Player getBukkitPlayer(){
 		return Bukkit.getPlayer(name);
 	}
+	
+	/**
+	 * Convenience method for {@link MGPlayer#getBukkitPlayer()}. Use this only if aesthetic ambiguity is not a point of concern.
+	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
+	 * @since 0.3.0
+	 */
+	public Player b(){
+		return getBukkitPlayer();
+	}
 
 	/**
 	 * Retrieves whether the player is frozen.
