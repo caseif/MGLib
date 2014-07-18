@@ -354,6 +354,27 @@ public class ArenaFactory {
 		else
 			throw new InvalidLocationException();
 	}
+	
+	/**
+	 * Attaches an arbitrary key-value pair to the arena.
+	 * @param key the key to set for the arena.
+	 * @param value the value to associate with the key.
+	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @since 0.3.0
+	 */
+	public ArenaFactory setData(String key, Object value){
+		if (yaml == null)
+			yaml = MGUtil.loadArenaYaml(plugin);
+		else
+			Bukkit.getScheduler().cancelTask(timerHandle);
+		yaml.set(arena + "." + key, value);
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable(){
+			public void run(){
+				writeChanges();
+			}
+		}, 1L).getTaskId();
+		return this;
+	}
 
 	private void writeChanges(){
 		MGUtil.saveArenaYaml(plugin, yaml);
