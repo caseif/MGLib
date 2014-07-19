@@ -21,7 +21,6 @@ import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.MGPlayerSpectateEvent;
-import net.amigocraft.mglib.event.player.PlayerLeaveMinigameRoundEvent;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
@@ -211,35 +210,20 @@ public class MGPlayer implements Metadatable {
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the round's default exit point.
 	 * @throws PlayerNotPresentException if the given player is not in a round.
+	 * @throws PlayerOfflineException if the given player is not online.
 	 * @since 0.1.0
 	 */
-	public void removeFromRound(final Location location) throws PlayerNotPresentException {
-		Player p = getBukkitPlayer();
-		for (Round r : Minigame.getMinigameInstance(plugin).getRoundList()) // reuse the old MGPlayer if it exists
-			if (r.getPlayers().containsKey(name)){
-				setSpectating(false); // make sure they're not effectively dead when they join a new round (or invisible)
-				setArena(null); // clear the arena from the object
-				r.getPlayers().remove(name); // remove the player from the round object
-				p.setGameMode(getPrevGameMode());
-				Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
-					public void run(){
-						if (getBukkitPlayer() != null)
-							reset(location); // reset the object and send the player to the exit point (and reset the player's inventory
-					}
-				});
-
-				MGUtil.callEvent(new PlayerLeaveMinigameRoundEvent(r, this));
-				return;
-			}
-		throw new PlayerNotPresentException();
+	public void removeFromRound(Location location) throws PlayerNotPresentException, PlayerOfflineException {
+		getRound().removePlayer(name, location);
 	}
 
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @throws PlayerNotPresentException if the player is not in a round.
+	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1.0
 	 */
-	public void removeFromRound() throws PlayerNotPresentException {
+	public void removeFromRound() throws PlayerNotPresentException, PlayerOfflineException {
 		removeFromRound(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
 
@@ -322,6 +306,7 @@ public class MGPlayer implements Metadatable {
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
 	 * @since 0.2.0
 	 */
+	@SuppressWarnings("deprecation")
 	public Player getBukkitPlayer(){
 		return Bukkit.getPlayer(name);
 	}

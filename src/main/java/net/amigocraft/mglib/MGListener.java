@@ -318,6 +318,7 @@ class MGListener implements Listener {
 							p.removeFromRound(l);
 						}
 						catch (PlayerNotPresentException ex){} // this can never happen
+						catch (PlayerOfflineException ex){} // this can definitely never happen
 					}
 					else {
 						Location min = r.getMinBound();
@@ -333,6 +334,7 @@ class MGListener implements Listener {
 									p.removeFromRound(l);
 								}
 								catch (PlayerNotPresentException ex){} // this can never happen
+								catch (PlayerOfflineException ex){} // this can definitely never happen
 							}
 						}
 					}

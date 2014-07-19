@@ -127,8 +127,8 @@ public class Round implements Metadatable {
 		stage = Stage.WAITING; // default to waiting stage
 		String[] defaultKeysA = new String[]{"world", "spawns", "minX", "minY", "minZ", "maxX", "maxY", "maxZ"};
 		List<String> defaultKeys = Arrays.asList(defaultKeysA);
-		for (String k : cs.getKeys(false))
-			if (!defaultKeys.contains(k))
+		for (String k : cs.getKeys(true))
+			if (!defaultKeys.contains(k.split(".")[0]))
 				setMetadata(k, cs.get(k));
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
@@ -286,7 +286,7 @@ public class Round implements Metadatable {
 	}
 
 	/**
-	 * Subtracts <b>t</b> seconds from the remaining time in the round.
+	 * Subtracts <b>t</b> seconds from the elapsed time in the round.
 	 * @param t The number of seconds to subtract.
 	 * @since 0.1.0
 	 */
@@ -295,7 +295,7 @@ public class Round implements Metadatable {
 	}
 
 	/**
-	 * Adds <b>t</b> seconds from the remaining time in the round.
+	 * Adds <b>t</b> seconds to the elapsed time in the round.
 	 * @param t The number of seconds to add.
 	 * @since 0.1.0
 	 */
@@ -728,6 +728,7 @@ public class Round implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void removePlayer(String name, Location location) throws PlayerOfflineException, PlayerNotPresentException {
+		@SuppressWarnings("deprecation")
 		Player p = Bukkit.getPlayer(name);
 		MGPlayer mp = players.get(name);
 		if (mp == null)
