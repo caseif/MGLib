@@ -128,7 +128,6 @@ public class Round implements Metadatable {
 		String[] defaultKeysA = new String[]{"world", "spawns", "minX", "minY", "minZ", "maxX", "maxY", "maxZ"};
 		List<String> defaultKeys = Arrays.asList(defaultKeysA);
 		for (String k : cs.getKeys(true)){
-			Main.log(k, LogLevel.DEBUG);
 			if (!defaultKeys.contains(k.split("\\.")[0]))
 				setMetadata(k, cs.get(k));
 		}

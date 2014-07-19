@@ -14,7 +14,6 @@ import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.round.LobbyClickEvent;
-import net.amigocraft.mglib.event.round.MGRoundEvent;
 import net.amigocraft.mglib.exception.ArenaNotExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 import net.amigocraft.mglib.exception.PlayerNotPresentException;
@@ -624,15 +623,6 @@ class MGListener implements Listener {
 				}
 			}
 		}
-	}
-
-	@EventHandler
-	public void onMGRoundEvent(final MGRoundEvent e){
-		Bukkit.getScheduler().runTaskLater(Main.plugin, new Runnable(){
-			public void run(){
-				e.getRound().getMinigame().getLobbyManager().update(e.getRound().getArena());
-			}
-		}, 2L);
 	}
 
 	@EventHandler

@@ -237,8 +237,10 @@ public class MGPlayer implements Metadatable {
 		final Player p = getBukkitPlayer();
 		if (p == null) // check that the specified player is online
 			return;
-		for (String k : this.getAllMetadata().keySet())
+		// uncommenting this causes the method to stop dead in its tracks
+		/*for (String k : this.getAllMetadata().keySet()){
 			this.removeMetadata(k);
+		}*/
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(new ItemStack[4]);
 		for (PotionEffect pe : p.getActivePotionEffects())

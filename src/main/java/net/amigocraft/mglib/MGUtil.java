@@ -111,7 +111,7 @@ public class MGUtil {
 	 * @since 0.3.0
 	 */
 	public static void log(String message, String prefix, LogLevel level){
-		if (Main.LOGGING_LEVEL.compareTo(level) <= 0)
+		if (Main.LOGGING_LEVEL.compareTo(level) >= 0)
 			System.out.println("[" + level.toString() + "][" + prefix + "] " + message);
 	}
 
@@ -124,7 +124,7 @@ public class MGUtil {
 	public static void callEvent(MGLibEvent event){
 		HandlerList hl = event.getHandlers();
 		for (RegisteredListener rl : hl.getRegisteredListeners())
-			if (rl.getPlugin().getName().equals(event.getPlugin())){
+			if (rl.getPlugin().getName().equals(event.getPlugin()) || rl.getPlugin().getName().equals("MGLib")){
 				try {
 					rl.callEvent(event);
 				}
