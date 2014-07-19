@@ -128,7 +128,7 @@ public class Round implements Metadatable {
 		String[] defaultKeysA = new String[]{"world", "spawns", "minX", "minY", "minZ", "maxX", "maxY", "maxZ"};
 		List<String> defaultKeys = Arrays.asList(defaultKeysA);
 		for (String k : cs.getKeys(true))
-			if (!defaultKeys.contains(k.split(".")[0]))
+			if (!defaultKeys.contains(k.contains(".") ? k.split(".")[0] : k))
 				setMetadata(k, cs.get(k));
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
