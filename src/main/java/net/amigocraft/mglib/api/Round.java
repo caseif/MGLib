@@ -127,9 +127,11 @@ public class Round implements Metadatable {
 		stage = Stage.WAITING; // default to waiting stage
 		String[] defaultKeysA = new String[]{"world", "spawns", "minX", "minY", "minZ", "maxX", "maxY", "maxZ"};
 		List<String> defaultKeys = Arrays.asList(defaultKeysA);
-		for (String k : cs.getKeys(true))
-			if (!defaultKeys.contains(k.contains(".") ? k.split(".")[0] : k))
+		for (String k : cs.getKeys(true)){
+			Main.log(k, LogLevel.DEBUG);
+			if (!defaultKeys.contains(k.split("\\.")[0]))
 				setMetadata(k, cs.get(k));
+		}
 		Minigame.getMinigameInstance(plugin).getRounds().put(arena, this); // register round with minigame instance
 	}
 
@@ -496,10 +498,10 @@ public class Round implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void end(boolean timeUp){
+		setStage(Stage.RESETTING);
 		setTime(-1);
 		if (timerHandle != -1)
 			Bukkit.getScheduler().cancelTask(timerHandle); // cancel the round's timer task
-		stage = Stage.WAITING; // set stage back to waiting
 		timerHandle = -1; // reset timer handle since the task no longer exists
 		for (MGPlayer mp : getPlayerList()){ // iterate and remove players
 			try {
@@ -510,6 +512,7 @@ public class Round implements Metadatable {
 		MGUtil.callEvent(new MinigameRoundEndEvent(this, timeUp));
 		if (getConfigManager().isRollbackEnabled()) // check if rollbacks are enabled
 			getRollbackManager().rollback(getArena()); // roll back arena
+		setStage(Stage.WAITING);
 	}
 
 	/**
