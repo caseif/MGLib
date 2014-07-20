@@ -264,8 +264,13 @@ public class LobbySign {
 							sign.setLine(2, color + Main.locale.getMessage(status.toString()));
 							String time = "";
 							if (status != Stage.WAITING && status != Stage.RESETTING){
-								if (r.getRemainingTime() == -1)
-									time = cm.getLobbyTimeInfiniteColor() + "∞:∞";
+								if (r.getRemainingTime() == -1){
+									String seconds = Integer.toString(r.getTime() % 60);
+									if (seconds.length() == 1)
+										seconds = "0" + seconds;
+									time = cm.getLobbyTimeInfiniteColor() +
+											df.format(r.getTime() / 60) + ":" + seconds;
+								}
 								else {
 									String seconds = Integer.toString(r.getRemainingTime() % 60);
 									if (seconds.length() == 1)

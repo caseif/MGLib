@@ -13,6 +13,8 @@ import net.amigocraft.mglib.event.MGLibEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,7 +67,7 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
-		LOGGING_LEVEL = LogLevel.valueOf(getConfig().getString("logging-level"));
+		LOGGING_LEVEL = LogLevel.valueOf(getConfig().getString("logging-level").toUpperCase());
 		
 		locale = new LocaleManager("MGLib");
 		locale.initialize();
@@ -140,6 +142,16 @@ public class Main extends JavaPlugin {
 	 */
 	public static void log(String message, LogLevel level){
 		MGUtil.log(message, "MGLib", level);
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+		if (label.equalsIgnoreCase("mglib")){
+			sender.sendMessage(ChatColor.LIGHT_PURPLE +
+					"This server is using MGLib version " + this.getDescription().getVersion() + " by Maxim Roncacé");
+			return true;
+		}
+		return false;
 	}
 
 }

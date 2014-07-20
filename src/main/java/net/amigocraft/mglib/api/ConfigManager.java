@@ -28,7 +28,7 @@ public class ConfigManager {
 	private boolean joinRwP = false;
 	private boolean pmsAllowed = true;
 	private boolean kitsAllowed = true;
-	private boolean spectateJoin = true;
+	private boolean spectateJoin = false;
 	private HashMap<String, ChatColor> lobbyColors = new HashMap<String, ChatColor>();
 	private HashMap<String, Boolean> actions = new HashMap<String, Boolean>();
 	private Class<? extends MGPlayer> playerClass = MGPlayer.class;
@@ -249,7 +249,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players will be set to spectator mode upon joining around in progress. (default: true)
+	 * Retrieves whether players will be set to spectator mode upon joining around in progress. (default: false)
 	 * @return whether players will be set to spectator mode upon joining around in progress.
 	 * @since 0.1.0
 	 */
@@ -258,7 +258,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players will be set to spectator mode upon joining around in progress. (default: true) This will have no effect if both
+	 * Sets whether players will be set to spectator mode upon joining around in progress. (default: false) This will have no effect if both
 	 * {@link ConfigManager#getAllowJoinRoundWhilePreparing()} and {@link ConfigManager#getAllowJoinRoundInProgress()} return false.
 	 * @param allowed whether players will be set to spectator mode upon joining around in progress.
 	 * @since 0.1.0
