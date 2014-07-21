@@ -345,7 +345,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClick(InventoryClickEvent e){
 		boolean found = false;
 		for (Minigame mg : Minigame.getMinigameInstances()){
@@ -365,7 +365,7 @@ class MGListener implements Listener {
 	}
 
 	@SuppressWarnings("unchecked")
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances())
 			for (Round r : mg.getRoundList())
@@ -385,7 +385,7 @@ class MGListener implements Listener {
 					}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent e){
 		//Main.log.info("break: " + Bukkit.getWorlds().get(0).getTime() + "");
 		for (Minigame mg : Minigame.getMinigameInstances())
@@ -407,7 +407,7 @@ class MGListener implements Listener {
 					}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBurn(BlockBurnEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
@@ -422,7 +422,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockFade(BlockFadeEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
@@ -437,7 +437,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockGrow(BlockGrowEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
@@ -452,7 +452,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockIgnite(BlockIgniteEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
@@ -467,7 +467,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockFlow(BlockFromToEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
@@ -482,7 +482,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPhysics(BlockPhysicsEvent e){
 		//Main.log.info("physics: " + Bukkit.getWorlds().get(0).getTime() + "");
 		String w = e.getBlock().getWorld().getName();
@@ -498,7 +498,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPiston(BlockPistonExtendEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
@@ -513,7 +513,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPiston(BlockPistonRetractEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
@@ -528,7 +528,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockSpread(BlockSpreadEvent e){
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
