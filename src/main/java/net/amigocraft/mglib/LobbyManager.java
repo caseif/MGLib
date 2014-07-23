@@ -23,7 +23,7 @@ public class LobbyManager {
 
 	private String plugin;
 
-	private HashMap<Location, LobbySign> signs = new HashMap<Location, LobbySign>();
+	HashMap<Location, LobbySign> signs = new HashMap<Location, LobbySign>();
 
 	/**
 	 * Creates a new lobby manager instance.

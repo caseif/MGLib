@@ -62,6 +62,7 @@ public class Main extends JavaPlugin {
 	 * @since 0.1.0
 	 */
 	public void onEnable(){
+		
 		plugin = this;
 		log = getLogger();
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);

@@ -8,6 +8,10 @@ import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.event.MGLibEvent;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventException;
 import org.bukkit.event.HandlerList;
@@ -132,6 +136,51 @@ public class MGUtil {
 					ex.printStackTrace();
 				}
 			}
+	}
+
+	/**
+	 * Retrieves the sign attached to a given block, or null if ones does not exist.
+	 * @param block the block to check for an attached sign.
+	 * @return the sign attached to a given block, or null if ones does not exist.
+	 */
+	public static Block getAttachedSign(Block block){
+		BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
+				BlockFace.WEST, BlockFace.UP};
+		for (BlockFace face : faces){
+			Block adjBlock = block.getRelative(face);
+			if (adjBlock.getState() instanceof Sign){
+				if (face != BlockFace.UP){
+					@SuppressWarnings("deprecation")
+					byte data = adjBlock.getData();
+					byte north = 0x2;
+					byte south = 0x3;
+					byte west = 0x4;
+					byte east = 0x5;
+					BlockFace attached = null;
+					if (data == east){
+						attached = BlockFace.WEST;
+					}
+					else if (data == west){
+						attached = BlockFace.EAST;
+					}
+					else if (data == north){
+						attached = BlockFace.SOUTH;
+					}
+					else if (data == south){
+						attached = BlockFace.NORTH;
+					}
+					if (adjBlock.getType() == Material.SIGN_POST){
+						attached = BlockFace.DOWN;
+					}
+					if (block.getX() == adjBlock.getRelative(attached).getX() && block.getY() == 
+							adjBlock.getRelative(attached).getY() && block.getZ() ==
+							adjBlock.getRelative(attached).getZ()){
+						return adjBlock;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

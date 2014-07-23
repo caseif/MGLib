@@ -409,11 +409,29 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBurn(BlockBurnEvent e){
+		boolean cancelled = false;
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
 			for (int i = 0; i < worlds.get(p).size(); i++){
 				if (worlds.get(p).get(i).equals(w)){
 					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockBurnAllowed()){
+						e.setCancelled(true);
+						cancelled = true;
+						break;
+					}
+				}
+			}
+		}
+		if (cancelled)
+			return;
+		Block adjBlock = null;
+		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		if (adjBlock != null){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				for (LobbySign l : mg.getLobbyManager().signs.values()){
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
+							&& l.getZ() == adjBlock.getZ() &&
+							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
 					}
@@ -424,11 +442,29 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockFade(BlockFadeEvent e){
+		boolean cancelled = false;
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
 			for (int i = 0; i < worlds.get(p).size(); i++){
 				if (worlds.get(p).get(i).equals(w)){
 					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockFadeAllowed()){
+						e.setCancelled(true);
+						cancelled = true;
+						break;
+					}
+				}
+			}
+		}
+		if (cancelled)
+			return;
+		Block adjBlock = null;
+		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		if (adjBlock != null){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				for (LobbySign l : mg.getLobbyManager().signs.values()){
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
+							&& l.getZ() == adjBlock.getZ() &&
+							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
 					}
@@ -454,11 +490,29 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockIgnite(BlockIgniteEvent e){
+		boolean cancelled = false;
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
 			for (int i = 0; i < worlds.get(p).size(); i++){
 				if (worlds.get(p).get(i).equals(w)){
 					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockIgniteAllowed()){
+						e.setCancelled(true);
+						cancelled = true;
+						break;
+					}
+				}
+			}
+		}
+		if (cancelled)
+			return;
+		Block adjBlock = null;
+		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		if (adjBlock != null){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				for (LobbySign l : mg.getLobbyManager().signs.values()){
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
+							&& l.getZ() == adjBlock.getZ() &&
+							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
 					}
@@ -484,27 +538,29 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPhysics(BlockPhysicsEvent e){
-		//Main.log.info("physics: " + Bukkit.getWorlds().get(0).getTime() + "");
+		boolean cancelled = false;
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
 			for (int i = 0; i < worlds.get(p).size(); i++){
 				if (worlds.get(p).get(i).equals(w)){
 					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPhysicsAllowed()){
 						e.setCancelled(true);
+						cancelled = true;
 						break;
 					}
 				}
 			}
 		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onBlockPiston(BlockPistonExtendEvent e){
-		String w = e.getBlock().getWorld().getName();
-		for (String p : worlds.keySet()){
-			for (int i = 0; i < worlds.get(p).size(); i++){
-				if (worlds.get(p).get(i).equals(w)){
-					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPistonAllowed()){
+		if (cancelled)
+			return;
+		Block adjBlock = null;
+		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		if (adjBlock != null){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				for (LobbySign l : mg.getLobbyManager().signs.values()){
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
+							&& l.getZ() == adjBlock.getZ() &&
+							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
 					}
@@ -514,12 +570,63 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onBlockPiston(BlockPistonRetractEvent e){
+	public void onBlockPistonExtend(BlockPistonExtendEvent e){
+		boolean cancelled = false;
 		String w = e.getBlock().getWorld().getName();
 		for (String p : worlds.keySet()){
 			for (int i = 0; i < worlds.get(p).size(); i++){
 				if (worlds.get(p).get(i).equals(w)){
 					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPistonAllowed()){
+						e.setCancelled(true);
+						cancelled = true;
+						break;
+					}
+				}
+			}
+		}
+		if (cancelled)
+			return;
+		Block adjBlock = null;
+		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		if (adjBlock != null){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				for (LobbySign l : mg.getLobbyManager().signs.values()){
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
+							&& l.getZ() == adjBlock.getZ() &&
+							l.getWorld().equals(adjBlock.getWorld().getName())){
+						e.setCancelled(true);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onBlockPistonRetract(BlockPistonRetractEvent e){
+		boolean cancelled = false;
+		String w = e.getBlock().getWorld().getName();
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPistonAllowed()){
+						e.setCancelled(true);
+						cancelled = true;
+						break;
+					}
+				}
+			}
+		}
+		if (cancelled)
+			return;
+		Block adjBlock = null;
+		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		if (adjBlock != null){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				for (LobbySign l : mg.getLobbyManager().signs.values()){
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
+							&& l.getZ() == adjBlock.getZ() &&
+							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
 					}
