@@ -11,15 +11,15 @@ rollback-logging: true
 
 # Defines the level at which MGLib and plugins hooking it (if compliant) will log.
 # Each level includes messages logged at it as well as at lower levels. Therefore, higher levels typically means more messages.
-# SEVERE will log only exceptions and other severe messages. This is not recommended.
-# WARNING will log recoverable errors and warnings. This is recommended for most users.
-# INFO will log status messages and other non-important informational messages. This is recommended for server owners troubleshooting MGLib or plugins hooking it.
+# SEVERE will log only exceptions and other severe messages. This is not recommended under any circumstances.
+# WARNING will log recoverable errors and warnings. This is not recommended, but may be safely used to reduce log density.
+# INFO will log status messages and other non-important informational messages. This is recommended for most users.
 # DEBUG will log messages intended for debugging purposes only. This is recommended for developers troubleshooting their own plugin.
 # VERBOSE will log any messages not contained by the above categories, no matter how insignificant. This is not recommended for anyone unless they know exactly what they're getting themselves into.
-logging-level: WARNING
+logging-level: INFO
 
 # Should MGLib silently download and install updates when available?
-# We highly recommend you set this to true so you may run plugins using new features.
+# We highly recommend you set this to true so you may run plugins using new API ,features.
 enable-updater: true
 
 # Should MGLib submit anonymous statistics to MCStats? (Set to false if you're paranoid.)

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import net.amigocraft.mglib.api.LocaleManager;
+import net.amigocraft.mglib.api.Locale;
 import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
@@ -53,9 +53,9 @@ public class Main extends JavaPlugin {
 	public static LogLevel LOGGING_LEVEL;
 	
 	/**
-	 * The locale manager for MGLib itself.
+	 * The locale for MGLib itself.
 	 */
-	public static LocaleManager locale;
+	public static Locale locale;
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override.
@@ -70,7 +70,7 @@ public class Main extends JavaPlugin {
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
 		LOGGING_LEVEL = LogLevel.valueOf(getConfig().getString("logging-level").toUpperCase());
 		
-		locale = new LocaleManager("MGLib");
+		locale = new Locale("MGLib");
 		locale.initialize();
 		
 		// updater
@@ -124,9 +124,9 @@ public class Main extends JavaPlugin {
 	
 	/**
 	 * This method should not be called from your plugin. So don't use it. Please.
-	 * @param plugin the plugin to register worlds for.
+	 * @param plugin the name of the plugin to register worlds for.
 	 */
-	public static void registerWorlds(JavaPlugin plugin){
+	public static void registerWorlds(String plugin){
 		MGListener.addWorlds(plugin);
 	}
 

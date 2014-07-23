@@ -39,6 +39,7 @@ public class Minigame {
 	private ConfigManager configManager;
 	private RollbackManager rbManager;
 	private LobbyManager lobbyManager;
+	private Locale locale;
 
 	protected HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
@@ -61,7 +62,13 @@ public class Minigame {
 				lobbyManager.reset();
 			}
 		});
-		Main.registerWorlds(plugin); // registers worlds containing arenas for use with the event listener
+		Main.registerWorlds(plugin.getName()); // registers worlds containing arenas for use with the event listener
+		locale = new Locale(plugin.getName());
+		Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){ // add delay so that the plugin has a chance to change its default locale
+			public void run(){
+				locale.initialize();
+			}
+		});
 	}
 
 	/**
@@ -336,6 +343,15 @@ public class Minigame {
 	 */
 	public ConfigManager getConfigManager(){
 		return configManager;
+	}
+	
+	/**
+	 * Returns the {@link Locale} for this minigame.
+	 * @return the {@link Locale} for this minigame.
+	 * @since 0.3.0
+	 */
+	public Locale getLocale(){
+		return locale;
 	}
 
 	/**

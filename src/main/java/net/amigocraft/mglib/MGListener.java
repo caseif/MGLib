@@ -64,7 +64,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -74,11 +73,11 @@ class MGListener implements Listener {
 
 	static void initialize(){
 		for (Minigame mg : Minigame.getMinigameInstances())
-			MGListener.addWorlds(mg.getPlugin());
+			MGListener.addWorlds(mg.getPlugin().getName());
 	}
 
-	static void addWorlds(JavaPlugin plugin){
-		File f = new File(plugin.getDataFolder(), "arenas.yml");
+	static void addWorlds(String plugin){
+		File f = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder(), "arenas.yml");
 		if (f.exists()){
 			YamlConfiguration y = new YamlConfiguration();
 			try {
@@ -86,11 +85,11 @@ class MGListener implements Listener {
 				y.load(f);
 				for (String k : y.getKeys(false))
 					worldList.add(k);
-				worlds.put(plugin.getName(), worldList);
+				worlds.put(plugin, worldList);
 			}
 			catch (Exception ex){
 				ex.printStackTrace();
-				Main.log.severe("An exception occurred while loading world list for plugin " + plugin.getName());
+				Main.log.severe("An exception occurred while loading world list for plugin " + plugin);
 			}
 		}
 	}

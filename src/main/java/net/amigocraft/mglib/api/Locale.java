@@ -18,7 +18,7 @@ import org.bukkit.Bukkit;
  * themselves in the form of CSV files using "|" symbols as separators.
  * @since 0.3.0
  */
-public class LocaleManager {
+public class Locale {
 
 	/**
 	 * The name of the plugin this locale manager belongs to.
@@ -38,7 +38,7 @@ public class LocaleManager {
 	 * @param plugin the plugin to create a locale manager for.
 	 * @since 0.3.0
 	 */
-	public LocaleManager(String plugin){
+	public Locale(String plugin){
 		this.plugin = plugin;
 		prefix = plugin.equals("MGLib") ? "" : "[" + plugin + "]";
 	}
@@ -57,7 +57,7 @@ public class LocaleManager {
 	}
 
 	/**
-	 * Initializes the locale manager. This must be called, or {@link LocaleManager#getMessage(String)} will always return its parameter.
+	 * Initializes the locale manager. This must be called, or {@link Locale#getMessage(String)} will always return its parameter.
 	 * @since 0.3.0
 	 */
 	public void initialize(){
@@ -66,7 +66,7 @@ public class LocaleManager {
 		String defaultLocale = Minigame.getMinigameInstance(plugin) != null ?
 				Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() : "enUS";
 				try {
-					defaultIs = LocaleManager.class.getResourceAsStream("/locales/" +
+					defaultIs = Locale.class.getResourceAsStream("/locales/" +
 							defaultLocale + ".csv");
 					File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator + "locales" + File.separator +
 							Main.plugin.getConfig().getString("locale") + ".csv");
