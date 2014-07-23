@@ -1,5 +1,6 @@
 package net.amigocraft.mglib.event.player;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -12,16 +13,19 @@ import net.amigocraft.mglib.api.MGPlayer;
 public class MGPlayerDeathEvent extends MGPlayerEvent {
 
 	private DamageCause cause;
+	private Entity killer;
 	
 	/**
 	 * Creates a new instance of this event.
 	 * @param player the player who has died.
 	 * @param cause the cause of death (i.e. the cause of the damage resulting in death).
+	 * @param killer the entity which killed this player (null may be used in the event that there is none.
 	 * @since 0.3.0
 	 */
-	public MGPlayerDeathEvent(MGPlayer player, DamageCause cause){
+	public MGPlayerDeathEvent(MGPlayer player, DamageCause cause, Entity killer){
 		super(player);
 		this.cause = cause;
+		this.killer = killer;
 	}
 	
 	/**
@@ -31,6 +35,15 @@ public class MGPlayerDeathEvent extends MGPlayerEvent {
 	 */
 	public DamageCause getCause(){
 		return cause;
+	}
+	
+	/**
+	 * Retrieves the entity which killed the player, if applicable.
+	 * @return the entity which killed the player, or null if none applies.
+	 * @since 0.3.0
+	 */
+	public Entity getKiller(){
+		return killer;
 	}
 
 }

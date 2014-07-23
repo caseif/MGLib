@@ -256,7 +256,8 @@ class MGListener implements Listener {
 					}
 					if (actualDamage >= ((Player)e.getEntity()).getHealth()){
 						e.setCancelled(true);
-						MGUtil.callEvent(new MGPlayerDeathEvent(p, e.getCause()));
+						MGUtil.callEvent(new MGPlayerDeathEvent(p, e.getCause(),
+								e instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)e).getDamager() : null));
 					}
 					else if (mg.getConfigManager().isForcePreciseDamage()){
 						e.setCancelled(true);
