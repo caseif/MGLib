@@ -497,6 +497,7 @@ public class Round implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void end(boolean timeUp){
+		MGUtil.callEvent(new MinigameRoundEndEvent(this, timeUp));
 		setStage(Stage.RESETTING);
 		setTime(-1);
 		if (timerHandle != -1)
@@ -508,7 +509,6 @@ public class Round implements Metadatable {
 			}
 			catch (Exception ex){} // I don't care if this happens
 		}
-		MGUtil.callEvent(new MinigameRoundEndEvent(this, timeUp));
 		if (getConfigManager().isRollbackEnabled()) // check if rollbacks are enabled
 			getRollbackManager().rollback(getArena()); // roll back arena
 		setStage(Stage.WAITING);
@@ -916,7 +916,7 @@ public class Round implements Metadatable {
 	public void broadcast(String message, boolean broadcastToSpectators){
 		for (MGPlayer p : players.values())
 			if (!p.isSpectating() || broadcastToSpectators)
-				p.getBukkitPlayer().sendMessage(message);
+				p.getBukkitPlayer().sendMessage("[" + plugin + "] " + message);
 	}
 
 	/**
