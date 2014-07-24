@@ -2,7 +2,9 @@ package net.amigocraft.mglib;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import net.amigocraft.mglib.api.Locale;
@@ -153,6 +155,15 @@ public class Main extends JavaPlugin {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
+	 * @return a hashmap mapping the names of online players to their respective UUIDs.
+	 * @since 0.3.0
+	 */
+	public static HashMap<String, UUID> getOnlineUUIDs(){
+		return UUIDFetcher.uuids;
 	}
 
 }

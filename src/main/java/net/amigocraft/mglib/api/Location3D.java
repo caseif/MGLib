@@ -1,17 +1,63 @@
-package net.amigocraft.mglib.misc;
+package net.amigocraft.mglib.api;
 
 import org.bukkit.Location;
 
 /**
- * Represents an arbitrary three-dimensinal point.
- * This class is much more reliable for comparisons than the vanilla Bukkit {@link Location} class.
+ * Represents an arbitrary three-dimensional point.
+ * This class is more reliable for comparisons than the vanilla Bukkit {@link Location} class.
  * @since 0.3.0
  */
 public class Location3D {
 
+	private String world = "";
 	private float x;
 	private float y;
 	private float z;
+
+	/**
+	 * Creates a new Location3D from the given points.
+	 * @param world the name of the world containing the location.
+	 * @param x the x-coordinate of the location.
+	 * @param y the y-coordinate of the location.
+	 * @param z the z-coordinate of the location.
+	 * @since 0.3.0
+	 */
+	public Location3D(String world, float x, float y, float z){
+		this.world = world;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	/**
+	 * Creates a new Location3D from the given points.
+	 * @param world the name of the world containing the location.
+	 * @param x the x-coordinate of the location.
+	 * @param y the y-coordinate of the location.
+	 * @param z the z-coordinate of the location.
+	 * @since 0.3.0
+	 */
+	public Location3D(String world, double x, double y, double z){
+		this.world = world;
+		this.x = (float)x;
+		this.y = (float)y;
+		this.z = (float)z;
+	}
+
+	/**
+	 * Creates a new Location3D from the given points.
+	 * @param world the name of the world containing the location.
+	 * @param x the x-coordinate of the location.
+	 * @param y the y-coordinate of the location.
+	 * @param z the z-coordinate of the location.
+	 * @since 0.3.0
+	 */
+	public Location3D(String world, int x, int y, int z){
+		this.world = world;
+		this.x = (float)x;
+		this.y = (float)y;
+		this.z = (float)z;
+	}
 
 	/**
 	 * Creates a new Location3D from the given points.
@@ -50,6 +96,24 @@ public class Location3D {
 		this.x = (float)x;
 		this.y = (float)y;
 		this.z = (float)z;
+	}
+	
+	/**
+	 * Retrieves the name of the world of this location.
+	 * @return the name of the world of this location, or an empty string if one was not provided.
+	 * @since 0.3.0
+	 */
+	public String getWorld(){
+		return world;
+	}
+	
+	/**
+	 * Sets the name of the world of this location.
+	 * @param world the name of the world of this location, or null if one was not provided.
+	 * @since 0.3.0
+	 */
+	public void setWorld(String world){
+		this.world = world;
 	}
 
 	/**
@@ -167,12 +231,13 @@ public class Location3D {
 	 * @since 0.3.0
 	 */
 	public static Location3D valueOf(Location location){
-		return new Location3D(location.getX(), location.getY(), location.getZ());
+		return new Location3D(location.getWorld().getName(), location.getX(), location.getY(), location.getZ());
 	}
 
 	@Override
 	public boolean equals(Object otherObject){
 		return otherObject instanceof Location3D &&
+				((Location3D)otherObject).getWorld().equals(world) &&
 				((Location3D)otherObject).getX() == x &&
 				((Location3D)otherObject).getY() == y && 
 				((Location3D)otherObject).getZ() == z;
@@ -180,7 +245,8 @@ public class Location3D {
 	
 	@Override
 	public int hashCode(){
-		return 47 + ((Float.valueOf(x).hashCode() * 53 + Float.valueOf(y).hashCode() * 67 + Float.valueOf(z).hashCode() * 17) * 93);	
+		return 47 + (world.hashCode() * 61 +
+				(Float.valueOf(x).hashCode() * 53 + Float.valueOf(y).hashCode() * 67 + Float.valueOf(z).hashCode() * 17) * 93);	
 	}
 
 }

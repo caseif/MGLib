@@ -76,7 +76,7 @@ public class ConfigManager {
 		actions.put("block-grow", false);
 		actions.put("block-ignite", false);
 		actions.put("block-flow", false);
-		actions.put("block-physics", false);
+		actions.put("block-physics", true);
 		actions.put("block-piston", true);
 		actions.put("block-spread", false);
 		actions.put("entity-explode", false);
@@ -663,7 +663,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Retrieves whether block physics are permitted in worlds containing one or more arenas. (default: false)
+	 * Retrieves whether block physics are permitted in worlds containing one or more arenas. (default: true)
 	 * @return whether block physics are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
@@ -672,7 +672,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether block ignition are physics in worlds containing one or more arenas. (default: false)
+	 * Sets whether block ignition are physics in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether block physics are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */

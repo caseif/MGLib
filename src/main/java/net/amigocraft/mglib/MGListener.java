@@ -9,6 +9,7 @@ import java.util.List;
 
 import net.amigocraft.mglib.api.LobbySign;
 import net.amigocraft.mglib.api.LobbyType;
+import net.amigocraft.mglib.api.Location3D;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
@@ -21,7 +22,6 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
 import net.amigocraft.mglib.misc.JoinResult;
-import net.amigocraft.mglib.misc.Location3D;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

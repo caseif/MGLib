@@ -2,6 +2,7 @@ package net.amigocraft.mglib.api;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import net.amigocraft.mglib.LobbyManager;
 import net.amigocraft.mglib.MGUtil;
@@ -151,9 +152,9 @@ public class Minigame {
 	}
 
 	/**
-	 * Gets the instance of the round associated with the given arena.
+	 * Retrieves the instance of the round associated with the given arena.
 	 * @param name The name of the round to retrieve.
-	 * @return The instance of the round associated with the given arena.
+	 * @return The instance of the round associated with the given arena, or null if it does not exist.
 	 * @since 0.1.0
 	 */
 	public Round getRound(String name){
@@ -362,6 +363,15 @@ public class Minigame {
 	 */
 	public void log(String message, LogLevel level){
 		MGUtil.log(message, plugin.getName(), level);
+	}
+	
+	/**
+	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
+	 * @return a hashmap mapping the names of online players to their respective UUIDs.
+	 * @since 0.3.0
+	 */
+	public static HashMap<String, UUID> getOnlineUUIDs(){
+		return Main.getOnlineUUIDs();
 	}
 
 	/**
