@@ -95,7 +95,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.LOWEST) // so that we can prepare everything for the hooking plugins
 	public void onPlayerQuit(PlayerQuitEvent e){
 		final String p = e.getPlayer().getName();
 		for (Minigame mg : Minigame.getMinigameInstances())
@@ -126,7 +126,7 @@ class MGListener implements Listener {
 			}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamage(EntityDamageEvent e){
 		Player pl = null;
 		Player p2 = null; // don't ask why it's named like this
@@ -270,7 +270,7 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.LOWEST) // so that we can prepare everything for the hooking plugins
 	public void onPlayerJoin(PlayerJoinEvent e){
 		final String p = e.getPlayer().getName();
 		try {

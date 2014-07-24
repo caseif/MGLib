@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
+import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 
 import org.bukkit.Bukkit;
@@ -78,7 +79,8 @@ public class Locale {
 					is = Bukkit.getPluginManager().getPlugin(plugin).getClass().getResourceAsStream("/locales/" +
 							Main.plugin.getConfig().getString("locale") + ".csv");
 					if (is == null){
-						Main.log.warning(prefix + "Locale defined in config not found in JAR or plugin folder; defaulting to " + defaultLocale);
+						MGUtil.log("Locale defined in config not found in JAR or plugin folder; defaulting to " + defaultLocale, prefix,
+								LogLevel.WARNING);
 						is = defaultIs;
 					}
 				}

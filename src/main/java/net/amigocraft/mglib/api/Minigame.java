@@ -358,7 +358,7 @@ public class Minigame {
 	/**
 	 * Logs the given message if verbose logging is enabled.
 	 * @param message the message to log.
-	 * @param level the level at which to log the message (0-3)
+	 * @param level the level at which to log the message.
 	 * @since 0.3.0
 	 */
 	public void log(String message, LogLevel level){
