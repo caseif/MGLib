@@ -348,20 +348,19 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClick(InventoryClickEvent e){
-		boolean found = false;
 		for (Minigame mg : Minigame.getMinigameInstances()){
-			for (Round r : mg.getRoundList()){
-				if (r.getPlayers().containsKey(e.getWhoClicked().getName())){
-					if (e.getInventory().getHolder() instanceof BlockState){
-						mg.getRollbackManager().logInventoryChange(e.getInventory(),
-								((BlockState)e.getInventory().getHolder()).getBlock(), r.getArena());
-						found = true;
-						break;
-					}
+			MGPlayer mp = mg.getMGPlayer(e.getWhoClicked().getName());
+			if (mp != null){
+				if (mp.isSpectating()){
+					e.setCancelled(true);
+					return;
+				}
+				if (e.getInventory().getHolder() instanceof BlockState){
+					mg.getRollbackManager().logInventoryChange(e.getInventory(),
+							((BlockState)e.getInventory().getHolder()).getBlock(), mp.getArena());
+					return;
 				}
 			}
-			if (found)
-				break;
 		}
 	}
 
