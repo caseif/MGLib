@@ -215,7 +215,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: true)
+	 * Retrieves whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: false)
 	 * @return whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
 	 * @since 0.1.0
 	 */
@@ -224,7 +224,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: true)
+	 * Sets whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: false)
 	 * @param allow whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
 	 * @since 0.1.0
 	 */
@@ -233,7 +233,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Retrieves whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: true)
+	 * Retrieves whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: false)
 	 * @return whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage.}
 	 * @since 0.1.0
 	 */
@@ -242,7 +242,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: true)
+	 * Sets whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: false)
 	 * @param allow whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}.
 	 * @since 0.1.0
 	 */
@@ -799,7 +799,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Sets whether players in rounds may receive damage by default. (default: false)
+	 * Sets whether players in rounds may receive damage by default. (default: true)
 	 * @param allowed whether players in rounds may receive damage by default.
 	 * @since 0.1.0 
 	 */
@@ -978,7 +978,7 @@ public class ConfigManager {
 	 * @param enabled whether hunger should drain from players in rounds.
 	 * @since 0.3.0
 	 */
-	public void isHungerEnabled(boolean enabled){
+	public void setHungerEnabled(boolean enabled){
 		this.hunger = enabled;
 	}
 	
@@ -1006,7 +1006,7 @@ public class ConfigManager {
 	
 	/**
 	 * Retrieves whether teams in a round should have separate chat channels. (default: false)
-	 * (default: true)
+	 * (default: false)
 	 * @return whether teams in a round should have separate chat channels.
 	 * @since 0.3.0
 	 */
@@ -1016,7 +1016,7 @@ public class ConfigManager {
 	
 	/**
 	 * Sets whether teams in a round should have separate chat channels.
-	 * (default: true)
+	 * (default: false)
 	 * @param enabled whether teams in a round should have separate chat channels.
 	 * @since 0.3.0
 	 */
