@@ -58,6 +58,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -787,6 +788,26 @@ class MGListener implements Listener {
 						mg.getRollbackManager().logBlockChange(e.getLocation().getBlock(), r.getArena());
 						break;
 					}
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onAsyncPlayerChat(AsyncPlayerChatEvent e){
+		List<Player> remove = new ArrayList<Player>();
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			if (mg.getConfigManager().isPerRoundChatEnabled()){
+				MGPlayer sender = mg.getMGPlayer(e.getPlayer().getName());
+				for (Player pl : e.getRecipients()){
+					MGPlayer recipient = mg.getMGPlayer(pl.getName());
+					if ((sender == null) != (recipient == null))
+						remove.add(pl);
+					else if (sender != null && recipient != null)
+						if (!sender.getRound().getArena().equals(recipient.getRound().getArena()))
+							remove.add(pl);
+						else if (mg.getConfigManager().isTeamChatEnabled() && !sender.getTeam().equals(recipient.getTeam()))
+							remove.add(pl);
 				}
 			}
 		}

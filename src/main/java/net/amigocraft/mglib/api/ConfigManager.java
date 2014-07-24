@@ -44,6 +44,8 @@ public class ConfigManager {
 	private boolean overrideDeathEvent = false;
 	private boolean forcePreciseDamage = false;
 	private boolean hunger = false;
+	private boolean perRoundChat = true;
+	private boolean teamChat = false;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -978,6 +980,48 @@ public class ConfigManager {
 	 */
 	public void isHungerEnabled(boolean enabled){
 		this.hunger = enabled;
+	}
+	
+	/**
+	 * Retrieves whether chat should be handled on a per-round basis (e.g. players in an arena only see messages sent by players in the same arena).
+	 * (default: true)
+	 * @return whether chat should be handled on a per-round basis (e.g. players in an arena only see messages sent by players in the same arena).
+	 * @since 0.3.0
+	 */
+	public boolean isPerRoundChatEnabled(){
+		return perRoundChat;
+	}
+	
+	/**
+	 * Sets whether chat should be handled on a per-round basis (e.g. players in an arena only see messages sent by players in the same arena).
+	 * (default: true)
+	 * @param enabled whether chat should be handled on a per-round basis (e.g. players in an arena only see messages sent by players in the same arena).
+	 * @since 0.3.0
+	 */
+	public void setPerRoundChatEnabled(boolean enabled){
+		this.perRoundChat = enabled;
+	}
+	
+
+	
+	/**
+	 * Retrieves whether teams in a round should have separate chat channels. (default: false)
+	 * (default: true)
+	 * @return whether teams in a round should have separate chat channels.
+	 * @since 0.3.0
+	 */
+	public boolean isTeamChatEnabled(){
+		return teamChat;
+	}
+	
+	/**
+	 * Sets whether teams in a round should have separate chat channels.
+	 * (default: true)
+	 * @param enabled whether teams in a round should have separate chat channels.
+	 * @since 0.3.0
+	 */
+	public void setTeamChatEnabled(boolean enabled){
+		this.teamChat = enabled;
 	}
 
 }
