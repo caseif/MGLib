@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -75,6 +76,8 @@ public class Round implements Metadatable {
 	private boolean damage;
 	private boolean pvp;
 	private boolean rollback;
+	
+	private boolean ended;
 
 	/**
 	 * Creates a new {@link Round} with the given parameters.
@@ -92,9 +95,10 @@ public class Round implements Metadatable {
 		ConfigurationSection cs = y.getConfigurationSection(arena); // make the code easier to read
 		world = cs.getString("world"); // get the name of the world of the arena
 		World w = Bukkit.getWorld(world); // convert it to a Bukkit world
-		if (w == null){ // but what if world is kill?
+		if (w == null)
+			w = Bukkit.createWorld(new WorldCreator(world));
+		if (w == null) // but what if world is kill?
 			throw new IllegalArgumentException("World " + world + " cannot be loaded!"); // then round is kill
-		}
 		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){ // load spawns into round object
 			Location l = new Location(w, cs.getDouble("spawns." + k + ".x"),
 					cs.getDouble("spawns." + k + ".y"),
@@ -497,6 +501,7 @@ public class Round implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void end(boolean timeUp){
+		ended = true;
 		MGUtil.callEvent(new MinigameRoundEndEvent(this, timeUp));
 		setStage(Stage.RESETTING);
 		setTime(-1);
@@ -521,6 +526,15 @@ public class Round implements Metadatable {
 	 */
 	public void end(){
 		end(false);
+	}
+	
+	/**
+	 * Retrieves whether this round has been ended.
+	 * @return whether this round has been ended.
+	 * @since 0.3.0
+	 */
+	public boolean hasEnded(){
+		return ended;
 	}
 
 	/**
@@ -916,7 +930,7 @@ public class Round implements Metadatable {
 	public void broadcast(String message, boolean broadcastToSpectators){
 		for (MGPlayer p : players.values())
 			if (!p.isSpectating() || broadcastToSpectators)
-				p.getBukkitPlayer().sendMessage("[" + plugin + "] " + message);
+				p.getBukkitPlayer().sendMessage(message);
 	}
 
 	/**
