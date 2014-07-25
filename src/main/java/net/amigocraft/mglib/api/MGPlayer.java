@@ -33,6 +33,8 @@ import net.amigocraft.mglib.misc.Metadatable;
  * @since 0.1.0
  */
 public class MGPlayer implements Metadatable {
+	
+	HashMap<String, Object> metadata = new HashMap<String, Object>();
 
 	private String plugin;
 	private String name;
@@ -379,27 +381,23 @@ public class MGPlayer implements Metadatable {
 		return 41 * (plugin.hashCode() + name.hashCode() + arena.hashCode() + Boolean.valueOf(isSpectating()).hashCode() + 41);
 	}
 
-	@Override
 	public Object getMetadata(String key){
 		return metadata.get(key);
 	}
 
-	@Override
 	public void setMetadata(String key, Object value){
+		Main.log(name + ": " + key, LogLevel.DEBUG);
 		metadata.put(key, value);
 	}
 
-	@Override
 	public void removeMetadata(String key){
 		metadata.remove(key);
 	}
 
-	@Override
 	public boolean hasMetadata(String key){
 		return metadata.containsKey(key);
 	}
 
-	@Override
 	public HashMap<String, Object> getAllMetadata(){
 		return metadata;
 	}

@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 public interface Metadatable {
 	
-	HashMap<String, Object> metadata = new HashMap<String, Object>();
-	
 	/**
 	 * Retrieves a given value from this object's metadata by its key.
 	 * @param key the key to retrieve.

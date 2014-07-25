@@ -52,6 +52,8 @@ import net.amigocraft.mglib.misc.Metadatable;
  * @since 0.1.0
  */
 public class Round implements Metadatable {
+	
+	HashMap<String, Object> metadata = new HashMap<String, Object>();
 
 	private int minPlayers;
 	private int maxPlayers;
@@ -942,27 +944,22 @@ public class Round implements Metadatable {
 		broadcast(message, true);
 	}
 
-	@Override
 	public Object getMetadata(String key){
 		return metadata.get(key);
 	}
 
-	@Override
 	public void setMetadata(String key, Object value){
 		metadata.put(key, value);
 	}
 
-	@Override
 	public void removeMetadata(String key){
 		metadata.remove(key);
 	}
 
-	@Override
 	public boolean hasMetadata(String key){
 		return metadata.containsKey(key);
 	}
 
-	@Override
 	public HashMap<String, Object> getAllMetadata(){
 		return metadata;
 	}
