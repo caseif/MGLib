@@ -32,7 +32,7 @@ public class Locale {
 	 */
 	public HashMap<String, String> messages = new HashMap<String, String>();
 	private String prefix;
-	
+
 	/**
 	 * Creates a new locale manager for the given plugin (yours). MGLib attempts to load locales first from the
 	 * "locales" directory in the plugin's data folder, then from the locales directory in the plugin JAR's root.
@@ -62,62 +62,65 @@ public class Locale {
 	 * @since 0.3.0
 	 */
 	public void initialize(){
-		InputStream is = null;
-		InputStream defaultIs = null;
-		String defaultLocale = Minigame.getMinigameInstance(plugin) != null ?
-				Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() : "enUS";
-				try {
-					defaultIs = Locale.class.getResourceAsStream("/locales/" +
-							defaultLocale + ".csv");
-					File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator + "locales" + File.separator +
-							Main.plugin.getConfig().getString("locale") + ".csv");
-					is = new FileInputStream(file);
-					Main.log("Loaded locale from " + file.getAbsolutePath(), LogLevel.INFO);
+		if (Locale.class.getClassLoader().getResource("locales") != null){
+			InputStream is = null;
+			InputStream defaultIs = null;
+			String defaultLocale = Minigame.getMinigameInstance(plugin) != null ?
+					Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() : "enUS";
+					try {
+						defaultIs = Locale.class.getResourceAsStream("/locales/" +
+								defaultLocale + ".csv");
+						File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator + "locales" + File.separator +
+								Main.plugin.getConfig().getString("locale") + ".csv");
+						is = new FileInputStream(file);
+						Main.log("Loaded locale from " + file.getAbsolutePath(), LogLevel.INFO);
 
-				}
-				catch (Exception ex){
-					is = Bukkit.getPluginManager().getPlugin(plugin).getClass().getResourceAsStream("/locales/" +
-							Main.plugin.getConfig().getString("locale") + ".csv");
-					if (is == null){
-						MGUtil.log("Locale defined in config not found in JAR or plugin folder; defaulting to " + defaultLocale, prefix,
-								LogLevel.WARNING);
-						is = defaultIs;
 					}
-				}
-				try {
-					if (is != null){
-						BufferedReader br;
-						String line;
-						br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-						while ((line = br.readLine()) != null) {
-							String[] params = line.split("\\|");
-							if (params.length > 1){
-								messages.put(params[0], params[1]);
-							}
+					catch (Exception ex){
+						is = Bukkit.getPluginManager().getPlugin(plugin).getClass().getResourceAsStream("/locales/" +
+								Main.plugin.getConfig().getString("locale") + ".csv");
+						if (is == null){
+							MGUtil.log("Locale defined in config not found in JAR or plugin folder; defaulting to " + defaultLocale, prefix,
+									LogLevel.WARNING);
+							is = defaultIs;
 						}
 					}
-					if (defaultIs != null){
-						BufferedReader br;
-						String line;
-						br = new BufferedReader(new InputStreamReader(defaultIs, Charset.forName("UTF-8")));
-						while ((line = br.readLine()) != null) {
-							String[] params = line.split("\\|");
-							if (params.length > 1){
-								if (!messages.containsKey(params[0])){
-									messages.put(params[0].toLowerCase(), params[1]);
+					try {
+						if (is != null){
+							BufferedReader br;
+							String line;
+							br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+							while ((line = br.readLine()) != null) {
+								String[] params = line.split("\\|");
+								if (params.length > 1){
+									messages.put(params[0], params[1]);
 								}
 							}
 						}
+						if (defaultIs != null){
+							BufferedReader br;
+							String line;
+							br = new BufferedReader(new InputStreamReader(defaultIs, Charset.forName("UTF-8")));
+							while ((line = br.readLine()) != null) {
+								String[] params = line.split("\\|");
+								if (params.length > 1){
+									if (!messages.containsKey(params[0])){
+										messages.put(params[0].toLowerCase(), params[1]);
+									}
+								}
+							}
+						}
+						else if (is == null)
+							MGUtil.log("Neither the defined nor default locale could be loaded. "
+									+ "Localized messages will be displayed only as their keys!", prefix, LogLevel.SEVERE);
 					}
-					else if (is == null)
-						Main.log.severe("Neither the defined nor default locale could be loaded. Localized messages will be displayed only as their keys!");
-				}
-				catch (IOException e){
-					e.printStackTrace();
-				}
-				finally {
-					try {is.close();}
-					catch (Exception ex){ex.printStackTrace();}
-				}
+					catch (IOException e){
+						e.printStackTrace();
+					}
+					finally {
+						try {is.close();}
+						catch (Exception ex){ex.printStackTrace();}
+					}
+		}
 	}
 }
