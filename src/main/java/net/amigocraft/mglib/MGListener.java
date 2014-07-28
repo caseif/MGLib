@@ -27,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -172,9 +173,14 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			if (p2 != null){
 				MGPlayer p = mg.getMGPlayer(p2.getName());
+				if (p != null && p.isSpectating()){
+					e.setCancelled(true);
+					return;
+				}
 				if (p != null && p.getRound() != null && p.getRound().getConfigManager().isOverrideDeathEvent()){
 					// override the death event with a custom one
 					double actualDamage = 0;
+					boolean force = false;
 					try {
 						e.getClass().getMethod("getFinalDamage", new Class<?>[]{}); // test for new damage API
 						actualDamage = e.getFinalDamage();
@@ -254,15 +260,18 @@ class MGListener implements Listener {
 								if (pe.getType() == PotionEffectType.DAMAGE_RESISTANCE)
 									potionMod = (float)(25 - ((pe.getAmplifier() + 1) * 5)) / 25.0f;
 						actualDamage = (int)(e.getDamage() * potionMod - armorMod - enchantMod);
+						force = true;
 					}
 					if (actualDamage >= ((Player)e.getEntity()).getHealth()){
 						e.setCancelled(true);
 						MGUtil.callEvent(new MGPlayerDeathEvent(p, e.getCause(),
 								e instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)e).getDamager() : null));
 					}
-					else if (mg.getConfigManager().isForcePreciseDamage()){
+					else if (mg.getConfigManager().isForcePreciseDamage() && force){
 						e.setCancelled(true);
 						p2.setHealth(p2.getHealth() - actualDamage);
+						p2.getWorld().playSound(p2.getLocation(), Sound.HURT_FLESH, 10, 1);
+						MGUtil.damage(p2);
 					}
 					break;
 				}
@@ -713,6 +722,7 @@ class MGListener implements Listener {
 							}
 							catch (ArenaNotExistsException ex){
 								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-load-fail").replace("%", ls.getArena()));
+								return;
 							}
 						}
 						try {

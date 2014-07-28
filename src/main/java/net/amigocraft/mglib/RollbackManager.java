@@ -154,7 +154,6 @@ public class RollbackManager {
 		ConfigurationSection cs2 = y.getConfigurationSection(arena + ".inventoryChanges");
 		if (cs2 != null){
 			for (String k : cs2.getKeys(false)){
-				System.out.println(k);
 				String[] coords = k.split(",");
 				double x = Double.NaN, y = Double.NaN, z = Double.NaN;
 				if (MGUtil.isInteger(coords[0]))
@@ -164,7 +163,6 @@ public class RollbackManager {
 				if (MGUtil.isInteger(coords[2]))
 					z = Integer.parseInt(coords[2]);
 				World w = Bukkit.getWorld(cs2.getString(k + ".world"));
-				System.out.println(w.getName() + ", " + x + ", " + y + ", " + z);
 				if (w != null && x != Double.NaN && y != Double.NaN && z != Double.NaN){
 					Location l = new Location(w, x, y, z);
 					if (l.getBlock().getState() instanceof InventoryHolder)

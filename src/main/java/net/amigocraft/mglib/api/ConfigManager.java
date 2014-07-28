@@ -940,7 +940,7 @@ public class ConfigManager {
 	
 	/**
 	 * Retrieves whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
-	 * values, but will ensure that pre- or postmature deaths do not occur. (default: false)
+	 * values as well as the knockback effect, but will ensure that pre- or postmature deaths do not occur. (default: false)
 	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
 	 * <br><br>
 	 * <b>Note: this may break protection potions.</b>
@@ -953,7 +953,7 @@ public class ConfigManager {
 	
 	/**
 	 * Sets whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
-	 * values, but will ensure that pre- or postmature deaths do not occur. (default: false)
+	 * values as well as the knockback effect, but will ensure that pre- or postmature deaths do not occur. (default: false)
 	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
 	 * <br><br>
 	 * <b>Note: this may break protection potions.</b>
