@@ -1039,7 +1039,7 @@ public class ConfigManager {
 	 * @param allowed whether mob spawning is permitted in worlds containing an arena.
 	 * @since 0.3.0
 	 */
-	public void isMobSpawningAllowed(boolean allowed){
+	public void setMobSpawningAllowed(boolean allowed){
 		this.mobSpawning = allowed;
 	}
 
