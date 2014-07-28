@@ -46,6 +46,7 @@ public class ConfigManager {
 	private boolean hunger = false;
 	private boolean perRoundChat = true;
 	private boolean teamChat = false;
+	private boolean mobSpawning = true;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -1022,6 +1023,24 @@ public class ConfigManager {
 	 */
 	public void setTeamChatEnabled(boolean enabled){
 		this.teamChat = enabled;
+	}
+	
+	/**
+	 * Retrieves whether mob spawning is permitted in worlds containing an arena. (default: true)
+	 * @return whether mob spawning is permitted in worlds containing an arena.
+	 * @since 0.3.0
+	 */
+	public boolean isMobSpawningAllowed(){
+		return mobSpawning;
+	}
+	
+	/**
+	 * Sets whether mob spawning is permitted in worlds containing an arena. (default: true)
+	 * @param allowed whether mob spawning is permitted in worlds containing an arena.
+	 * @since 0.3.0
+	 */
+	public void isMobSpawningAllowed(boolean allowed){
+		this.mobSpawning = allowed;
 	}
 
 }

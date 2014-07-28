@@ -53,6 +53,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -265,7 +266,11 @@ class MGListener implements Listener {
 					if (actualDamage >= ((Player)e.getEntity()).getHealth()){
 						e.setCancelled(true);
 						MGUtil.callEvent(new MGPlayerDeathEvent(p, e.getCause(),
-								e instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)e).getDamager() : null));
+								e instanceof EntityDamageByEntityEvent ?
+										((EntityDamageByEntityEvent)e).getDamager() instanceof Projectile ?
+												(Entity)((Projectile)((EntityDamageByEntityEvent)e).getDamager()).getShooter() :
+													((EntityDamageByEntityEvent)e).getDamager() :
+														null));
 					}
 					else if (mg.getConfigManager().isForcePreciseDamage() && force){
 						e.setCancelled(true);
@@ -822,4 +827,19 @@ class MGListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onCreatureSpawn(CreatureSpawnEvent e){
+		String w = e.getEntity().getWorld().getName();
+		for (String p : worlds.keySet()){
+			for (int i = 0; i < worlds.get(p).size(); i++){
+				if (worlds.get(p).get(i).equals(w)){
+					if (!Minigame.getMinigameInstance(p).getConfigManager().isMobSpawningAllowed()){
+						e.setCancelled(true);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
 }
