@@ -58,6 +58,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -841,5 +842,17 @@ class MGListener implements Listener {
 			}
 		}
 	}
-	
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntityTarget(EntityTargetEvent e){
+		if (e.getTarget().getType() == EntityType.PLAYER){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				MGPlayer mp = mg.getMGPlayer(((Player)e.getTarget()).getName());
+				if (mp != null && (!mg.getConfigManager().isEntityTargetingEnabled() || mp.isSpectating())){
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+
 }

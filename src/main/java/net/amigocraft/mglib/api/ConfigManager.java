@@ -47,6 +47,7 @@ public class ConfigManager {
 	private boolean perRoundChat = true;
 	private boolean teamChat = false;
 	private boolean mobSpawning = true;
+	private boolean targeting = false;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -1041,6 +1042,24 @@ public class ConfigManager {
 	 */
 	public void setMobSpawningAllowed(boolean allowed){
 		this.mobSpawning = allowed;
+	}
+	
+	/**
+	 * Retrieves whether entities are permitted to target players in arenas. (default: false)
+	 * @return whether entities are permitted to target players in arenas.
+	 * @since 0.3.0
+	 */
+	public boolean isEntityTargetingEnabled(){
+		return targeting;
+	}
+	
+	/**
+	 * Sets whether entities are permitted to target players in arenas. (default: false)
+	 * @param enabled whether entities are permitted to target players in arenas.
+	 * @since 0.3.0
+	 */
+	public void setEntityTargetingEnabled(boolean enabled){
+		this.targeting = enabled;
 	}
 
 }
