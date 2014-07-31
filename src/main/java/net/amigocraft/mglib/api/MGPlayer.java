@@ -386,7 +386,6 @@ public class MGPlayer implements Metadatable {
 	}
 
 	public void setMetadata(String key, Object value){
-		Main.log(name + ": " + key, LogLevel.DEBUG);
 		metadata.put(key, value);
 	}
 
