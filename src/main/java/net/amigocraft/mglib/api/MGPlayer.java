@@ -167,7 +167,7 @@ public class MGPlayer implements Metadatable {
 				p.setGameMode(GameMode.ADVENTURE); // disable block breaking
 				String message = Main.locale.getMessage("spectating"); // tell them
 				if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()){
-					p.setFlying(true); // enable flight
+					p.setAllowFlight(true); // enable flight
 					message += " " + locale.getMessage("flight-enabled");
 				}
 				p.sendMessage(message);

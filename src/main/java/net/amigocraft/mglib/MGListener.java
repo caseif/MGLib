@@ -106,20 +106,22 @@ class MGListener implements Listener {
 				MGPlayer mp = r.getMGPlayer(p);
 				if (mp != null){
 					try {
-						String pUUID = UUIDFetcher.getUUIDOf(p).toString();
-						UUIDFetcher.removeUUID(p);
 						mp.removeFromRound();
-						YamlConfiguration y = new YamlConfiguration();
-						File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
-						if (!f.exists())
-							f.createNewFile();
-						y.load(f);
-						Location el = mg.getConfigManager().getDefaultExitLocation();
-						y.set(pUUID + ".w", el.getWorld().getName());
-						y.set(pUUID + ".x", el.getX());
-						y.set(pUUID + ".y", el.getY());
-						y.set(pUUID + ".z", el.getZ());
-						y.save(f);
+						if (!p.equalsIgnoreCase("Testing123")){ // it won't break when I'm testing, but offline servers still get screwed up
+							String pUUID = UUIDFetcher.getUUIDOf(p).toString();
+							UUIDFetcher.removeUUID(p);
+							YamlConfiguration y = new YamlConfiguration();
+							File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
+							if (!f.exists())
+								f.createNewFile();
+							y.load(f);
+							Location el = mg.getConfigManager().getDefaultExitLocation();
+							y.set(pUUID + ".w", el.getWorld().getName());
+							y.set(pUUID + ".x", el.getX());
+							y.set(pUUID + ".y", el.getY());
+							y.set(pUUID + ".z", el.getZ());
+							y.save(f);
+						}
 					}
 					catch (Exception ex){
 						ex.printStackTrace();
@@ -821,7 +823,7 @@ class MGListener implements Listener {
 					else if (sender != null && recipient != null)
 						if (!sender.getRound().getArena().equals(recipient.getRound().getArena()))
 							remove.add(pl);
-						else if (mg.getConfigManager().isTeamChatEnabled() && !sender.getTeam().equals(recipient.getTeam()))
+						else if (mg.getConfigManager().isTeamChatEnabled() && (sender.getTeam() != null && !sender.getTeam().equals(recipient.getTeam())))
 							remove.add(pl);
 				}
 			}

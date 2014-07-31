@@ -931,7 +931,7 @@ public class Round implements Metadatable {
 	 */
 	public void broadcast(String message, boolean broadcastToSpectators){
 		for (MGPlayer p : players.values())
-			if (!p.isSpectating() || broadcastToSpectators)
+			if ((!p.isSpectating() || broadcastToSpectators) && p.getBukkitPlayer() != null)
 				p.getBukkitPlayer().sendMessage(message);
 	}
 
