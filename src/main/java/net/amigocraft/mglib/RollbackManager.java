@@ -17,6 +17,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class RollbackManager {
@@ -65,9 +66,9 @@ public class RollbackManager {
 	 */
 	@SuppressWarnings("deprecation")
 	public void logBlockChange(Block block, String arena){
-		if (!y.isSet(arena.toLowerCase() + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
-			y.createSection(arena.toLowerCase() + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
-		ConfigurationSection cs = y.getConfigurationSection(arena.toLowerCase() + ".blockChanges." +
+		if (!y.isSet(arena + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
+			y.createSection(arena + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
+		ConfigurationSection cs = y.getConfigurationSection(arena + ".blockChanges." +
 				block.getX() + "," + block.getY() + "," + block.getZ());
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("type")){ // make sure it hasn't already been changed
@@ -95,9 +96,9 @@ public class RollbackManager {
 	 * @since 0.1.0
 	 */
 	public void logInventoryChange(Inventory inventory, Block block, String arena){
-		if (!y.isSet(arena.toLowerCase() + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
-			y.createSection(arena.toLowerCase() + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
-		ConfigurationSection cs = y.getConfigurationSection(arena.toLowerCase() + ".inventoryChanges." +
+		if (!y.isSet(arena + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ()))
+			y.createSection(arena + ".inventoryChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
+		ConfigurationSection cs = y.getConfigurationSection(arena + ".inventoryChanges." +
 				block.getX() + "," + block.getY() + "," + block.getZ());
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("inventory")) // make sure it hasn't already been changed
@@ -115,7 +116,7 @@ public class RollbackManager {
 	/**
 	 * Rolls back the given arena.
 	 * <br><br>
-	 * This method <b>should not</b> be called from your plugin unless you understand the implications.
+	 * This method <strong>should not</strong> be called from your plugin unless you understand the implications.
 	 * @param arena The arena to roll back.
 	 * @since 0.1.0
 	 */
@@ -142,6 +143,8 @@ public class RollbackManager {
 				World w = Bukkit.getWorld(cs.getString(k + ".world"));
 				if (w != null && x != Double.NaN && y != Double.NaN && z != Double.NaN){
 					Location l = new Location(w, x, y, z);
+					if (l.getBlock().getState() instanceof InventoryHolder)
+						((InventoryHolder)l.getBlock().getState()).getInventory().setContents(new ItemStack[0]);
 					l.getBlock().setType(Material.getMaterial(cs.getString(k + ".type")));
 					l.getBlock().setData(Byte.parseByte(cs.getString(k + ".data")));
 					if (l.getBlock().getState() instanceof Sign)
