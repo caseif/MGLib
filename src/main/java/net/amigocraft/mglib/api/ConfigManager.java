@@ -82,6 +82,7 @@ public class ConfigManager {
 		actions.put("block-piston", true);
 		actions.put("block-spread", false);
 		actions.put("entity-explode", false);
+		actions.put("hanging-break", false);
 	}
 
 	/**
@@ -572,6 +573,24 @@ public class ConfigManager {
 	 */
 	public void setBlockBreakAllowed(boolean allowed){
 		actions.put("block-break", allowed);
+	}
+
+	/**
+	 * Retrieves whether hanging entity (e.g. paintings, item frames) breaking is permitted for players in a {@link Round round}. (default: false)
+	 * @return whether hanging entity breaking is permitted for players in a {@link Round round}.
+	 * @since 0.3.0
+	 */
+	public boolean isHangingBreakAllowed(){
+		return actions.get("hanging-break");
+	}
+	
+	/**
+	 * Sets whether hanging entity (e.g. paintings, item frames) breaking is permitted for players in a {@link Round round}. (default: false)
+	 * @param allowed whether hanging entity breaking is permitted for players in a {@link Round round}.
+	 * @since 0.3.0
+	 */
+	public void setHangingBreakAllowed(boolean allowed){
+		actions.put("hanging-break", allowed);
 	}
 
 	/**

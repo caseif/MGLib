@@ -1,5 +1,6 @@
 package net.amigocraft.mglib.api;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +44,8 @@ public class Minigame {
 	private Locale locale;
 
 	protected HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
+	
+	private static List<String> versions = Arrays.asList(new String[]{"0.1.0", "0.2.0", "0.3.0"}); 
 
 	private Minigame(final JavaPlugin plugin){
 		if (!registeredInstances.containsKey(plugin.getName())){
@@ -382,6 +385,18 @@ public class Minigame {
 	public static void uninitialize(){
 		registeredInstances.clear(); // unregister all minigame instances
 		registeredInstances = null; // why not?
+	}
+	
+	/**
+	 * Determines whether this version of MGLib is compatibile with the specified minimum required version.
+	 * @param minReqVersion the minimum required version of MGLib.
+	 * @return whether this version of MGLib is compatibile with the specified minimum required version.
+	 * @since 0.3.0
+	 */
+	public static boolean isMGLibCompatible(String minReqVersion){
+		if (versions.contains(minReqVersion))
+			return true;
+		return false;
 	}
 
 }

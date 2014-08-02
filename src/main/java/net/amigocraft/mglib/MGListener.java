@@ -60,6 +60,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -854,6 +855,15 @@ class MGListener implements Listener {
 					e.setCancelled(true);
 				}
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onHangingBreak(HangingBreakByEntityEvent e){
+		if (e.getRemover() instanceof Player){
+			for (Minigame mg : Minigame.getMinigameInstances())
+				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(((Player)e.getRemover()).getName()))
+					e.setCancelled(true);
 		}
 	}
 
