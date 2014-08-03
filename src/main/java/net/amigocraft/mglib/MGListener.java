@@ -848,7 +848,7 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityTarget(EntityTargetEvent e){
-		if (e.getTarget().getType() == EntityType.PLAYER){
+		if (e.getTarget() != null && e.getTarget().getType() == EntityType.PLAYER){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				MGPlayer mp = mg.getMGPlayer(((Player)e.getTarget()).getName());
 				if (mp != null && (!mg.getConfigManager().isEntityTargetingEnabled() || mp.isSpectating())){
