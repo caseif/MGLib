@@ -359,13 +359,58 @@ public class Minigame {
 	}
 
 	/**
-	 * Logs the given message if verbose logging is enabled.
+	 * Logs the given message at the specified logging level.
 	 * @param message the message to log.
 	 * @param level the level at which to log the message.
 	 * @since 0.3.0
 	 */
 	public void log(String message, LogLevel level){
 		MGUtil.log(message, plugin.getName(), level);
+	}
+	
+	/**
+	 * Logs the given message at {@link LogLevel#SEVERE}.
+	 * @param message the message to log.
+	 * @since 0.3.0
+	 */
+	public void severe(String message){
+		this.log(message, LogLevel.SEVERE);
+	}
+	
+	/**
+	 * Logs the given message at {@link LogLevel#WARNING}.
+	 * @param message the message to log.
+	 * @since 0.3.0
+	 */
+	public void warning(String message){
+		this.log(message, LogLevel.WARNING);
+	}
+	
+	/**
+	 * Logs the given message at {@link LogLevel#INFO}.
+	 * @param message the message to log.
+	 * @since 0.3.0
+	 */
+	public void info(String message){
+		this.log(message, LogLevel.INFO);
+	}
+	
+	/**
+	 * Logs the given message at {@link LogLevel#DEBUG}.
+	 * @param message the message to log.
+	 * @since 0.3.0
+	 */
+	public void debug(String message){
+		this.log(message, LogLevel.DEBUG);
+	}
+	
+	/**
+	 * Logs the given message at {@link LogLevel#VERBOSE}.
+	 * @param message the message to log.
+	 * @since 0.3.0
+	 */
+	public void verbose(String message){
+		this.log(message, LogLevel.VERBOSE);
 	}
 	
 	/**
