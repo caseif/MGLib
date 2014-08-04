@@ -755,7 +755,7 @@ public class Round implements Metadatable {
 			PlayerLeaveMinigameRoundEvent event = new PlayerLeaveMinigameRoundEvent(this, mp);
 			MGUtil.callEvent(event);
 			mp.setArena(null); // they're not in an arena anymore
-			mp.setSpectating(false); // make sure they're not dead when they join a new round
+			mp.setSpectating(false); // make sure they're not spectating when they join a new round
 			players.remove(name); // remove player from round
 			p.setGameMode(mp.getPrevGameMode()); // restore the player's gamemode
 			mp.reset(location); // reset the object and send the player to the exit point

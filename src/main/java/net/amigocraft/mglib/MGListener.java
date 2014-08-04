@@ -826,9 +826,12 @@ class MGListener implements Listener {
 							remove.add(pl);
 						else if (mg.getConfigManager().isTeamChatEnabled() && (sender.getTeam() != null && !sender.getTeam().equals(recipient.getTeam())))
 							remove.add(pl);
+						else if (mg.getConfigManager().isSpectatorChatSeparate() && sender.isSpectating() && !recipient.isSpectating())
+							remove.add(pl);
 				}
 			}
 		}
+		e.getRecipients().removeAll(remove);
 	}
 
 	@EventHandler

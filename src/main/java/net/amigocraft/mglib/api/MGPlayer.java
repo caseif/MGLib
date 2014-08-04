@@ -165,7 +165,7 @@ public class MGPlayer implements Metadatable {
 					pl.hidePlayer(p); // hide them
 				//TODO: Set gamemode to SPECTATOR if supported (after 1.8 comes out)
 				p.setGameMode(GameMode.ADVENTURE); // disable block breaking
-				String message = Main.locale.getMessage("spectating"); // tell them
+				String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating"); // tell them
 				if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()){
 					p.setAllowFlight(true); // enable flight
 					message += " " + locale.getMessage("flight-enabled");

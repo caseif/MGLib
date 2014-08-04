@@ -4,7 +4,7 @@ import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Round;
 
 /**
- * Thrown when a {@link MGPlayer player} is marked as dead.
+ * Thrown when a {@link MGPlayer player} becomes a spectator.
  * @since 0.2.0
  */
 public class MGPlayerSpectateEvent extends MGPlayerEvent {

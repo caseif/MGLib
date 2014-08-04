@@ -48,6 +48,7 @@ public class ConfigManager {
 	private boolean teamChat = false;
 	private boolean mobSpawning = true;
 	private boolean targeting = false;
+	private boolean spectatorChat = true;
 	
 	/**
 	 * Creates a config manager for the given plugin.
@@ -1079,6 +1080,24 @@ public class ConfigManager {
 	 */
 	public void setEntityTargetingEnabled(boolean enabled){
 		this.targeting = enabled;
+	}
+	
+	/**
+	 * Retrieves whether spectators are placed in a separate chat channel from active players. (default: true)
+	 * @return whether spectators are placed in a separate chat channel from active players.
+	 * @since 0.3.0
+	 */
+	public boolean isSpectatorChatSeparate(){
+		return spectatorChat;
+	}
+	
+	/**
+	 * Sets whether spectators are placed in a separate chat channel from active players. (default: true)
+	 * @param separate whether spectators are placed in a separate chat channel from active players.
+	 * @since 0.3.0
+	 */
+	public void isSpectatorChatSeparate(boolean separate){
+		this.spectatorChat = separate;
 	}
 
 }
