@@ -132,7 +132,7 @@ class MGListener implements Listener {
 			}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityDamage(EntityDamageEvent e){
 		Player pl = null;
 		Player p2 = null; // don't ask why it's named like this
