@@ -49,7 +49,7 @@ public class ConfigManager {
 	private boolean mobSpawning = true;
 	private boolean targeting = false;
 	private boolean spectatorChat = true;
-	
+
 	/**
 	 * Creates a config manager for the given plugin.
 	 * @param plugin the plugin to associate this config manager with.
@@ -59,7 +59,7 @@ public class ConfigManager {
 		this.plugin = plugin;
 		this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
 		this.signId = "[" + plugin + "]";
-		
+
 		lobbyColors.put("arena", ChatColor.DARK_RED);
 		lobbyColors.put("waiting", ChatColor.DARK_GRAY);
 		lobbyColors.put("preparing", ChatColor.RED);
@@ -70,7 +70,7 @@ public class ConfigManager {
 		lobbyColors.put("time-infinite", ChatColor.GREEN);
 		lobbyColors.put("player-count", ChatColor.GREEN);
 		lobbyColors.put("player-count-full", ChatColor.RED);
-		
+
 		actions.put("teleport", true);
 		actions.put("block-place", false);
 		actions.put("block-break", false);
@@ -207,7 +207,7 @@ public class ConfigManager {
 	public int getDefaultPlayingTime(){
 		return roundPlayTime;
 	}
-	
+
 	/**
 	 * Sets the default time allotted to a round's {@link Stage#PLAYING playing} period (default: 300).
 	 * Set to a value less than or equal to zero for an indefinite (infinite) time limit.
@@ -217,7 +217,7 @@ public class ConfigManager {
 	public void setDefaultPlayingTime(int playingTime){
 		this.roundPlayTime = playingTime;
 	}
-	
+
 	/**
 	 * Retrieves whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: false)
 	 * @return whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
@@ -226,7 +226,7 @@ public class ConfigManager {
 	public boolean getAllowJoinRoundInProgress(){
 		return joinRiP;
 	}
-	
+
 	/**
 	 * Sets whether players are allowed to join a round which {@link Stage#PLAYING has already started}. (default: false)
 	 * @param allow whether players are allowed to join a round which {@link Stage#PLAYING has already started.}
@@ -235,7 +235,7 @@ public class ConfigManager {
 	public void setAllowJoinRoundInProgress(boolean allow){
 		this.joinRiP = allow;
 	}
-	
+
 	/**
 	 * Retrieves whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: false)
 	 * @return whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage.}
@@ -244,7 +244,7 @@ public class ConfigManager {
 	public boolean getAllowJoinRoundWhilePreparing(){
 		return joinRwP;
 	}
-	
+
 	/**
 	 * Sets whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}. (default: false)
 	 * @param allow whether players are allowed to join a round which {@link Stage#PREPARING is in its preparation stage}.
@@ -253,7 +253,7 @@ public class ConfigManager {
 	public void setAllowJoinRoundWhilePreparing(boolean allow){
 		this.joinRwP = allow;
 	}
-	
+
 	/**
 	 * Retrieves whether players will be set to spectator mode upon joining around in progress. (default: false)
 	 * @return whether players will be set to spectator mode upon joining around in progress.
@@ -262,7 +262,7 @@ public class ConfigManager {
 	public boolean getSpectateOnJoin(){
 		return spectateJoin;
 	}
-	
+
 	/**
 	 * Sets whether players will be set to spectator mode upon joining around in progress. (default: false) This will have no effect if both
 	 * {@link ConfigManager#getAllowJoinRoundWhilePreparing()} and {@link ConfigManager#getAllowJoinRoundInProgress()} return false.
@@ -281,7 +281,7 @@ public class ConfigManager {
 	public ChatColor getLobbyArenaColor(){
 		return lobbyColors.get("arena");
 	}
-	
+
 	/**
 	 * Sets the color of the top line (the arena name) of a lobby sign.
 	 * @param color the new color of the top line of a lobby sign.
@@ -290,7 +290,7 @@ public class ConfigManager {
 	public void setLobbyArenaColor(ChatColor color){
 		lobbyColors.put("arena", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's {@link Stage#WAITING WAITING} status.
 	 * @return the color of a lobby sign's {@link Stage#WAITING WAITING} status.
@@ -299,7 +299,7 @@ public class ConfigManager {
 	public ChatColor getLobbyWaitingColor(){
 		return lobbyColors.get("waiting");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's {@link Stage#WAITING WAITING} status.
 	 * @param color the new color of a lobby sign's {@link Stage#WAITING WAITING} status.
@@ -308,7 +308,7 @@ public class ConfigManager {
 	public void setLobbyWaitingColor(ChatColor color){
 		lobbyColors.put("waiting", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's {@link Stage#PREPARING PREPARING} status.
 	 * @return the color of a lobby sign's {@link Stage#PREPARING PREPARING} status.
@@ -317,7 +317,7 @@ public class ConfigManager {
 	public ChatColor getLobbyPreparingColor(){
 		return lobbyColors.get("preparing");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's {@link Stage#PREPARING PREPARING} status.
 	 * @param color the new color of a lobby sign's {@link Stage#PREPARING PREPARING} status.
@@ -326,7 +326,7 @@ public class ConfigManager {
 	public void setLobbyPreparingColor(ChatColor color){
 		lobbyColors.put("preparing", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's {@link Stage#PLAYING PLAYING} status.
 	 * @return the color of a lobby sign's {@link Stage#PLAYING PLAYING} status.
@@ -335,7 +335,7 @@ public class ConfigManager {
 	public ChatColor getLobbyPlayingColor(){
 		return lobbyColors.get("playing");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's {@link Stage#PLAYING PLAYING} status.
 	 * @param color the new color of a lobby sign's {@link Stage#PLAYING PLAYING} status.
@@ -344,7 +344,7 @@ public class ConfigManager {
 	public void setLobbyPlayingColor(ChatColor color){
 		lobbyColors.put("playing", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's {@link Stage#RESETTING RESETTING} status.
 	 * @return the color of a lobby sign's {@link Stage#RESETTING RESETTING} status.
@@ -353,7 +353,7 @@ public class ConfigManager {
 	public ChatColor getLobbyResettingColor(){
 		return lobbyColors.get("resetting");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's {@link Stage#RESETTING RESETTING} status.
 	 * @param color the new color of a lobby sign's {@link Stage#RESETTING RESETTING} status.
@@ -362,7 +362,7 @@ public class ConfigManager {
 	public void setLobbyResettingColor(ChatColor color){
 		lobbyColors.put("resetting", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's timer when remaining time is greater than 60 seconds.
 	 * @return the color of a lobby sign's timer when remaining time is greater than 60 seconds.
@@ -371,7 +371,7 @@ public class ConfigManager {
 	public ChatColor getLobbyTimeColor(){
 		return lobbyColors.get("time");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's timer when remaining time is greater than 60 seconds.
 	 * @param color the new color of a lobby sign's timer when remaining time is greater than 60 seconds.
@@ -380,7 +380,7 @@ public class ConfigManager {
 	public void setLobbyTimeColor(ChatColor color){
 		lobbyColors.put("time", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's timer when remaining time is less than 60 seconds.
 	 * @return the color of a lobby sign's timer when remaining time is less than 60 seconds.
@@ -389,7 +389,7 @@ public class ConfigManager {
 	public ChatColor getLobbyTimeWarningColor(){
 		return lobbyColors.get("time-warning");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's timer when remaining time is less than 60 seconds.
 	 * @param color the new color of a lobby sign's timer when remaining time is less than 60 seconds.
@@ -398,7 +398,7 @@ public class ConfigManager {
 	public void setLobbyTimeWarningColor(ChatColor color){
 		lobbyColors.put("time-warning", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's timer when remaining time is infinite.
 	 * @return the color of a lobby sign's timer when remaining time is infinite.
@@ -407,7 +407,7 @@ public class ConfigManager {
 	public ChatColor getLobbyTimeInfiniteColor(){
 		return lobbyColors.get("time-infinite");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's timer when remaining time is infinite.
 	 * @param color the new color of a lobby sign's timer when remaining time is infinite.
@@ -416,7 +416,7 @@ public class ConfigManager {
 	public void setLobbyTimeInfiniteColor(ChatColor color){
 		lobbyColors.put("time-infinite", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's player count when the round is not full.
 	 * @return the color of a lobby sign's player count when the round is not full.
@@ -425,7 +425,7 @@ public class ConfigManager {
 	public ChatColor getLobbyPlayerCountColor(){
 		return lobbyColors.get("player-count");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's player count when the round is not full.
 	 * @param color the new color of a lobby sign's player count when the round is not full.
@@ -434,7 +434,7 @@ public class ConfigManager {
 	public void setLobbyPlayerCountColor(ChatColor color){
 		lobbyColors.put("player-count", color);
 	}
-	
+
 	/**
 	 * Retrieves the color of a lobby sign's player count when the round is full.
 	 * @return the color of a lobby sign's player count when the round is full.
@@ -443,7 +443,7 @@ public class ConfigManager {
 	public ChatColor getLobbyPlayerCountFullColor(){
 		return lobbyColors.get("player-count-full");
 	}
-	
+
 	/**
 	 * Sets the color of a lobby sign's player count when the round is full.
 	 * @param color the new color of a lobby sign's player count when the round is full.
@@ -452,7 +452,7 @@ public class ConfigManager {
 	public void setLobbyPlayerCountFullColor(ChatColor color){
 		lobbyColors.put("player-count-full", color);
 	}
-	
+
 	/**
 	 * Retrieves a copy of the hashmap containing all color attributes for lobby signs associated with this manager's plugin.
 	 * @return a copy of the hashmap containing all color attributes for lobby signs associated with this manager's plugin.
@@ -462,7 +462,7 @@ public class ConfigManager {
 	public HashMap<String, ChatColor> getLobbyColorAttributes(){
 		return (HashMap<String, ChatColor>)lobbyColors.clone();
 	}
-	
+
 	/**
 	 * Retrieves a specific color attribute for lobby signs associated with this manager's plugin.
 	 * @param key the attribute to fetch the color for.
@@ -473,7 +473,7 @@ public class ConfigManager {
 	public ChatColor getLobbyColorAttribute(String key){
 		return lobbyColors.get(key);
 	}
-	
+
 	/**
 	 * Sets a specific color attribute for lobby signs associated with this manager's plugin.
 	 * If the provided key is not used in the library, this method will have no effect.
@@ -493,7 +493,7 @@ public class ConfigManager {
 	public boolean isTeleportationAllowed(){
 		return actions.get("teleport");
 	}
-	
+
 	/**
 	 * Sets whether teleportation (via ender pearl, command, or another plugin) is permitted for players in a {@link Round round}. (default: true)
 	 * @param allowed whether teleportation is permitted for players in a {@link Round round}.
@@ -502,7 +502,7 @@ public class ConfigManager {
 	public void setTeleportationAllowed(boolean allowed){
 		actions.put("teleport", allowed);
 	}
-	
+
 	/**
 	 * Retrieves whether players partaking in a minigame are permitted to send private messages or use the /pm command. (default: true)
 	 * This can help limit communication of volatile information between teams, such as in <a href="http://dev.bukkit.org/bukkit-plugins/TTT">TTT</a>.
@@ -512,7 +512,7 @@ public class ConfigManager {
 	public boolean arePMsAllowed(){
 		return pmsAllowed;
 	}
-	
+
 	/**
 	 * Sets whether players partaking in a minigame are permitted to send private messages or use the /pm command. (default: true)
 	 * @param allowed whether players partaking in a minigame are permitted to send private messages or use the /pm command.
@@ -521,7 +521,7 @@ public class ConfigManager {
 	public void setPMsAllowed(boolean allowed){
 		this.pmsAllowed = allowed;
 	}
-	
+
 	/**
 	 * Retrieves whether players are permitted to use the /kit command while partaking in a minigame. (default: true)
 	 * @return whether players are permitted to use the /kit command while partaking in a minigame.
@@ -530,7 +530,7 @@ public class ConfigManager {
 	public boolean areKitsAllowed(){
 		return kitsAllowed;
 	}
-	
+
 	/**
 	 * Sets whether players are permitted to use the /kit command while partaking in a minigame. (default: true)
 	 * @param allowed whether players are permitted to use the /kit command while partaking in a minigame.
@@ -548,7 +548,7 @@ public class ConfigManager {
 	public boolean isBlockPlaceAllowed(){
 		return actions.get("block-place");
 	}
-	
+
 	/**
 	 * Sets whether block placing is permitted for players in a {@link Round round}. (default: false)
 	 * @param allowed whether block placing is permitted for players in a {@link Round round}.
@@ -566,7 +566,7 @@ public class ConfigManager {
 	public boolean isBlockBreakAllowed(){
 		return actions.get("block-break");
 	}
-	
+
 	/**
 	 * Sets whether block breaking is permitted for players in a {@link Round round}. (default: false)
 	 * @param allowed whether block breaking is permitted for players in a {@link Round round}.
@@ -584,7 +584,7 @@ public class ConfigManager {
 	public boolean isHangingBreakAllowed(){
 		return actions.get("hanging-break");
 	}
-	
+
 	/**
 	 * Sets whether hanging entity (e.g. paintings, item frames) breaking is permitted for players in a {@link Round round}. (default: false)
 	 * @param allowed whether hanging entity breaking is permitted for players in a {@link Round round}.
@@ -602,7 +602,7 @@ public class ConfigManager {
 	public boolean isBlockBurnAllowed(){
 		return actions.get("block-burn");
 	}
-	
+
 	/**
 	 * Sets whether block burning is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block burning is permitted in worlds containing one or more arenas.
@@ -620,7 +620,7 @@ public class ConfigManager {
 	public boolean isBlockFadeAllowed(){
 		return actions.get("block-fade");
 	}
-	
+
 	/**
 	 * Sets whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block fading (e.g. leaves decaying) is permitted in worlds containing one or more arenas.
@@ -638,7 +638,7 @@ public class ConfigManager {
 	public boolean isBlockGrowAllowed(){
 		return actions.get("block-grow");
 	}
-	
+
 	/**
 	 * Sets whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block growing (e.g. reeds growing) is permitted in worlds containing one or more arenas.
@@ -656,7 +656,7 @@ public class ConfigManager {
 	public boolean isBlockIgniteAllowed(){
 		return actions.get("block-ignite");
 	}
-	
+
 	/**
 	 * Sets whether block ignition is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block ignition is permitted in worlds containing one or more arenas.
@@ -674,7 +674,7 @@ public class ConfigManager {
 	public boolean isBlockFlowAllowed(){
 		return actions.get("block-flow");
 	}
-	
+
 	/**
 	 * Sets whether block flowing is permitted in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether block flowing is permitted in worlds containing one or more arenas.
@@ -692,13 +692,13 @@ public class ConfigManager {
 	public boolean isBlockPhysicsAllowed(){
 		return actions.get("block-physics");
 	}
-	
+
 	/**
 	 * Sets whether block ignition are physics in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether block physics are permitted in worlds containing one or more arenas.
 	 * @since 0.1.0
 	 */
-	public void setBlockPhyiscsAllowed(boolean allowed){
+	public void setBlockPhysicsAllowed(boolean allowed){
 		actions.put("block-physics", allowed);
 	}
 
@@ -710,7 +710,7 @@ public class ConfigManager {
 	public boolean isBlockPistonAllowed(){
 		return actions.get("block-piston");
 	}
-	
+
 	/**
 	 * Sets whether pistons are permitted in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether pistons are permitted in worlds containing one or more arenas.
@@ -728,7 +728,7 @@ public class ConfigManager {
 	public boolean isBlockSpreadAllowed(){
 		return actions.get("block-spread");
 	}
-	
+
 	/**
 	 * Sets whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block spreading (e.g. grass spreding to dirt blocks) are permitted in worlds containing one or more arenas.
@@ -746,7 +746,7 @@ public class ConfigManager {
 	public boolean isEntityExplosionsAllowed(){
 		return actions.get("entity-explode");
 	}
-	
+
 	/**
 	 * Sets whether entity explosions are permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether entity explosions are permitted in worlds containing one or more arenas.
@@ -755,7 +755,7 @@ public class ConfigManager {
 	public void setEntityExplosionsAllowed(boolean allowed){
 		actions.put("entity-explode", allowed);
 	}
-	
+
 	/**
 	 * Retrieves the {@link Class class} object used to store information about players in minigame rounds. (default: {@link MGPlayer MGPlayer.class}
 	 * @return the static class to use for player storage (e.g. CustomPlayer.class).
@@ -764,7 +764,7 @@ public class ConfigManager {
 	public Class<? extends MGPlayer> getPlayerClass(){
 		return playerClass;
 	}
-	
+
 	/**
 	 * Sets the {@link Class class} object used to store information about players in minigame rounds. (default: {@link MGPlayer MGPlayer.class})
 	 * This may be used to add additional fields to MGLib's default {@link MGPlayer} class.
@@ -774,7 +774,7 @@ public class ConfigManager {
 	public void setPlayerClass(Class<? extends MGPlayer> clazz){
 		this.playerClass = clazz;
 	}
-	
+
 	/**
 	 * Retrieves the default {@link GameMode gamemode} for players entering minigame rounds. (default: {@link GameMode#SURVIVAL})
 	 * @return the default {@link GameMode gamemode} for players entering minigame rounds.
@@ -792,7 +792,7 @@ public class ConfigManager {
 	public void setDefaultGameMode(GameMode gameMode){
 		this.gameMode = gameMode;
 	}
-	
+
 	/**
 	 * Retrieves whether PvP is allowed by default. (default: true)
 	 * @return whether PvP is allowed by default.
@@ -801,7 +801,7 @@ public class ConfigManager {
 	public boolean isPvPAllowed(){
 		return pvp;
 	}
-	
+
 	/**
 	 * Sets whether PvP is allowed by default. (default: true)
 	 * @param allowed whether PvP is allowed by default.
@@ -810,7 +810,7 @@ public class ConfigManager {
 	public void setPvPAllowed(boolean allowed){
 		this.pvp = allowed;
 	}
-	
+
 	/**
 	 * Retrieves whether players in rounds may receive damage. (default: true)
 	 * @return whether players in rounds may receive damage.
@@ -819,7 +819,7 @@ public class ConfigManager {
 	public boolean isDamageAllowed(){
 		return damage;
 	}
-	
+
 	/**
 	 * Sets whether players in rounds may receive damage by default. (default: true)
 	 * @param allowed whether players in rounds may receive damage by default.
@@ -828,7 +828,7 @@ public class ConfigManager {
 	public void setDamageAllowed(boolean allowed){
 		this.damage = allowed;
 	}
-	
+
 	/**
 	 * Retrieves whether rollback is enabled by default. (default: true)
 	 * @return whether rollback is enabled by default.
@@ -837,7 +837,7 @@ public class ConfigManager {
 	public boolean isRollbackEnabled(){
 		return rollback;
 	}
-	
+
 	/**
 	 * Sets whether rollback is enabled by default. (default: true)
 	 * @param enabled whether rollback is enabled by default.
@@ -846,7 +846,7 @@ public class ConfigManager {
 	public void setRollbackEnabled(boolean enabled){
 		this.rollback = enabled;
 	}
-	
+
 	/**
 	 * Retrieves whether spectators' names are displayed on lobby signs. (defualt: true)
 	 * @return whether spectators' names are displayed on lobby signs.
@@ -855,7 +855,7 @@ public class ConfigManager {
 	public boolean areSpectatorsOnLobbySigns(){
 		return spectatorsOnSigns;
 	}
-	
+
 	/**
 	 * Sets whether spectators' names are displayed on lobby signs. (default: true)
 	 * @param displayed whether spectators' names are displayed on lobby signs.
@@ -864,7 +864,7 @@ public class ConfigManager {
 	public void setSpectatorsOnLobbySigns(boolean displayed){
 		this.spectatorsOnSigns = displayed;
 	}
-	
+
 	/**
 	 * Retrieves whether spectators are permitted to fly. (default: true)
 	 * This will be overridden if allow-flight is set to false in the server.properties file.
@@ -874,7 +874,7 @@ public class ConfigManager {
 	public boolean isSpectatorFlightAllowed(){
 		return spectatorFlight;
 	}
-	
+
 	/**
 	 * Sets whether spectators are permitted to fly. (default: true)
 	 * This will be overridden if allow-flight is set to false in the server.properties file.
@@ -884,7 +884,7 @@ public class ConfigManager {
 	public void setSpectatorFlightAllowed(boolean allowed){
 		this.spectatorFlight = allowed;
 	}
-	
+
 	/**
 	 * Retrieves whether players are permitted to damage teammates. (default: true)
 	 * @return whether players are permitted to damage teammates.
@@ -893,7 +893,7 @@ public class ConfigManager {
 	public boolean isTeamDamageAllowed(){
 		return teamDamage;
 	}
-	
+
 	/**
 	 * Sets whether players are permitted to damage teammates. (default: true)
 	 * @param allowed whether players are permitted to damage teammates.
@@ -902,7 +902,7 @@ public class ConfigManager {
 	public void setTeamDamageAllowed(boolean allowed){
 		this.teamDamage = allowed;
 	}
-	
+
 	/**
 	 * Retrieves the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
 	 * @return the locale to fall back to if the one defined in the MGLib config cannot be loaded.
@@ -911,7 +911,7 @@ public class ConfigManager {
 	public String getDefaultLocale(){
 		return locale;
 	}
-	
+
 	/**
 	 * Sets the locale to fall back to if the one defined in the MGLib config cannot be loaded. (default: enUS)
 	 * @param locale the locale to fall back to if the one defined in the MGLib config cannot be loaded.
@@ -920,7 +920,7 @@ public class ConfigManager {
 	public void setDefaultLocale(String locale){
 		this.locale = locale;
 	}
-	
+
 	/**
 	 * Retrieves whether players are sent to a random spawn when entered into an arena. (default: true)
 	 * @return whether players should be sent to a random spawn.
@@ -929,7 +929,7 @@ public class ConfigManager {
 	public boolean isRandomSpawning(){
 		return randomSpawns;
 	}
-	
+
 	/**
 	 * Sets whether players are sent to a random spawn when entered into an arena. (default: true)
 	 * When false, the first player to join will be sent to spawn 0, the second to spawn 1, etc.
@@ -939,7 +939,7 @@ public class ConfigManager {
 	public void setRandomSpawning(boolean random){
 		this.randomSpawns = random;
 	}
-	
+
 	/**
 	 * Retrieves whether Bukkit's {@link PlayerDeathEvent} will be overridden for players participating in minigame rounds. (default: false)
 	 * If true, the death event will be cancelled and a custom MGLib event will be thrown instead.
@@ -949,7 +949,7 @@ public class ConfigManager {
 	public boolean isOverrideDeathEvent(){
 		return overrideDeathEvent;
 	}
-	
+
 	/**
 	 * Sets whether Bukkit's {@link PlayerDeathEvent} will be overridden for players participating in minigame rounds. (default: false)
 	 * If true, the death event will be cancelled and a custom MGLib event will be thrown instead.
@@ -959,7 +959,7 @@ public class ConfigManager {
 	public void setOverrideDeathEvent(boolean override){
 		this.overrideDeathEvent = override;
 	}
-	
+
 	/**
 	 * Retrieves whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
 	 * values as well as the knockback effect, but will ensure that pre- or postmature deaths do not occur. (default: false)
@@ -972,7 +972,7 @@ public class ConfigManager {
 	public boolean isForcePreciseDamage(){
 		return forcePreciseDamage;
 	}
-	
+
 	/**
 	 * Sets whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
 	 * values as well as the knockback effect, but will ensure that pre- or postmature deaths do not occur. (default: false)
@@ -985,7 +985,7 @@ public class ConfigManager {
 	public void setForcePreciseDamage(boolean force){
 		this.forcePreciseDamage = force;
 	}
-	
+
 	/**
 	 * Retrieves whether hunger should drain from players in rounds. (default: false)
 	 * @return whether hunger should drain from players in rounds.
@@ -994,7 +994,7 @@ public class ConfigManager {
 	public boolean isHungerEnabled(){
 		return hunger;
 	}
-	
+
 	/**
 	 * Retrieves whether hunger should drain from players in rounds. (default: false)
 	 * @param enabled whether hunger should drain from players in rounds.
@@ -1003,7 +1003,7 @@ public class ConfigManager {
 	public void setHungerEnabled(boolean enabled){
 		this.hunger = enabled;
 	}
-	
+
 	/**
 	 * Retrieves whether chat should be handled on a per-round basis (e.g. players in an arena only see messages sent by players in the same arena).
 	 * (default: true)
@@ -1013,7 +1013,7 @@ public class ConfigManager {
 	public boolean isPerRoundChatEnabled(){
 		return perRoundChat;
 	}
-	
+
 	/**
 	 * Sets whether chat should be handled on a per-round basis (e.g. players in an arena only see messages sent by players in the same arena).
 	 * (default: true)
@@ -1023,9 +1023,9 @@ public class ConfigManager {
 	public void setPerRoundChatEnabled(boolean enabled){
 		this.perRoundChat = enabled;
 	}
-	
 
-	
+
+
 	/**
 	 * Retrieves whether teams in a round should have separate chat channels. (default: false)
 	 * (default: false)
@@ -1035,7 +1035,7 @@ public class ConfigManager {
 	public boolean isTeamChatEnabled(){
 		return teamChat;
 	}
-	
+
 	/**
 	 * Sets whether teams in a round should have separate chat channels.
 	 * (default: false)
@@ -1045,7 +1045,7 @@ public class ConfigManager {
 	public void setTeamChatEnabled(boolean enabled){
 		this.teamChat = enabled;
 	}
-	
+
 	/**
 	 * Retrieves whether mob spawning is permitted in worlds containing an arena. (default: true)
 	 * @return whether mob spawning is permitted in worlds containing an arena.
@@ -1054,7 +1054,7 @@ public class ConfigManager {
 	public boolean isMobSpawningAllowed(){
 		return mobSpawning;
 	}
-	
+
 	/**
 	 * Sets whether mob spawning is permitted in worlds containing an arena. (default: true)
 	 * @param allowed whether mob spawning is permitted in worlds containing an arena.
@@ -1063,7 +1063,7 @@ public class ConfigManager {
 	public void setMobSpawningAllowed(boolean allowed){
 		this.mobSpawning = allowed;
 	}
-	
+
 	/**
 	 * Retrieves whether entities are permitted to target players in arenas. (default: false)
 	 * @return whether entities are permitted to target players in arenas.
@@ -1072,7 +1072,7 @@ public class ConfigManager {
 	public boolean isEntityTargetingEnabled(){
 		return targeting;
 	}
-	
+
 	/**
 	 * Sets whether entities are permitted to target players in arenas. (default: false)
 	 * @param enabled whether entities are permitted to target players in arenas.
@@ -1081,7 +1081,7 @@ public class ConfigManager {
 	public void setEntityTargetingEnabled(boolean enabled){
 		this.targeting = enabled;
 	}
-	
+
 	/**
 	 * Retrieves whether spectators are placed in a separate chat channel from active players. (default: true)
 	 * @return whether spectators are placed in a separate chat channel from active players.
@@ -1090,7 +1090,7 @@ public class ConfigManager {
 	public boolean isSpectatorChatSeparate(){
 		return spectatorChat;
 	}
-	
+
 	/**
 	 * Sets whether spectators are placed in a separate chat channel from active players. (default: true)
 	 * @param separate whether spectators are placed in a separate chat channel from active players.
