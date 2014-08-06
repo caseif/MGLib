@@ -35,6 +35,9 @@ public class MGUtil {
 	private static Field playerConnection;
 	private static Method sendPacket;
 
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_WHITE = "\u001B[37m";
+
 	static {
 		try {
 			//get the constructor of the packet
@@ -234,13 +237,13 @@ public class MGUtil {
 		}
 	}
 
-	private static Class<?> getMCClass(String name) throws ClassNotFoundException {
+	public static Class<?> getMCClass(String name) throws ClassNotFoundException {
 		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
 		String className = "net.minecraft.server." + version + name;
 		return Class.forName(className);
 	}
 
-	private static Class<?> getCraftClass(String name) throws ClassNotFoundException {
+	public static Class<?> getCraftClass(String name) throws ClassNotFoundException {
 		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
 		String className = "org.bukkit.craftbukkit." + version + name;
 		return Class.forName(className);

@@ -10,7 +10,7 @@ import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.exception.ArenaExistsException;
-import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.NoSuchArenaException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 
 import org.bukkit.Bukkit;
@@ -61,7 +61,7 @@ public class Minigame {
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
 		lobbyManager = new LobbyManager(plugin.getName());
 		lobbyManager.loadSigns();
-		Bukkit.getScheduler().runTask(plugin, new Runnable(){
+		Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
 			public void run(){
 				lobbyManager.reset();
 			}
@@ -144,10 +144,10 @@ public class Minigame {
 	 * Creates and stores a new round with the given parameters.
 	 * @param arena The name of the arena to create the round in.
 	 * @return The created round.
-	 * @throws ArenaNotExistsException if the given arena does not exist.
+	 * @throws NoSuchArenaException if the given arena does not exist.
 	 * @since 0.1.0
 	 */
-	public Round createRound(String arena) throws ArenaNotExistsException {
+	public Round createRound(String arena) throws NoSuchArenaException {
 		Round r = new Round(plugin.getName(), arena); // create the Round object
 		r.setStage(Stage.WAITING); // default to waiting stage
 		rounds.put(arena, r); // register arena with MGLib
@@ -256,13 +256,13 @@ public class Minigame {
 	/**
 	 * Removes an arena from the plugin's config, effectively deleting it.
 	 * @param name The arena to delete.
-	 * @throws ArenaNotExistsException if an arena by the specified name does not exist.
+	 * @throws NoSuchArenaException if an arena by the specified name does not exist.
 	 * @since 0.1.0
 	 */
-	public void deleteArena(String name) throws ArenaNotExistsException {
+	public void deleteArena(String name) throws NoSuchArenaException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName()); // convenience method for loading the YAML file
 		if (!y.contains(name)) // arena doesn't exist
-			throw new ArenaNotExistsException();
+			throw new NoSuchArenaException();
 		y.set(name, null); // remove the arena from the arenas.yml file 
 		MGUtil.saveArenaYaml(plugin.getName(), y);
 		Round r = Minigame.getMinigameInstance(plugin).getRound(name); // get the Round object if it exists
@@ -303,15 +303,15 @@ public class Minigame {
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
 	 * @param arena the name of the arena to retrieve an {@link ArenaFactory} for.
 	 * @return the arena's {@link ArenaFactory}.
-	 * @throws ArenaNotExistsException if the given arena does not exist. In this case, you should instead use
+	 * @throws NoSuchArenaException if the given arena does not exist. In this case, you should instead use
 	 * {@link ArenaFactory#createArenaFactory(String, String, String)}.
 	 * @since 0.1.0
 	 */
-	public ArenaFactory getArenaFactory(String arena) throws ArenaNotExistsException {
+	public ArenaFactory getArenaFactory(String arena) throws NoSuchArenaException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
 		if (y.isSet(arena + ".world"))
 			return ArenaFactory.createArenaFactory(plugin.getName(), arena, MGUtil.loadArenaYaml(plugin.getName()).getString(arena + ".world"));
-		throw new ArenaNotExistsException();
+		throw new NoSuchArenaException();
 	}
 
 	/**

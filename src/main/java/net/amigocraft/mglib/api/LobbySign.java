@@ -24,7 +24,7 @@ public class LobbySign {
 	private String arena;
 	private int number;
 	private LobbyType type;
-	private int index;
+	private int index = -1;
 
 	/**
 	 * Creates a new {@link LobbySign} object.
@@ -216,7 +216,6 @@ public class LobbySign {
 	 */
 	public void remove(){
 		LobbyManager lm = Minigame.getMinigameInstance(plugin).getLobbyManager();
-		lm.save(this);
 		lm.remove(this);
 	}
 

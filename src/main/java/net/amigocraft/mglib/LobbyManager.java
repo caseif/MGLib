@@ -6,9 +6,10 @@ import java.util.List;
 
 import net.amigocraft.mglib.api.LobbySign;
 import net.amigocraft.mglib.api.LobbyType;
+import net.amigocraft.mglib.api.Location3D;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Stage;
-import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.NoSuchArenaException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 
 import org.bukkit.Bukkit;
@@ -23,7 +24,7 @@ public class LobbyManager {
 
 	private String plugin;
 
-	HashMap<Location, LobbySign> signs = new HashMap<Location, LobbySign>();
+	HashMap<Location3D, LobbySign> signs = new HashMap<Location3D, LobbySign>();
 
 	/**
 	 * Creates a new lobby manager instance.
@@ -39,7 +40,7 @@ public class LobbyManager {
 	 * @return a hashmap of signs registered with this lobby manager.
 	 * @since 0.1.0
 	 */
-	public HashMap<Location, LobbySign> getSigns(){
+	public HashMap<Location3D, LobbySign> getSigns(){
 		return signs;
 	}
 
@@ -58,13 +59,13 @@ public class LobbyManager {
 	 * @param arena The name of the arena the sign will be linked to.
 	 * @param type The type of the sign ("status" or "players")
 	 * @param index The number of the sign (applicable only for "players" signs)
-	 * @throws ArenaNotExistsException if the specified arena does not exist.
+	 * @throws NoSuchArenaException if the specified arena does not exist.
 	 * @throws InvalidLocationException if the specified location does not contain a sign.
 	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
 	 * @since 0.1.0
 	 */
 	public void add(Location l, String arena, LobbyType type, int index)
-			throws ArenaNotExistsException, InvalidLocationException, IllegalArgumentException {
+			throws NoSuchArenaException, InvalidLocationException, IllegalArgumentException {
 		if (l.getBlock().getState() instanceof Sign){
 			if (MGUtil.loadArenaYaml(plugin).getConfigurationSection(arena) != null){
 				LobbySign ls;
@@ -79,11 +80,11 @@ public class LobbyManager {
 				else
 					throw new NullPointerException();
 				save(ls);
-				signs.put(l, ls);
+				signs.put(Location3D.valueOf(l), ls);
 				update(arena);
 			}
 			else
-				throw new ArenaNotExistsException();
+				throw new NoSuchArenaException();
 		}
 		else
 			throw new InvalidLocationException();
@@ -125,9 +126,11 @@ public class LobbyManager {
 			if (!f.exists())
 				f.createNewFile();
 			y.load(f);
+			Location3D l = new Location3D(y.getString(s.getIndex() + ".world"), y.getInt(s.getIndex() + ".x"),
+					y.getInt(s.getIndex() + ".y"), y.getInt(s.getIndex() + ".z"));
 			y.set(Integer.toString(s.getIndex()), null);
 			y.save(f);
-			signs.remove(s);
+			signs.remove(l);
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
@@ -142,17 +145,17 @@ public class LobbyManager {
 	 * @since 0.1.0
 	 */
 	public int save(LobbySign l){
-		int nextKey = 0;
+		int key = l.getIndex();
 		try {
 			YamlConfiguration y = new YamlConfiguration();
 			File f = new File(Minigame.getMinigameInstance(plugin).getPlugin().getDataFolder(), "lobbies.yml");
 			if (!f.exists())
 				f.createNewFile();
 			y.load(f);
+			if (key == -1)
 			for (String k : y.getKeys(false))
-				if (MGUtil.isInteger(k) && Integer.parseInt(k) >= nextKey)
-					nextKey = Integer.parseInt(k) + 1;
-			String key = Integer.toString(nextKey);
+				if (MGUtil.isInteger(k) && Integer.parseInt(k) >= key)
+					key = Integer.parseInt(k) + 1;
 			y.set(key + ".world", l.getWorld());
 			y.set(key + ".x", l.getX());
 			y.set(key + ".y", l.getY());
@@ -160,14 +163,14 @@ public class LobbyManager {
 			y.set(key + ".arena", l.getArena());
 			y.set(key + ".type", l.getType().toString());
 			y.set(key + ".number", l.getNumber());
-			l.setIndex(nextKey);
+			l.setIndex(key);
 			y.save(f);
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
 			Main.log.warning("An error occurred while creating a lobby sign for plugin " + plugin);
 		}
-		return nextKey;
+		return key;
 	}
 
 	/**
@@ -176,7 +179,7 @@ public class LobbyManager {
 	 * @return the lobby sign at the specified location, or null if it does not exist.
 	 * @since 0.1.0
 	 */
-	public LobbySign getSign(Location location){
+	public LobbySign getSign(Location3D location){
 		return signs.get(location);
 	}
 
@@ -203,8 +206,10 @@ public class LobbyManager {
 							LobbyType.fromString(y.getString(k + ".type").toUpperCase()) != null &&
 							(LobbyType.fromString(y.getString(k + ".type").toUpperCase()) == LobbyType.STATUS || y.get(k + ".number") != null)){
 						Location l = new Location(w, y.getInt(k + ".x"), y.getInt(k + ".y"), y.getInt(k + ".z"));
-						signs.put(l, new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, w.getName(),
-								y.getString(k + ".arena"), y.getInt(k + ".number"), LobbyType.fromString(y.getString(k + ".type").toUpperCase())));
+						LobbySign ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, w.getName(),
+								y.getString(k + ".arena"), y.getInt(k + ".number"), LobbyType.fromString(y.getString(k + ".type").toUpperCase()));
+						ls.setIndex(Integer.parseInt(k));
+						signs.put(Location3D.valueOf(l), ls);
 					}
 					else
 						Main.log.warning("Incomplete data for lobby sign with index of " + k + "! Removing from disk...");

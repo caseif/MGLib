@@ -1,5 +1,4 @@
 package net.amigocraft.mglib;
-
 import java.io.File;
 
 import net.amigocraft.mglib.api.Minigame;
@@ -15,6 +14,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +26,8 @@ public class RollbackManager {
 	private File f = null;
 	private YamlConfiguration y = null;
 	private JavaPlugin plugin = null;
+	
+	EntityDamageEvent lastEvent;
 
 	/**
 	 * Creates a new rollback manager for the specified plugin

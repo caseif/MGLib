@@ -1,7 +1,9 @@
 package net.amigocraft.mglib;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -63,6 +65,7 @@ public class Main extends JavaPlugin {
 	 * Standard {@link JavaPlugin#onEnable()} override.
 	 * @since 0.1.0
 	 */
+	@SuppressWarnings("unchecked")
 	public void onEnable(){
 		
 		plugin = this;
@@ -98,8 +101,19 @@ public class Main extends JavaPlugin {
 		
 		// store UUIDs of online players
 		List<String> names = new ArrayList<String>();
-		for (Player p : Bukkit.getOnlinePlayers())
-			names.add(p.getName());
+		try {
+			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
+				for (Player pl :
+					(Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+					names.add(pl.getName());
+			else
+				for (Player pl :
+					(Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+					names.add(pl.getName());
+		}
+		catch (NoSuchMethodException ex){} // can never happen
+		catch (InvocationTargetException ex){} // can also never happen
+		catch (IllegalAccessException ex){} // can still never happen
 		try {
 			new UUIDFetcher(names).call();
 		}

@@ -15,9 +15,9 @@ import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.round.LobbyClickEvent;
-import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.NoSuchArenaException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
-import net.amigocraft.mglib.exception.PlayerNotPresentException;
+import net.amigocraft.mglib.exception.NoSuchPlayerException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
@@ -27,12 +27,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -56,7 +54,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -67,10 +65,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 class MGListener implements Listener {
 
@@ -182,7 +178,7 @@ class MGListener implements Listener {
 					e.setCancelled(true);
 					return;
 				}
-				if (p != null && p.getRound() != null && p.getRound().getConfigManager().isOverrideDeathEvent()){
+				/*if (p != null && p.getRound() != null && p.getRound().getConfigManager().isOverrideDeathEvent()){
 					// override the death event with a custom one
 					double actualDamage = 0;
 					boolean force = false;
@@ -267,6 +263,8 @@ class MGListener implements Listener {
 						actualDamage = (int)(e.getDamage() * potionMod - armorMod - enchantMod);
 						force = true;
 					}
+					Main.log("damage: " + p2.getWorld().getTime() + ", " +
+							p2.getName() + ", " + actualDamage + ", " + ((Player)e.getEntity()).getHealth(), LogLevel.DEBUG);
 					if (actualDamage >= ((Player)e.getEntity()).getHealth()){
 						e.setCancelled(true);
 						MGUtil.callEvent(new MGPlayerDeathEvent(p, e.getCause(),
@@ -283,7 +281,56 @@ class MGListener implements Listener {
 						MGUtil.damage(p2);
 					}
 					break;
+				}*/
+			}
+		}
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent e){
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			if (mg.getConfigManager().isOverrideDeathEvent() && mg.isPlayer(e.getEntity().getName())){
+				e.setDeathMessage(null);
+				e.setKeepLevel(true);
+				e.getDrops().clear();
+				try {
+					// oh God why did I think this was a good idea
+					Class<?> packetClass;
+					Object packet;
+					try {
+						packetClass = MGUtil.getMCClass("PacketPlayInClientCommand");
+						packet = packetClass.getConstructor(MGUtil.getMCClass("EnumClientCommand"))
+								.newInstance(Enum.valueOf((Class<? extends Enum>)MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"));
+					}
+					catch (Exception ex){
+						packetClass = MGUtil.getMCClass("Packet205ClientCommand");
+						packet = packetClass.getConstructor().newInstance();
+						packetClass.getDeclaredField("a").set(packet, 1);
+					}
+					Object nmsPlayer = MGUtil.getCraftClass("entity.CraftPlayer").getMethod("getHandle").invoke(e.getEntity(), new Object[0]);
+					Object conn = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
+					conn.getClass().getMethod("a", packetClass).invoke(conn, packet);
 				}
+				catch (Exception ex){
+					ex.printStackTrace();
+				}
+				EntityDamageEvent ed = e.getEntity().getLastDamageCause();
+				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(),
+						ed instanceof EntityDamageByEntityEvent ?
+								((EntityDamageByEntityEvent)ed).getDamager() instanceof Projectile ?
+										(Entity)((Projectile)((EntityDamageByEntityEvent)ed).getDamager()).getShooter() :
+											((EntityDamageByEntityEvent)ed).getDamager() :
+												null));
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerRespawn(PlayerRespawnEvent e){
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			if (mg.getConfigManager().isOverrideDeathEvent() && mg.isPlayer(e.getPlayer().getName())){
+				e.setRespawnLocation(e.getPlayer().getLocation());
 			}
 		}
 	}
@@ -335,7 +382,7 @@ class MGListener implements Listener {
 						try {
 							p.removeFromRound(l);
 						}
-						catch (PlayerNotPresentException ex){} // this can never happen
+						catch (NoSuchPlayerException ex){} // this can never happen
 						catch (PlayerOfflineException ex){} // this can definitely never happen
 					}
 					else {
@@ -351,7 +398,7 @@ class MGListener implements Listener {
 								try {
 									p.removeFromRound(l);
 								}
-								catch (PlayerNotPresentException ex){} // this can never happen
+								catch (NoSuchPlayerException ex){} // this can never happen
 								catch (PlayerOfflineException ex){} // this can definitely never happen
 							}
 						}
@@ -680,7 +727,7 @@ class MGListener implements Listener {
 								int index = MGUtil.isInteger(e.getLine(3)) ? Integer.parseInt(e.getLine(3)) : 0;
 								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(2), LobbyType.fromString(e.getLine(1)), index);
 							}
-							catch (ArenaNotExistsException ex){
+							catch (NoSuchArenaException ex){
 								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-not-exists"));
 							}
 							catch (IllegalArgumentException ex){
@@ -714,7 +761,7 @@ class MGListener implements Listener {
 		if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK){
 			if (e.getClickedBlock().getState() instanceof Sign){
 				for (Minigame mg : Minigame.getMinigameInstances()){
-					LobbySign ls = mg.getLobbyManager().getSign(e.getClickedBlock().getLocation());
+					LobbySign ls = mg.getLobbyManager().getSign(Location3D.valueOf(e.getClickedBlock().getLocation()));
 					if (ls != null){
 						e.setCancelled(true);
 						if (e.getAction() == Action.LEFT_CLICK_BLOCK && e.getPlayer().isSneaking()){
@@ -729,7 +776,7 @@ class MGListener implements Listener {
 							try {
 								r = mg.createRound(ls.getArena());
 							}
-							catch (ArenaNotExistsException ex){
+							catch (NoSuchArenaException ex){
 								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-load-fail").replace("%", ls.getArena()));
 								return;
 							}

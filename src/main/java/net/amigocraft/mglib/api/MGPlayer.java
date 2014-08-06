@@ -3,6 +3,8 @@ package net.amigocraft.mglib.api;
 import static net.amigocraft.mglib.Main.locale;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -21,7 +23,7 @@ import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.event.player.MGPlayerSpectateEvent;
-import net.amigocraft.mglib.exception.PlayerNotPresentException;
+import net.amigocraft.mglib.exception.NoSuchPlayerException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
@@ -154,6 +156,7 @@ public class MGPlayer implements Metadatable {
 	 * @param spectating whether the player is spectating.
 	 * @since 0.1.0
 	 */
+	@SuppressWarnings("unchecked")
 	public void setSpectating(boolean spectating){
 		this.spectating = spectating;
 		if (spectating){
@@ -161,8 +164,19 @@ public class MGPlayer implements Metadatable {
 			Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
 				p.closeInventory(); // close any inventory they have open
-				for (Player pl : Bukkit.getOnlinePlayers())
-					pl.hidePlayer(p); // hide them
+				try {
+					if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
+						for (Player pl :
+							(Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+							pl.hidePlayer(p);
+					else
+						for (Player pl :
+							(Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+							pl.hidePlayer(p);
+				}
+				catch (NoSuchMethodException ex){} // can never happen
+				catch (InvocationTargetException ex){} // can also never happen
+				catch (IllegalAccessException ex){} // can still never happen
 				//TODO: Set gamemode to SPECTATOR if supported (after 1.8 comes out)
 				p.setGameMode(GameMode.ADVENTURE); // disable block breaking
 				String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating"); // tell them
@@ -176,8 +190,19 @@ public class MGPlayer implements Metadatable {
 		else {
 			Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
-				for (Player pl : Bukkit.getOnlinePlayers())
-					pl.showPlayer(p); // show them
+				try {
+					if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
+						for (Player pl :
+							(Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+							pl.showPlayer(p);
+					else
+						for (Player pl :
+							(Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+							pl.showPlayer(p);
+				}
+				catch (NoSuchMethodException ex){} // can never happen
+				catch (InvocationTargetException ex){} // can also never happen
+				catch (IllegalAccessException ex){} // can still never happen
 				if (getRound() != null)
 					p.setGameMode(getRound().getConfigManager().getDefaultGameMode()); // set them to the default gamemode for arenas
 				p.setFlying(false); // disable flight
@@ -211,21 +236,21 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the round's default exit point.
-	 * @throws PlayerNotPresentException if the given player is not in a round.
+	 * @throws NoSuchPlayerException if the given player is not in a round.
 	 * @throws PlayerOfflineException if the given player is not online.
 	 * @since 0.1.0
 	 */
-	public void removeFromRound(Location location) throws PlayerNotPresentException, PlayerOfflineException {
+	public void removeFromRound(Location location) throws NoSuchPlayerException, PlayerOfflineException {
 		getRound().removePlayer(name, location);
 	}
 
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
-	 * @throws PlayerNotPresentException if the player is not in a round.
+	 * @throws NoSuchPlayerException if the player is not in a round.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1.0
 	 */
-	public void removeFromRound() throws PlayerNotPresentException, PlayerOfflineException {
+	public void removeFromRound() throws NoSuchPlayerException, PlayerOfflineException {
 		removeFromRound(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
 

@@ -42,7 +42,6 @@ public class ConfigManager {
 	private String locale = "enUS";
 	private boolean randomSpawns = true;
 	private boolean overrideDeathEvent = false;
-	private boolean forcePreciseDamage = false;
 	private boolean hunger = false;
 	private boolean perRoundChat = true;
 	private boolean teamChat = false;
@@ -696,10 +695,22 @@ public class ConfigManager {
 	/**
 	 * Sets whether block ignition are physics in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether block physics are permitted in worlds containing one or more arenas.
-	 * @since 0.1.0
+	 * @since 0.3.0
 	 */
 	public void setBlockPhysicsAllowed(boolean allowed){
 		actions.put("block-physics", allowed);
+	}
+	
+	/**
+	 * Sets whether block ignition are physics in worlds containing one or more arenas. (default: true)
+	 * @deprecated This method is improperly named, but remains for the sake of reverse compatibility.
+	 * You should instead use {@link ConfigManager#setBlockPhysicsAllowed(boolean)}.
+	 * @param allowed whether block physics are permitted in worlds containing one or more arenas.
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public void setBlockPhyiscsAllowed(boolean allowed){
+		setBlockPhysicsAllowed(allowed);
 	}
 
 	/**
@@ -958,32 +969,6 @@ public class ConfigManager {
 	 */
 	public void setOverrideDeathEvent(boolean override){
 		this.overrideDeathEvent = override;
-	}
-
-	/**
-	 * Retrieves whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
-	 * values as well as the knockback effect, but will ensure that pre- or postmature deaths do not occur. (default: false)
-	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
-	 * <br><br>
-	 * <b>Note: this may break protection potions.</b>
-	 * @return whether damage events for players will be handled by the plugin.
-	 * @since 0.3.0
-	 */
-	public boolean isForcePreciseDamage(){
-		return forcePreciseDamage;
-	}
-
-	/**
-	 * Sets whether damage will be dealt to players in rounds by MGLib. This will remove the random element from damage
-	 * values as well as the knockback effect, but will ensure that pre- or postmature deaths do not occur. (default: false)
-	 * <i>This will have no effect if {@link ConfigManager#isOverrideDeathEvent()} returns false, or if the CB build is #3096 or newer.</i>
-	 * <br><br>
-	 * <b>Note: this may break protection potions.</b>
-	 * @param force whether damage events for players will be handled by the plugin.
-	 * @since 0.3.0
-	 */
-	public void setForcePreciseDamage(boolean force){
-		this.forcePreciseDamage = force;
 	}
 
 	/**

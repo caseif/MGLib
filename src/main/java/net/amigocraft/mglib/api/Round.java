@@ -37,9 +37,9 @@ import net.amigocraft.mglib.event.round.MinigameRoundEndEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundPrepareEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundStartEvent;
 import net.amigocraft.mglib.event.round.MinigameRoundTickEvent;
-import net.amigocraft.mglib.exception.ArenaNotExistsException;
+import net.amigocraft.mglib.exception.NoSuchArenaException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
-import net.amigocraft.mglib.exception.PlayerNotPresentException;
+import net.amigocraft.mglib.exception.NoSuchPlayerException;
 import net.amigocraft.mglib.exception.PlayerOfflineException;
 import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
@@ -88,12 +88,12 @@ public class Round implements Metadatable {
 	 * understand the implications of using this constructor.
 	 * @param plugin the plugin which this round should be associated with.
 	 * @param arena the name of the arena in which this round takes place in.
-	 * @throws ArenaNotExistsException if the specified arena does not exist.
+	 * @throws NoSuchArenaException if the specified arena does not exist.
 	 */
-	public Round(String plugin, String arena) throws ArenaNotExistsException {
+	public Round(String plugin, String arena) throws NoSuchArenaException {
 		YamlConfiguration y = loadArenaYaml(plugin);
 		if (!y.contains(arena))
-			throw new ArenaNotExistsException();
+			throw new NoSuchArenaException();
 		ConfigurationSection cs = y.getConfigurationSection(arena); // make the code easier to read
 		world = cs.getString("world"); // get the name of the world of the arena
 		World w = Bukkit.getWorld(world); // convert it to a Bukkit world
@@ -742,15 +742,15 @@ public class Round implements Metadatable {
 	 * @param name The player to remove from this {@link Round round}.
 	 * @param location The location to teleport the player to.
 	 * @throws PlayerOfflineException if the player is not online.
-	 * @throws PlayerNotPresentException if the player are not in this round.
+	 * @throws NoSuchPlayerException if the player are not in this round.
 	 * @since 0.1.0
 	 */
-	public void removePlayer(String name, Location location) throws PlayerOfflineException, PlayerNotPresentException {
+	public void removePlayer(String name, Location location) throws PlayerOfflineException, NoSuchPlayerException {
 		@SuppressWarnings("deprecation")
 		Player p = Bukkit.getPlayer(name);
 		MGPlayer mp = players.get(name);
 		if (mp == null)
-			throw new PlayerNotPresentException();
+			throw new NoSuchPlayerException();
 		if (p != null){
 			PlayerLeaveMinigameRoundEvent event = new PlayerLeaveMinigameRoundEvent(this, mp);
 			MGUtil.callEvent(event);
@@ -766,11 +766,11 @@ public class Round implements Metadatable {
 	 * Removes a given player from this {@link Round round} and teleports them to the round or plugin's default exit location
 	 * (defaults to the main world's spawn point).
 	 * @param name The player to remove from this {@link Round round}. 
-	 * @throws PlayerNotPresentException if the given player is not in this round.
+	 * @throws NoSuchPlayerException if the given player is not in this round.
 	 * @throws PlayerOfflineException if the given player is offline.
 	 * @since 0.1.0
 	 */
-	public void removePlayer(String name) throws PlayerOfflineException, PlayerNotPresentException{
+	public void removePlayer(String name) throws PlayerOfflineException, NoSuchPlayerException{
 		removePlayer(name, getConfigManager().getDefaultExitLocation());
 	}
 
@@ -815,13 +815,13 @@ public class Round implements Metadatable {
 	 * @param location The location to create the sign at.
 	 * @param type The type of the sign ("status" or "players")
 	 * @param index The number of the sign (applicable only for "players" signs)
-	 * @throws ArenaNotExistsException  if the specified arena does not exist.
+	 * @throws NoSuchArenaException  if the specified arena does not exist.
 	 * @throws InvalidLocationException if the specified location does not contain a sign.
 	 * @throws IndexOutOfBoundsException if the specified index for a player sign is less than 1. 
 	 * @since 0.1.0
 	 */
 	public void addSign(Location location, LobbyType type, int index)
-			throws ArenaNotExistsException, InvalidLocationException, IndexOutOfBoundsException {
+			throws NoSuchArenaException, InvalidLocationException, IndexOutOfBoundsException {
 		this.getMinigame().getLobbyManager().add(location, this.getArena(), type, index);
 	}
 
