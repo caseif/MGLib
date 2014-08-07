@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 class InventorySerializer {
 	public static String InventoryToString (Inventory invInventory)
 	{
-		String serialization = invInventory.getSize() + ";";
+		String serialization = invInventory.getSize() + ";" + invInventory.getType().toString() + ";";
 		for (int i = 0; i < invInventory.getSize(); i++)
 		{
 			ItemStack is = invInventory.getItem(i);
@@ -54,10 +55,13 @@ class InventorySerializer {
 	public static Inventory StringToInventory (String invString)
 	{
 		String[] serializedBlocks = invString.split(";");
-		String invInfo = serializedBlocks[0];
-		Inventory deserializedInventory = Bukkit.getServer().createInventory(null, Integer.valueOf(invInfo));
+		String size = serializedBlocks[0];
+		String type = serializedBlocks[1];
+		Inventory deserializedInventory = type.equals("CHEST") ?
+				Bukkit.getServer().createInventory(null, Integer.parseInt(size)) :
+					Bukkit.getServer().createInventory(null, InventoryType.valueOf(type));
 
-		for (int i = 1; i < serializedBlocks.length; i++)
+		for (int i = 2; i < serializedBlocks.length; i++)
 		{
 			String[] serializedBlock = serializedBlocks[i].split("#");
 			int stackPosition = Integer.valueOf(serializedBlock[0]);

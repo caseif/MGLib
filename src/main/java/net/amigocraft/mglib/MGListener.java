@@ -33,6 +33,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -140,7 +141,7 @@ class MGListener implements Listener {
 				pl = (Player)damager;
 			else if (damager instanceof Projectile) // damager is an arrow or something
 				if (((Projectile)damager).getShooter() instanceof Player)
-					pl = (Player)((Projectile)damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow)
+					pl = (Player)((Projectile)damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow) 
 
 			//TODO: probably rewrite this bit at some point
 			if (pl != null || p2 != null){
@@ -149,6 +150,10 @@ class MGListener implements Listener {
 						MGPlayer p = mg.getMGPlayer(pl.getName());
 						if (p != null && (p.isSpectating() || !p.getRound().isPvPAllowed())){
 							e.setCancelled(true); // we don't want any spooky ghosts meddling in the affairs of the living
+							return;
+						}
+						else if (p != null && !mg.getConfigManager().isItemFrameDamageAllowed() && e.getEntity() instanceof ItemFrame){
+							e.setCancelled(true);
 							return;
 						}
 					}
@@ -910,9 +915,12 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onHangingBreak(HangingBreakByEntityEvent e){
-		if (e.getRemover() instanceof Player){
+		if (e.getRemover() instanceof Player || (e.getRemover() instanceof Projectile &&
+				((Projectile)e.getRemover()).getShooter() instanceof Player)){
 			for (Minigame mg : Minigame.getMinigameInstances())
-				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(((Player)e.getRemover()).getName()))
+				if (!mg.getConfigManager().isHangingBreakAllowed() &&
+						mg.isPlayer(e.getRemover() instanceof Player ? ((Player)e.getRemover()).getName() :
+							((Player)((Projectile)e.getRemover()).getShooter()).getName()))
 					e.setCancelled(true);
 		}
 	}

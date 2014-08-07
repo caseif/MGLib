@@ -83,6 +83,7 @@ public class ConfigManager {
 		actions.put("block-spread", false);
 		actions.put("entity-explode", false);
 		actions.put("hanging-break", false);
+		actions.put("item-frame-damage", false);
 	}
 
 	/**
@@ -591,6 +592,24 @@ public class ConfigManager {
 	 */
 	public void setHangingBreakAllowed(boolean allowed){
 		actions.put("hanging-break", allowed);
+	}
+
+	/**
+	 * Retrieves whether players in a minigame may remove the item from an item frame by clicking on it. (default: false)
+	 * @return whether players in a minigame may remove the item from an item frame by clicking on it.
+	 * @since 0.3.0
+	 */
+	public boolean isItemFrameDamageAllowed(){
+		return actions.get("item-frame-damage");
+	}
+
+	/**
+	 * Sets whether players in a minigame may remove the item from an item frame by clicking on it. (default: false)
+	 * @param allowed whether players in a minigame may remove the item from an item frame by clicking on it.
+	 * @since 0.3.0
+	 */
+	public void setItemFrameDamageAllowed(boolean allowed){
+		actions.put("item-frame-damage", allowed);
 	}
 
 	/**
