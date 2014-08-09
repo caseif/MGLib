@@ -1,13 +1,17 @@
 package net.amigocraft.mglib.event.round;
 
+import org.bukkit.event.Cancellable;
+
 import net.amigocraft.mglib.api.Round;
 
 /**
  * Fired when an {@link Round MGLib round} ends.
  * @since 0.1.0
  */
-public class MinigameRoundEndEvent extends MGRoundEvent {
+public class MinigameRoundEndEvent extends MGRoundEvent implements Cancellable {
+	
 	private boolean outOfTime;
+	private boolean cancelled;
 	
 	/**
 	 * Creates a new instance of this event.
@@ -27,6 +31,16 @@ public class MinigameRoundEndEvent extends MGRoundEvent {
 	 */
 	public boolean wasOutOfTime(){
 		return outOfTime;
+	}
+
+	@Override
+	public boolean isCancelled(){
+		return this.cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancel){
+		this.cancelled = cancel;
 	}
 
 

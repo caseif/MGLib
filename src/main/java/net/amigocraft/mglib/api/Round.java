@@ -98,7 +98,7 @@ public class Round implements Metadatable {
 		world = cs.getString("world"); // get the name of the world of the arena
 		World w = Bukkit.getWorld(world); // convert it to a Bukkit world
 		if (w == null)
-			w = Bukkit.createWorld(new WorldCreator(world));
+			w = Bukkit.createWorld(new WorldCreator(world).environment(MGUtil.getEnvironment(cs.getString("world"))));
 		if (w == null) // but what if world is kill?
 			throw new IllegalArgumentException("World " + world + " cannot be loaded!"); // then round is kill
 		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){ // load spawns into round object
@@ -430,14 +430,20 @@ public class Round implements Metadatable {
 		if (stage == Stage.WAITING){ // make sure the round isn't already started
 			final Round r = this;
 			if (r.getPreparationTime() > 0){
+				MinigameRoundPrepareEvent event = new MinigameRoundPrepareEvent(r);
+				MGUtil.callEvent(event);
+				if (event.isCancelled())
+					return;
 				r.setTime(0); // reset time
 				r.setStage(Stage.PREPARING); // set stage to preparing
-				MGUtil.callEvent(new MinigameRoundPrepareEvent(r)); // call an event for anyone who cares
 			}
 			else {
+				MinigameRoundStartEvent event = new MinigameRoundStartEvent(r);
+				MGUtil.callEvent(event);
+				if (event.isCancelled())
+					return;
 				r.setTime(0); // reset timer
 				r.setStage(Stage.PLAYING);
-				MGUtil.callEvent(new MinigameRoundStartEvent(r));
 			}
 			if (time != -1){ // I'm pretty sure this is wrong, but I'm also pretty tired
 				timerHandle = Bukkit.getScheduler().runTaskTimer(Main.plugin, new Runnable(){
@@ -447,10 +453,13 @@ public class Round implements Metadatable {
 						int limit = r.getStage() == Stage.PLAYING ? r.getPlayingTime() : r.getPreparationTime();
 						if (r.getTime() >= limit && limit > 0){ // timer reached its limit
 							if (r.getStage() == Stage.PREPARING){ // if we're still preparing...
+								MinigameRoundStartEvent event = new MinigameRoundStartEvent(r);
+								MGUtil.callEvent(event);
+								if (event.isCancelled())
+									return;
 								r.setStage(Stage.PLAYING); // ...set stage to playing
 								stageChange = true;
 								r.setTime(0); // reset timer
-								MGUtil.callEvent(new MinigameRoundStartEvent(r));
 							}
 							else { // we're playing and the round just ended
 								end(true);
@@ -504,7 +513,10 @@ public class Round implements Metadatable {
 	 */
 	public void end(boolean timeUp){
 		ended = true;
-		MGUtil.callEvent(new MinigameRoundEndEvent(this, timeUp));
+		MinigameRoundEndEvent event = new MinigameRoundEndEvent(this, timeUp);
+		MGUtil.callEvent(event);
+		if (event.isCancelled())
+			return;
 		setStage(Stage.RESETTING);
 		setTime(-1);
 		if (timerHandle != -1)
@@ -637,6 +649,11 @@ public class Round implements Metadatable {
 	@SuppressWarnings("deprecation")
 	public JoinResult addPlayer(String name, int spawn) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
 		final Player p = Bukkit.getPlayer(name);
+		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
+		PlayerJoinMinigameRoundEvent event = new PlayerJoinMinigameRoundEvent(this, mp);
+		MGUtil.callEvent(event);
+		if (event.isCancelled())
+			return JoinResult.CANCELLED;
 		if (p == null) // check that the specified player is online
 			throw new PlayerOfflineException();
 		if (getPlayerCount() >= getMaxPlayers() && getMaxPlayers() > 0)
@@ -653,7 +670,6 @@ public class Round implements Metadatable {
 				return JoinResult.ROUND_PLAYING;
 			}
 		}
-		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null){
 			try {
 				mp = (MGPlayer)getConfigManager().getPlayerClass().getDeclaredConstructors()[0]
@@ -731,7 +747,6 @@ public class Round implements Metadatable {
 					spawns.get(new Random().nextInt(spawns.size())) :
 						spawns.get(players.size() % spawns.size());
 					p.teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
-					MGUtil.callEvent(new PlayerJoinMinigameRoundEvent(this, mp));
 					if (getStage() == Stage.WAITING && getPlayerCount() >= getMinPlayers() && getPlayerCount() > 0)
 						start();
 					return JoinResult.SUCCESS;
@@ -754,6 +769,8 @@ public class Round implements Metadatable {
 		if (p != null){
 			PlayerLeaveMinigameRoundEvent event = new PlayerLeaveMinigameRoundEvent(this, mp);
 			MGUtil.callEvent(event);
+			if (event.isCancelled())
+				return;
 			mp.setArena(null); // they're not in an arena anymore
 			mp.setSpectating(false); // make sure they're not spectating when they join a new round
 			players.remove(name); // remove player from round

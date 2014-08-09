@@ -1,18 +1,24 @@
 package net.amigocraft.mglib.event.round;
 
+import org.bukkit.event.Cancellable;
+
 import net.amigocraft.mglib.api.LobbySign;
 import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.event.player.PlayerJoinMinigameRoundEvent;
 import net.amigocraft.mglib.misc.JoinResult;
 
 /**
  * Called when a player clicks a lobby sign in order to join a minigame round.
+ * <br><br>
+ * <strong>Note:</strong> If you wish to cancel this event, you must instead listen to the {@link PlayerJoinMinigameRoundEvent} and cancel that.
  * @since 0.3.0
  */
-public class LobbyClickEvent extends MGRoundEvent {
+public class LobbyClickEvent extends MGRoundEvent implements Cancellable {
 
 	private String player;
 	private LobbySign lobbySign;
 	private JoinResult result;
+	private boolean cancelled;
 	
 	/**
 	 * Creates a new instance of this event.
@@ -54,6 +60,16 @@ public class LobbyClickEvent extends MGRoundEvent {
 	 */
 	public JoinResult getResult(){
 		return result;
+	}
+
+	@Override
+	public boolean isCancelled(){
+		return this.cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancel){
+		this.cancelled = cancel;
 	}
 	
 }

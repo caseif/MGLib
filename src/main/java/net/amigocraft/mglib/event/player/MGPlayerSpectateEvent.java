@@ -1,5 +1,7 @@
 package net.amigocraft.mglib.event.player;
 
+import org.bukkit.event.Cancellable;
+
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Round;
 
@@ -7,9 +9,10 @@ import net.amigocraft.mglib.api.Round;
  * Thrown when a {@link MGPlayer player} becomes a spectator.
  * @since 0.2.0
  */
-public class MGPlayerSpectateEvent extends MGPlayerEvent {
+public class MGPlayerSpectateEvent extends MGPlayerEvent implements Cancellable {
 
 	protected Round round;
+	private boolean cancelled;
 	
 	/**
 	 * Creates a new instance of this event.
@@ -29,6 +32,16 @@ public class MGPlayerSpectateEvent extends MGPlayerEvent {
 	 */
 	public Round getRound(){
 		return round;
+	}
+
+	@Override
+	public boolean isCancelled(){
+		return this.cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancel){
+		this.cancelled = cancel;
 	}
 	
 }

@@ -13,6 +13,7 @@ import net.amigocraft.mglib.event.MGLibEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -99,6 +100,11 @@ public class MGUtil {
 		}
 	}
 
+	/**
+	 * Determines whether the provided string can be parsed to an integer.
+	 * @param s the string to check.
+	 * @return whether the provided string can be parsed to an integer.
+	 */
 	public static boolean isInteger(String s){
 		try {
 			Integer.parseInt(s);
@@ -214,6 +220,11 @@ public class MGUtil {
 		return null;
 	}
 
+	/**
+	 * Applies a damage effect to the given player.
+	 * @param p the player to apply the effect to.
+	 * @since 0.3.0
+	 */
 	public static void damage(Player p){
 		if (NMS_SUPPORT){
 			try {
@@ -237,16 +248,57 @@ public class MGUtil {
 		}
 	}
 
+	/**
+	 * Retrieves a class by the given name from the package <code>net.minecraft.server</code>.
+	 * @param name the class to retrieve.
+	 * @return the class object from the package <code>net.minecraft.server</code>.
+	 * @throws ClassNotFoundException if the class does not exist in the package.
+	 */
 	public static Class<?> getMCClass(String name) throws ClassNotFoundException {
-		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
+		String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+		String version = array.length == 4 ? array[3] : "" + ".";
 		String className = "net.minecraft.server." + version + name;
 		return Class.forName(className);
 	}
 
+	/**
+	 * Retrieves a class by the given name from the package <code>org.bukkit.craftbukkit</code>.
+	 * @param name the class to retrieve.
+	 * @return the class object from the package <code>org.bukkit.craftbukkit</code>.
+	 * @throws ClassNotFoundException if the class does not exist in the package.
+	 */
 	public static Class<?> getCraftClass(String name) throws ClassNotFoundException {
-		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
+		String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+		String version = array.length == 4 ? array[3] : "" + ".";
 		String className = "org.bukkit.craftbukkit." + version + name;
 		return Class.forName(className);
+	}
+	
+	/**
+	 * Determines the environment of the given world based on its folder structure.
+	 * @param world the name of the world to determine the environment of.
+	 * @return the environment of the given world.
+	 * @since 0.3.0
+	 */
+	public static Environment getEnvironment(String world){
+		File worldFolder = new File(Bukkit.getWorldContainer(), world);
+		if (worldFolder.exists()){
+			boolean nether = false;
+			boolean end = false;
+			for (File f : worldFolder.listFiles()){
+				if (f.getName().equals("region"))
+					return Environment.NORMAL;
+				else if (f.getName().equals("DIM-1"))
+					nether = true;
+				else if (f.getName().equals("DIM1"))
+					end = true;
+				if (nether)
+					return Environment.NETHER;
+				else if (end)
+					return Environment.THE_END;
+			}
+		}
+		return null;
 	}
 
 }

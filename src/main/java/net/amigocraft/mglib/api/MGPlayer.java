@@ -158,9 +158,12 @@ public class MGPlayer implements Metadatable {
 	 */
 	@SuppressWarnings("unchecked")
 	public void setSpectating(boolean spectating){
-		this.spectating = spectating;
 		if (spectating){
-			MGUtil.callEvent(new MGPlayerSpectateEvent(this.getRound(), this));
+			MGPlayerSpectateEvent event = new MGPlayerSpectateEvent(this.getRound(), this);
+			MGUtil.callEvent(event);
+			if (event.isCancelled())
+				return;
+			this.spectating = spectating;
 			Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
 				p.closeInventory(); // close any inventory they have open
@@ -188,6 +191,7 @@ public class MGPlayer implements Metadatable {
 			}
 		}
 		else {
+			this.spectating = spectating;
 			Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
 				try {

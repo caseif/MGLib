@@ -1,5 +1,7 @@
 package net.amigocraft.mglib.event.player;
 
+import org.bukkit.event.Cancellable;
+
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.round.MGRoundEvent;
@@ -8,9 +10,10 @@ import net.amigocraft.mglib.event.round.MGRoundEvent;
  * Thrown when a {@link MGPlayer player} joins an {@link Round MGLib round}.
  * @since 0.1.0
  */
-public class PlayerJoinMinigameRoundEvent extends MGRoundEvent {
+public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancellable {
 
 	protected MGPlayer player;
+	private boolean cancelled;
 	
 	/**
 	 * Creates a new instance of this event.
@@ -30,6 +33,16 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent {
 	 */
 	public MGPlayer getPlayer(){
 		return player;
+	}
+
+	@Override
+	public boolean isCancelled(){
+		return this.cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancel){
+		this.cancelled = cancel;
 	}
 	
 }

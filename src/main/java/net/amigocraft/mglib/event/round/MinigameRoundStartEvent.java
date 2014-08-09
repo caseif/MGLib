@@ -1,14 +1,17 @@
 package net.amigocraft.mglib.event.round;
 
+import org.bukkit.event.Cancellable;
+
 import net.amigocraft.mglib.api.Round;
 
 /**
  * Fired when an MGLib round begins.
  * @since 0.1.0
  */
-public class MinigameRoundStartEvent extends MGRoundEvent {
+public class MinigameRoundStartEvent extends MGRoundEvent implements Cancellable {
 	
 	private boolean prepared;
+	private boolean cancelled;
 	
 	/**
 	 * Creates a new instance of this event.
@@ -38,6 +41,16 @@ public class MinigameRoundStartEvent extends MGRoundEvent {
 	 */
 	public boolean wasPrepared(){
 		return prepared;
+	}
+
+	@Override
+	public boolean isCancelled(){
+		return this.cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancel){
+		this.cancelled = cancel;
 	}
 
 }
