@@ -74,9 +74,10 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
 		LOGGING_LEVEL = LogLevel.valueOf(getConfig().getString("logging-level").toUpperCase());
-		if (LOGGING_LEVEL == null)
+		if (LOGGING_LEVEL == null){
 			LOGGING_LEVEL = LogLevel.WARNING;
-		Main.log("The configured logging level is invalid!", LogLevel.WARNING);
+			Main.log("The configured logging level is invalid!", LogLevel.WARNING);
+		}
 		
 		locale = new Locale("MGLib");
 		locale.initialize();

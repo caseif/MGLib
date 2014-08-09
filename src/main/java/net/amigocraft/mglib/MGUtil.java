@@ -38,9 +38,15 @@ public class MGUtil {
 
 	public static final String ANSI_RED = "\u001B[31m";
 	public static final String ANSI_WHITE = "\u001B[37m";
+	
+	public static String nmsVersion;
 
 	static {
 		try {
+			
+			String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+			nmsVersion = array.length == 4 ? array[3] + "." : "";
+			
 			//get the constructor of the packet
 			packetPlayOutAnimation = getMCClass("PacketPlayOutAnimation").getConstructor(getMCClass("Entity"), int.class);
 			//get method for recieving craftplayer's entityplayer
@@ -255,9 +261,7 @@ public class MGUtil {
 	 * @throws ClassNotFoundException if the class does not exist in the package.
 	 */
 	public static Class<?> getMCClass(String name) throws ClassNotFoundException {
-		String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
-		String version = array.length == 4 ? array[3] : "" + ".";
-		String className = "net.minecraft.server." + version + name;
+		String className = "net.minecraft.server." + nmsVersion + name;
 		return Class.forName(className);
 	}
 
@@ -268,9 +272,7 @@ public class MGUtil {
 	 * @throws ClassNotFoundException if the class does not exist in the package.
 	 */
 	public static Class<?> getCraftClass(String name) throws ClassNotFoundException {
-		String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
-		String version = array.length == 4 ? array[3] : "" + ".";
-		String className = "org.bukkit.craftbukkit." + version + name;
+		String className = "org.bukkit.craftbukkit." + nmsVersion + name;
 		return Class.forName(className);
 	}
 	
