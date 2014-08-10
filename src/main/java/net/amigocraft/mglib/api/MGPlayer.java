@@ -6,6 +6,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,7 +36,7 @@ import net.amigocraft.mglib.misc.Metadatable;
  * @since 0.1.0
  */
 public class MGPlayer implements Metadatable {
-	
+
 	HashMap<String, Object> metadata = new HashMap<String, Object>();
 
 	private String plugin;
@@ -345,7 +346,7 @@ public class MGPlayer implements Metadatable {
 	public Player getBukkitPlayer(){
 		return Bukkit.getPlayer(name);
 	}
-	
+
 	/**
 	 * Convenience method for {@link MGPlayer#getBukkitPlayer()}. Use this only if aesthetic ambiguity is not a point of concern.
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
@@ -399,6 +400,30 @@ public class MGPlayer implements Metadatable {
 			this.removeMetadata("prev-jump-duration");
 		}
 		this.frozen = frozen;
+	}
+
+	/**
+	 * Respawns the player at the given spawn.
+	 * @param spawn the index of the spawn to send the player to.
+	 * @since 0.3.0
+	 */
+	public void spawnIn(int spawn){
+		Round r = this.getRound();
+		if (r != null){
+			Location sp = (spawn >= 0 && r.getSpawns().size() > spawn) ? r.getSpawns().get(spawn) :
+				r.getConfigManager().isRandomSpawning() ?
+						r.getSpawns().get(new Random().nextInt(r.getSpawns().size())) :
+							r.getSpawns().get(r.getPlayerList().size() % r.getSpawns().size());
+						this.getBukkitPlayer().teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
+		}
+	}
+
+	/**
+	 * Respawns the player at a random or sequential spawn, depending on your configuration.
+	 * @since 0.3.0
+	 */
+	public void spawnIn(){
+		spawnIn(-1);
 	}
 
 	public boolean equals(Object p){

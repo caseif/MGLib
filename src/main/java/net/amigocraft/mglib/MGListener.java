@@ -146,6 +146,15 @@ class MGListener implements Listener {
 			//TODO: probably rewrite this bit at some point
 			if (pl != null || p2 != null){
 				for (Minigame mg : Minigame.getMinigameInstances()){
+					if (p2 != null){
+						MGPlayer p = mg.getMGPlayer(p2.getName());
+						if (p != null){
+							if (p.isSpectating() || !p.getRound().isDamageAllowed()){
+								e.setCancelled(true); // we don't want any spooky ghosts being harassed by the living
+								return;
+							}
+						}
+					}
 					if (pl != null){
 						MGPlayer p = mg.getMGPlayer(pl.getName());
 						if (p != null && (p.isSpectating() || !p.getRound().isPvPAllowed())){
@@ -154,13 +163,6 @@ class MGListener implements Listener {
 						}
 						else if (p != null && !mg.getConfigManager().isItemFrameDamageAllowed() && e.getEntity() instanceof ItemFrame){
 							e.setCancelled(true);
-							return;
-						}
-					}
-					if (p2 != null){
-						MGPlayer p = mg.getMGPlayer(p2.getName());
-						if (p != null && (p.isSpectating() || !p.getRound().isDamageAllowed())){
-							e.setCancelled(true); // we don't want any spooky ghosts being harassed by the living
 							return;
 						}
 					}

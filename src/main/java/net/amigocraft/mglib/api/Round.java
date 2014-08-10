@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,7 +51,7 @@ import net.amigocraft.mglib.misc.Metadatable;
  * @since 0.1.0
  */
 public class Round implements Metadatable {
-	
+
 	HashMap<String, Object> metadata = new HashMap<String, Object>();
 
 	private int minPlayers;
@@ -78,7 +77,7 @@ public class Round implements Metadatable {
 	private boolean damage;
 	private boolean pvp;
 	private boolean rollback;
-	
+
 	private boolean ended;
 
 	/**
@@ -337,7 +336,7 @@ public class Round implements Metadatable {
 	public HashMap<String, MGPlayer> getPlayers(){
 		return players;
 	}
-	
+
 	/**
 	 * Retrieves a {@link HashMap} of all players on a given team.
 	 * @param team the team to retrieve players from.
@@ -541,7 +540,7 @@ public class Round implements Metadatable {
 	public void end(){
 		end(false);
 	}
-	
+
 	/**
 	 * Retrieves whether this round has been ended.
 	 * @return whether this round has been ended.
@@ -620,7 +619,7 @@ public class Round implements Metadatable {
 	public String getWorld(){
 		return world;
 	}
-	
+
 	/**
 	 * Adds a player by the given name to this {@link Round round}.
 	 * @param name the player to add to this {@link Round round}.
@@ -650,26 +649,6 @@ public class Round implements Metadatable {
 	public JoinResult addPlayer(String name, int spawn) throws PlayerOfflineException, PlayerPresentException, RoundFullException {
 		final Player p = Bukkit.getPlayer(name);
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
-		PlayerJoinMinigameRoundEvent event = new PlayerJoinMinigameRoundEvent(this, mp);
-		MGUtil.callEvent(event);
-		if (event.isCancelled())
-			return JoinResult.CANCELLED;
-		if (p == null) // check that the specified player is online
-			throw new PlayerOfflineException();
-		if (getPlayerCount() >= getMaxPlayers() && getMaxPlayers() > 0)
-			throw new RoundFullException();
-		if (getStage() == Stage.PREPARING){
-			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
-				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-prepare"));
-				return JoinResult.ROUND_PREPARING;
-			}
-		}
-		else if (getStage() == Stage.PLAYING){
-			if (!getConfigManager().getAllowJoinRoundInProgress()){
-				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-progress"));
-				return JoinResult.ROUND_PLAYING;
-			}
-		}
 		if (mp == null){
 			try {
 				mp = (MGPlayer)getConfigManager().getPlayerClass().getDeclaredConstructors()[0]
@@ -698,6 +677,26 @@ public class Round implements Metadatable {
 			mp.setArena(arena);
 		else
 			throw new PlayerPresentException();
+		PlayerJoinMinigameRoundEvent event = new PlayerJoinMinigameRoundEvent(this, mp);
+		MGUtil.callEvent(event);
+		if (event.isCancelled())
+			return JoinResult.CANCELLED;
+		if (p == null) // check that the specified player is online
+			throw new PlayerOfflineException();
+		if (getPlayerCount() >= getMaxPlayers() && getMaxPlayers() > 0)
+			throw new RoundFullException();
+		if (getStage() == Stage.PREPARING){
+			if (!getConfigManager().getAllowJoinRoundWhilePreparing()){
+				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-prepare"));
+				return JoinResult.ROUND_PREPARING;
+			}
+		}
+		else if (getStage() == Stage.PLAYING){
+			if (!getConfigManager().getAllowJoinRoundInProgress()){
+				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-progress"));
+				return JoinResult.ROUND_PLAYING;
+			}
+		}
 		ItemStack[] contents = p.getInventory().getContents();
 		PlayerInventory pInv = (PlayerInventory)p.getInventory();
 		ItemStack helmet = pInv.getHelmet(), chestplate = pInv.getChestplate(), leggings = pInv.getLeggings(), boots = pInv.getBoots();
@@ -742,14 +741,10 @@ public class Round implements Metadatable {
 		mp.setPrevGameMode(p.getGameMode());
 		p.setGameMode(getConfigManager().getDefaultGameMode());
 		players.put(name, mp); // register player with round object
-		Location sp = (spawn >= 0 && spawns.size() > spawn) ? spawns.get(spawn) :
-			getConfigManager().isRandomSpawning() ?
-					spawns.get(new Random().nextInt(spawns.size())) :
-						spawns.get(players.size() % spawns.size());
-					p.teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
-					if (getStage() == Stage.WAITING && getPlayerCount() >= getMinPlayers() && getPlayerCount() > 0)
-						start();
-					return JoinResult.SUCCESS;
+		mp.spawnIn();
+		if (getStage() == Stage.WAITING && getPlayerCount() >= getMinPlayers() && getPlayerCount() > 0)
+			start();
+		return JoinResult.SUCCESS;
 	}
 
 	/**
@@ -776,6 +771,8 @@ public class Round implements Metadatable {
 			players.remove(name); // remove player from round
 			p.setGameMode(mp.getPrevGameMode()); // restore the player's gamemode
 			mp.reset(location); // reset the object and send the player to the exit point
+			if (this.getPlayerCount() < this.getMinPlayers())
+				this.setStage(Stage.PREPARING);
 		}
 	}
 
