@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.collect.Lists;
@@ -67,13 +68,16 @@ public class LobbyManager {
 	public void add(Location l, String arena, LobbyType type, int index)
 			throws NoSuchArenaException, InvalidLocationException, IllegalArgumentException {
 		if (l.getBlock().getState() instanceof Sign){
-			if (MGUtil.loadArenaYaml(plugin).getConfigurationSection(arena) != null){
+			ConfigurationSection cs = MGUtil.loadArenaYaml(plugin).getConfigurationSection(arena);
+			if (cs != null){
 				LobbySign ls;
 				if (type == LobbyType.STATUS)
-					ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(), arena, 0, type);
+					ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(),
+							cs.getString("displayname"), 0, type);
 				else if (type == LobbyType.PLAYERS){
 					if (index >= 1)
-						ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(), arena, index, type);
+						ls = new LobbySign(l.getBlockX(), l.getBlockY(), l.getBlockZ(), plugin, l.getWorld().getName(),
+								cs.getString("displayname"), index, type);
 					else
 						throw new IllegalArgumentException("Invalid player sign index for arena " + arena);
 				}
@@ -97,7 +101,7 @@ public class LobbyManager {
 	 */
 	public void update(String arena){
 		for (LobbySign s : signs.values()){
-			if (s.getArena().equals(arena)){
+			if (s.getArena().equalsIgnoreCase(arena)){
 				s.update();
 			}
 		}

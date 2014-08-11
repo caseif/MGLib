@@ -288,15 +288,15 @@ public class LobbySign {
 								if (r != null){
 									List<MGPlayer> players = Minigame.getMinigameInstance(plugin).getConfigManager().areSpectatorsOnLobbySigns() ?
 											r.getPlayerList() : r.getAlivePlayerList();
-									if (players.size() >= (this.getNumber() - 1) * 4 + i + 1){
-										MGPlayer p = players.get((this.getNumber() - 1) * 4 + i);
-										String name = p.getPrefix() + p.getName();
-										if (name.length() > 16)
-											name = name.substring(0, 16);
-										sign.setLine(i, name);
-									}
-									else
-										sign.setLine(i, "");
+											if (players.size() >= (this.getNumber() - 1) * 4 + i + 1){
+												MGPlayer p = players.get((this.getNumber() - 1) * 4 + i);
+												String name = p.getPrefix() + p.getName();
+												if (name.length() > 16)
+													name = name.substring(0, 16);
+												sign.setLine(i, name);
+											}
+											else
+												sign.setLine(i, "");
 								}
 								else
 									sign.setLine(i, "");
@@ -351,7 +351,11 @@ public class LobbySign {
 					});
 				}
 				else
-					remove();
+					Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
+						public void run(){
+							remove();
+						}
+					});
 			}
 		}
 	}

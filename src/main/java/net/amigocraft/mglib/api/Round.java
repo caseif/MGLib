@@ -66,6 +66,7 @@ public class Round implements Metadatable {
 
 	private String world;
 	private String arena;
+	private String displayName;
 	private List<Location> spawns = new ArrayList<Location>();
 	private Location minBound;
 	private Location maxBound;
@@ -90,7 +91,7 @@ public class Round implements Metadatable {
 	 * @throws NoSuchArenaException if the specified arena does not exist.
 	 */
 	public Round(String plugin, String arena) throws NoSuchArenaException {
-		YamlConfiguration y = loadArenaYaml(plugin);
+		MGYamlConfiguration y = loadArenaYaml(plugin);
 		if (!y.contains(arena))
 			throw new NoSuchArenaException();
 		ConfigurationSection cs = y.getConfigurationSection(arena); // make the code easier to read
@@ -119,7 +120,8 @@ public class Round implements Metadatable {
 			maxBound = null;
 		}
 		this.plugin = plugin; // set globals
-		this.arena = arena;
+		this.arena = arena.toLowerCase();
+		this.displayName = this.arena = cs.contains("displayname") ? cs.getString("displayname") : arena.toLowerCase();
 		ConfigManager cm = getConfigManager();
 		this.prepareTime = cm.getDefaultPreparationTime();
 		this.roundTime = cm.getDefaultPlayingTime();
@@ -652,7 +654,7 @@ public class Round implements Metadatable {
 		if (mp == null){
 			try {
 				mp = (MGPlayer)getConfigManager().getPlayerClass().getDeclaredConstructors()[0]
-						.newInstance(plugin, name, arena);
+						.newInstance(plugin, name, arena.toLowerCase());
 			}
 			catch (InvocationTargetException ex){ // any error thrown from the called constructor
 				ex.getTargetException().printStackTrace();
@@ -674,7 +676,7 @@ public class Round implements Metadatable {
 			}
 		}
 		else if (mp.getArena() == null)
-			mp.setArena(arena);
+			mp.setArena(arena.toLowerCase());
 		else
 			throw new PlayerPresentException();
 		PlayerJoinMinigameRoundEvent event = new PlayerJoinMinigameRoundEvent(this, mp);
@@ -766,13 +768,13 @@ public class Round implements Metadatable {
 			MGUtil.callEvent(event);
 			if (event.isCancelled())
 				return;
-			mp.setArena(null); // they're not in an arena anymore
 			mp.setSpectating(false); // make sure they're not spectating when they join a new round
 			players.remove(name); // remove player from round
 			p.setGameMode(mp.getPrevGameMode()); // restore the player's gamemode
 			mp.reset(location); // reset the object and send the player to the exit point
+			mp.setArena(null); // they're not in an arena anymore
 			if (this.getPlayerCount() < this.getMinPlayers())
-				this.setStage(Stage.PREPARING);
+				this.setStage(Stage.WAITING);
 		}
 	}
 
@@ -956,6 +958,15 @@ public class Round implements Metadatable {
 	 */
 	public void broadcast(String message){
 		broadcast(message, true);
+	}
+	
+	/**
+	 * Retrieves the display name of the round's arena.
+	 * @return the display name of the round's arena.
+	 * @since 0.3.0
+	 */
+	public String getDisplayName(){
+		return displayName;
 	}
 
 	public Object getMetadata(String key){

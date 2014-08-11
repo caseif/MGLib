@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.amigocraft.mglib.api.LogLevel;
+import net.amigocraft.mglib.api.MGYamlConfiguration;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.event.MGLibEvent;
 
@@ -64,11 +65,15 @@ public class MGUtil {
 
 	/**
 	 * Loads and returns the given plugin's arenas.yml file.
+	 * <br><br>
+	 * <strong>Note: arena names are converted to lower case when saved.
+	 * The custom class will automatically take this into account should you choose to use it. However, if you store the returned
+	 * object as a vanilla {@link YamlConfiguration}, you will need to do so yourself, as the methods will not be overridden.</strong>
 	 * @param plugin The plugin to load the YAML file from.
-	 * @return The loaded {@link YamlConfiguration}.
+	 * @return The loaded {@link YamlConfiguration} object.
 	 * @since 0.1.0
 	 */
-	public static YamlConfiguration loadArenaYaml(String plugin){
+	public static MGYamlConfiguration loadArenaYaml(String plugin){
 		JavaPlugin jp = Minigame.getMinigameInstance(plugin).getPlugin();
 		File f = new File(jp.getDataFolder(), "arenas.yml");
 		try {
@@ -76,7 +81,7 @@ public class MGUtil {
 				jp.getDataFolder().mkdirs();
 			if (!f.exists())
 				f.createNewFile();
-			YamlConfiguration y = new YamlConfiguration();
+			MGYamlConfiguration y = new MGYamlConfiguration();
 			y.load(f);
 			return y;
 		}

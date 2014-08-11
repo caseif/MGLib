@@ -21,12 +21,20 @@ public class ArenaFactory {
 	private YamlConfiguration yaml = null;
 
 	private int timerHandle = -1;
-	
+
 	private ArenaFactory(String plugin, String arena, String world){
 		this.plugin = plugin;
-		this.arena = arena;
+		MGYamlConfiguration y = MGUtil.loadArenaYaml(plugin);
+		String display = "";
+		if (y != null && y.contains(arena + ".displayname"))
+			display = y.getString(arena + ".displayname");
+		if (display.equalsIgnoreCase(arena))
+			this.arena = display;
+		else
+			this.arena = arena;
 		this.world = world;
 		setWorld(world);
+		setDisplayName(arena);
 		MGUtil.getWorlds(plugin).add(world); // register world with event listener
 	}
 
@@ -39,14 +47,17 @@ public class ArenaFactory {
 	 * @since 0.1.0
 	 */
 	public static ArenaFactory createArenaFactory(String plugin, String arena, String world){
-		ArenaFactory af = Minigame.getMinigameInstance(plugin).arenaFactories.get(arena);
+		ArenaFactory af = Minigame.getMinigameInstance(plugin).arenaFactories.get(arena.toLowerCase());
 		if (af == null){
 			boolean nA = false;
+			String displayName = arena;
 			if (MGUtil.loadArenaYaml(plugin).get(arena) == null)
 				nA = true;
-			else
+			else {
 				world = MGUtil.loadArenaYaml(plugin).getString(arena + ".world");
-			af = new ArenaFactory(plugin, arena, world);
+				displayName = MGUtil.loadArenaYaml(plugin).getString(arena + ".displayname");
+			}
+			af = new ArenaFactory(plugin, displayName, world);
 			af.newArena = nA;
 			return af;
 		}
@@ -54,9 +65,9 @@ public class ArenaFactory {
 			af.newInstance = false;
 			return af;
 		}
-			
+
 	}
-	
+
 	/**
 	 * Retrieves the name of the plugin associated with this {@link ArenaFactory}.
 	 * @return the name of the plugin associated with this {@link ArenaFactory}.
@@ -65,7 +76,7 @@ public class ArenaFactory {
 	public String getPlugin(){
 		return plugin;
 	}
-	
+
 	/**
 	 * Retrieves the name of the arena associated with this {@link ArenaFactory}.
 	 * @return the name of the arena associated with this {@link ArenaFactory}.
@@ -74,7 +85,16 @@ public class ArenaFactory {
 	public String getArena(){
 		return arena;
 	}
-	
+
+	/**
+	 * Retrieves the display name of the arena associated with this {@link ArenaFactory}.
+	 * @return the display name of the arena associated with this {@link ArenaFactory}.
+	 * @since 0.1.0
+	 */
+	public String getDisplayName(){
+		return arena;
+	}
+
 	/**
 	 * Retrieves the name of the world associated with this {@link ArenaFactory}'s arena.
 	 * @return the name of the world associated with this {@link ArenaFactory}'s arena.
@@ -83,7 +103,21 @@ public class ArenaFactory {
 	public String getWorld(){
 		return world;
 	}
-	
+
+	private ArenaFactory setDisplayName(String displayName){
+		if (yaml == null)
+			yaml = MGUtil.loadArenaYaml(plugin);
+		else
+			Bukkit.getScheduler().cancelTask(timerHandle);
+		yaml.set(arena + ".displayname", displayName);
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable(){
+			public void run(){
+				writeChanges();
+			}
+		}, 1L).getTaskId();
+		return this;
+	}
+
 	private ArenaFactory setWorld(String world){
 		if (yaml == null)
 			yaml = MGUtil.loadArenaYaml(plugin);
@@ -294,7 +328,7 @@ public class ArenaFactory {
 		}, 1L).getTaskId();
 		return this;
 	}
-	
+
 	/**
 	 * Sets the minimum boundary of this arena.
 	 * @param location the {@link Location} representing the maximum boundary.
@@ -354,7 +388,7 @@ public class ArenaFactory {
 		else
 			throw new InvalidLocationException();
 	}
-	
+
 	/**
 	 * Attaches an arbitrary key-value pair to the arena.
 	 * @param key the key to set for the arena.
@@ -390,7 +424,7 @@ public class ArenaFactory {
 	public boolean isNewInstance(){
 		return newInstance;
 	}
-	
+
 	/**
 	 * Determines whether this arena is newly created. This will permanently return false until the arena is deleted.
 	 * @return whether this arena is newly created.

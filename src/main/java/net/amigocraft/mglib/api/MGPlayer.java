@@ -149,7 +149,7 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public Round getRound(){
-		return Minigame.getMinigameInstance(plugin).getRound(arena);
+		return Minigame.getMinigameInstance(plugin).getRound(arena.toLowerCase());
 	}
 
 	/**

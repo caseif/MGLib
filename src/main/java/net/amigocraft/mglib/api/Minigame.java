@@ -150,7 +150,7 @@ public class Minigame {
 	public Round createRound(String arena) throws NoSuchArenaException {
 		Round r = new Round(plugin.getName(), arena); // create the Round object
 		r.setStage(Stage.WAITING); // default to waiting stage
-		rounds.put(arena, r); // register arena with MGLib
+		rounds.put(arena.toLowerCase(), r); // register arena with MGLib
 		return r; // give the calling plugin the Round object
 	}
 
@@ -161,7 +161,7 @@ public class Minigame {
 	 * @since 0.1.0
 	 */
 	public Round getRound(String name){
-		return rounds.get(name);
+		return rounds.get(name.toLowerCase());
 	}
 
 	/**
@@ -231,9 +231,10 @@ public class Minigame {
 			}
 		}
 
-		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName()).addSpawn(spawn);
+		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName());
 		if (!a.isNewArena())
 			throw new ArenaExistsException();
+		a.addSpawn(spawn);
 		if (minX == minX)
 			a.setMinBound(minX, minY, minZ).setMaxBound(maxX, maxY, maxZ);
 		return a;
