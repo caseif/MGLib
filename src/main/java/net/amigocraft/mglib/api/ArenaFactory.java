@@ -28,6 +28,8 @@ public class ArenaFactory {
 		String display = "";
 		if (y != null && y.contains(arena + ".displayname"))
 			display = y.getString(arena + ".displayname");
+		else if (y != null)
+			y.set(arena + ".displayname", arena);
 		if (display.equalsIgnoreCase(arena))
 			this.arena = display;
 		else

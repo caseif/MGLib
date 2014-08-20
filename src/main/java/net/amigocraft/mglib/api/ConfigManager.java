@@ -48,6 +48,7 @@ public class ConfigManager {
 	private boolean mobSpawning = true;
 	private boolean targeting = false;
 	private boolean spectatorChat = true;
+	private boolean vanillaSpectating = true;
 
 	/**
 	 * Creates a config manager for the given plugin.
@@ -897,7 +898,8 @@ public class ConfigManager {
 
 	/**
 	 * Retrieves whether spectators are permitted to fly. (default: true)
-	 * This will be overridden if allow-flight is set to false in the server.properties file.
+	 * This will be overridden if allow-flight is set to false in the server.properties file,
+	 * or if {@link ConfigManager#isUsingVanillaSpectating()} returns true.
 	 * @return whether spectators are permitted to fly.
 	 * @since 0.2.0
 	 */
@@ -907,7 +909,8 @@ public class ConfigManager {
 
 	/**
 	 * Sets whether spectators are permitted to fly. (default: true)
-	 * This will be overridden if allow-flight is set to false in the server.properties file.
+	 * This will be overridden if allow-flight is set to false in the server.properties file,
+	 * or if {@link ConfigManager#isUsingVanillaSpectating()} returns true.
 	 * @param allowed whether spectators are permitted to fly.
 	 * @since 0.2.0
 	 */
@@ -1100,8 +1103,28 @@ public class ConfigManager {
 	 * @param separate whether spectators are placed in a separate chat channel from active players.
 	 * @since 0.3.0
 	 */
-	public void isSpectatorChatSeparate(boolean separate){
+	public void setSpectatorChatSeparate(boolean separate){
 		this.spectatorChat = separate;
+	}
+	
+	/**
+	 * Retrieves whether players are made vanilla spectators when {@link MGPlayer#setSpectating(boolean)} is called. (default: true)
+	 * If false, the player will be manually made invisible and flying.
+	 * @return whether players are made vanilla spectators when {@link MGPlayer#setSpectating(boolean)} is called.
+	 * @since 0.3.0
+	 */
+	public boolean isUsingVanillaSpectating(){
+		return vanillaSpectating;
+	}
+	
+	/**
+	 * Sets whether players are made vanilla spectators when {@link MGPlayer#setSpectating(boolean)} is called. (default: true)
+	 * If false, the player will be manually made invisible and flying.
+	 * @param vanillaSpectating whether players are made vanilla spectators when {@link MGPlayer#setSpectating(boolean)} is called.
+	 * @since 0.3.0
+	 */
+	public void setUsingVanillaSpectating(boolean vanillaSpectating){
+		this.vanillaSpectating = vanillaSpectating;
 	}
 
 }

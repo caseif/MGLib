@@ -181,14 +181,26 @@ public class MGPlayer implements Metadatable {
 				catch (NoSuchMethodException ex){} // can never happen
 				catch (InvocationTargetException ex){} // can also never happen
 				catch (IllegalAccessException ex){} // can still never happen
-				//TODO: Set gamemode to SPECTATOR if supported (after 1.8 comes out)
-				p.setGameMode(GameMode.ADVENTURE); // disable block breaking
-				String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating"); // tell them
-				if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()){
-					p.setAllowFlight(true); // enable flight
-					message += " " + locale.getMessage("flight-enabled");
+				GameMode spectateMode = null; // in anticipation of 1.8
+				if (GameMode.valueOf("SPECTATOR") != null)
+					spectateMode = GameMode.valueOf("SPECTATOR");
+				else if (GameMode.valueOf("SPECTATOR") != null)
+					spectateMode = GameMode.valueOf("SPECTATING");
+				else if (GameMode.valueOf("SPECTATOR") != null)
+					spectateMode = GameMode.valueOf("SPECTATE");
+				if (spectateMode != null && this.getRound().getConfigManager().isUsingVanillaSpectating()){
+					p.setGameMode(spectateMode);
+					p.sendMessage(ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating")); // tell them
 				}
-				p.sendMessage(message);
+				else {
+					p.setGameMode(GameMode.ADVENTURE); // disable block breaking
+					String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating"); // tell them
+					if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()){
+						p.setAllowFlight(true); // enable flight
+						message += " " + locale.getMessage("flight-enabled");
+					}
+					p.sendMessage(message);
+				}
 			}
 		}
 		else {
