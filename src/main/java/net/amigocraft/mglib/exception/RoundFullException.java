@@ -2,6 +2,7 @@ package net.amigocraft.mglib.exception;
 
 /**
  * Thrown when a player joins a round but it is full.
+ *
  * @since 0.2.0
  */
 public class RoundFullException extends Exception {

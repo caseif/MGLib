@@ -11,6 +11,7 @@ public class MGLibEvent extends Event {
 
 	/**
 	 * Creates a new instance of this event.
+	 *
 	 * @param plugin The name of the plugin involved in this {@link MGLibEvent}.
 	 * @since 0.1.0
 	 */
@@ -20,6 +21,7 @@ public class MGLibEvent extends Event {
 
 	/**
 	 * Retrieves the name of the plugin involved in this {@link MGLibEvent}.
+	 *
 	 * @return the name of the plugin involved in this {@link MGLibEvent}.
 	 * @since 0.1.0
 	 */
@@ -27,11 +29,11 @@ public class MGLibEvent extends Event {
 		return plugin;
 	}
 
-	public HandlerList getHandlers() {
+	public HandlerList getHandlers(){
 		return handlers;
 	}
 
-	public static HandlerList getHandlerList() {
+	public static HandlerList getHandlerList(){
 		return handlers;
 	}
 

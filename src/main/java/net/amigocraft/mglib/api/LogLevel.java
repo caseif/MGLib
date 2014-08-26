@@ -7,5 +7,5 @@ public enum LogLevel {
 	INFO,
 	DEBUG,
 	VERBOSE
-	
+
 }

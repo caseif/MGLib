@@ -1,23 +1,24 @@
 package net.amigocraft.mglib.event.player;
 
-import org.bukkit.event.Cancellable;
-
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.round.MGRoundEvent;
+import org.bukkit.event.Cancellable;
 
 /**
  * Thrown when a {@link MGPlayer player} joins an {@link Round MGLib round}.
+ *
  * @since 0.1.0
  */
 public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancellable {
 
 	protected MGPlayer player;
 	private boolean cancelled;
-	
+
 	/**
 	 * Creates a new instance of this event.
-	 * @param round the round the player has joined.
+	 *
+	 * @param round  the round the player has joined.
 	 * @param player the player involved in this event.
 	 * @since 0.1.0
 	 */
@@ -25,9 +26,10 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancel
 		super(round);
 		this.player = player;
 	}
-	
+
 	/**
 	 * Returns the {@link Round round} involved in this event.
+	 *
 	 * @return the {@link Round round} involved in this event.
 	 * @since 0.1.0
 	 */
@@ -44,5 +46,5 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancel
 	public void setCancelled(boolean cancel){
 		this.cancelled = cancel;
 	}
-	
+
 }

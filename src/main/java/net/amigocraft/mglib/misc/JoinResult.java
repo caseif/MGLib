@@ -8,5 +8,5 @@ public enum JoinResult {
 	ROUND_PLAYING,
 	INVENTORY_SAVE_ERROR,
 	CANCELLED
-	
+
 }

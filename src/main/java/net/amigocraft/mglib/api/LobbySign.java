@@ -1,16 +1,15 @@
 package net.amigocraft.mglib.api;
 
-import java.text.DecimalFormat;
-import java.util.List;
-
+import net.amigocraft.mglib.LobbyManager;
+import net.amigocraft.mglib.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
-import net.amigocraft.mglib.LobbyManager;
-import net.amigocraft.mglib.Main;
+import java.text.DecimalFormat;
+import java.util.List;
 
 public class LobbySign {
 
@@ -28,14 +27,15 @@ public class LobbySign {
 
 	/**
 	 * Creates a new {@link LobbySign} object.
-	 * @param x the x-coordinate of the physical sign.
-	 * @param y the y-coordinate of the physical sign.
-	 * @param z the z-coordinate of the physical sign.
+	 *
+	 * @param x      the x-coordinate of the physical sign.
+	 * @param y      the y-coordinate of the physical sign.
+	 * @param z      the z-coordinate of the physical sign.
 	 * @param plugin the name of the plugin the sign is to be associated with.
-	 * @param world the world containing the physical sign.
-	 * @param arena the arena the sign should track.
+	 * @param world  the world containing the physical sign.
+	 * @param arena  the arena the sign should track.
 	 * @param number the number of the sign (used for {@link LobbyType#PLAYERS player signs}).
-	 * @param type the {@link LobbyType type} of the sign.
+	 * @param type   the {@link LobbyType type} of the sign.
 	 * @since 0.1.0
 	 */
 	public LobbySign(int x, int y, int z, String plugin, String world, String arena, int number, LobbyType type){
@@ -51,6 +51,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical x-coordinate of this lobby sign.
+	 *
 	 * @return the physical x-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -60,6 +61,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical x-coordinate of this lobby sign.
+	 *
 	 * @param x the physical x-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -69,6 +71,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical y-coordinate of this lobby sign.
+	 *
 	 * @return the physical y-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -78,6 +81,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical y-coordinate of this lobby sign.
+	 *
 	 * @param y the physical y-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -87,6 +91,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical z-coordinate of this lobby sign.
+	 *
 	 * @return the physical z-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -96,6 +101,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical z-coordinate of this lobby sign.
+	 *
 	 * @param z the physical z-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -105,6 +111,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the plugin this lobby sign is associated with.
+	 *
 	 * @return the plugin this lobby sign is associated with.
 	 * @since 0.1.0
 	 */
@@ -114,6 +121,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the name of the world containing this physical lobby sign.
+	 *
 	 * @return the name of the world containing this physical lobby sign.
 	 * @since 0.1.0
 	 */
@@ -123,6 +131,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the name of the world containing this physical lobby sign.
+	 *
 	 * @param world the name of the world containing this physical lobby sign.
 	 * @since 0.1.0
 	 */
@@ -132,6 +141,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the arena associated with this lobby sign.
+	 *
 	 * @return the arena associated with this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -141,6 +151,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the arena associated with this lobby sign.
+	 *
 	 * @param arena the arena associated with this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -150,6 +161,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the number of this lobby sign.
+	 *
 	 * @return the number of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -159,6 +171,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the number of this lobby sign.
+	 *
 	 * @param number the number of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -168,6 +181,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the {@link LobbyType type} of this lobby sign.
+	 *
 	 * @return the {@link LobbyType type} of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -177,6 +191,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the {@link LobbyType type} of this lobby sign.
+	 *
 	 * @param type the {@link LobbyType type} of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -186,6 +201,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the internal index of this lobby sign.
+	 *
 	 * @return the internal index of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -195,6 +211,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the internal index of this lobby sign.
+	 *
 	 * @param index the internal index of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -204,6 +221,7 @@ public class LobbySign {
 
 	/**
 	 * Saves this lobby sign's data to disk.
+	 *
 	 * @since 0.1.0
 	 */
 	public void save(){
@@ -212,6 +230,7 @@ public class LobbySign {
 
 	/**
 	 * Saves this lobby sign's data to disk and removes it from memory.
+	 *
 	 * @since 0.1.0
 	 */
 	public void remove(){
@@ -221,6 +240,7 @@ public class LobbySign {
 
 	/**
 	 * Updates this lobby sign's text based on its arena's current status.
+	 *
 	 * @since 0.1.0
 	 */
 	public void update(){
@@ -231,95 +251,108 @@ public class LobbySign {
 				Block b = w.getBlockAt(this.getX(), this.getY(), this.getZ());
 				if (b != null){
 					if (b.getState() instanceof Sign){
-						final Sign sign = (Sign)b.getState();
+						final Sign sign = (Sign) b.getState();
 						ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
 						if (this.getType() == LobbyType.STATUS){
 							sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
 							String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
-							if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0)
+							if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0){
 								max = "∞";
-							String playerCount = r != null ? (r.getPlayers().size() + "/" + max) : (playerCount = "0/" + max);
-							if (!max.equals("∞")){
-								if (r != null && r.getPlayers().size() >= Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers())
-									playerCount = cm.getLobbyPlayerCountFullColor() + playerCount;
-								else
-									playerCount = cm.getLobbyPlayerCountColor() + playerCount;
 							}
-							else
+							String playerCount = r.getPlayers().size() + "/" + max;
+							if (!max.equals("∞")){
+								if (r.getPlayers().size() >= Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers()){
+									playerCount = cm.getLobbyPlayerCountFullColor() + playerCount;
+								}
+								else {
+									playerCount = cm.getLobbyPlayerCountColor() + playerCount;
+								}
+							}
+							else {
 								playerCount = cm.getLobbyPlayerCountColor() + playerCount;
+							}
 							sign.setLine(1, playerCount);
-							Stage status = r == null ? Stage.WAITING : r.getStage();
+							Stage status = r.getStage();
 							ChatColor color = null;
 							switch (status){
-							case WAITING:
-								color = cm.getLobbyWaitingColor();
-							case PREPARING:
-								color = cm.getLobbyPreparingColor();
-							case PLAYING:
-								color = cm.getLobbyPlayingColor();
-							case RESETTING:
-								color = cm.getLobbyResettingColor();
+								case WAITING:
+									color = cm.getLobbyWaitingColor();
+									break;
+								case PREPARING:
+									color = cm.getLobbyPreparingColor();
+									break;
+								case PLAYING:
+									color = cm.getLobbyPlayingColor();
+									break;
+								case RESETTING:
+									color = cm.getLobbyResettingColor();
+									break;
 							}
 							sign.setLine(2, color + Main.locale.getMessage(status.toString()));
 							String time = "";
 							if (status != Stage.WAITING && status != Stage.RESETTING){
 								if (r.getRemainingTime() == -1){
 									String seconds = Integer.toString(r.getTime() % 60);
-									if (seconds.length() == 1)
+									if (seconds.length() == 1){
 										seconds = "0" + seconds;
+									}
 									time = cm.getLobbyTimeInfiniteColor() +
 											df.format(r.getTime() / 60) + ":" + seconds;
 								}
 								else {
 									String seconds = Integer.toString(r.getRemainingTime() % 60);
-									if (seconds.length() == 1)
+									if (seconds.length() == 1){
 										seconds = "0" + seconds;
+									}
 									time = df.format(r.getRemainingTime() / 60) + ":" + seconds;
-									if (r.getRemainingTime() <= 60)
+									if (r.getRemainingTime() <= 60){
 										time = cm.getLobbyTimeWarningColor() + time;
-									else
+									}
+									else {
 										time = cm.getLobbyTimeColor() + time;
+									}
 								}
 							}
 							sign.setLine(3, time);
 						}
 						else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0){
 							for (int i = 0; i <= 3; i++){
-								if (r != null){
-									List<MGPlayer> players = Minigame.getMinigameInstance(plugin).getConfigManager().areSpectatorsOnLobbySigns() ?
-											r.getPlayerList() : r.getAlivePlayerList();
-											if (players.size() >= (this.getNumber() - 1) * 4 + i + 1){
-												MGPlayer p = players.get((this.getNumber() - 1) * 4 + i);
-												String name = p.getPrefix() + p.getName();
-												if (name.length() > 16)
-													name = name.substring(0, 16);
-												sign.setLine(i, name);
-											}
-											else
-												sign.setLine(i, "");
+								List<MGPlayer> players = Minigame.getMinigameInstance(plugin).getConfigManager().areSpectatorsOnLobbySigns() ? r.getPlayerList() : r.getAlivePlayerList();
+								if (players.size() >= (this.getNumber() - 1) * 4 + i + 1){
+									MGPlayer p = players.get((this.getNumber() - 1) * 4 + i);
+									String name = p.getPrefix() + p.getName();
+									if (name.length() > 16){
+										name = name.substring(0, 16);
+									}
+									sign.setLine(i, name);
 								}
-								else
+								else {
 									sign.setLine(i, "");
+								}
 							}
 						}
-						if (Main.plugin.isEnabled())
-							Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
+						if (Main.plugin.isEnabled()){
+							Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
 								public void run(){
 									sign.update();
 								}
 							});
+						}
 					}
-					else
+					else {
 						remove();
+					}
 				}
 			}
 		}
-		else
+		else {
 			reset();
+		}
 	}
 
 	/**
 	 * Resets this lobby sign's text as if its arena was empty and in {@link Stage#WAITING}.
+	 *
 	 * @since 0.1.0
 	 */
 	public void reset(){
@@ -328,13 +361,14 @@ public class LobbySign {
 			Block b = w.getBlockAt(this.getX(), this.getY(), this.getZ());
 			if (b != null){
 				if (b.getState() instanceof Sign){
-					final Sign sign = (Sign)b.getState();
+					final Sign sign = (Sign) b.getState();
 					ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
 					if (this.getType() == LobbyType.STATUS){
 						sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
 						String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
-						if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0)
+						if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0){
 							max = "∞";
+						}
 						sign.setLine(1, cm.getLobbyPlayerCountColor() + "0/" + max);
 						sign.setLine(2, cm.getLobbyWaitingColor() + Main.locale.getMessage("waiting"));
 						sign.setLine(3, "");
@@ -344,18 +378,19 @@ public class LobbySign {
 							sign.setLine(i, "");
 						}
 					}
-					Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
+					Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
 						public void run(){
 							sign.update();
 						}
 					});
 				}
-				else
-					Bukkit.getScheduler().runTask(Main.plugin, new Runnable(){
+				else {
+					Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
 						public void run(){
 							remove();
 						}
 					});
+				}
 			}
 		}
 	}

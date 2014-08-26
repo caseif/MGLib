@@ -1,9 +1,5 @@
 package net.amigocraft.mglib.api;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,8 +7,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
- * A custom class for managing YAML files which forces the first section title to be made lowercase. This is to allow for case-insensitive arena names.
+ * A custom class for managing YAML files which forces the first section title to be made lowercase. This is to allow
+ * for case-insensitive arena names.
+ *
  * @since 0.3.0
  */
 public class MGYamlConfiguration extends YamlConfiguration {
@@ -205,8 +207,10 @@ public class MGYamlConfiguration extends YamlConfiguration {
 	@Override
 	public void addDefaults(Map<String, Object> defaults){
 		Map<String, Object> newMap = new HashMap<String, Object>();
-		for (String s : defaults.keySet())
+		for (String s : defaults.keySet()){
 			newMap.put(getNewKey(s), defaults.get(s));
+		}
+		super.addDefaults(newMap);
 	}
 
 	private static String getNewKey(String path){
@@ -215,8 +219,9 @@ public class MGYamlConfiguration extends YamlConfiguration {
 				String[] pathArray = path.split("\\.");
 				pathArray[0] = pathArray[0].toLowerCase();
 				String newPath = "";
-				for (String s : pathArray)
+				for (String s : pathArray){
 					newPath += s;
+				}
 				return newPath;
 			}
 			return path.toLowerCase();

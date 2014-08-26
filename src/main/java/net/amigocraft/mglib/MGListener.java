@@ -1,28 +1,10 @@
 package net.amigocraft.mglib;
 
-import static net.amigocraft.mglib.Main.locale;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import net.amigocraft.mglib.api.LobbySign;
-import net.amigocraft.mglib.api.LobbyType;
-import net.amigocraft.mglib.api.Location3D;
-import net.amigocraft.mglib.api.MGPlayer;
-import net.amigocraft.mglib.api.Minigame;
-import net.amigocraft.mglib.api.Round;
+import net.amigocraft.mglib.api.*;
 import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.round.LobbyClickEvent;
-import net.amigocraft.mglib.exception.NoSuchArenaException;
-import net.amigocraft.mglib.exception.InvalidLocationException;
-import net.amigocraft.mglib.exception.NoSuchPlayerException;
-import net.amigocraft.mglib.exception.PlayerOfflineException;
-import net.amigocraft.mglib.exception.PlayerPresentException;
-import net.amigocraft.mglib.exception.RoundFullException;
+import net.amigocraft.mglib.exception.*;
 import net.amigocraft.mglib.misc.JoinResult;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,51 +13,31 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockGrowEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static net.amigocraft.mglib.Main.locale;
 
 class MGListener implements Listener {
 
 	static HashMap<String, List<String>> worlds = new HashMap<String, List<String>>();
 
 	static void initialize(){
-		for (Minigame mg : Minigame.getMinigameInstances())
+		for (Minigame mg : Minigame.getMinigameInstances()){
 			MGListener.addWorlds(mg.getPlugin().getName());
+		}
 	}
 
 	static void addWorlds(String plugin){
@@ -85,8 +47,9 @@ class MGListener implements Listener {
 			try {
 				List<String> worldList = new ArrayList<String>();
 				y.load(f);
-				for (String k : y.getKeys(false))
+				for (String k : y.getKeys(false)){
 					worldList.add(k);
+				}
 				worlds.put(plugin, worldList);
 			}
 			catch (Exception ex){
@@ -99,7 +62,7 @@ class MGListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST) // so that we can prepare everything for the hooking plugins
 	public void onPlayerQuit(PlayerQuitEvent e){
 		final String p = e.getPlayer().getName();
-		for (Minigame mg : Minigame.getMinigameInstances())
+		for (Minigame mg : Minigame.getMinigameInstances()){
 			for (Round r : mg.getRoundList()){
 				MGPlayer mp = r.getMGPlayer(p);
 				if (mp != null){
@@ -110,8 +73,9 @@ class MGListener implements Listener {
 							UUIDFetcher.removeUUID(p);
 							YamlConfiguration y = new YamlConfiguration();
 							File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
-							if (!f.exists())
+							if (!f.exists()){
 								f.createNewFile();
+							}
 							y.load(f);
 							Location el = mg.getConfigManager().getDefaultExitLocation();
 							y.set(pUUID + ".w", el.getWorld().getName());
@@ -127,21 +91,28 @@ class MGListener implements Listener {
 					}
 				}
 			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityDamage(EntityDamageEvent e){
 		Player pl = null;
 		Player p2 = null; // don't ask why it's named like this
-		if (e.getEntity() instanceof Player)
-			p2 = (Player)e.getEntity();
+		if (e.getEntity() instanceof Player){
+			p2 = (Player) e.getEntity();
+		}
 		if (e instanceof EntityDamageByEntityEvent){
-			Entity damager = ((EntityDamageByEntityEvent)e).getDamager();
+			Entity damager = ((EntityDamageByEntityEvent) e).getDamager();
 			if (damager instanceof Player) // damager is a player
-				pl = (Player)damager;
+			{
+				pl = (Player) damager;
+			}
 			else if (damager instanceof Projectile) // damager is an arrow or something
-				if (((Projectile)damager).getShooter() instanceof Player)
-					pl = (Player)((Projectile)damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow) 
+			{
+				if (((Projectile) damager).getShooter() instanceof Player){
+					pl = (Player) ((Projectile) damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow)
+				}
+			}
 
 			//TODO: probably rewrite this bit at some point
 			if (pl != null || p2 != null){
@@ -307,15 +278,14 @@ class MGListener implements Listener {
 					Object packet;
 					try {
 						packetClass = MGUtil.getMCClass("PacketPlayInClientCommand");
-						packet = packetClass.getConstructor(MGUtil.getMCClass("EnumClientCommand"))
-								.newInstance(Enum.valueOf((Class<? extends Enum>)MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"));
+						packet = packetClass.getConstructor(MGUtil.getMCClass("EnumClientCommand")).newInstance(Enum.valueOf((Class<? extends Enum>) MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"));
 					}
 					catch (Exception ex){
 						packetClass = MGUtil.getMCClass("Packet205ClientCommand");
 						packet = packetClass.getConstructor().newInstance();
 						packetClass.getDeclaredField("a").set(packet, 1);
 					}
-					Object nmsPlayer = MGUtil.getCraftClass("entity.CraftPlayer").getMethod("getHandle").invoke(e.getEntity(), new Object[0]);
+					Object nmsPlayer = MGUtil.getCraftClass("entity.CraftPlayer").getMethod("getHandle").invoke(e.getEntity());
 					Object conn = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
 					conn.getClass().getMethod("a", packetClass).invoke(conn, packet);
 				}
@@ -323,12 +293,7 @@ class MGListener implements Listener {
 					ex.printStackTrace();
 				}
 				EntityDamageEvent ed = e.getEntity().getLastDamageCause();
-				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(),
-						ed instanceof EntityDamageByEntityEvent ?
-								((EntityDamageByEntityEvent)ed).getDamager() instanceof Projectile ?
-										(Entity)((Projectile)((EntityDamageByEntityEvent)ed).getDamager()).getShooter() :
-											((EntityDamageByEntityEvent)ed).getDamager() :
-												null));
+				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(), ed instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent) ed).getDamager() instanceof Projectile ? (Entity) ((Projectile) ((EntityDamageByEntityEvent) ed).getDamager()).getShooter() : ((EntityDamageByEntityEvent) ed).getDamager() : null));
 			}
 		}
 	}
@@ -355,8 +320,9 @@ class MGListener implements Listener {
 		try {
 			YamlConfiguration y = new YamlConfiguration();
 			File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
-			if (!f.exists())
+			if (!f.exists()){
 				f.createNewFile();
+			}
 			y.load(f);
 			String pUUID = UUIDFetcher.getUUIDOf(p).toString();
 			if (y.isSet(pUUID)){
@@ -366,7 +332,6 @@ class MGListener implements Listener {
 				final double zz = y.getDouble(pUUID + ".z");
 				MGPlayer mp = new MGPlayer("MGLib", p, "null");
 				mp.reset(new Location(Bukkit.getWorld(ww), xx, yy, zz));
-				mp = null;
 				y.set(pUUID, null);
 				y.save(f);
 			}
@@ -386,35 +351,46 @@ class MGListener implements Listener {
 				if (p != null){
 					Location l = e.getTo();
 					if (!l.getWorld().getName().equals(r.getWorld())){
+						found = true;
 						try {
 							p.removeFromRound(l);
 						}
-						catch (NoSuchPlayerException ex){} // this can never happen
-						catch (PlayerOfflineException ex){} // this can definitely never happen
+						catch (NoSuchPlayerException ex){ // this can never happen
+							ex.printStackTrace();
+						}
+						catch (PlayerOfflineException ex){ // this can definitely never happen
+							ex.printStackTrace();
+						}
 					}
 					else {
 						Location min = r.getMinBound();
 						Location max = r.getMaxBound();
 						if (min != null && max != null){
-							if (l.getX() < min.getX() || 
+							if (l.getX() < min.getX() ||
 									l.getY() < min.getY() ||
 									l.getZ() < min.getZ() ||
 									l.getX() > max.getX() ||
 									l.getY() > max.getY() ||
 									l.getZ() > max.getZ()){
+								found = true;
 								try {
 									p.removeFromRound(l);
 								}
-								catch (NoSuchPlayerException ex){} // this can never happen
-								catch (PlayerOfflineException ex){} // this can definitely never happen
+								catch (NoSuchPlayerException ex){ // this can never happen
+									ex.printStackTrace();
+								}
+								catch (PlayerOfflineException ex){ // this can definitely never happen
+									ex.printStackTrace();
+								}
 							}
 						}
 					}
 					break;
 				}
 			}
-			if (found)
+			if (found){
 				break;
+			}
 		}
 	}
 
@@ -428,8 +404,7 @@ class MGListener implements Listener {
 					return;
 				}
 				if (e.getInventory().getHolder() instanceof BlockState){
-					mg.getRollbackManager().logInventoryChange(e.getInventory(),
-							((BlockState)e.getInventory().getHolder()).getBlock(), mp.getArena());
+					mg.getRollbackManager().logInventoryChange(e.getInventory(), ((BlockState) e.getInventory().getHolder()).getBlock(), mp.getArena());
 					return;
 				}
 			}
@@ -439,30 +414,36 @@ class MGListener implements Listener {
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent e){
-		for (Minigame mg : Minigame.getMinigameInstances())
-			for (Round r : mg.getRoundList())
-				if (r.isRollbackEnabled())
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			for (Round r : mg.getRoundList()){
+				if (r.isRollbackEnabled()){
 					if (r.getPlayers().containsKey(e.getPlayer().getName())){
-						if (!mg.getConfigManager().isBlockPlaceAllowed())
+						if (!mg.getConfigManager().isBlockPlaceAllowed()){
 							e.setCancelled(true);
+						}
 						else if (e.getBlock().getType() == Material.TNT){
 							List<Location3D> list = new ArrayList<Location3D>();
-							if (r.hasMetadata("tntBlocks"))
-								list = (List<Location3D>)r.getMetadata("tntBlocks");
+							if (r.hasMetadata("tntBlocks")){
+								list = (List<Location3D>) r.getMetadata("tntBlocks");
+							}
 							list.add(Location3D.valueOf(e.getBlock().getLocation()));
 							r.setMetadata("tntBlocks", list);
 						}
-						else
+						else {
 							mg.getRollbackManager().logBlockChange(e.getBlockReplacedState().getBlock(), r.getArena());
+						}
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent e){
 		//Main.log.info("break: " + Bukkit.getWorlds().get(0).getTime() + "");
-		for (Minigame mg : Minigame.getMinigameInstances())
-			for (Round r : mg.getRoundList())
-				if (r.isRollbackEnabled())
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			for (Round r : mg.getRoundList()){
+				if (r.isRollbackEnabled()){
 					if (r.getPlayers().containsKey(e.getPlayer().getName())){
 						if (!mg.getConfigManager().isBlockBreakAllowed()){
 							e.setCancelled(true);
@@ -472,11 +453,15 @@ class MGListener implements Listener {
 							//TODO: handle rollback of attached blocks
 							for (int y = 1; e.getBlock().getY() + y < 256; y++){
 								Material type = e.getBlock().getLocation().add(0, y, 0).getBlock().getType();
-								if (type == Material.SAND || type == Material.GRAVEL || type == Material.ANVIL || type == Material.DRAGON_EGG)
+								if (type == Material.SAND || type == Material.GRAVEL || type == Material.ANVIL || type == Material.DRAGON_EGG){
 									mg.getRollbackManager().logBlockChange(e.getBlock().getLocation().add(0, y, 0).getBlock(), r.getArena());
+								}
 							}
 						}
 					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -494,15 +479,14 @@ class MGListener implements Listener {
 				}
 			}
 		}
-		if (cancelled)
+		if (cancelled){
 			return;
-		Block adjBlock = null;
-		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		}
+		Block adjBlock = MGUtil.getAttachedSign(e.getBlock());
 		if (adjBlock != null){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				for (LobbySign l : mg.getLobbyManager().signs.values()){
-					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
-							&& l.getZ() == adjBlock.getZ() &&
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY() && l.getZ() == adjBlock.getZ() &&
 							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
@@ -527,15 +511,14 @@ class MGListener implements Listener {
 				}
 			}
 		}
-		if (cancelled)
+		if (cancelled){
 			return;
-		Block adjBlock = null;
-		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		}
+		Block adjBlock = MGUtil.getAttachedSign(e.getBlock());
 		if (adjBlock != null){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				for (LobbySign l : mg.getLobbyManager().signs.values()){
-					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
-							&& l.getZ() == adjBlock.getZ() &&
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY() && l.getZ() == adjBlock.getZ() &&
 							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
@@ -575,15 +558,14 @@ class MGListener implements Listener {
 				}
 			}
 		}
-		if (cancelled)
+		if (cancelled){
 			return;
-		Block adjBlock = null;
-		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		}
+		Block adjBlock = MGUtil.getAttachedSign(e.getBlock());
 		if (adjBlock != null){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				for (LobbySign l : mg.getLobbyManager().signs.values()){
-					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
-							&& l.getZ() == adjBlock.getZ() &&
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY() && l.getZ() == adjBlock.getZ() &&
 							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
@@ -623,15 +605,14 @@ class MGListener implements Listener {
 				}
 			}
 		}
-		if (cancelled)
+		if (cancelled){
 			return;
-		Block adjBlock = null;
-		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		}
+		Block adjBlock = MGUtil.getAttachedSign(e.getBlock());
 		if (adjBlock != null){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				for (LobbySign l : mg.getLobbyManager().signs.values()){
-					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
-							&& l.getZ() == adjBlock.getZ() &&
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY() && l.getZ() == adjBlock.getZ() &&
 							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
@@ -656,15 +637,14 @@ class MGListener implements Listener {
 				}
 			}
 		}
-		if (cancelled)
+		if (cancelled){
 			return;
-		Block adjBlock = null;
-		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		}
+		Block adjBlock = MGUtil.getAttachedSign(e.getBlock());
 		if (adjBlock != null){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				for (LobbySign l : mg.getLobbyManager().signs.values()){
-					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
-							&& l.getZ() == adjBlock.getZ() &&
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY() && l.getZ() == adjBlock.getZ() &&
 							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
@@ -689,15 +669,14 @@ class MGListener implements Listener {
 				}
 			}
 		}
-		if (cancelled)
+		if (cancelled){
 			return;
-		Block adjBlock = null;
-		adjBlock = MGUtil.getAttachedSign(e.getBlock());
+		}
+		Block adjBlock = MGUtil.getAttachedSign(e.getBlock());
 		if (adjBlock != null){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				for (LobbySign l : mg.getLobbyManager().signs.values()){
-					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY()
-							&& l.getZ() == adjBlock.getZ() &&
+					if (l.getX() == adjBlock.getX() && l.getY() == adjBlock.getY() && l.getZ() == adjBlock.getZ() &&
 							l.getWorld().equals(adjBlock.getWorld().getName())){
 						e.setCancelled(true);
 						break;
@@ -728,8 +707,7 @@ class MGListener implements Listener {
 			for (Minigame mg : Minigame.getMinigameInstances()){ // iterate registered minigames
 				if (e.getLine(0).equalsIgnoreCase(mg.getConfigManager().getSignId())){ // it's a lobby sign-to-be
 					if (e.getPlayer().hasPermission(mg.getPlugin().getName() + ".lobby.create")){
-						if (!e.getLine(1).equalsIgnoreCase("players") ||
-								MGUtil.isInteger(e.getLine(3))){ // make sure last line (sign index) is a number if it's a player sign
+						if (!e.getLine(1).equalsIgnoreCase("players") || MGUtil.isInteger(e.getLine(3))){ // make sure last line (sign index) is a number if it's a player sign
 							try {
 								int index = MGUtil.isInteger(e.getLine(3)) ? Integer.parseInt(e.getLine(3)) : 0;
 								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(2), LobbyType.fromString(e.getLine(1)), index);
@@ -738,16 +716,20 @@ class MGListener implements Listener {
 								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-not-exists"));
 							}
 							catch (IllegalArgumentException ex){
-								if (ex.getMessage().contains("index"))
+								if (ex.getMessage().contains("index")){
 									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-index"));
-								else if (ex.getMessage().contains("Invalid string!"))
+								}
+								else if (ex.getMessage().contains("Invalid string!")){
 									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-type"));
-								else
+								}
+								else {
 									ex.printStackTrace();
+								}
 							}
 						}
-						else
+						else {
 							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-index"));
+						}
 					}
 					break;
 				}
@@ -759,11 +741,12 @@ class MGListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent e){
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			MGPlayer p = mg.getMGPlayer(e.getPlayer().getName());
-			if (p != null)
+			if (p != null){
 				if (p.isSpectating()){
 					e.setCancelled(true);
 					return;
 				}
+			}
 		}
 		if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK){
 			if (e.getClickedBlock().getState() instanceof Sign){
@@ -792,11 +775,13 @@ class MGListener implements Listener {
 							JoinResult result = r.addPlayer(e.getPlayer().getName());
 							MGUtil.callEvent(new LobbyClickEvent(e.getPlayer().getName(), r, ls, result));
 						}
-						catch (PlayerOfflineException ex){} // this can never happen
-						catch (PlayerPresentException e1){
+						catch (PlayerOfflineException ex){ // this can never happen
+							ex.printStackTrace();
+						}
+						catch (PlayerPresentException ex){
 							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("in-round"));
 						}
-						catch (RoundFullException e1){
+						catch (RoundFullException ex){
 							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("round-full"));
 						}
 					}
@@ -808,32 +793,37 @@ class MGListener implements Listener {
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e){
 		if (e.getMessage().startsWith("kit")){
-			for (Minigame mg : Minigame.getMinigameInstances())
+			for (Minigame mg : Minigame.getMinigameInstances()){
 				if (mg.isPlayer(e.getPlayer().getName())){
 					if (!mg.getConfigManager().areKitsAllowed()){
 						e.setCancelled(true);
 						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("no-kits"));
 					}
 				}
+			}
 		}
 		else if (e.getMessage().startsWith("msg") || e.getMessage().startsWith("tell") || e.getMessage().startsWith("r ") ||
 				e.getMessage().startsWith("me")){
-			for (Minigame mg : Minigame.getMinigameInstances())
+			for (Minigame mg : Minigame.getMinigameInstances()){
 				if (mg.isPlayer(e.getPlayer().getName())){
 					if (!mg.getConfigManager().arePMsAllowed()){
 						e.setCancelled(true);
 						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("no-pms"));
 					}
 				}
+			}
 		}
 	}
 
-	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerHungerEvent(FoodLevelChangeEvent e){
-		if (e.getEntityType() == EntityType.PLAYER)
-			for (Minigame mg : Minigame.getMinigameInstances())
-				if (!mg.getConfigManager().isHungerEnabled() && mg.isPlayer(((Player)e.getEntity()).getName()))
+		if (e.getEntityType() == EntityType.PLAYER){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				if (!mg.getConfigManager().isHungerEnabled() && mg.isPlayer((e.getEntity()).getName())){
 					e.setCancelled(true);
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -853,10 +843,11 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			for (Round r : mg.getRoundList()){
 				if (r.hasMetadata("tntBlocks")){
-					List<Location3D> list = (List<Location3D>)r.getMetadata("tntBlocks");
+					List<Location3D> list = (List<Location3D>) r.getMetadata("tntBlocks");
 					if (list.contains(new Location3D(e.getLocation().getBlockX(), e.getLocation().getBlockY(), e.getLocation().getBlockZ()))){
-						for (Block b : e.blockList())
+						for (Block b : e.blockList()){
 							mg.getRollbackManager().logBlockChange(b, r.getArena());
+						}
 						mg.getRollbackManager().logBlockChange(e.getLocation().getBlock(), r.getArena());
 						break;
 					}
@@ -873,15 +864,20 @@ class MGListener implements Listener {
 				MGPlayer sender = mg.getMGPlayer(e.getPlayer().getName());
 				for (Player pl : e.getRecipients()){
 					MGPlayer recipient = mg.getMGPlayer(pl.getName());
-					if ((sender == null) != (recipient == null))
+					if ((sender == null) != (recipient == null)){
 						remove.add(pl);
-					else if (sender != null && recipient != null)
-						if (!sender.getRound().getArena().equals(recipient.getRound().getArena()))
+					}
+					else if (sender != null && recipient != null){
+						if (!sender.getRound().getArena().equals(recipient.getRound().getArena())){
 							remove.add(pl);
-						else if (mg.getConfigManager().isTeamChatEnabled() && (sender.getTeam() != null && !sender.getTeam().equals(recipient.getTeam())))
+						}
+						else if (mg.getConfigManager().isTeamChatEnabled() && (sender.getTeam() != null && !sender.getTeam().equals(recipient.getTeam()))){
 							remove.add(pl);
-						else if (mg.getConfigManager().isSpectatorChatSeparate() && sender.isSpectating() && !recipient.isSpectating())
+						}
+						else if (mg.getConfigManager().isSpectatorChatSeparate() && sender.isSpectating() && !recipient.isSpectating()){
 							remove.add(pl);
+						}
+					}
 				}
 			}
 		}
@@ -907,7 +903,7 @@ class MGListener implements Listener {
 	public void onEntityTarget(EntityTargetEvent e){
 		if (e.getTarget() != null && e.getTarget().getType() == EntityType.PLAYER){
 			for (Minigame mg : Minigame.getMinigameInstances()){
-				MGPlayer mp = mg.getMGPlayer(((Player)e.getTarget()).getName());
+				MGPlayer mp = mg.getMGPlayer(((Player) e.getTarget()).getName());
 				if (mp != null && (!mg.getConfigManager().isEntityTargetingEnabled() || mp.isSpectating())){
 					e.setCancelled(true);
 				}
@@ -917,13 +913,12 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onHangingBreak(HangingBreakByEntityEvent e){
-		if (e.getRemover() instanceof Player || (e.getRemover() instanceof Projectile &&
-				((Projectile)e.getRemover()).getShooter() instanceof Player)){
-			for (Minigame mg : Minigame.getMinigameInstances())
-				if (!mg.getConfigManager().isHangingBreakAllowed() &&
-						mg.isPlayer(e.getRemover() instanceof Player ? ((Player)e.getRemover()).getName() :
-							((Player)((Projectile)e.getRemover()).getShooter()).getName()))
+		if (e.getRemover() instanceof Player || (e.getRemover() instanceof Projectile && ((Projectile) e.getRemover()).getShooter() instanceof Player)){
+			for (Minigame mg : Minigame.getMinigameInstances()){
+				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(e.getRemover() instanceof Player ? ((Player) e.getRemover()).getName() : ((Player) ((Projectile) e.getRemover()).getShooter()).getName())){
 					e.setCancelled(true);
+				}
+			}
 		}
 	}
 

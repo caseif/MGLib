@@ -1,20 +1,10 @@
 package net.amigocraft.mglib;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Logger;
-
 import net.amigocraft.mglib.api.Locale;
 import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.MGLibEvent;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,8 +12,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.logging.Logger;
+
 /**
  * MGLib's primary (central) class.
+ *
  * @author Maxim Roncacé
  * @version 0.3.0
  * @since 0.1.0
@@ -31,31 +27,31 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
 
 	/**
-	 * The current instance of the plugin.
-	 * <br><br>
-	 * This is for use within the library; please do not modify this in your plugin or everything will break.
+	 * The current instance of the plugin. <br><br> This is for use within the library; please do not modify this in
+	 * your plugin or everything will break.
+	 *
 	 * @since 0.1.0
 	 */
 	public static Main plugin;
 
 	/**
-	 * MGLib's logger.
-	 * <br><br>
-	 * This is for use within the library; please do not use this in your plugin or you'll confuse the server owner.
+	 * MGLib's logger. <br><br> This is for use within the library; please do not use this in your plugin or you'll
+	 * confuse the server owner.
+	 *
 	 * @since 0.1.0
 	 */
 	public static Logger log;
-	
+
 	/**
 	 * Whether block changes should be logged immediately.
 	 */
 	public static boolean IMMEDIATE_LOGGING;
-	
+
 	/**
 	 * The minimum level at which messages should be logged.
 	 */
 	public static LogLevel LOGGING_LEVEL;
-	
+
 	/**
 	 * The locale for MGLib itself.
 	 */
@@ -63,11 +59,12 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override.
+	 *
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("unchecked")
 	public void onEnable(){
-		
+
 		plugin = this;
 		log = getLogger();
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
@@ -78,10 +75,10 @@ public class Main extends JavaPlugin {
 			LOGGING_LEVEL = LogLevel.WARNING;
 			Main.log("The configured logging level is invalid!", LogLevel.WARNING);
 		}
-		
+
 		locale = new Locale("MGLib");
 		locale.initialize();
-		
+
 		// updater
 		if (getConfig().getBoolean("enable-updater")){
 			new Updater(this, 74979, this.getFile(), Updater.UpdateType.DEFAULT, true);
@@ -97,24 +94,33 @@ public class Main extends JavaPlugin {
 				log.warning(locale.getMessage("metrics-fail"));
 			}
 		}
-		if (this.getDescription().getVersion().contains("dev"))
+		if (this.getDescription().getVersion().contains("dev")){
 			log.warning(locale.getMessage("dev-build"));
-		
+		}
+
 		// store UUIDs of online players
 		List<String> names = new ArrayList<String>();
 		try {
-			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
-				for (Player pl :
-					(Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
+				for (Player pl : (Collection<? extends Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 					names.add(pl.getName());
-			else
-				for (Player pl :
-					(Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0]))
+				}
+			}
+			else {
+				for (Player pl : (Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 					names.add(pl.getName());
+				}
+			}
 		}
-		catch (NoSuchMethodException ex){} // can never happen
-		catch (InvocationTargetException ex){} // can also never happen
-		catch (IllegalAccessException ex){} // can still never happen
+		catch (NoSuchMethodException ex){ // can never happen
+			ex.printStackTrace();
+		}
+		catch (InvocationTargetException ex){ // can also never happen
+			ex.printStackTrace();
+		}
+		catch (IllegalAccessException ex){ // can still never happen
+			ex.printStackTrace();
+		}
 		try {
 			new UUIDFetcher(names).call();
 		}
@@ -122,28 +128,32 @@ public class Main extends JavaPlugin {
 			ex.printStackTrace();
 			Main.log.severe(locale.getMessage("uuid-fail"));
 		}
-		
+
 		log.info(this + " " + locale.getMessage("enabled"));
 	}
 
 	/**
 	 * Standard {@link JavaPlugin#onDisable()} override.
+	 *
 	 * @since 0.1.0
 	 */
 	public void onDisable(){
 		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("ending-rounds"));
-		for (Minigame mg : Minigame.getMinigameInstances())
-			for (Round r : mg.getRoundList())
+		for (Minigame mg : Minigame.getMinigameInstances()){
+			for (Round r : mg.getRoundList()){
 				r.end(false);
+			}
+		}
 		Minigame.uninitialize();
 		MGLibEvent.uninitialize();
 		UUIDFetcher.uninitialize();
 		log.info(this + " " + locale.getMessage("disabled"));
 		Main.uninitialize();
 	}
-	
+
 	/**
 	 * This method should not be called from your plugin. So don't use it. Please.
+	 *
 	 * @param plugin the name of the plugin to register worlds for.
 	 */
 	public static void registerWorlds(String plugin){
@@ -154,17 +164,18 @@ public class Main extends JavaPlugin {
 		log = null;
 		plugin = null;
 	}
-	
+
 	/**
 	 * Internal convenience method for logging. <strong>Please do not call this from your plugin.</strong>
+	 *
 	 * @param message the message to log.
-	 * @param level the {@link LogLevel level} at which to log the message.
+	 * @param level   the {@link LogLevel level} at which to log the message.
 	 * @since 0.3.0
 	 */
 	public static void log(String message, LogLevel level){
 		MGUtil.log(message, "MGLib", level);
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if (label.equalsIgnoreCase("mglib")){
@@ -174,9 +185,10 @@ public class Main extends JavaPlugin {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
+	 *
 	 * @return a hashmap mapping the names of online players to their respective UUIDs.
 	 * @since 0.3.0
 	 */
