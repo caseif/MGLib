@@ -76,7 +76,7 @@ public class Round implements Metadatable {
 	 * @param arena  the name of the arena in which this round takes place in.
 	 * @throws NoSuchArenaException if the specified arena does not exist.
 	 */
-	public Round(String plugin, String arena) throws NoSuchArenaException{
+	public Round(String plugin, String arena) throws NoSuchArenaException {
 		MGYamlConfiguration y = loadArenaYaml(plugin);
 		if (!y.contains(arena)){
 			throw new NoSuchArenaException();
@@ -111,7 +111,7 @@ public class Round implements Metadatable {
 		}
 		this.plugin = plugin; // set globals
 		this.arena = arena.toLowerCase();
-		this.displayName = this.arena = cs.contains("displayname") ? cs.getString("displayname") : arena.toLowerCase();
+		this.displayName = cs.contains("displayname") ? cs.getString("displayname") : arena.toLowerCase();
 		ConfigManager cm = getConfigManager();
 		this.prepareTime = cm.getDefaultPreparationTime();
 		this.roundTime = cm.getDefaultPlayingTime();

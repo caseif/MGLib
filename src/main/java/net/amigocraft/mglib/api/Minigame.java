@@ -156,7 +156,7 @@ public class Minigame {
 	 * @since 0.1.0
 	 */
 	public Round createRound(String arena) throws NoSuchArenaException{
-		Round r = new Round(plugin.getName(), arena); // create the Round object
+		Round r = new Round(plugin.getName(), arena.toLowerCase()); // create the Round object
 		r.setStage(Stage.WAITING); // default to waiting stage
 		rounds.put(arena.toLowerCase(), r); // register arena with MGLib
 		return r; // give the calling plugin the Round object

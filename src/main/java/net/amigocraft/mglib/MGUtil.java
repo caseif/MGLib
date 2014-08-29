@@ -34,6 +34,7 @@ public class MGUtil {
 
 	private static boolean NMS_SUPPORT = true;
 	private static Constructor<?> packetPlayOutAnimation;
+	private static Constructor<?> packetPlayOutPlayerInfo;
 	private static Method getHandle;
 	private static Field playerConnection;
 	private static Method sendPacket;
@@ -50,16 +51,23 @@ public class MGUtil {
 			nmsVersion = array.length == 4 ? array[3] + "." : "";
 
 			//get the constructor of the packet
-			packetPlayOutAnimation = getMCClass("PacketPlayOutAnimation").getConstructor(getMCClass("Entity"), int.class);
+			try {
+				packetPlayOutAnimation = getMCClass("PacketPlayOutAnimation").getConstructor(getMCClass("Entity"), int.class); // 1.7.x and above
+				packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo").getConstructor(String.class, boolean.class, int.class); // 1.7.x and above
+			}
+			catch (ClassNotFoundException ex){
+				packetPlayOutAnimation = getMCClass("Packet18ArmAnimation").getConstructor(getMCClass("Entity"), int.class); // 1.6.x and below
+				packetPlayOutPlayerInfo = getMCClass("Packet201PlayerInfo").getConstructor(String.class, boolean.class, int.class); // 1.6.x and below
+			}
 			//get method for recieving craftplayer's entityplayer
-			getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle");
+			getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle"); // same between versions
 			//get the playerconnection of the entityplayer
-			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection");
+			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection"); // same between versions
 			//method to send the packet
-			sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet"));
+			sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet")); // same between versions
 		}
 		catch (Exception e){
-			Main.log.warning("Cannot access NMS codebase! Packet effects disabled.");
+			Main.log("Cannot access NMS codebase! Packet manipulation disabled.", LogLevel.WARNING);
 			NMS_SUPPORT = false;
 		}
 	}
@@ -288,6 +296,17 @@ public class MGUtil {
 	}
 
 	/**
+	 * Retrieves a class by the given name from the package <code>net.minecraft.server</code>.
+	 *
+	 * @param name the class to retrieve.
+	 * @return the class object from the package <code>net.minecraft.server</code>.
+	 * @throws ClassNotFoundException if the class does not exist in the package.
+	 */
+	public static Class<?> getNMSClass(String name) throws ClassNotFoundException{
+		return getMCClass(name);
+	}
+
+	/**
 	 * Retrieves a class by the given name from the package <code>org.bukkit.craftbukkit</code>.
 	 *
 	 * @param name the class to retrieve.
@@ -330,6 +349,23 @@ public class MGUtil {
 			}
 		}
 		return null;
+	}
+
+	//TODO: probably store the classes/fields
+	public static boolean sendPlayerInfoPacket(final Player recipient, final Player subject){
+		try {
+			int ping = (Integer)getNMSClass("EntityPlayer").getDeclaredField("ping").get(getHandle.invoke(subject));
+			Object packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), true, (Integer)ping);
+			sendPacket.invoke(
+					playerConnection.get(getHandle.invoke(recipient)), packet);
+			return true;
+		}
+		catch (Exception ex){ // just in case
+			ex.printStackTrace();
+			Main.log("Failed to send player info packet! Your server software may be incompatible with MGLib.",
+					LogLevel.SEVERE);
+		}
+		return false;
 	}
 
 }

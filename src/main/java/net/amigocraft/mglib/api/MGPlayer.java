@@ -179,18 +179,20 @@ public class MGPlayer implements Metadatable {
 			if (event.isCancelled()){
 				return;
 			}
-			Player p = getBukkitPlayer();
+			final Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
 				p.closeInventory(); // close any inventory they have open
 				try {
 					if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
-						for (Player pl : (Collection<? extends Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+						for (final Player pl : (Collection<? extends Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 							pl.hidePlayer(p);
+							MGUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 					else {
-						for (Player pl : (Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+						for (final Player pl : (Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 							pl.hidePlayer(p);
+							MGUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 				}
