@@ -13,7 +13,6 @@ public class MinigameRoundTickEvent extends MGRoundEvent {
 
 	/**
 	 * You probably shouldn't call this from your plugin. Let MGLib handle that.
-	 *
 	 * @param round       the round which has ticked.
 	 * @param oldTime     the round time before the tick.
 	 * @param stageChange whether the tick resulted in a stage change (e.g. from {@link Stage#PREPARING} to {@link
@@ -28,7 +27,6 @@ public class MinigameRoundTickEvent extends MGRoundEvent {
 
 	/**
 	 * Returns the round time before the tick.
-	 *
 	 * @return the time remaining in the round before the tick.
 	 * @since 0.1.0
 	 */
@@ -38,7 +36,6 @@ public class MinigameRoundTickEvent extends MGRoundEvent {
 
 	/**
 	 * Returns whether the tick resulted in a stage change for the round (e.g. from "PREPARING" to "PLAYING").
-	 *
 	 * @return whether the tick resulted in a stage change for the round.
 	 * @since 0.1.0
 	 */

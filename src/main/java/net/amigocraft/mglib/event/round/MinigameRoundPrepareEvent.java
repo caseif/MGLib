@@ -5,7 +5,6 @@ import org.bukkit.event.Cancellable;
 
 /**
  * Fired when an {@link Round MGLib round}'s preparation period begins.
- *
  * @since 0.1.0
  */
 public class MinigameRoundPrepareEvent extends MGRoundEvent implements Cancellable {
@@ -14,7 +13,6 @@ public class MinigameRoundPrepareEvent extends MGRoundEvent implements Cancellab
 
 	/**
 	 * Creates a new instance of this event.
-	 *
 	 * @param round The round associated with this event.
 	 * @since 0.1.0
 	 */

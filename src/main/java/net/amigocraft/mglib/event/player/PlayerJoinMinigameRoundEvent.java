@@ -7,7 +7,6 @@ import org.bukkit.event.Cancellable;
 
 /**
  * Thrown when a {@link MGPlayer player} joins an {@link Round MGLib round}.
- *
  * @since 0.1.0
  */
 public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancellable {
@@ -17,7 +16,6 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancel
 
 	/**
 	 * Creates a new instance of this event.
-	 *
 	 * @param round  the round the player has joined.
 	 * @param player the player involved in this event.
 	 * @since 0.1.0
@@ -29,7 +27,6 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancel
 
 	/**
 	 * Returns the {@link Round round} involved in this event.
-	 *
 	 * @return the {@link Round round} involved in this event.
 	 * @since 0.1.0
 	 */

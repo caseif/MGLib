@@ -7,7 +7,6 @@ public enum LobbyType {
 
 	/**
 	 * Retrieves a LobbySign value corresponding to the given string.
-	 *
 	 * @param s the string to match.
 	 * @return a LobbySign value corresponding to the given string.
 	 * @throws IllegalArgumentException if the given string does not match a lobby type.

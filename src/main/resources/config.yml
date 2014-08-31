@@ -18,6 +18,10 @@ rollback-logging: true
 # VERBOSE will log any messages not contained by the above categories, no matter how insignificant. This is not recommended for anyone unless they know exactly what they're getting themselves into.
 logging-level: INFO
 
+# When true, MGLib will never use Minecraft's vanilla spectator mode.
+# This toggle has been added in case problems arise due to its in-advance implementation.
+disable-vanilla-spectating: false
+
 # Should MGLib silently download and install updates when available?
 # We highly recommend you set this to true so you may run plugins using new API ,features.
 enable-updater: true

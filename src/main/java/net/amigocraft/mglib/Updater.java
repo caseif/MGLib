@@ -32,7 +32,6 @@ import java.util.zip.ZipFile;
  * An example of a good configuration option would be something similar to 'auto-update: true' - if this value is set to
  * false you may NOT run the auto-updater. <br> If you are unsure about these rules, please read the plugin submission
  * guidelines: http://goo.gl/8iU5l
- *
  * @author Gravity
  * @version 2.0
  */
@@ -130,7 +129,6 @@ class Updater {
 
 	/**
 	 * Initialize the updater
-	 *
 	 * @param plugin   The plugin that is checking for an update.
 	 * @param id       The dev.bukkit.org id of the project
 	 * @param file     The file that the plugin is running from, get this by doing this.getFile() from within your main
@@ -206,7 +204,6 @@ class Updater {
 
 	/**
 	 * Get the result of the update process.
-	 *
 	 * @return the result of the update process.
 	 */
 	public Updater.UpdateResult getResult(){
@@ -216,7 +213,6 @@ class Updater {
 
 	/**
 	 * Get the latest version's release type (release, beta, or alpha).
-	 *
 	 * @return the latest version's release type.
 	 */
 	public String getLatestType(){
@@ -226,7 +222,6 @@ class Updater {
 
 	/**
 	 * Get the latest version's game version.
-	 *
 	 * @return the latest version's game version.
 	 */
 	public String getLatestGameVersion(){
@@ -236,7 +231,6 @@ class Updater {
 
 	/**
 	 * Get the latest version's name.
-	 *
 	 * @return the latest version's name.
 	 */
 	public String getLatestName(){
@@ -246,7 +240,6 @@ class Updater {
 
 	/**
 	 * Get the latest version's file link.
-	 *
 	 * @return the latest version's file link.
 	 */
 	public String getLatestFileLink(){
@@ -294,7 +287,7 @@ class Updater {
 			while ((count = in.read(data, 0, Updater.BYTE_SIZE)) != -1){
 				downloaded += count;
 				fout.write(data, 0, count);
-				final int percent = (int) ((downloaded * 100) / fileLength);
+				final int percent = (int)((downloaded * 100) / fileLength);
 				if (this.announce && ((percent % 10) == 0)){
 					this.plugin.getLogger().info("Downloading update: " + percent + "% of " + fileLength + " bytes.");
 				}
@@ -482,7 +475,7 @@ class Updater {
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			final String response = reader.readLine();
 
-			final JSONArray array = (JSONArray) JSONValue.parse(response);
+			final JSONArray array = (JSONArray)JSONValue.parse(response);
 
 			if (array.size() == 0){
 				this.plugin.getLogger().warning("The updater could not find any files for the project id " + this.id);
@@ -490,10 +483,10 @@ class Updater {
 				return false;
 			}
 
-			this.versionName = (String) ((JSONObject) array.get(array.size() - 1)).get(Updater.TITLE_VALUE);
-			this.versionLink = (String) ((JSONObject) array.get(array.size() - 1)).get(Updater.LINK_VALUE);
-			this.versionType = (String) ((JSONObject) array.get(array.size() - 1)).get(Updater.TYPE_VALUE);
-			this.versionGameVersion = (String) ((JSONObject) array.get(array.size() - 1)).get(Updater.VERSION_VALUE);
+			this.versionName = (String)((JSONObject)array.get(array.size() - 1)).get(Updater.TITLE_VALUE);
+			this.versionLink = (String)((JSONObject)array.get(array.size() - 1)).get(Updater.LINK_VALUE);
+			this.versionType = (String)((JSONObject)array.get(array.size() - 1)).get(Updater.TYPE_VALUE);
+			this.versionGameVersion = (String)((JSONObject)array.get(array.size() - 1)).get(Updater.VERSION_VALUE);
 
 			return true;
 		}

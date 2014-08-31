@@ -32,7 +32,6 @@ import static net.amigocraft.mglib.Main.locale;
 
 /**
  * Represents a player participating in a minigame.
- *
  * @since 0.1.0
  */
 public class MGPlayer implements Metadatable {
@@ -50,7 +49,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Creates a new MGPlayer instance.
-	 *
 	 * @param plugin the plugin to associate the MGPlayer with.
 	 * @param name   the username of the player.
 	 * @param arena  the arena of the player.
@@ -64,7 +62,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the minigame plugin associated with this {@link MGPlayer}.
-	 *
 	 * @return the minigame plugin associated with this {@link MGPlayer}.
 	 * @since 0.1.0
 	 */
@@ -74,7 +71,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
-	 *
 	 * @return the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
 	 * @since 0.1.0
 	 */
@@ -84,7 +80,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the username of this {@link MGPlayer}.
-	 *
 	 * @return the username of this {@link MGPlayer}.
 	 * @since 0.1.0
 	 */
@@ -94,7 +89,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the arena associated with this {@link MGPlayer}.
-	 *
 	 * @return the arena associated with this {@link MGPlayer}.
 	 * @since 0.1.0
 	 */
@@ -104,7 +98,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves the prefix of this player (used on lobby signs).
-	 *
 	 * @return the prefix of this player.
 	 * @since 0.1.0
 	 */
@@ -114,7 +107,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves the name of the team this player is on, or null if they are not on a team.
-	 *
 	 * @return the name of the team this player is on, or null if they are not on a team.
 	 * @since 0.3.0
 	 */
@@ -124,7 +116,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Sets the name of the team this player is on.
-	 *
 	 * @param team the name of the team this player is on. Set to null for no team.
 	 * @since 0.3.0
 	 */
@@ -135,7 +126,6 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Sets the arena of this {@link MGPlayer}. Please do not call this method unless you understand the implications of
 	 * doing so.
-	 *
 	 * @param arena the new arena of this {@link MGPlayer}.
 	 * @since 0.1.0
 	 */
@@ -144,8 +134,16 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
+	 * Gets the {@link Round} associated with this player.
+	 * @return the {@link Round} associated with this player.
+	 * @since 0.1.0
+	 */
+	public Round getRound(){
+		return Minigame.getMinigameInstance(plugin).getRound(arena.toLowerCase());
+	}
+
+	/**
 	 * Gets whether this player is spectating their round, as opposed to participating in it.
-	 *
 	 * @return whether this player is spectating their round (can return true even if {@link Player#isDead()} returns
 	 * false).
 	 * @since 0.1.0
@@ -155,18 +153,7 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Gets the {@link Round} associated with this player.
-	 *
-	 * @return the {@link Round} associated with this player.
-	 * @since 0.1.0
-	 */
-	public Round getRound(){
-		return Minigame.getMinigameInstance(plugin).getRound(arena.toLowerCase());
-	}
-
-	/**
 	 * Sets whether this player is spectating or not.
-	 *
 	 * @param spectating whether the player is spectating.
 	 * @since 0.1.0
 	 */
@@ -184,15 +171,17 @@ public class MGPlayer implements Metadatable {
 				p.closeInventory(); // close any inventory they have open
 				try {
 					if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
-						for (final Player pl : (Collection<? extends Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+						for (final Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 							pl.hidePlayer(p);
-							MGUtil.sendPlayerInfoPacket(pl, p);
+							if (this.getRound().getConfigManager().areSpectatorsInTabList())
+								MGUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 					else {
-						for (final Player pl : (Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+						for (final Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 							pl.hidePlayer(p);
-							MGUtil.sendPlayerInfoPacket(pl, p);
+							if (this.getRound().getConfigManager().areSpectatorsInTabList())
+								MGUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 				}
@@ -206,7 +195,7 @@ public class MGPlayer implements Metadatable {
 					ex.printStackTrace();
 				}
 				GameMode spectateMode = null; // in anticipation of 1.8
-				if (this.getRound().getConfigManager().isUsingVanillaSpectating()){
+				if (!Main.isVanillaSpectatingDisabled() && this.getRound().getConfigManager().isUsingVanillaSpectating()){
 					try {
 						spectateMode = GameMode.valueOf("SPECTATOR");
 					}
@@ -218,11 +207,12 @@ public class MGPlayer implements Metadatable {
 							try {
 								spectateMode = GameMode.valueOf("SPECTATE");
 							}
-							catch (IllegalArgumentException ex3){} // guess we don't have spectator support then
+							catch (IllegalArgumentException ex3){
+							} // guess we don't have spectator support then
 						}
 					}
 				}
-				if (spectateMode != null && this.getRound().getConfigManager().isUsingVanillaSpectating()){
+				if (spectateMode != null){
 					p.setGameMode(spectateMode);
 					p.sendMessage(ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating")); // tell them
 				}
@@ -240,17 +230,17 @@ public class MGPlayer implements Metadatable {
 		else {
 			Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
-				if (this.getRound().getConfigManager().isUsingVanillaSpectating()){
+				if (!Main.isVanillaSpectatingDisabled() && this.getRound().getConfigManager().isUsingVanillaSpectating()){
 					p.setGameMode(this.getRound().getConfigManager().getDefaultGameMode());
 				}
 				try {
 					if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
-						for (Player pl : (Collection<? extends Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+						for (Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 							pl.showPlayer(p);
 						}
 					}
 					else {
-						for (Player pl : (Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+						for (Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 							pl.showPlayer(p);
 						}
 					}
@@ -275,7 +265,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Sets the prefix of this player (used on lobby signs).
-	 *
 	 * @param prefix the new prefix of this player.
 	 * @since 0.1.0
 	 */
@@ -285,7 +274,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Adds this {@link MGPlayer} to the given {@link Round round}.
-	 *
 	 * @param round The name of the round to add the player to.
 	 * @return the result of this player being added to the round.
 	 * @throws PlayerOfflineException if the player is not online.
@@ -299,7 +287,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
-	 *
 	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the
 	 *                 round's default exit point.
 	 * @throws NoSuchPlayerException  if the given player is not in a round.
@@ -312,7 +299,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
-	 *
 	 * @throws NoSuchPlayerException  if the player is not in a round.
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1.0
@@ -323,7 +309,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
-	 *
 	 * @param location The location to teleport the player to, or null to skip teleportation.
 	 * @since 0.1.0
 	 */
@@ -349,7 +334,7 @@ public class MGPlayer implements Metadatable {
 				YamlConfiguration invY = new YamlConfiguration();
 				invY.load(invF);
 				ItemStack[] invI = new ItemStack[36];
-				PlayerInventory pInv = (PlayerInventory) p.getInventory();
+				PlayerInventory pInv = (PlayerInventory)p.getInventory();
 				for (String k : invY.getKeys(false)){
 					if (MGUtil.isInteger(k)){
 						invI[Integer.parseInt(k)] = invY.getItemStack(k);
@@ -383,7 +368,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
-	 *
 	 * @throws PlayerOfflineException if the player is not online.
 	 * @since 0.1.0
 	 */
@@ -393,7 +377,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * You probably shouldn't use this unless you know what it does.
-	 *
 	 * @return the player's previous gamemode.
 	 * @since 0.1.0
 	 */
@@ -403,7 +386,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * You probably shouldn't use this unless you know what it does.
-	 *
 	 * @param gameMode the player's previous gamemode.
 	 * @since 0.1.0
 	 */
@@ -413,7 +395,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves the {@link Bukkit Player} object for this {@link MGPlayer}.
-	 *
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
 	 * @since 0.2.0
 	 */
@@ -425,7 +406,6 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Convenience method for {@link MGPlayer#getBukkitPlayer()}. Use this only if aesthetic ambiguity is not a point of
 	 * concern.
-	 *
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
 	 * @since 0.3.0
 	 */
@@ -435,7 +415,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves whether the player is frozen.
-	 *
 	 * @return whether the player is frozen.
 	 * @since 0.3.0
 	 */
@@ -446,7 +425,6 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Cleanly freezes or unfreezes the player. The library will automatically revert the player to their previous speed
 	 * when unfrozen so as to let them go, <i>let them go!</i>
-	 *
 	 * @param frozen whether the player should be frozen.
 	 * @since 0.3.0
 	 */
@@ -467,11 +445,11 @@ public class MGPlayer implements Metadatable {
 			}
 		}
 		else if (this.isFrozen()){
-			this.getBukkitPlayer().setWalkSpeed(this.hasMetadata("prev-walk-speed") ? (Float) this.getMetadata("prev-walk-speed") : 0.2f);
-			this.getBukkitPlayer().setFlySpeed(this.hasMetadata("prev-fly-speed") ? (Float) this.getMetadata("prev-fly-speed") : 0.2f);
+			this.getBukkitPlayer().setWalkSpeed(this.hasMetadata("prev-walk-speed") ? (Float)this.getMetadata("prev-walk-speed") : 0.2f);
+			this.getBukkitPlayer().setFlySpeed(this.hasMetadata("prev-fly-speed") ? (Float)this.getMetadata("prev-fly-speed") : 0.2f);
 			this.getBukkitPlayer().removePotionEffect(PotionEffectType.JUMP);
 			if (this.hasMetadata("prev-jump-level")){
-				this.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, (Integer) this.getMetadata("prev-jump-duration"), (Integer) this.getMetadata("prev-jump-level")));
+				this.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, (Integer)this.getMetadata("prev-jump-duration"), (Integer)this.getMetadata("prev-jump-level")));
 			}
 			this.removeMetadata("prev-walk-speed");
 			this.removeMetadata("prev-fly-speed");
@@ -483,7 +461,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Respawns the player at the given spawn.
-	 *
 	 * @param spawn the index of the spawn to send the player to.
 	 * @since 0.3.0
 	 */
@@ -497,7 +474,6 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Respawns the player at a random or sequential spawn, depending on your configuration.
-	 *
 	 * @since 0.3.0
 	 */
 	public void spawnIn(){
@@ -506,7 +482,7 @@ public class MGPlayer implements Metadatable {
 
 	public boolean equals(Object p){
 		if (p instanceof MGPlayer){
-			MGPlayer t = (MGPlayer) p;
+			MGPlayer t = (MGPlayer)p;
 			return name.equals(t.getName()) && arena.equals(t.getArena()) && isSpectating() == t.isSpectating();
 		}
 		return false;

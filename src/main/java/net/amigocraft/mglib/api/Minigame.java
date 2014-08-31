@@ -13,6 +13,8 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,6 @@ import java.util.UUID;
  * against this version of the library is <i>highly discouraged</i>. This is a development build, and as such, is very
  * prone to change. Methods may be in this version that will disappear in the next release, and existing methods may be
  * temporarily refactored.
- *
  * @author Maxim Roncacé
  * @version 0.3.0
  * @since 0.1.0
@@ -76,7 +77,6 @@ public class Minigame {
 
 	/**
 	 * Registers a plugin with the MGLib API.
-	 *
 	 * @param plugin An instance of your plugin (can be substituted with this if called from your main class).
 	 * @return A minigame object which may be used for most core API methods, with the exception of some pertaining
 	 * exclusively to players or rounds.
@@ -88,7 +88,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves the {@link JavaPlugin} associated with this {@link Minigame} instance.
-	 *
 	 * @return The {@link JavaPlugin} associated with this {@link Minigame} instance.
 	 */
 	public JavaPlugin getPlugin(){
@@ -97,7 +96,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves a {@link List list} of all registered {@link Minigame minigame} instances.
-	 *
 	 * @return a {@link List list} of all registered {@link Minigame minigame} instances.
 	 * @since 0.1.0
 	 */
@@ -107,7 +105,6 @@ public class Minigame {
 
 	/**
 	 * Finds the instance of the MGLib API associated with a given plugin
-	 *
 	 * @param plugin The name of the plugin to search for
 	 * @return The instance of the MGLib API (Minigame.class) associated with the given plugin
 	 * @since 0.1.0
@@ -118,7 +115,6 @@ public class Minigame {
 
 	/**
 	 * Finds the instance of the MGLib API associated with a given plugin
-	 *
 	 * @param plugin The plugin to search for
 	 * @return The instance of the MGLib API (Minigame.class) associated with the given plugin
 	 * @since 0.1.0
@@ -129,7 +125,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves a hashmap containing all rounds associated with the instance which registered this API instance.
-	 *
 	 * @return A hashmap containing all rounds associated with the instance which registered this API instance.
 	 * @since 0.1.0
 	 */
@@ -139,7 +134,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves a list containing all rounds associated with the instance which registered this API instance.
-	 *
 	 * @return A list containing all rounds associated with the instance which registered this API instance.
 	 * @since 0.1.0
 	 */
@@ -149,14 +143,35 @@ public class Minigame {
 
 	/**
 	 * Creates and stores a new round with the given parameters.
-	 *
 	 * @param arena The name of the arena to create the round in.
 	 * @return The created round.
 	 * @throws NoSuchArenaException if the given arena does not exist.
 	 * @since 0.1.0
 	 */
 	public Round createRound(String arena) throws NoSuchArenaException{
-		Round r = new Round(plugin.getName(), arena.toLowerCase()); // create the Round object
+		Round r = null;
+		try {
+			Constructor con = getConfigManager().getRoundClass().getDeclaredConstructor(String.class, String.class);
+			r = (Round)con.newInstance(plugin.getName(), arena.toLowerCase());
+		}
+		catch (NoSuchMethodException ex){ // thrown when the required constructor does not exist
+			Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
+			ex.printStackTrace();
+		}
+		catch (InvocationTargetException ex){ // any error thrown from the called constructor
+			ex.getTargetException().printStackTrace();
+		}
+		catch (SecurityException ex){ // I have no idea why this would happen.
+			ex.printStackTrace();
+		}
+		catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
+			Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
+			ex.printStackTrace();
+		}
+		catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
+			Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible!");
+			ex.printStackTrace();
+		}
 		r.setStage(Stage.WAITING); // default to waiting stage
 		rounds.put(arena.toLowerCase(), r); // register arena with MGLib
 		return r; // give the calling plugin the Round object
@@ -164,7 +179,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves the instance of the round associated with the given arena.
-	 *
 	 * @param name The name of the round to retrieve.
 	 * @return The instance of the round associated with the given arena, or null if it does not exist.
 	 * @since 0.1.0
@@ -175,7 +189,6 @@ public class Minigame {
 
 	/**
 	 * Creates an arena for use with MGLib.
-	 *
 	 * @param name    The name of the arena (used to identify it).
 	 * @param spawn   The initial spawn point of the arena (more may be added later).
 	 * @param corner1 A corner of the arena.
@@ -258,7 +271,6 @@ public class Minigame {
 
 	/**
 	 * Creates an arena for use with MGLib.
-	 *
 	 * @param name  The name of the arena (used to identify it).
 	 * @param spawn The initial spawn point of the arena (more may be added later).
 	 * @throws ArenaExistsException if an arena of the same name already exists.
@@ -275,7 +287,6 @@ public class Minigame {
 
 	/**
 	 * Removes an arena from the plugin's config, effectively deleting it.
-	 *
 	 * @param name The arena to delete.
 	 * @throws NoSuchArenaException if an arena by the specified name does not exist.
 	 * @since 0.1.0
@@ -286,7 +297,7 @@ public class Minigame {
 		{
 			throw new NoSuchArenaException();
 		}
-		y.set(name, null); // remove the arena from the arenas.yml file 
+		y.set(name, null); // remove the arena from the arenas.yml file
 		MGUtil.saveArenaYaml(plugin.getName(), y);
 		Round r = Minigame.getMinigameInstance(plugin).getRound(name); // get the Round object if it exists
 		if (r != null){
@@ -297,7 +308,6 @@ public class Minigame {
 
 	/**
 	 * Returns the {@link MGPlayer} associated with the given username.
-	 *
 	 * @param player The username to search for.
 	 * @return The {@link MGPlayer} associated with the given username, or <b>null</b> if none is found.
 	 * @since 0.1.0
@@ -316,7 +326,6 @@ public class Minigame {
 	/**
 	 * Convenience method for checking if an {@link MGPlayer} is associated with the given username. <br><br> This
 	 * method simply checks if {@link Minigame#getMGPlayer(String) Minigame#getMGPlayer(p)} is <b>null</b>.
-	 *
 	 * @param p The username to search for.
 	 * @return Whether an associated {@link MGPlayer} was found.
 	 * @since 0.1.0
@@ -327,7 +336,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
-	 *
 	 * @param arena the name of the arena to retrieve an {@link ArenaFactory} for.
 	 * @return the arena's {@link ArenaFactory}.
 	 * @throws NoSuchArenaException if the given arena does not exist. In this case, you should instead use {@link
@@ -344,7 +352,6 @@ public class Minigame {
 
 	/**
 	 * For use within the library <b><i>only</i></b>. Please do not modify the returned map.
-	 *
 	 * @return a map of arena names and their corresponding {@link ArenaFactory ArenaFactories}.
 	 */
 	public HashMap<String, ArenaFactory> getArenaFactories(){
@@ -353,7 +360,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves this minigame's rollback manager.
-	 *
 	 * @return this minigame's rollback manager.
 	 * @since 0.1.0
 	 */
@@ -363,7 +369,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves this minigame's lobby manager.
-	 *
 	 * @return this minigame's lobby manager.
 	 * @since 0.1.0
 	 */
@@ -373,7 +378,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves this minigame's config manager.
-	 *
 	 * @return this minigame's config manager.
 	 * @since 0.1.0
 	 */
@@ -383,7 +387,6 @@ public class Minigame {
 
 	/**
 	 * Returns the {@link Locale} for this minigame.
-	 *
 	 * @return the {@link Locale} for this minigame.
 	 * @since 0.3.0
 	 */
@@ -393,7 +396,6 @@ public class Minigame {
 
 	/**
 	 * Logs the given message at the specified logging level.
-	 *
 	 * @param message the message to log.
 	 * @param level   the level at which to log the message.
 	 * @since 0.3.0
@@ -404,7 +406,6 @@ public class Minigame {
 
 	/**
 	 * Logs the given message at {@link LogLevel#SEVERE}.
-	 *
 	 * @param message the message to log.
 	 * @since 0.3.0
 	 */
@@ -414,7 +415,6 @@ public class Minigame {
 
 	/**
 	 * Logs the given message at {@link LogLevel#WARNING}.
-	 *
 	 * @param message the message to log.
 	 * @since 0.3.0
 	 */
@@ -424,7 +424,6 @@ public class Minigame {
 
 	/**
 	 * Logs the given message at {@link LogLevel#INFO}.
-	 *
 	 * @param message the message to log.
 	 * @since 0.3.0
 	 */
@@ -434,7 +433,6 @@ public class Minigame {
 
 	/**
 	 * Logs the given message at {@link LogLevel#DEBUG}.
-	 *
 	 * @param message the message to log.
 	 * @since 0.3.0
 	 */
@@ -444,7 +442,6 @@ public class Minigame {
 
 	/**
 	 * Logs the given message at {@link LogLevel#VERBOSE}.
-	 *
 	 * @param message the message to log.
 	 * @since 0.3.0
 	 */
@@ -454,7 +451,6 @@ public class Minigame {
 
 	/**
 	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
-	 *
 	 * @return a hashmap mapping the names of online players to their respective UUIDs.
 	 * @since 0.3.0
 	 */
@@ -465,7 +461,6 @@ public class Minigame {
 	/**
 	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
 	 * everything for everyone.</b>
-	 *
 	 * @since 0.1.0
 	 */
 	public static void uninitialize(){
@@ -475,7 +470,6 @@ public class Minigame {
 
 	/**
 	 * Determines whether this version of MGLib is compatibile with the specified minimum required version.
-	 *
 	 * @param minReqVersion the minimum required version of MGLib.
 	 * @return whether this version of MGLib is compatibile with the specified minimum required version.
 	 * @since 0.3.0

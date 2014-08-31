@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 
 /**
  * MGLib's primary (central) class.
- *
  * @author Maxim Roncacé
  * @version 0.3.0
  * @since 0.1.0
@@ -29,7 +28,6 @@ public class Main extends JavaPlugin {
 	/**
 	 * The current instance of the plugin. <br><br> This is for use within the library; please do not modify this in
 	 * your plugin or everything will break.
-	 *
 	 * @since 0.1.0
 	 */
 	public static Main plugin;
@@ -37,7 +35,6 @@ public class Main extends JavaPlugin {
 	/**
 	 * MGLib's logger. <br><br> This is for use within the library; please do not use this in your plugin or you'll
 	 * confuse the server owner.
-	 *
 	 * @since 0.1.0
 	 */
 	public static Logger log;
@@ -53,13 +50,17 @@ public class Main extends JavaPlugin {
 	public static LogLevel LOGGING_LEVEL;
 
 	/**
+	 * Whether vanilla spectating is globally disabled.
+	 */
+	private static boolean VANILLA_SPECTATING_DISABLED;
+
+	/**
 	 * The locale for MGLib itself.
 	 */
 	public static Locale locale;
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override.
-	 *
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("unchecked")
@@ -75,6 +76,7 @@ public class Main extends JavaPlugin {
 			LOGGING_LEVEL = LogLevel.WARNING;
 			Main.log("The configured logging level is invalid!", LogLevel.WARNING);
 		}
+		VANILLA_SPECTATING_DISABLED = getConfig().getBoolean("disable-vanilla-spectating");
 
 		locale = new Locale("MGLib");
 		locale.initialize();
@@ -102,12 +104,12 @@ public class Main extends JavaPlugin {
 		List<String> names = new ArrayList<String>();
 		try {
 			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
-				for (Player pl : (Collection<? extends Player>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+				for (Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 					names.add(pl.getName());
 				}
 			}
 			else {
-				for (Player pl : (Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+				for (Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
 					names.add(pl.getName());
 				}
 			}
@@ -134,7 +136,6 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Standard {@link JavaPlugin#onDisable()} override.
-	 *
 	 * @since 0.1.0
 	 */
 	public void onDisable(){
@@ -153,7 +154,6 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * This method should not be called from your plugin. So don't use it. Please.
-	 *
 	 * @param plugin the name of the plugin to register worlds for.
 	 */
 	public static void registerWorlds(String plugin){
@@ -167,7 +167,6 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Internal convenience method for logging. <strong>Please do not call this from your plugin.</strong>
-	 *
 	 * @param message the message to log.
 	 * @param level   the {@link LogLevel level} at which to log the message.
 	 * @since 0.3.0
@@ -188,12 +187,20 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
-	 *
 	 * @return a hashmap mapping the names of online players to their respective UUIDs.
 	 * @since 0.3.0
 	 */
 	public static HashMap<String, UUID> getOnlineUUIDs(){
 		return UUIDFetcher.uuids;
+	}
+
+	/**
+	 * Retrieves whether vanilla spectating has been globally disabled by MGLib's config.yml file.
+	 * @return whether vanilla spectating has been globally disabled by MGLib's config.yml file.
+	 * @since 0.3.0
+	 */
+	public static boolean isVanillaSpectatingDisabled(){
+		return VANILLA_SPECTATING_DISABLED;
 	}
 
 }

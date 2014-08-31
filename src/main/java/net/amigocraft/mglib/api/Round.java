@@ -22,6 +22,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,6 @@ import static net.amigocraft.mglib.Main.locale;
 
 /**
  * Represents a round within a minigame.
- *
  * @author Maxim Roncacé
  * @since 0.1.0
  */
@@ -71,12 +71,11 @@ public class Round implements Metadatable {
 	/**
 	 * Creates a new {@link Round} with the given parameters. <br><br> Please use {@link Minigame#createRound(String)}
 	 * unless you understand the implications of using this constructor.
-	 *
 	 * @param plugin the plugin which this round should be associated with.
 	 * @param arena  the name of the arena in which this round takes place in.
 	 * @throws NoSuchArenaException if the specified arena does not exist.
 	 */
-	public Round(String plugin, String arena) throws NoSuchArenaException {
+	public Round(String plugin, String arena) throws NoSuchArenaException{
 		MGYamlConfiguration y = loadArenaYaml(plugin);
 		if (!y.contains(arena)){
 			throw new NoSuchArenaException();
@@ -94,10 +93,10 @@ public class Round implements Metadatable {
 		for (String k : cs.getConfigurationSection("spawns").getKeys(false)){ // load spawns into round object
 			Location l = new Location(w, cs.getDouble("spawns." + k + ".x"), cs.getDouble("spawns." + k + ".y"), cs.getDouble("spawns." + k + ".z"));
 			if (cs.isSet(k + ".pitch")){
-				l.setPitch((float) cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".pitch"));
+				l.setPitch((float)cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".pitch"));
 			}
 			if (cs.isSet(k + ".yaw")){
-				l.setYaw((float) cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".yaw"));
+				l.setYaw((float)cs.getDouble(cs.getCurrentPath() + ".spawns." + k + ".yaw"));
 			}
 			spawns.add(l); // register spawn
 		}
@@ -134,7 +133,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the name of the minigame plugin associated with this {@link Round}.
-	 *
 	 * @return The name of the minigame plugin associated with this {@link Round}.
 	 * @since 0.1.0
 	 */
@@ -144,7 +142,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the instance of the MGLib API registered by the plugin associated with this {@link Round}.
-	 *
 	 * @return The instance of the MGLib API registered by the plugin associated with this {@link Round}.
 	 * @since 0.1.0
 	 */
@@ -154,7 +151,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the name of the arena associated with this {@link Round}.
-	 *
 	 * @return The name of the arena associated with this {@link Round}.
 	 * @since 0.1.0
 	 */
@@ -164,7 +160,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the current {@link Stage} of this {@link Round}.
-	 *
 	 * @return The current {@link Stage} of this {@link Round}.
 	 * @since 0.1.0
 	 */
@@ -174,7 +169,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the current time in seconds of this {@link Round}, where 0 represents the first second of it.
-	 *
 	 * @return the current time in seconds of this {@link Round}, where 0 represents the first second of it.
 	 * @since 0.1.0
 	 */
@@ -184,7 +178,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the time remaining in this round.
-	 *
 	 * @return the time remaining in this round, or -1 if there is no time limit or if the {@link Stage stage} is not
 	 * {@link Stage#PLAYING PLAYING} or {@link Stage#PREPARING PREPARING}
 	 * @since 0.1.0
@@ -212,7 +205,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the round's preparation time.
-	 *
 	 * @return The round's preparation time.
 	 * @since 0.1.0
 	 */
@@ -222,7 +214,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the round's playing time.
-	 *
 	 * @return The round's playing time.
 	 * @since 0.1.0
 	 */
@@ -232,7 +223,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Gets the round's timer's task's handle, or -1 if a timer is not started.
-	 *
 	 * @return The round's timer's task's handle, or -1 if a timer is not started.
 	 * @since 0.1.0
 	 */
@@ -242,7 +232,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the associated arena of this {@link Round}.
-	 *
 	 * @param arena The arena to associate with this {@link Round}.
 	 * @since 0.1.0
 	 */
@@ -252,7 +241,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the current stage of this {@link Round}.
-	 *
 	 * @param s The stage to set this {@link Round} to.
 	 * @since 0.1.0
 	 */
@@ -263,7 +251,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the remaining time of this {@link Round}.
-	 *
 	 * @param t The time to set this {@link Round} to.
 	 * @since 0.1.0
 	 */
@@ -273,7 +260,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the round's preparation time.
-	 *
 	 * @param t The number of seconds to set the preparation time to. Use -1 for no limit, or 0 for no preparation
 	 *          phase.
 	 * @since 0.1.0
@@ -284,7 +270,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the round's playing time.
-	 *
 	 * @param t The number of seconds to set the preparation time to. Use -1 for no limit.
 	 * @since 0.1.0
 	 */
@@ -295,7 +280,6 @@ public class Round implements Metadatable {
 	/**
 	 * Decrements the time remaining in the round by 1. <br><br> Please do not call this method from your plugin unless
 	 * you understand the implications. Let MGLib handle the timer.
-	 *
 	 * @since 0.1.0
 	 */
 	public void tick(){
@@ -304,7 +288,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Subtracts <b>t</b> seconds from the elapsed time in the round.
-	 *
 	 * @param t The number of seconds to subtract.
 	 * @since 0.1.0
 	 */
@@ -314,7 +297,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Adds <b>t</b> seconds to the elapsed time in the round.
-	 *
 	 * @param t The number of seconds to add.
 	 * @since 0.1.0
 	 */
@@ -325,7 +307,6 @@ public class Round implements Metadatable {
 	/**
 	 * Destroys this {@link Round}. <br><br> <b>Please do not call this method from your plugin unless you understand
 	 * the implications.</b>
-	 *
 	 * @since 0.1.0
 	 */
 	public void destroy(){
@@ -334,7 +315,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves a list of {@link MGPlayer MGPlayers} in this round.
-	 *
 	 * @return A list of {@link MGPlayer MGPlayers} in this round.
 	 * @since 0.1.0
 	 */
@@ -344,7 +324,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves a {@link HashMap} of players in this round.
-	 *
 	 * @return a {@link HashMap} mapping the names of players in the round to their respective {@link MGPlayer} objects.
 	 * @since 0.1.0
 	 */
@@ -354,7 +333,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves a {@link HashMap} of all players on a given team.
-	 *
 	 * @param team the team to retrieve players from.
 	 * @return a {@link HashMap} mapping the names of players on a given team to their respective {@link MGPlayer}
 	 * objects.
@@ -372,7 +350,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves a list of non-spectating {@link MGPlayer MGPlayers} in this round.
-	 *
 	 * @return a list of non-spectating {@link MGPlayer MGPlayers} in this round.
 	 * @since 0.2.0
 	 */
@@ -388,7 +365,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves a list of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
-	 *
 	 * @return a list of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
@@ -404,7 +380,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the number of {@link MGPlayer MGPlayers} in this {@link Round}.
-	 *
 	 * @return the number of {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
@@ -414,7 +389,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the number of in-game (non-spectating) {@link MGPlayer MGPlayers} in this {@link Round}.
-	 *
 	 * @return the number of in-game (non-spectating) {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
@@ -430,7 +404,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the number of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
-	 *
 	 * @return the number of spectating {@link MGPlayer MGPlayers} in this {@link Round}.
 	 * @since 0.2.0
 	 */
@@ -450,7 +423,6 @@ public class Round implements Metadatable {
 	 * Stage#PREPARING} and it will begins its preparation stage. <br><br> After it finishes its preparation, it will
 	 * begin as it would if this method were called again (don't actually call it again though, or you'll trigger an
 	 * exception).
-	 *
 	 * @throws IllegalStateException if the stage is already {@link Stage#PLAYING}.
 	 * @since 0.1.0
 	 */
@@ -548,7 +520,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
-	 *
 	 * @param timeUp Whether the round was ended due to its timer expiring. This will default to false if omitted.
 	 * @throws IllegalStateException if the timer has not been started.
 	 * @since 0.1.0
@@ -570,7 +541,8 @@ public class Round implements Metadatable {
 			try {
 				removePlayer(mp.getName());
 			}
-			catch (Exception ex){} // I don't care if this happens
+			catch (Exception ex){
+			} // I don't care if this happens
 		}
 		if (getConfigManager().isRollbackEnabled()) // check if rollbacks are enabled
 		{
@@ -581,7 +553,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Ends the round and resets its timer. The stage will also be set to {@link Stage#WAITING}.
-	 *
 	 * @throws IllegalStateException if the timer has not been started.
 	 * @since 0.1.0
 	 */
@@ -591,7 +562,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves whether this round has been ended.
-	 *
 	 * @return whether this round has been ended.
 	 * @since 0.3.0
 	 */
@@ -602,7 +572,6 @@ public class Round implements Metadatable {
 	/**
 	 * Retrieves the location representing the minimum boundary on all three axes of the arena this round takes place
 	 * in.
-	 *
 	 * @return the location representing the minimum boundary on all three axes of the arena this round takes place in,
 	 * or null if the arena does not have boundaries.
 	 * @since 0.1.0
@@ -614,7 +583,6 @@ public class Round implements Metadatable {
 	/**
 	 * Retrieves the location representing the maximum boundary on all three axes of the arena this round takes place
 	 * in.
-	 *
 	 * @return the location representing the maximum boundary on all three axes of the arena this round takes place in,
 	 * or null if the arena does not have boundaries.
 	 * @since 0.1.0
@@ -625,7 +593,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the minimum boundary on all three axes of this round object.
-	 *
 	 * @param x The minimum x-value.
 	 * @param y The minimum y-value.
 	 * @param z The minimum z-value.
@@ -637,7 +604,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the maximum boundary on all three axes of this round object.
-	 *
 	 * @param x The maximum x-value.
 	 * @param y The maximum y-value.
 	 * @param z The maximum z-value.
@@ -649,7 +615,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves a list of possible spawns for this round's arena.
-	 *
 	 * @return a list of possible spawns for this round's arena.
 	 * @since 0.1.0
 	 */
@@ -659,7 +624,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Returns the {@link MGPlayer} in this round associated with the given username.
-	 *
 	 * @param player The username to search for.
 	 * @return The {@link MGPlayer} in this round associated with the given username, or <b>null</b> if none is found.
 	 * @since 0.1.0
@@ -670,7 +634,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the world of this arena.
-	 *
 	 * @return The name of the world containing this arena.
 	 * @since 0.1.0
 	 */
@@ -680,7 +643,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Adds a player by the given name to this {@link Round round}.
-	 *
 	 * @param name the player to add to this {@link Round round}. (will default to random/sequential (depending on
 	 *             configuration) if out of bounds).
 	 * @return the {@link JoinResult result} of the player being added to the round.
@@ -695,7 +657,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Adds a player by the given name to this {@link Round round}.
-	 *
 	 * @param name  the player to add to this {@link Round round}.
 	 * @param spawn the spawn number to teleport the player to (will default to random/sequential (depending on
 	 *              configuration) if out of bounds).
@@ -711,24 +672,25 @@ public class Round implements Metadatable {
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null){
 			try {
-				mp = (MGPlayer) getConfigManager().getPlayerClass().getDeclaredConstructors()[0].newInstance(plugin, name, arena.toLowerCase());
+				Constructor con = getConfigManager().getPlayerClass().getDeclaredConstructor(String.class, String.class, String.class);
+				mp = (MGPlayer)con.newInstance(plugin, name, arena.toLowerCase());
+			}
+			catch (NoSuchMethodException ex){ // thrown when the required constructor does not exist
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
+				ex.printStackTrace();
 			}
 			catch (InvocationTargetException ex){ // any error thrown from the called constructor
 				ex.getTargetException().printStackTrace();
-			}
-			catch (IllegalArgumentException ex){ // thrown when the overriding constructor doesn't match what's expected
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed");
-				ex.printStackTrace();
 			}
 			catch (SecurityException ex){ // I have no idea why this would happen.
 				ex.printStackTrace();
 			}
 			catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is seriously wack. Fix it, developer.");
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
 				ex.printStackTrace();
 			}
 			catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible");
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible!");
 				ex.printStackTrace();
 			}
 		}
@@ -737,11 +699,6 @@ public class Round implements Metadatable {
 		}
 		else {
 			throw new PlayerPresentException();
-		}
-		PlayerJoinMinigameRoundEvent event = new PlayerJoinMinigameRoundEvent(this, mp);
-		MGUtil.callEvent(event);
-		if (event.isCancelled()){
-			return JoinResult.CANCELLED;
 		}
 		if (p == null) // check that the specified player is online
 		{
@@ -761,6 +718,11 @@ public class Round implements Metadatable {
 				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-progress"));
 				return JoinResult.ROUND_PLAYING;
 			}
+		}
+		PlayerJoinMinigameRoundEvent event = new PlayerJoinMinigameRoundEvent(this, mp);
+		MGUtil.callEvent(event);
+		if (event.isCancelled()){
+			return JoinResult.CANCELLED;
 		}
 		ItemStack[] contents = p.getInventory().getContents();
 		PlayerInventory pInv = p.getInventory();
@@ -822,7 +784,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Removes a given player from this {@link Round round} and teleports them to the given location.
-	 *
 	 * @param name     The player to remove from this {@link Round round}.
 	 * @param location The location to teleport the player to.
 	 * @throws PlayerOfflineException if the player is not online.
@@ -855,7 +816,6 @@ public class Round implements Metadatable {
 	/**
 	 * Removes a given player from this {@link Round round} and teleports them to the round or plugin's default exit
 	 * location (defaults to the main world's spawn point).
-	 *
 	 * @param name The player to remove from this {@link Round round}.
 	 * @throws NoSuchPlayerException  if the given player is not in this round.
 	 * @throws PlayerOfflineException if the given player is offline.
@@ -867,7 +827,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the minimum number of players required to automatically start the round.
-	 *
 	 * @return the minimum number of players required to automatically start the round.
 	 * @since 0.2.0
 	 */
@@ -877,7 +836,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the minimum number of players required to automatically start the round.
-	 *
 	 * @param players the minimum number of players required to automatically start the round.
 	 * @since 0.2.0
 	 */
@@ -887,7 +845,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the maximum number of players allowed in a round at once.
-	 *
 	 * @return the maximum number of players allowed in a round at once.
 	 * @since 0.1.0
 	 */
@@ -897,7 +854,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the maximum number of players allowed in a round at once.
-	 *
 	 * @param players the maximum number of players allowed in a round at once.
 	 * @since 0.1.0
 	 */
@@ -907,7 +863,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Creates a new LobbySign to be managed
-	 *
 	 * @param location The location to create the sign at.
 	 * @param type     The type of the sign ("status" or "players")
 	 * @param index    The number of the sign (applicable only for "players" signs)
@@ -922,7 +877,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Updates all lobby signs linked to this round's arena.
-	 *
 	 * @since 0.1.0
 	 */
 	public void updateSigns(){
@@ -931,7 +885,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves this round's exit location.
-	 *
 	 * @return this round's exit location.
 	 * @since 0.1.0
 	 */
@@ -941,7 +894,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets this round's exit location.
-	 *
 	 * @param location the new exit location for this round.
 	 * @since 0.1.0
 	 */
@@ -951,7 +903,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves whether PvP is allowed.
-	 *
 	 * @return whether PvP is allowed.
 	 * @since 0.1.0
 	 */
@@ -961,7 +912,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets whether PvP is allowed.
-	 *
 	 * @param allowed whether PvP is allowed.
 	 * @since 0.1.0
 	 */
@@ -971,7 +921,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves whether players in rounds may receive damage. (default: true)
-	 *
 	 * @return whether players in rounds may receive damage.
 	 * @since 0.1.0
 	 */
@@ -981,7 +930,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets whether players in rounds may receive damage. (default: false)
-	 *
 	 * @param allowed whether players in rounds may receive damage.
 	 * @since 0.1.0
 	 */
@@ -991,7 +939,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves whether rollback is enabled in this round.
-	 *
 	 * @return whether rollback is enabled in this round.
 	 * @since 0.2.0
 	 */
@@ -1001,7 +948,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets whether rollback is enabled by default.
-	 *
 	 * @param enabled whether rollback is enabled by default.
 	 * @since 0.2.0
 	 */
@@ -1011,7 +957,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the {@link ConfigManager} of the plugin owning this round.
-	 *
 	 * @return the {@link ConfigManager} of the plugin owning this round.
 	 * @since 0.2.0
 	 */
@@ -1021,7 +966,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the {@link RollbackManager} of the plugin owning this round.
-	 *
 	 * @return the {@link RollbackManager} of the plugin owning this round.
 	 * @since 0.2.0
 	 */
@@ -1031,7 +975,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Broadcasts a message to all players in this round.
-	 *
 	 * @param message               the message to broadcast.
 	 * @param broadcastToSpectators whether the message should be broadcast to spectators.
 	 * @since 0.2.0
@@ -1046,7 +989,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Broadcasts a message to all players in this round.
-	 *
 	 * @param message the message to broadcast.
 	 * @since 0.2.0
 	 */
@@ -1056,7 +998,6 @@ public class Round implements Metadatable {
 
 	/**
 	 * Retrieves the display name of the round's arena.
-	 *
 	 * @return the display name of the round's arena.
 	 * @since 0.3.0
 	 */
@@ -1085,7 +1026,7 @@ public class Round implements Metadatable {
 	}
 
 	public boolean equals(Object p){
-		return p instanceof Round && arena.equals(((Round) p).getArena());
+		return p instanceof Round && arena.equals(((Round)p).getArena());
 	}
 
 	public int hashCode(){

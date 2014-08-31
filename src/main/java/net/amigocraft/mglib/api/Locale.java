@@ -11,20 +11,17 @@ import java.util.HashMap;
 /**
  * MGLib's locale API. It can be used for easy localization; you need only supply the translations themselves in the
  * form of CSV files using "|" symbols as separators.
- *
  * @since 0.3.0
  */
 public class Locale {
 
 	/**
 	 * The name of the plugin this locale manager belongs to.
-	 *
 	 * @since 0.3.0
 	 */
 	public String plugin;
 	/**
 	 * The messages stored by this local manager.
-	 *
 	 * @since 0.3.0
 	 */
 	public HashMap<String, String> messages = new HashMap<String, String>();
@@ -33,7 +30,6 @@ public class Locale {
 	/**
 	 * Creates a new locale manager for the given plugin (yours). MGLib attempts to load locales first from the
 	 * "locales" directory in the plugin's data folder, then from the locales directory in the plugin JAR's root.
-	 *
 	 * @param plugin the plugin to create a locale manager for.
 	 * @since 0.3.0
 	 */
@@ -44,7 +40,6 @@ public class Locale {
 
 	/**
 	 * Retrieves a message from a given key.
-	 *
 	 * @param key the key to search for.
 	 * @return the message associated with the given key.
 	 * @since 0.3.0
@@ -60,7 +55,6 @@ public class Locale {
 	/**
 	 * Initializes the locale manager. This must be called, or {@link Locale#getMessage(String)} will always return its
 	 * parameter.
-	 *
 	 * @since 0.3.0
 	 */
 	public void initialize(){
@@ -119,8 +113,12 @@ public class Locale {
 			}
 			finally {
 				if (is != null){
-					try {is.close();}
-					catch (Exception ex){ex.printStackTrace();}
+					try {
+						is.close();
+					}
+					catch (Exception ex){
+						ex.printStackTrace();
+					}
 				}
 			}
 		}

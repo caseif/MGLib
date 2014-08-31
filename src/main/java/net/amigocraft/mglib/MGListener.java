@@ -99,18 +99,18 @@ class MGListener implements Listener {
 		Player pl = null;
 		Player p2 = null; // don't ask why it's named like this
 		if (e.getEntity() instanceof Player){
-			p2 = (Player) e.getEntity();
+			p2 = (Player)e.getEntity();
 		}
 		if (e instanceof EntityDamageByEntityEvent){
-			Entity damager = ((EntityDamageByEntityEvent) e).getDamager();
+			Entity damager = ((EntityDamageByEntityEvent)e).getDamager();
 			if (damager instanceof Player) // damager is a player
 			{
-				pl = (Player) damager;
+				pl = (Player)damager;
 			}
 			else if (damager instanceof Projectile) // damager is an arrow or something
 			{
-				if (((Projectile) damager).getShooter() instanceof Player){
-					pl = (Player) ((Projectile) damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow)
+				if (((Projectile)damager).getShooter() instanceof Player){
+					pl = (Player)((Projectile)damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow)
 				}
 			}
 
@@ -278,7 +278,7 @@ class MGListener implements Listener {
 					Object packet;
 					try {
 						packetClass = MGUtil.getMCClass("PacketPlayInClientCommand");
-						packet = packetClass.getConstructor(MGUtil.getMCClass("EnumClientCommand")).newInstance(Enum.valueOf((Class<? extends Enum>) MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"));
+						packet = packetClass.getConstructor(MGUtil.getMCClass("EnumClientCommand")).newInstance(Enum.valueOf((Class<? extends Enum>)MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"));
 					}
 					catch (Exception ex){
 						packetClass = MGUtil.getMCClass("Packet205ClientCommand");
@@ -293,7 +293,7 @@ class MGListener implements Listener {
 					ex.printStackTrace();
 				}
 				EntityDamageEvent ed = e.getEntity().getLastDamageCause();
-				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(), ed instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent) ed).getDamager() instanceof Projectile ? (Entity) ((Projectile) ((EntityDamageByEntityEvent) ed).getDamager()).getShooter() : ((EntityDamageByEntityEvent) ed).getDamager() : null));
+				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(), ed instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)ed).getDamager() instanceof Projectile ? (Entity)((Projectile)((EntityDamageByEntityEvent)ed).getDamager()).getShooter() : ((EntityDamageByEntityEvent)ed).getDamager() : null));
 			}
 		}
 	}
@@ -404,7 +404,7 @@ class MGListener implements Listener {
 					return;
 				}
 				if (e.getInventory().getHolder() instanceof BlockState){
-					mg.getRollbackManager().logInventoryChange(e.getInventory(), ((BlockState) e.getInventory().getHolder()).getBlock(), mp.getArena());
+					mg.getRollbackManager().logInventoryChange(e.getInventory(), ((BlockState)e.getInventory().getHolder()).getBlock(), mp.getArena());
 					return;
 				}
 			}
@@ -424,7 +424,7 @@ class MGListener implements Listener {
 						else if (e.getBlock().getType() == Material.TNT){
 							List<Location3D> list = new ArrayList<Location3D>();
 							if (r.hasMetadata("tntBlocks")){
-								list = (List<Location3D>) r.getMetadata("tntBlocks");
+								list = (List<Location3D>)r.getMetadata("tntBlocks");
 							}
 							list.add(Location3D.valueOf(e.getBlock().getLocation()));
 							r.setMetadata("tntBlocks", list);
@@ -843,7 +843,7 @@ class MGListener implements Listener {
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			for (Round r : mg.getRoundList()){
 				if (r.hasMetadata("tntBlocks")){
-					List<Location3D> list = (List<Location3D>) r.getMetadata("tntBlocks");
+					List<Location3D> list = (List<Location3D>)r.getMetadata("tntBlocks");
 					if (list.contains(new Location3D(e.getLocation().getBlockX(), e.getLocation().getBlockY(), e.getLocation().getBlockZ()))){
 						for (Block b : e.blockList()){
 							mg.getRollbackManager().logBlockChange(b, r.getArena());
@@ -903,7 +903,7 @@ class MGListener implements Listener {
 	public void onEntityTarget(EntityTargetEvent e){
 		if (e.getTarget() != null && e.getTarget().getType() == EntityType.PLAYER){
 			for (Minigame mg : Minigame.getMinigameInstances()){
-				MGPlayer mp = mg.getMGPlayer(((Player) e.getTarget()).getName());
+				MGPlayer mp = mg.getMGPlayer(((Player)e.getTarget()).getName());
 				if (mp != null && (!mg.getConfigManager().isEntityTargetingEnabled() || mp.isSpectating())){
 					e.setCancelled(true);
 				}
@@ -913,9 +913,9 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onHangingBreak(HangingBreakByEntityEvent e){
-		if (e.getRemover() instanceof Player || (e.getRemover() instanceof Projectile && ((Projectile) e.getRemover()).getShooter() instanceof Player)){
+		if (e.getRemover() instanceof Player || (e.getRemover() instanceof Projectile && ((Projectile)e.getRemover()).getShooter() instanceof Player)){
 			for (Minigame mg : Minigame.getMinigameInstances()){
-				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(e.getRemover() instanceof Player ? ((Player) e.getRemover()).getName() : ((Player) ((Projectile) e.getRemover()).getShooter()).getName())){
+				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(e.getRemover() instanceof Player ? ((Player)e.getRemover()).getName() : ((Player)((Projectile)e.getRemover()).getShooter()).getName())){
 					e.setCancelled(true);
 				}
 			}

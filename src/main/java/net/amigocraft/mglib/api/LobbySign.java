@@ -27,7 +27,6 @@ public class LobbySign {
 
 	/**
 	 * Creates a new {@link LobbySign} object.
-	 *
 	 * @param x      the x-coordinate of the physical sign.
 	 * @param y      the y-coordinate of the physical sign.
 	 * @param z      the z-coordinate of the physical sign.
@@ -51,7 +50,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical x-coordinate of this lobby sign.
-	 *
 	 * @return the physical x-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -61,7 +59,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical x-coordinate of this lobby sign.
-	 *
 	 * @param x the physical x-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -71,7 +68,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical y-coordinate of this lobby sign.
-	 *
 	 * @return the physical y-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -81,7 +77,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical y-coordinate of this lobby sign.
-	 *
 	 * @param y the physical y-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -91,7 +86,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical z-coordinate of this lobby sign.
-	 *
 	 * @return the physical z-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -101,7 +95,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical z-coordinate of this lobby sign.
-	 *
 	 * @param z the physical z-coordinate of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -111,7 +104,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the plugin this lobby sign is associated with.
-	 *
 	 * @return the plugin this lobby sign is associated with.
 	 * @since 0.1.0
 	 */
@@ -121,7 +113,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the name of the world containing this physical lobby sign.
-	 *
 	 * @return the name of the world containing this physical lobby sign.
 	 * @since 0.1.0
 	 */
@@ -131,7 +122,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the name of the world containing this physical lobby sign.
-	 *
 	 * @param world the name of the world containing this physical lobby sign.
 	 * @since 0.1.0
 	 */
@@ -141,7 +131,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the arena associated with this lobby sign.
-	 *
 	 * @return the arena associated with this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -151,7 +140,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the arena associated with this lobby sign.
-	 *
 	 * @param arena the arena associated with this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -161,7 +149,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the number of this lobby sign.
-	 *
 	 * @return the number of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -171,7 +158,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the number of this lobby sign.
-	 *
 	 * @param number the number of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -181,7 +167,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the {@link LobbyType type} of this lobby sign.
-	 *
 	 * @return the {@link LobbyType type} of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -191,7 +176,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the {@link LobbyType type} of this lobby sign.
-	 *
 	 * @param type the {@link LobbyType type} of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -201,7 +185,6 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the internal index of this lobby sign.
-	 *
 	 * @return the internal index of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -211,7 +194,6 @@ public class LobbySign {
 
 	/**
 	 * Sets the internal index of this lobby sign.
-	 *
 	 * @param index the internal index of this lobby sign.
 	 * @since 0.1.0
 	 */
@@ -221,7 +203,6 @@ public class LobbySign {
 
 	/**
 	 * Saves this lobby sign's data to disk.
-	 *
 	 * @since 0.1.0
 	 */
 	public void save(){
@@ -230,7 +211,6 @@ public class LobbySign {
 
 	/**
 	 * Saves this lobby sign's data to disk and removes it from memory.
-	 *
 	 * @since 0.1.0
 	 */
 	public void remove(){
@@ -240,7 +220,6 @@ public class LobbySign {
 
 	/**
 	 * Updates this lobby sign's text based on its arena's current status.
-	 *
 	 * @since 0.1.0
 	 */
 	public void update(){
@@ -251,7 +230,7 @@ public class LobbySign {
 				Block b = w.getBlockAt(this.getX(), this.getY(), this.getZ());
 				if (b != null){
 					if (b.getState() instanceof Sign){
-						final Sign sign = (Sign) b.getState();
+						final Sign sign = (Sign)b.getState();
 						ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
 						if (this.getType() == LobbyType.STATUS){
 							sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
@@ -352,7 +331,6 @@ public class LobbySign {
 
 	/**
 	 * Resets this lobby sign's text as if its arena was empty and in {@link Stage#WAITING}.
-	 *
 	 * @since 0.1.0
 	 */
 	public void reset(){
@@ -361,7 +339,7 @@ public class LobbySign {
 			Block b = w.getBlockAt(this.getX(), this.getY(), this.getZ());
 			if (b != null){
 				if (b.getState() instanceof Sign){
-					final Sign sign = (Sign) b.getState();
+					final Sign sign = (Sign)b.getState();
 					ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
 					if (this.getType() == LobbyType.STATUS){
 						sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());

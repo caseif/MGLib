@@ -23,7 +23,6 @@ public class LobbyManager {
 
 	/**
 	 * Creates a new lobby manager instance.
-	 *
 	 * @param plugin The plugin to create the manager for.
 	 * @since 0.1.0
 	 */
@@ -33,7 +32,6 @@ public class LobbyManager {
 
 	/**
 	 * Retrieves a hashmap mapping locations to lobby signs registered with this lobby manager.
-	 *
 	 * @return a hashmap of signs registered with this lobby manager.
 	 * @since 0.1.0
 	 */
@@ -43,7 +41,6 @@ public class LobbyManager {
 
 	/**
 	 * Retrieves a list of lobby signs registered with this lobby manager.
-	 *
 	 * @return a list of lobby signs registered with this lobby manager.
 	 * @since 0.1.0
 	 */
@@ -53,7 +50,6 @@ public class LobbyManager {
 
 	/**
 	 * Creates a new LobbySign to be managed
-	 *
 	 * @param l     The location to create the sign at.
 	 * @param arena The name of the arena the sign will be linked to.
 	 * @param type  The type of the sign ("status" or "players")
@@ -97,7 +93,6 @@ public class LobbyManager {
 
 	/**
 	 * Updates all lobby signs linked to a specific arena.
-	 *
 	 * @param arena The arena to update signs for.
 	 * @since 0.1.0
 	 */
@@ -112,7 +107,6 @@ public class LobbyManager {
 	/**
 	 * Resets all lobby signs to their default state ({@link Stage#WAITING waiting stage} for {@link LobbyType#STATUS
 	 * status} signs, blank for {@link LobbyType#PLAYERS player signs}).
-	 *
 	 * @since 0.1.0
 	 */
 	public void reset(){
@@ -123,7 +117,6 @@ public class LobbyManager {
 
 	/**
 	 * Removes the given lobby sign.
-	 *
 	 * @param s the lobby sign to remove.
 	 * @since 0.1.0
 	 */
@@ -148,7 +141,6 @@ public class LobbyManager {
 
 	/**
 	 * Saves a lobby sign's data to disk.
-	 *
 	 * @param l the lobby sign to save to disk.
 	 * @return the index of the sign in the YAML file used for storage.
 	 * @since 0.1.0
@@ -188,7 +180,6 @@ public class LobbyManager {
 
 	/**
 	 * Retrieves the lobby sign at the specified location, or null if it does not exist.
-	 *
 	 * @param location the location to search for a lobby sign at.
 	 * @return the lobby sign at the specified location, or null if it does not exist.
 	 * @since 0.1.0
@@ -199,7 +190,6 @@ public class LobbyManager {
 
 	/**
 	 * Loads lobby signs from disk.
-	 *
 	 * @since 0.1.0
 	 */
 	public void loadSigns(){

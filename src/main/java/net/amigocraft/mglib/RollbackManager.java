@@ -31,7 +31,6 @@ public class RollbackManager {
 
 	/**
 	 * Creates a new rollback manager for the specified plugin
-	 *
 	 * @param plugin The plugin to create the rollback manager for
 	 * @since 0.1.0
 	 */
@@ -56,7 +55,6 @@ public class RollbackManager {
 
 	/**
 	 * Retrieves the plugin associated with this rollback manager.
-	 *
 	 * @return the plugin associated with this rollback manager.
 	 * @since 0.1.0
 	 */
@@ -66,7 +64,6 @@ public class RollbackManager {
 
 	/**
 	 * Logs a block change.
-	 *
 	 * @param block The block which was changed.
 	 * @param arena The arena in which the block is contained.
 	 * @since 0.1.0
@@ -84,7 +81,7 @@ public class RollbackManager {
 			cs.set("data", block.getData());
 			if (block.getState() instanceof Sign){
 				for (int i = 0; i < 4; i++){
-					cs.set("sign-text-" + i, ((Sign) block.getState()).getLine(i));
+					cs.set("sign-text-" + i, ((Sign)block.getState()).getLine(i));
 				}
 			}
 		}
@@ -100,7 +97,6 @@ public class RollbackManager {
 
 	/**
 	 * Logs an inventory change
-	 *
 	 * @param inventory The inventory to log
 	 * @param block     The block containing the inventory
 	 * @param arena     The arena in which the block is contained
@@ -130,7 +126,6 @@ public class RollbackManager {
 	/**
 	 * Rolls back the given arena. <br><br> This method <strong>should not</strong> be called from your plugin unless
 	 * you understand the implications.
-	 *
 	 * @param arena The arena to roll back.
 	 * @since 0.1.0
 	 */
@@ -162,14 +157,14 @@ public class RollbackManager {
 				if (w != null && x == x && y == y && z == z){
 					Location l = new Location(w, x, y, z);
 					if (l.getBlock().getState() instanceof InventoryHolder){
-						((InventoryHolder) l.getBlock().getState()).getInventory().setContents(new ItemStack[0]);
+						((InventoryHolder)l.getBlock().getState()).getInventory().setContents(new ItemStack[0]);
 					}
 					l.getBlock().setType(Material.getMaterial(cs.getString(k + ".type")));
 					l.getBlock().setData(Byte.parseByte(cs.getString(k + ".data")));
 					if (l.getBlock().getState() instanceof Sign){
 						for (int i = 0; i < 4; i++){
 							if (cs.isSet("sign-text-" + i)){
-								((Sign) l.getBlock().getState()).setLine(i, cs.getString("sign-text-" + i));
+								((Sign)l.getBlock().getState()).setLine(i, cs.getString("sign-text-" + i));
 							}
 						}
 					}
@@ -194,7 +189,7 @@ public class RollbackManager {
 				if (w != null && x == x && y == y && z == z){
 					Location l = new Location(w, x, y, z);
 					if (l.getBlock().getState() instanceof InventoryHolder){
-						((InventoryHolder) l.getBlock().getState()).getInventory().setContents(InventorySerializer.StringToInventory(cs2.getString(k + ".inventory")).getContents());
+						((InventoryHolder)l.getBlock().getState()).getInventory().setContents(InventorySerializer.StringToInventory(cs2.getString(k + ".inventory")).getContents());
 					}
 				}
 			}
@@ -217,7 +212,6 @@ public class RollbackManager {
 
 	/**
 	 * Rolls back arenas which have not been rolled back due to a crash or unclean shutdown
-	 *
 	 * @since 0.1.0
 	 */
 	public void checkRollbacks(){

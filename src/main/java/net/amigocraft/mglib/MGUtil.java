@@ -20,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,11 @@ import java.util.List;
 /**
  * Utility methods for use within MGLib. You probably shouldn't call them from your plugin, since this isn't an API
  * class per se.
- *
  * @since 0.1.0
  */
 public class MGUtil {
+
+	private static String VERSION_STRING = "v1_7_R4."; // ignored unless JUnit is loaded
 
 	private static boolean NMS_SUPPORT = true;
 	private static Constructor<?> packetPlayOutAnimation;
@@ -42,13 +44,16 @@ public class MGUtil {
 	public static final String ANSI_RED = "\u001B[31m";
 	public static final String ANSI_WHITE = "\u001B[37m";
 
-	public static String nmsVersion;
-
 	static{
 		try {
+			try {
+				Class.forName("org.junit.Assert"); // arbitrary class from JUnit
+			}
+			catch (ClassNotFoundException ex){
+				String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+				VERSION_STRING = array.length == 4 ? array[3] + "." : "";
+			}
 
-			String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
-			nmsVersion = array.length == 4 ? array[3] + "." : "";
 
 			//get the constructor of the packet
 			try {
@@ -77,7 +82,6 @@ public class MGUtil {
 	 * case when saved. The custom class will automatically take this into account should you choose to use it. However,
 	 * if you store the returned object as a vanilla {@link YamlConfiguration}, you will need to do so yourself, as the
 	 * methods will not be overridden.</strong>
-	 *
 	 * @param plugin The plugin to load the YAML file from.
 	 * @return The loaded {@link YamlConfiguration} object.
 	 * @since 0.1.0
@@ -105,7 +109,6 @@ public class MGUtil {
 
 	/**
 	 * Saves the given plugin's arenas.yml file.
-	 *
 	 * @param plugin The plugin to save the given {@link YamlConfiguration} to.
 	 * @param y      The {@link YamlConfiguration} to save.
 	 */
@@ -126,7 +129,6 @@ public class MGUtil {
 
 	/**
 	 * Determines whether the provided string can be parsed to an integer.
-	 *
 	 * @param s the string to check.
 	 * @return whether the provided string can be parsed to an integer.
 	 */
@@ -135,13 +137,13 @@ public class MGUtil {
 			Integer.parseInt(s);
 			return true;
 		}
-		catch (NumberFormatException ex){}
+		catch (NumberFormatException ex){
+		}
 		return false;
 	}
 
 	/**
 	 * Retrieves worlds registered with MGLib's event listener.
-	 *
 	 * @return worlds registered with MGLib's event listener.
 	 * @since 0.1.0
 	 */
@@ -159,7 +161,6 @@ public class MGUtil {
 
 	/**
 	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
-	 *
 	 * @param plugin the plugin to retrieve worlds for.
 	 * @return worlds registered with MGLib's event listener for the given plugin.
 	 * @since 0.2.0
@@ -177,7 +178,6 @@ public class MGUtil {
 
 	/**
 	 * Logs the given message if verbose logging is enabled.
-	 *
 	 * @param message the message to log.
 	 * @param prefix  the prefix to place in front of the message. This will automatically be placed within brackets.
 	 * @param level   the {@link LogLevel level} at which to log the message.
@@ -192,7 +192,6 @@ public class MGUtil {
 	/**
 	 * Calls an event, but sends it only to the appropriate plugin. <strong>Please do not call this from your plugin
 	 * unless you are aware of the implications.</strong>
-	 *
 	 * @param event the event to call.
 	 * @since 0.3.0
 	 */
@@ -212,7 +211,6 @@ public class MGUtil {
 
 	/**
 	 * Retrieves the sign attached to a given block, or null if ones does not exist.
-	 *
 	 * @param block the block to check for an attached sign.
 	 * @return the sign attached to a given block, or null if ones does not exist.
 	 */
@@ -256,7 +254,6 @@ public class MGUtil {
 
 	/**
 	 * Applies a damage effect to the given player.
-	 *
 	 * @param p the player to apply the effect to.
 	 * @since 0.3.0
 	 */
@@ -264,6 +261,7 @@ public class MGUtil {
 		if (NMS_SUPPORT){
 			try {
 				Object nms_entity = getHandle.invoke(p);
+				System.out.println(nms_entity);
 				Object packet = packetPlayOutAnimation.newInstance(nms_entity, 1);
 
 				for (Player pl : p.getWorld().getPlayers()){
@@ -277,27 +275,28 @@ public class MGUtil {
 					}
 				}
 			}
-			catch (Exception e){
-				e.printStackTrace();
+			catch (InvocationTargetException ex){
+				ex.getCause().printStackTrace();
+			}
+			catch (Exception ex){
+				ex.printStackTrace();
 			}
 		}
 	}
 
 	/**
 	 * Retrieves a class by the given name from the package <code>net.minecraft.server</code>.
-	 *
 	 * @param name the class to retrieve.
 	 * @return the class object from the package <code>net.minecraft.server</code>.
 	 * @throws ClassNotFoundException if the class does not exist in the package.
 	 */
 	public static Class<?> getMCClass(String name) throws ClassNotFoundException{
-		String className = "net.minecraft.server." + nmsVersion + name;
+		String className = "net.minecraft.server." + VERSION_STRING + name;
 		return Class.forName(className);
 	}
 
 	/**
 	 * Retrieves a class by the given name from the package <code>net.minecraft.server</code>.
-	 *
 	 * @param name the class to retrieve.
 	 * @return the class object from the package <code>net.minecraft.server</code>.
 	 * @throws ClassNotFoundException if the class does not exist in the package.
@@ -308,19 +307,17 @@ public class MGUtil {
 
 	/**
 	 * Retrieves a class by the given name from the package <code>org.bukkit.craftbukkit</code>.
-	 *
 	 * @param name the class to retrieve.
 	 * @return the class object from the package <code>org.bukkit.craftbukkit</code>.
 	 * @throws ClassNotFoundException if the class does not exist in the package.
 	 */
 	public static Class<?> getCraftClass(String name) throws ClassNotFoundException{
-		String className = "org.bukkit.craftbukkit." + nmsVersion + name;
+		String className = "org.bukkit.craftbukkit." + VERSION_STRING + name;
 		return Class.forName(className);
 	}
 
 	/**
 	 * Determines the environment of the given world based on its folder structure.
-	 *
 	 * @param world the name of the world to determine the environment of.
 	 * @return the environment of the given world.
 	 * @since 0.3.0
@@ -366,6 +363,20 @@ public class MGUtil {
 					LogLevel.SEVERE);
 		}
 		return false;
+	}
+
+	/**
+	 * Deletes a folder recursively.
+	 * @param folder the folder to delete.
+	 * @since 0.3.0
+	 */
+	public static void deleteFolder(File folder){
+		for (File f : folder.listFiles()){
+			if (f.isDirectory())
+				deleteFolder(f);
+			else
+				f.delete();
+		}
 	}
 
 }
