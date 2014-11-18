@@ -17,8 +17,8 @@
     </properties>
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
+            <id>amigocraft-repo</id>
+            <url>http://repo.amigocraft.net/content/groups/public/</url>
         </repository>
         <repository>
             <id>bc-repo</id>
@@ -31,38 +31,6 @@
             <artifactId>bukkit</artifactId>
             <scope>provided</scope>
             <version>1.7.10-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <scope>test</scope>
-            <version>1.7.10-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
-            <version>1.7-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>1.4.9</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>1.4.9</version>
-            <type>jar</type>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <distributionManagement>
