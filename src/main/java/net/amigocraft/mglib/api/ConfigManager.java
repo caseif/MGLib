@@ -643,9 +643,7 @@ public class ConfigManager {
 	/**
 	 * Sets whether block burning is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block burning is permitted in worlds containing one or more arenas
-	 * @since 0.1.0
-	 * @deprecated This method is improperly named, but remains for the sake of reverse compatibility. You should
-	 * instead use {@link ConfigManager#areBlockPhysicsAllowed()}.
+	 * @since 0.3.1
 	 */
 	public void setBlockBurnAllowed(boolean allowed){
 		actions.put("block-burn", allowed);
@@ -654,9 +652,9 @@ public class ConfigManager {
 	/**
 	 * Sets whether block burning is permitted in worlds containing one or more arenas. (default: false)
 	 * @param allowed whether block burning is permitted in worlds containing one or more arenas
-	 * @since 0.1.0
 	 * @deprecated This method is improperly named, but remains for the sake of reverse compatibility. You should
 	 * instead use {@link ConfigManager#setBlockBurnAllowed(boolean)}.
+	 * @since 0.1.0
 	 */
 	@Deprecated
 	public void setBlockBurningAllowed(boolean allowed){
@@ -742,7 +740,7 @@ public class ConfigManager {
 	/**
 	 * Retrieves whether block physics are permitted in worlds containing one or more arenas. (default: true)
 	 * @return whether block physics are permitted in worlds containing one or more arenas
-	 * @since 0.1.0
+	 * @since 0.3.1
 	 */
 	public boolean areBlockPhysicsAllowed(){
 		return actions.get("block-physics");
@@ -751,9 +749,9 @@ public class ConfigManager {
 	/**
 	 * Retrieves whether block physics are permitted in worlds containing one or more arenas. (default: true)
 	 * @return whether block physics are permitted in worlds containing one or more arenas
-	 * @since 0.1.0
 	 * @deprecated This method is improperly named, but remains for the sake of reverse compatibility. You should
 	 * instead use {@link ConfigManager#areBlockPhysicsAllowed()}.
+	 * @since 0.1.0
 	 */
 	@Deprecated
 	public boolean isBlockPhysicsAllowed(){
@@ -772,9 +770,9 @@ public class ConfigManager {
 	/**
 	 * Sets whether block physics are permitted in worlds containing one or more arenas. (default: true)
 	 * @param allowed whether block physics are permitted in worlds containing one or more arenas
-	 * @since 0.1.0
 	 * @deprecated This method is improperly named, but remains for the sake of reverse compatibility. You should
 	 * instead use {@link ConfigManager#setBlockPhysicsAllowed(boolean)}.
+	 * @since 0.1.0
 	 */
 	@Deprecated
 	public void setBlockPhyiscsAllowed(boolean allowed){
@@ -824,7 +822,7 @@ public class ConfigManager {
 	/**
 	 * Retrieves whether entity explosions are permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether entity explosions are permitted in worlds containing one or more arenas
-	 * @since 0.3.0
+	 * @since 0.3.1
 	 */
 	public boolean areEntityExplosionsAllowed(){
 		return actions.get("entity-explode");
@@ -833,9 +831,9 @@ public class ConfigManager {
 	/**
 	 * Retrieves whether entity explosions are permitted in worlds containing one or more arenas. (default: false)
 	 * @return whether entity explosions are permitted in worlds containing one or more arenas
-	 * @since 0.3.0
 	 * @deprecated This method is improperly named, but remains for the sake of reverse compatibility. You should
 	 * instead use {@link ConfigManager#areEntityExplosionsAllowed()}.
+	 * @since 0.3.0
 	 */
 	@Deprecated
 	public boolean isEntityExplosionsAllowed(){
@@ -872,7 +870,10 @@ public class ConfigManager {
 	 */
 	@Deprecated
 	public void setPlayerClass(Class<? extends MGPlayer> clazz){
-		this.playerClass = clazz;
+		if (!clazz.equals(MGPlayer.class)){
+			this.playerClass = clazz;
+			this.getMinigame().customPlayerClass = true;
+		}
 	}
 
 	/**
@@ -896,7 +897,10 @@ public class ConfigManager {
 	 */
 	@Deprecated
 	public void setRoundClass(Class<? extends Round> clazz){
-		this.roundClass = clazz;
+		if (!clazz.equals(Round.class)){
+			this.roundClass = clazz;
+			this.getMinigame().customRoundClass = true;
+		}
 	}
 
 	/**

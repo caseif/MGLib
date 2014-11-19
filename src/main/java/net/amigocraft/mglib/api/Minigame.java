@@ -26,7 +26,7 @@ import java.util.UUID;
  * prone to change. Methods may be in this version that will disappear in the next release, and existing methods may be
  * temporarily refactored.
  * @author Maxim Roncacé
- * @version 0.3.0
+ * @version 0.3.1-SNAPSHOT
  * @since 0.1.0
  */
 public class Minigame {
@@ -46,15 +46,19 @@ public class Minigame {
 
 	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0");
 
+	boolean customRoundClass = false, customPlayerClass = false;
+
 	private Minigame(final JavaPlugin plugin){
 		if (!registeredInstances.containsKey(plugin.getName())){
 			this.plugin = plugin;
-			registeredInstances.put(plugin.getName(), this); // list this Minigame instance for use in other parts of the API
+			registeredInstances.put(plugin.getName(), this);// list this instance for use in other parts of the API
 			Main.log.info(plugin + " has successfully hooked into MGLib!");
 		}
 		else {
-			throw new IllegalStateException(plugin + " attempted to hook into MGLib while an instance of the API was already " +
-					"registered. This is a bug, and should be reported this to the author of the hooking plugin (" + plugin + ").");
+			throw new IllegalStateException(plugin +
+					" attempted to hook into MGLib while an instance of the API was already " +
+					"registered. This is a bug, and should be reported this to the author of the hooking plugin (" +
+					plugin + ").");
 		}
 		configManager = new ConfigManager(plugin.getName());
 		rbManager = new RollbackManager(plugin); // register rollback manager
@@ -150,29 +154,37 @@ public class Minigame {
 	 */
 	public Round createRound(String arena) throws NoSuchArenaException {
 		Round r = null;
-		try {
-			Constructor con = getConfigManager().getRoundClass().getDeclaredConstructor(String.class, String.class);
-			r = (Round)con.newInstance(plugin.getName(), arena.toLowerCase());
-			r.setStage(Stage.WAITING); // default to waiting stage
-			rounds.put(arena.toLowerCase(), r); // register arena with MGLib
+		if (this.customRoundClass){
+			try {
+				Constructor con = getConfigManager().getRoundClass().getDeclaredConstructor(String.class, String.class);
+				r = (Round) con.newInstance(plugin.getName(), arena.toLowerCase());
+				r.setStage(Stage.WAITING); // default to waiting stage
+				rounds.put(arena.toLowerCase(), r); // register arena with MGLib
+			}
+			catch (NoSuchMethodException ex){ // thrown when the required constructor does not exist
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
+						" is malformed!");
+				ex.printStackTrace();
+			}
+			catch (InvocationTargetException ex){ // any error thrown from the called constructor
+				ex.getTargetException().printStackTrace();
+			}
+			catch (SecurityException ex){ // I have no idea why this would happen.
+				ex.printStackTrace();
+			}
+			catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
+						" is malformed!");
+				ex.printStackTrace();
+			}
+			catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
+				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
+						" is not visible!");
+				ex.printStackTrace();
+			}
 		}
-		catch (NoSuchMethodException ex){ // thrown when the required constructor does not exist
-			Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
-			ex.printStackTrace();
-		}
-		catch (InvocationTargetException ex){ // any error thrown from the called constructor
-			ex.getTargetException().printStackTrace();
-		}
-		catch (SecurityException ex){ // I have no idea why this would happen.
-			ex.printStackTrace();
-		}
-		catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
-			Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
-			ex.printStackTrace();
-		}
-		catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
-			Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible!");
-			ex.printStackTrace();
+		else {
+			r = new Round(plugin.getName(), arena.toLowerCase());
 		}
 		return r; // give the calling plugin the Round object
 	}
@@ -198,7 +210,8 @@ public class Minigame {
 	 * @throws  ArenaExistsException     if an arena of the same name already exists
 	 * @since 0.1.0
 	 */
-	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2) throws InvalidLocationException, ArenaExistsException{
+	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2)
+			throws InvalidLocationException, ArenaExistsException{
 
 		double minX = Double.NaN;
 		double minY = Double.NaN;
@@ -206,21 +219,20 @@ public class Minigame {
 		double maxX = Double.NaN;
 		double maxY = Double.NaN;
 		double maxZ = Double.NaN;
-		double x1 = Double.NaN;
-		double y1 = Double.NaN;
-		double z1 = Double.NaN;
-		double x2 = Double.NaN;
-		;
-		double y2 = Double.NaN;
-		double z2 = Double.NaN;
+		double x1;
+		double y1;
+		double z1;
+		double x2;
+		double y2;
+		double z2;
 
 		if (corner1 != null && corner2 != null){
-			if (spawn.getWorld().getName() != corner1.getWorld().getName()) // spawn's in a different world than the first corner
-			{
+			if (!spawn.getWorld().getName().equals(corner1.getWorld().getName())){
+			// spawn's in a different world than the first corner
 				throw new InvalidLocationException();
 			}
-			if (spawn.getWorld().getName() != corner2.getWorld().getName()) // spawn's in a different world than the second corner
-			{
+			if (!spawn.getWorld().getName().equals(corner2.getWorld().getName())){
+			// spawn's in a different world than the second corner
 				throw new InvalidLocationException();
 			}
 
@@ -459,8 +471,9 @@ public class Minigame {
 	}
 
 	/**
-	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
-	 * everything for everyone.</b>
+	 * Unsets all static variables in this class.
+	 * <strong>Please do not call this from your plugin unless you want to ruin
+	 * everything for everyone.</strong>
 	 * @since 0.1.0
 	 */
 	public static void uninitialize(){

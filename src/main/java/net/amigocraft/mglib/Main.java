@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * MGLib's primary (central) class
  * @author Maxim Roncacé
- * @version 0.3.0
+ * @version 0.3.1-SNAPSHOT
  * @since 0.1.0
  */
 public class Main extends JavaPlugin {

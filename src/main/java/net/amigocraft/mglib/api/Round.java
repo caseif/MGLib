@@ -675,32 +675,37 @@ public class Round implements Metadatable {
 		final Player p = Bukkit.getPlayer(name);
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null){
-			try {
-				Constructor con = getConfigManager().getPlayerClass().getDeclaredConstructor(String.class, String.class, String.class);
-				mp = (MGPlayer)con.newInstance(plugin, name, arena.toLowerCase());
+			if (this.getMinigame().customPlayerClass){
+				try {
+					Constructor con = getConfigManager().getPlayerClass().getDeclaredConstructor(String.class, String.class, String.class);
+					mp = (MGPlayer) con.newInstance(plugin, name, arena.toLowerCase());
+				}
+				catch (NoSuchMethodException ex){ // thrown when the required constructor does not exist
+					Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
+					ex.printStackTrace();
+					return JoinResult.INTERNAL_ERROR;
+				}
+				catch (InvocationTargetException ex){ // any error thrown from the called constructor
+					ex.getTargetException().printStackTrace();
+					return JoinResult.INTERNAL_ERROR;
+				}
+				catch (SecurityException ex){ // I have no idea why this would happen.
+					ex.printStackTrace();
+					return JoinResult.INTERNAL_ERROR;
+				}
+				catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
+					Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
+					ex.printStackTrace();
+					return JoinResult.INTERNAL_ERROR;
+				}
+				catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
+					Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible!");
+					ex.printStackTrace();
+					return JoinResult.INTERNAL_ERROR;
+				}
 			}
-			catch (NoSuchMethodException ex){ // thrown when the required constructor does not exist
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
-				ex.printStackTrace();
-				return JoinResult.INTERNAL_ERROR;
-			}
-			catch (InvocationTargetException ex){ // any error thrown from the called constructor
-				ex.getTargetException().printStackTrace();
-				return JoinResult.INTERNAL_ERROR;
-			}
-			catch (SecurityException ex){ // I have no idea why this would happen.
-				ex.printStackTrace();
-				return JoinResult.INTERNAL_ERROR;
-			}
-			catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is malformed!");
-				ex.printStackTrace();
-				return JoinResult.INTERNAL_ERROR;
-			}
-			catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin + " is not visible!");
-				ex.printStackTrace();
-				return JoinResult.INTERNAL_ERROR;
+			else {
+				mp = new MGPlayer(plugin, name, arena.toLowerCase());
 			}
 		}
 		else if (mp.getArena() == null){
