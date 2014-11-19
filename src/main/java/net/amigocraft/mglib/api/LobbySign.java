@@ -27,14 +27,14 @@ public class LobbySign {
 
 	/**
 	 * Creates a new {@link LobbySign} object.
-	 * @param x      the x-coordinate of the physical sign.
-	 * @param y      the y-coordinate of the physical sign.
-	 * @param z      the z-coordinate of the physical sign.
-	 * @param plugin the name of the plugin the sign is to be associated with.
-	 * @param world  the world containing the physical sign.
-	 * @param arena  the arena the sign should track.
-	 * @param number the number of the sign (used for {@link LobbyType#PLAYERS player signs}).
-	 * @param type   the {@link LobbyType type} of the sign.
+	 * @param x      the x-coordinate of the physical sign
+	 * @param y      the y-coordinate of the physical sign
+	 * @param z      the z-coordinate of the physical sign
+	 * @param plugin the name of the plugin the sign is to be associated with
+	 * @param world  the world containing the physical sign
+	 * @param arena  the arena the sign should track
+	 * @param number the number of the sign (used for {@link LobbyType#PLAYERS player signs})
+	 * @param type   the {@link LobbyType type} of the sign
 	 * @since 0.1.0
 	 */
 	public LobbySign(int x, int y, int z, String plugin, String world, String arena, int number, LobbyType type){
@@ -50,7 +50,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical x-coordinate of this lobby sign.
-	 * @return the physical x-coordinate of this lobby sign.
+	 * @return the physical x-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
 	public int getX(){
@@ -59,7 +59,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical x-coordinate of this lobby sign.
-	 * @param x the physical x-coordinate of this lobby sign.
+	 * @param x the physical x-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
 	public void setX(int x){
@@ -68,7 +68,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical y-coordinate of this lobby sign.
-	 * @return the physical y-coordinate of this lobby sign.
+	 * @return the physical y-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
 	public int getY(){
@@ -77,7 +77,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical y-coordinate of this lobby sign.
-	 * @param y the physical y-coordinate of this lobby sign.
+	 * @param y the physical y-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
 	public void setY(int y){
@@ -86,7 +86,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical z-coordinate of this lobby sign.
-	 * @return the physical z-coordinate of this lobby sign.
+	 * @return the physical z-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
 	public int getZ(){
@@ -95,7 +95,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the physical z-coordinate of this lobby sign.
-	 * @param z the physical z-coordinate of this lobby sign.
+	 * @param z the physical z-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
 	public void setZ(int z){
@@ -104,7 +104,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the plugin this lobby sign is associated with.
-	 * @return the plugin this lobby sign is associated with.
+	 * @return the plugin this lobby sign is associated with
 	 * @since 0.1.0
 	 */
 	public String getPlugin(){
@@ -113,7 +113,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the name of the world containing this physical lobby sign.
-	 * @return the name of the world containing this physical lobby sign.
+	 * @return the name of the world containing this physical lobby sign
 	 * @since 0.1.0
 	 */
 	public String getWorld(){
@@ -122,7 +122,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the name of the world containing this physical lobby sign.
-	 * @param world the name of the world containing this physical lobby sign.
+	 * @param world the name of the world containing this physical lobby sign
 	 * @since 0.1.0
 	 */
 	public void setWorld(String world){
@@ -131,7 +131,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the arena associated with this lobby sign.
-	 * @return the arena associated with this lobby sign.
+	 * @return the arena associated with this lobby sign
 	 * @since 0.1.0
 	 */
 	public String getArena(){
@@ -140,7 +140,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the arena associated with this lobby sign.
-	 * @param arena the arena associated with this lobby sign.
+	 * @param arena the arena associated with this lobby sign
 	 * @since 0.1.0
 	 */
 	public void setArena(String arena){
@@ -149,7 +149,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the number of this lobby sign.
-	 * @return the number of this lobby sign.
+	 * @return the number of this lobby sign
 	 * @since 0.1.0
 	 */
 	public int getNumber(){
@@ -158,7 +158,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the number of this lobby sign.
-	 * @param number the number of this lobby sign.
+	 * @param number the number of this lobby sign
 	 * @since 0.1.0
 	 */
 	public void setNumber(int number){
@@ -167,7 +167,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the {@link LobbyType type} of this lobby sign.
-	 * @return the {@link LobbyType type} of this lobby sign.
+	 * @return the {@link LobbyType type} of this lobby sign
 	 * @since 0.1.0
 	 */
 	public LobbyType getType(){
@@ -176,7 +176,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the {@link LobbyType type} of this lobby sign.
-	 * @param type the {@link LobbyType type} of this lobby sign.
+	 * @param type the {@link LobbyType type} of this lobby sign
 	 * @since 0.1.0
 	 */
 	public void setType(LobbyType type){
@@ -185,7 +185,7 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the internal index of this lobby sign.
-	 * @return the internal index of this lobby sign.
+	 * @return the internal index of this lobby sign
 	 * @since 0.1.0
 	 */
 	public int getIndex(){
@@ -194,7 +194,7 @@ public class LobbySign {
 
 	/**
 	 * Sets the internal index of this lobby sign.
-	 * @param index the internal index of this lobby sign.
+	 * @param index the internal index of this lobby sign
 	 * @since 0.1.0
 	 */
 	public void setIndex(int index){

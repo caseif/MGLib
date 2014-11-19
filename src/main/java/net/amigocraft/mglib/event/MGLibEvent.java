@@ -11,7 +11,7 @@ public class MGLibEvent extends Event {
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param plugin The name of the plugin involved in this {@link MGLibEvent}.
+	 * @param plugin the name of the plugin involved in this {@link MGLibEvent}
 	 * @since 0.1.0
 	 */
 	public MGLibEvent(String plugin){
@@ -20,7 +20,7 @@ public class MGLibEvent extends Event {
 
 	/**
 	 * Retrieves the name of the plugin involved in this {@link MGLibEvent}.
-	 * @return the name of the plugin involved in this {@link MGLibEvent}.
+	 * @return the name of the plugin involved in this {@link MGLibEvent}
 	 * @since 0.1.0
 	 */
 	public String getPlugin(){
@@ -36,8 +36,9 @@ public class MGLibEvent extends Event {
 	}
 
 	/**
-	 * Unsets all static variables in this class. <b>Please do not call this from your plugin unless you want to ruin
-	 * everything for everyone.</b>
+	 * Unsets all static variables in this class.
+	 * <strong>Please do not call this from your plugin unless you want to ruin
+	 * everything for everyone.</strong>
 	 */
 	public static void uninitialize(){
 		handlers = null;

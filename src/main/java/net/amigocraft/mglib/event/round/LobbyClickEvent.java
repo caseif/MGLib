@@ -20,10 +20,10 @@ public class LobbyClickEvent extends MGRoundEvent implements Cancellable {
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param player    the name of the player who clicked a lobby sign.
-	 * @param round     the round which the lobby sign is linked to.
-	 * @param lobbySign the {@link LobbySign lobby sign} which has been clicked.
-	 * @param result    the result of the player being added to the round.
+	 * @param player    the name of the player who clicked a lobby sign
+	 * @param round     the round which the lobby sign is linked to
+	 * @param lobbySign the {@link LobbySign lobby sign} which has been clicked
+	 * @param result    the result of the player being added to the round
 	 * @since 0.3.0
 	 */
 	public LobbyClickEvent(String player, Round round, LobbySign lobbySign, JoinResult result){
@@ -35,7 +35,7 @@ public class LobbyClickEvent extends MGRoundEvent implements Cancellable {
 
 	/**
 	 * Retrieves the name of the player involved in this event.
-	 * @return the name of the player involved in this event.
+	 * @return the name of the player involved in this event
 	 * @since 0.3.0
 	 */
 	public String getPlayer(){
@@ -44,7 +44,7 @@ public class LobbyClickEvent extends MGRoundEvent implements Cancellable {
 
 	/**
 	 * Retrieves the {@link LobbySign lobby sign} object involved in this event.
-	 * @return the {@link LobbySign lobby sign} object involved in this event.
+	 * @return the {@link LobbySign lobby sign} object involved in this event
 	 * @since 0.3.0
 	 */
 	public LobbySign getLobbySign(){
@@ -53,7 +53,7 @@ public class LobbyClickEvent extends MGRoundEvent implements Cancellable {
 
 	/**
 	 * Retrieves the result of the event.
-	 * @return the result of this event.
+	 * @return the result of this event
 	 * @since 0.3.0
 	 */
 	public JoinResult getResult(){

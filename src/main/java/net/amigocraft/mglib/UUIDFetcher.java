@@ -13,6 +13,12 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.Callable;
 
+/**
+ * Utility class for use with Mojang's UUID API.
+ * <br><br>
+ * This class has been modified from the original for use with MGLib.
+ * @author evilmidget38
+ */
 public class UUIDFetcher implements Callable<Map<String, UUID>> {
 
 	static HashMap<String, UUID> uuids = new HashMap<String, UUID>();

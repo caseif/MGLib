@@ -15,8 +15,8 @@ public class MGPlayerSpectateEvent extends MGPlayerEvent implements Cancellable 
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param round  the round the player has joined.
-	 * @param player the player involved in this event.
+	 * @param round  the round the player has joined
+	 * @param player the player involved in this event
 	 * @since 0.2.0
 	 */
 	public MGPlayerSpectateEvent(Round round, MGPlayer player){
@@ -26,7 +26,7 @@ public class MGPlayerSpectateEvent extends MGPlayerEvent implements Cancellable 
 
 	/**
 	 * Returns the {@link Round round} involved in this event.
-	 * @return the {@link Round round} involved in this event.
+	 * @return the {@link Round round} involved in this event
 	 * @since 0.2.0
 	 */
 	public Round getRound(){

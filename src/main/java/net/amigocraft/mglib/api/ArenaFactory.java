@@ -45,10 +45,10 @@ public class ArenaFactory {
 
 	/**
 	 * Creates a new {@link ArenaFactory arena} object, used to modify an arena's assets.
-	 * @param plugin the plugin this arena is owned by.
-	 * @param arena  the name of the arena.
-	 * @param world  the world containing the arena.
-	 * @return the created ArenaFactory, or the existing one if present.
+	 * @param plugin the plugin this arena is owned by
+	 * @param arena  the name of the arena
+	 * @param world  the world containing the arena
+	 * @return the created ArenaFactory, or the existing one if present
 	 * @since 0.1.0
 	 */
 	public static ArenaFactory createArenaFactory(String plugin, String arena, String world){
@@ -76,7 +76,7 @@ public class ArenaFactory {
 
 	/**
 	 * Retrieves the name of the plugin associated with this {@link ArenaFactory}.
-	 * @return the name of the plugin associated with this {@link ArenaFactory}.
+	 * @return the name of the plugin associated with this {@link ArenaFactory}
 	 * @since 0.1.0
 	 */
 	public String getPlugin(){
@@ -85,7 +85,7 @@ public class ArenaFactory {
 
 	/**
 	 * Retrieves the name of the arena associated with this {@link ArenaFactory}.
-	 * @return the name of the arena associated with this {@link ArenaFactory}.
+	 * @return the name of the arena associated with this {@link ArenaFactory}
 	 * @since 0.1.0
 	 */
 	public String getArena(){
@@ -94,7 +94,7 @@ public class ArenaFactory {
 
 	/**
 	 * Retrieves the display name of the arena associated with this {@link ArenaFactory}.
-	 * @return the display name of the arena associated with this {@link ArenaFactory}.
+	 * @return the display name of the arena associated with this {@link ArenaFactory}
 	 * @since 0.1.0
 	 */
 	public String getDisplayName(){
@@ -103,7 +103,7 @@ public class ArenaFactory {
 
 	/**
 	 * Retrieves the name of the world associated with this {@link ArenaFactory}'s arena.
-	 * @return the name of the world associated with this {@link ArenaFactory}'s arena.
+	 * @return the name of the world associated with this {@link ArenaFactory}'s arena
 	 * @since 0.1.0
 	 */
 	public String getWorld(){
@@ -144,12 +144,12 @@ public class ArenaFactory {
 
 	/**
 	 * Adds a spawn to the given arena with the given coordinates, pitch, and yaw.
-	 * @param x     The x-coordinate of the new spawn.
-	 * @param y     The y-coordinate of the new spawn.
-	 * @param z     The z-coordinate of the new spawn.
-	 * @param pitch The pitch (x- and z-rotation) of the new spawn.
-	 * @param yaw   The yaw (y-rotation) of the new spawn.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param x the x-coordinate of the new spawn
+	 * @param y the y-coordinate of the new spawn
+	 * @param z the z-coordinate of the new spawn
+	 * @param pitch the pitch (x- and z-rotation) of the new spawn
+	 * @param yaw the yaw (y-rotation) of the new spawn
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(double x, double y, double z, float pitch, float yaw){
@@ -196,10 +196,10 @@ public class ArenaFactory {
 	 * Adds a spawn to the given arena with the given coordinates. <br><br> <b>Note:</b> it is recommended that you use
 	 * {@link ArenaFactory#addSpawn(Location) addSpawn(Location)} if an instance of a Location at these coordinates
 	 * already exists.
-	 * @param x The x-coordinate of the new spawn.
-	 * @param y The y-coordinate of the new spawn.
-	 * @param z The z-coordinate of the new spawn.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param x the x-coordinate of the new spawn
+	 * @param y the y-coordinate of the new spawn
+	 * @param z the z-coordinate of the new spawn
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(double x, double y, double z){
@@ -208,11 +208,11 @@ public class ArenaFactory {
 
 	/**
 	 * Adds a spawn to the given arena with the given {@link Location}.
-	 * @param location        The location of the new spawn.
-	 * @param saveOrientation Whether to save the {@link Location}'s pitch and yaw to the spawn (Defaults to false if
+	 * @param location the location of the new spawn
+	 * @param saveOrientation whether to save the {@link Location}'s pitch and yaw to the spawn (Defaults to false if
 	 *                        omitted).
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
+	 * @return the instance of {@link ArenaFactory} which this method was called from
+	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException{
@@ -229,9 +229,9 @@ public class ArenaFactory {
 
 	/**
 	 * Adds a spawn to the given arena with the given {@link Location}.
-	 * @param location The location of the new spawn.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
+	 * @param location the location of the new spawn
+	 * @return the instance of {@link ArenaFactory} which this method was called from
+	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
 	public ArenaFactory addSpawn(Location location) throws InvalidLocationException{
@@ -240,10 +240,10 @@ public class ArenaFactory {
 
 	/**
 	 * Deletes a spawn from the given arena at the given coordinates.
-	 * @param x The x-coordinate of the spawn to delete.
-	 * @param y The y-coordinate of the spawn to delete.
-	 * @param z The z-coordinate of the spawn to delete.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param x the x-coordinate of the spawn to delete
+	 * @param y the y-coordinate of the spawn to delete
+	 * @param z the z-coordinate of the spawn to delete
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
 	public ArenaFactory deleteSpawn(double x, double y, double z){
@@ -278,8 +278,8 @@ public class ArenaFactory {
 
 	/**
 	 * Deletes a spawn from the given arena at the given {@link Location}.
-	 * @param location The {@link Location} of the spawn to delete.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param location the {@link Location} of the spawn to delete
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
 	public ArenaFactory deleteSpawn(Location location){
@@ -288,8 +288,8 @@ public class ArenaFactory {
 
 	/**
 	 * Deletes a spawn from the given arena at the given {@link Location}.
-	 * @param index The internal index of the spawn to delete.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param index the internal index of the spawn to delete
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
 	public ArenaFactory deleteSpawn(int index){
@@ -325,10 +325,10 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the minimum boundary of this arena.
-	 * @param x The minimum x-value.
-	 * @param y The minimum y-value.
-	 * @param z The minimum z-value.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param x the minimum x-value
+	 * @param y the minimum y-value
+	 * @param z the minimum z-value
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
 	public ArenaFactory setMinBound(double x, double y, double z){
@@ -357,9 +357,9 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the minimum boundary of this arena.
-	 * @param location the {@link Location} representing the maximum boundary.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
+	 * @param location the {@link Location} representing the maximum boundary
+	 * @return the instance of {@link ArenaFactory} which this method was called from
+	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
 	public ArenaFactory setMinBound(Location location) throws InvalidLocationException{
@@ -373,10 +373,10 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the maximum boundary of this arena.
-	 * @param x The maximum x-value.
-	 * @param y The maximum y-value.
-	 * @param z The maximum z-value.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param x the maximum x-value
+	 * @param y the maximum y-value
+	 * @param z the maximum z-value
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
 	public ArenaFactory setMaxBound(double x, double y, double z){
@@ -405,9 +405,9 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the maximum boundary of this arena.
-	 * @param location the {@link Location} representing the maximum boundary.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
-	 * @throws InvalidLocationException if the provided location's world does not match the arena's world.
+	 * @param location the {@link Location} representing the maximum boundary
+	 * @return the instance of {@link ArenaFactory} which this method was called from
+	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
 	public ArenaFactory setMaxBound(Location location) throws InvalidLocationException{
@@ -421,9 +421,9 @@ public class ArenaFactory {
 
 	/**
 	 * Attaches an arbitrary key-value pair to the arena.
-	 * @param key   the key to set for the arena.
-	 * @param value the value to associate with the key.
-	 * @return the instance of {@link ArenaFactory} which this method was called from.
+	 * @param key   the key to set for the arena
+	 * @param value the value to associate with the key
+	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.3.0
 	 */
 	public ArenaFactory setData(String key, Object value){
@@ -451,7 +451,7 @@ public class ArenaFactory {
 	 * Determines whether this instance is newly created for the server session. This will return false for the rest of
 	 * the session after the {@link ArenaFactory#createArenaFactory(String, String, String) createArenaFactory()} method
 	 * is called a second time.
-	 * @return whether this instance is newly created.
+	 * @return whether this instance is newly created
 	 * @since 0.1.0
 	 */
 	public boolean isNewInstance(){
@@ -460,7 +460,7 @@ public class ArenaFactory {
 
 	/**
 	 * Determines whether this arena is newly created. This will permanently return false until the arena is deleted.
-	 * @return whether this arena is newly created.
+	 * @return whether this arena is newly created
 	 * @since 0.3.0
 	 */
 	public boolean isNewArena(){

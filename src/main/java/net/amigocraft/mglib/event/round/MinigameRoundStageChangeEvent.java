@@ -14,9 +14,9 @@ public class MinigameRoundStageChangeEvent extends MGRoundEvent {
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param round  The round associated with this event.
-	 * @param before the stage before the change.
-	 * @param after  the stage after the change.
+	 * @param round  the round associated with this event
+	 * @param before the stage before the change
+	 * @param after  the stage after the change
 	 * @since 0.3.0
 	 */
 	public MinigameRoundStageChangeEvent(Round round, Stage before, Stage after){
@@ -27,7 +27,7 @@ public class MinigameRoundStageChangeEvent extends MGRoundEvent {
 
 	/**
 	 * Gets the stage of the round before the event.
-	 * @return the stage of the round before the event.
+	 * @return the stage of the round before the event
 	 * @since 0.3.0
 	 */
 	public Stage getStageBefore(){
@@ -36,7 +36,7 @@ public class MinigameRoundStageChangeEvent extends MGRoundEvent {
 
 	/**
 	 * Gets the stage of the round after the event.
-	 * @return the stage of the round after the event.
+	 * @return the stage of the round after the event
 	 * @since 0.3.0
 	 */
 	public Stage getStageAfter(){

@@ -31,7 +31,7 @@ public class RollbackManager {
 
 	/**
 	 * Creates a new rollback manager for the specified plugin
-	 * @param plugin The plugin to create the rollback manager for
+	 * @param plugin the plugin to create the rollback manager for
 	 * @since 0.1.0
 	 */
 	public RollbackManager(JavaPlugin plugin){
@@ -55,7 +55,7 @@ public class RollbackManager {
 
 	/**
 	 * Retrieves the plugin associated with this rollback manager.
-	 * @return the plugin associated with this rollback manager.
+	 * @return the plugin associated with this rollback manager
 	 * @since 0.1.0
 	 */
 	public JavaPlugin getPlugin(){
@@ -64,8 +64,8 @@ public class RollbackManager {
 
 	/**
 	 * Logs a block change.
-	 * @param block The block which was changed.
-	 * @param arena The arena in which the block is contained.
+	 * @param block the block which was changed
+	 * @param arena the arena in which the block is contained
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
@@ -97,9 +97,9 @@ public class RollbackManager {
 
 	/**
 	 * Logs an inventory change
-	 * @param inventory The inventory to log
-	 * @param block     The block containing the inventory
-	 * @param arena     The arena in which the block is contained
+	 * @param inventory the inventory to log
+	 * @param block     the block containing the inventory
+	 * @param arena     the arena in which the block is contained
 	 * @since 0.1.0
 	 */
 	public void logInventoryChange(Inventory inventory, Block block, String arena){
@@ -124,9 +124,11 @@ public class RollbackManager {
 	}
 
 	/**
-	 * Rolls back the given arena. <br><br> This method <strong>should not</strong> be called from your plugin unless
+	 * Rolls back the given arena.
+	 * <br><br>
+	 * This method <strong>should not</strong> be called from your plugin unless
 	 * you understand the implications.
-	 * @param arena The arena to roll back.
+	 * @param arena the arena to roll back
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
@@ -211,7 +213,7 @@ public class RollbackManager {
 	}
 
 	/**
-	 * Rolls back arenas which have not been rolled back due to a crash or unclean shutdown
+	 * Rolls back arenas which have not been rolled back due to a crash or unclean shutdown.
 	 * @since 0.1.0
 	 */
 	public void checkRollbacks(){

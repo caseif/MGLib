@@ -32,7 +32,7 @@ public class LobbyManager {
 
 	/**
 	 * Retrieves a hashmap mapping locations to lobby signs registered with this lobby manager.
-	 * @return a hashmap of signs registered with this lobby manager.
+	 * @return a hashmap of signs registered with this lobby manager
 	 * @since 0.1.0
 	 */
 	public HashMap<Location3D, LobbySign> getSigns(){
@@ -41,7 +41,7 @@ public class LobbyManager {
 
 	/**
 	 * Retrieves a list of lobby signs registered with this lobby manager.
-	 * @return a list of lobby signs registered with this lobby manager.
+	 * @return a list of lobby signs registered with this lobby manager
 	 * @since 0.1.0
 	 */
 	public List<LobbySign> getSignList(){
@@ -50,13 +50,13 @@ public class LobbyManager {
 
 	/**
 	 * Creates a new LobbySign to be managed
-	 * @param l     The location to create the sign at.
-	 * @param arena The name of the arena the sign will be linked to.
-	 * @param type  The type of the sign ("status" or "players")
-	 * @param index The number of the sign (applicable only for "players" signs)
-	 * @throws NoSuchArenaException     if the specified arena does not exist.
-	 * @throws InvalidLocationException if the specified location does not contain a sign.
-	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1.
+	 * @param l     the location to create the sign at
+	 * @param arena the name of the arena the sign will be linked to
+	 * @param type  the type of the sign ("status" or "players")
+	 * @param index the number of the sign (applicable only for "players" signs)
+	 * @throws NoSuchArenaException     if the specified arena does not exist
+	 * @throws InvalidLocationException if the specified location does not contain a sign
+	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1
 	 * @since 0.1.0
 	 */
 	public void add(Location l, String arena, LobbyType type, int index) throws NoSuchArenaException, InvalidLocationException, IllegalArgumentException{
@@ -93,7 +93,7 @@ public class LobbyManager {
 
 	/**
 	 * Updates all lobby signs linked to a specific arena.
-	 * @param arena The arena to update signs for.
+	 * @param arena the arena to update signs for
 	 * @since 0.1.0
 	 */
 	public void update(String arena){
@@ -117,7 +117,7 @@ public class LobbyManager {
 
 	/**
 	 * Removes the given lobby sign.
-	 * @param s the lobby sign to remove.
+	 * @param s the lobby sign to remove
 	 * @since 0.1.0
 	 */
 	public void remove(LobbySign s){
@@ -141,8 +141,8 @@ public class LobbyManager {
 
 	/**
 	 * Saves a lobby sign's data to disk.
-	 * @param l the lobby sign to save to disk.
-	 * @return the index of the sign in the YAML file used for storage.
+	 * @param l the lobby sign to save to disk
+	 * @return the index of the sign in the YAML file used for storage
 	 * @since 0.1.0
 	 */
 	public int save(LobbySign l){
@@ -180,8 +180,8 @@ public class LobbyManager {
 
 	/**
 	 * Retrieves the lobby sign at the specified location, or null if it does not exist.
-	 * @param location the location to search for a lobby sign at.
-	 * @return the lobby sign at the specified location, or null if it does not exist.
+	 * @param location the location to search for a lobby sign at
+	 * @return the lobby sign at the specified location, or null if it does not exist
 	 * @since 0.1.0
 	 */
 	public LobbySign getSign(Location3D location){

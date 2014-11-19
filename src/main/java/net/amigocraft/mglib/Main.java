@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * MGLib's primary (central) class.
+ * MGLib's primary (central) class
  * @author Maxim Roncacé
  * @version 0.3.0
  * @since 0.1.0
@@ -26,41 +26,45 @@ import java.util.logging.Logger;
 public class Main extends JavaPlugin {
 
 	/**
-	 * The current instance of the plugin. <br><br> This is for use within the library; please do not modify this in
-	 * your plugin or everything will break.
+	 * The current instance of the plugin.
+	 * <br><br>
+	 * <strong>This is for use within the library; please do not modify this in
+	 * your plugin or everything will break.</strong>
 	 * @since 0.1.0
 	 */
 	public static Main plugin;
 
 	/**
-	 * MGLib's logger. <br><br> This is for use within the library; please do not use this in your plugin or you'll
-	 * confuse the server owner.
+	 * MGLib's logger.
+	 * <br><br>
+	 * <strong>This is for use within the library; please do not use this in your plugin or you'll
+	 * confuse the server owner.</strong>
 	 * @since 0.1.0
 	 */
 	public static Logger log;
 
 	/**
-	 * Whether block changes should be logged immediately.
+	 * Whether block changes should be logged immediately
 	 */
 	public static boolean IMMEDIATE_LOGGING;
 
 	/**
-	 * The minimum level at which messages should be logged.
+	 * The minimum level at which messages should be logged
 	 */
 	public static LogLevel LOGGING_LEVEL;
 
 	/**
-	 * Whether vanilla spectating is globally disabled.
+	 * Whether vanilla spectating is globally disabled
 	 */
 	private static boolean VANILLA_SPECTATING_DISABLED;
 
 	/**
-	 * The locale for MGLib itself.
+	 * The locale for MGLib itself
 	 */
 	public static Locale locale;
 
 	/**
-	 * Standard {@link JavaPlugin#onEnable()} override.
+	 * Standard {@link JavaPlugin#onEnable()} override
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("unchecked")
@@ -154,7 +158,7 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * This method should not be called from your plugin. So don't use it. Please.
-	 * @param plugin the name of the plugin to register worlds for.
+	 * @param plugin the name of the plugin to register worlds for
 	 */
 	public static void registerWorlds(String plugin){
 		MGListener.addWorlds(plugin);
@@ -168,7 +172,7 @@ public class Main extends JavaPlugin {
 	/**
 	 * Internal convenience method for logging. <strong>Please do not call this from your plugin.</strong>
 	 * @param message the message to log.
-	 * @param level   the {@link LogLevel level} at which to log the message.
+	 * @param level   the {@link LogLevel level} at which to log the message
 	 * @since 0.3.0
 	 */
 	public static void log(String message, LogLevel level){
@@ -187,7 +191,7 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
-	 * @return a hashmap mapping the names of online players to their respective UUIDs.
+	 * @return a hashmap mapping the names of online players to their respective UUIDs
 	 * @since 0.3.0
 	 */
 	public static HashMap<String, UUID> getOnlineUUIDs(){
@@ -196,7 +200,7 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Retrieves whether vanilla spectating has been globally disabled by MGLib's config.yml file.
-	 * @return whether vanilla spectating has been globally disabled by MGLib's config.yml file.
+	 * @return whether vanilla spectating has been globally disabled by MGLib's config.yml file
 	 * @since 0.3.0
 	 */
 	public static boolean isVanillaSpectatingDisabled(){

@@ -20,6 +20,7 @@ public class Locale {
 	 * @since 0.3.0
 	 */
 	public String plugin;
+
 	/**
 	 * The messages stored by this local manager.
 	 * @since 0.3.0
@@ -30,7 +31,7 @@ public class Locale {
 	/**
 	 * Creates a new locale manager for the given plugin (yours). MGLib attempts to load locales first from the
 	 * "locales" directory in the plugin's data folder, then from the locales directory in the plugin JAR's root.
-	 * @param plugin the plugin to create a locale manager for.
+	 * @param plugin the plugin to create a locale manager for
 	 * @since 0.3.0
 	 */
 	public Locale(String plugin){
@@ -40,8 +41,8 @@ public class Locale {
 
 	/**
 	 * Retrieves a message from a given key.
-	 * @param key the key to search for.
-	 * @return the message associated with the given key.
+	 * @param key the key to search for
+	 * @return the message associated with the given key
 	 * @since 0.3.0
 	 */
 	public String getMessage(String key){

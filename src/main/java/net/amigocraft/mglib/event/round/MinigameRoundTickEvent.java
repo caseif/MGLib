@@ -13,7 +13,7 @@ public class MinigameRoundTickEvent extends MGRoundEvent {
 
 	/**
 	 * You probably shouldn't call this from your plugin. Let MGLib handle that.
-	 * @param round       the round which has ticked.
+	 * @param round       the round which has ticked
 	 * @param oldTime     the round time before the tick.
 	 * @param stageChange whether the tick resulted in a stage change (e.g. from {@link Stage#PREPARING} to {@link
 	 *                    Stage#PLAYING}.

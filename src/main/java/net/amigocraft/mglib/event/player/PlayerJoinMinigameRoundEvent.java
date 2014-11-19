@@ -16,8 +16,8 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancel
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param round  the round the player has joined.
-	 * @param player the player involved in this event.
+	 * @param round  the round the player has joined
+	 * @param player the player involved in this event
 	 * @since 0.1.0
 	 */
 	public PlayerJoinMinigameRoundEvent(Round round, MGPlayer player){
@@ -27,7 +27,7 @@ public class PlayerJoinMinigameRoundEvent extends MGRoundEvent implements Cancel
 
 	/**
 	 * Returns the {@link Round round} involved in this event.
-	 * @return the {@link Round round} involved in this event.
+	 * @return the {@link Round round} involved in this event
 	 * @since 0.1.0
 	 */
 	public MGPlayer getPlayer(){

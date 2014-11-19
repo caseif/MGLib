@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.amigocraft.mglib</groupId>
-    <artifactId>MGLib</artifactId>
+    <artifactId>mglib</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.0</version>
+    <version>0.3.1-SNAPSHOT</version>
     <name>MGLib</name>
     <url>http://dev.bukkit.org/bukkit-plugins/mglib/</url>
     <description>A high-level API for Bukkit minigame creation</description>
@@ -36,7 +36,7 @@
     <distributionManagement>
         <repository>
             <id>ssh-repository</id>
-            <url>sftp://amigocraft.net/var/www/repo/content/repositories/mglib/</url>
+            <url>sftp://ssh.amigocraft.net/var/www/repo/content/groups/public/</url>
         </repository>
     </distributionManagement>
     <build>
@@ -64,7 +64,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <finalName>MGLib</finalName>
                     <archive>
                         <compress>true</compress>
                         <manifestEntries>

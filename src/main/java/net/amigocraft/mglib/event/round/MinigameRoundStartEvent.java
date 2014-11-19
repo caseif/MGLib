@@ -14,8 +14,8 @@ public class MinigameRoundStartEvent extends MGRoundEvent implements Cancellable
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param round    The {@link Round} associated with this event.
-	 * @param prepared Whether the round start was on account of its preparation period ending.
+	 * @param round    the {@link Round} associated with this event
+	 * @param prepared whether the round start was on account of its preparation period ending
 	 * @since 0.1.0
 	 */
 	public MinigameRoundStartEvent(Round round, boolean prepared){
@@ -25,7 +25,7 @@ public class MinigameRoundStartEvent extends MGRoundEvent implements Cancellable
 
 	/**
 	 * Creates an instance of this event.
-	 * @param round The {@link Round} associated with this {@link org.bukkit.event.Event}.
+	 * @param round the {@link Round} associated with this {@link org.bukkit.event.Event}
 	 * @since 0.1.0
 	 */
 	public MinigameRoundStartEvent(Round round){
@@ -35,7 +35,7 @@ public class MinigameRoundStartEvent extends MGRoundEvent implements Cancellable
 
 	/**
 	 * Gets whether the round start was on account of its preparation period ending.
-	 * @return Whether the round start was on account of its preparation period ending.
+	 * @return whether the round start was on account of its preparation period ending
 	 * @since 0.1.0
 	 */
 	public boolean wasPrepared(){

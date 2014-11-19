@@ -15,9 +15,9 @@ public class Location2D {
 
 	/**
 	 * Creates a new Location2D from the given points.
-	 * @param world the name of the world containing the location.
-	 * @param x     the x-coordinate of the location.
-	 * @param y     the y-coordinate of the location.
+	 * @param world the name of the world containing the location
+	 * @param x     the x-coordinate of the location
+	 * @param y     the y-coordinate of the location
 	 * @since 0.3.0
 	 */
 	public Location2D(String world, float x, float y){
@@ -28,9 +28,9 @@ public class Location2D {
 
 	/**
 	 * Creates a new Location2D from the given points.
-	 * @param world the name of the world containing the location.
-	 * @param x     the x-coordinate of the location.
-	 * @param y     the y-coordinate of the location.
+	 * @param world the name of the world containing the location
+	 * @param x     the x-coordinate of the location
+	 * @param y     the y-coordinate of the location
 	 * @since 0.3.0
 	 */
 	public Location2D(String world, double x, double y){
@@ -41,9 +41,9 @@ public class Location2D {
 
 	/**
 	 * Creates a new Location2D from the given points.
-	 * @param world the name of the world containing the location.
-	 * @param x     the x-coordinate of the location.
-	 * @param y     the y-coordinate of the location.
+	 * @param world the name of the world containing the location
+	 * @param x     the x-coordinate of the location
+	 * @param y     the y-coordinate of the location
 	 * @since 0.3.0
 	 */
 	public Location2D(String world, int x, int y){
@@ -54,8 +54,8 @@ public class Location2D {
 
 	/**
 	 * Creates a new Location2D from the given points.
-	 * @param x the x-coordinate of the location.
-	 * @param y the y-coordinate of the location.
+	 * @param x the x-coordinate of the location
+	 * @param y the y-coordinate of the location
 	 * @since 0.3.0
 	 */
 	public Location2D(float x, float y){
@@ -65,8 +65,8 @@ public class Location2D {
 
 	/**
 	 * Creates a new Location2D from the given points.
-	 * @param x the x-coordinate of the location.
-	 * @param y the y-coordinate of the location.
+	 * @param x the x-coordinate of the location
+	 * @param y the y-coordinate of the location
 	 * @since 0.3.0
 	 */
 	public Location2D(double x, double y){
@@ -76,8 +76,8 @@ public class Location2D {
 
 	/**
 	 * Creates a new Location2D from the given points.
-	 * @param x the x-coordinate of the location.
-	 * @param y the y-coordinate of the location.
+	 * @param x the x-coordinate of the location
+	 * @param y the y-coordinate of the location
 	 * @since 0.3.0
 	 */
 	public Location2D(int x, int y){
@@ -87,7 +87,7 @@ public class Location2D {
 
 	/**
 	 * Retrieves the name of the world of this location.
-	 * @return the name of the world of this location, or an empty string if one was not provided.
+	 * @return the name of the world of this location, or an empty string if one was not provided
 	 * @since 0.3.0
 	 */
 	public String getWorld(){
@@ -96,7 +96,7 @@ public class Location2D {
 
 	/**
 	 * Sets the name of the world of this location.
-	 * @param world the name of the world of this location, or null if one was not provided.
+	 * @param world the name of the world of this location, or null if one was not provided
 	 * @since 0.3.0
 	 */
 	public void setWorld(String world){
@@ -105,7 +105,7 @@ public class Location2D {
 
 	/**
 	 * Retrieves the x-coordinate of this location.
-	 * @return the x-coordinate of this location.
+	 * @return the x-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public float getX(){
@@ -114,7 +114,7 @@ public class Location2D {
 
 	/**
 	 * Retrieves the y-coordinate of this location.
-	 * @return the y-coordinate of this location.
+	 * @return the y-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public float getY(){
@@ -123,7 +123,7 @@ public class Location2D {
 
 	/**
 	 * Sets the x-coordinate of this location.
-	 * @param x the new x-coordinate of this location.
+	 * @param x the new x-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public void setX(float x){
@@ -132,7 +132,7 @@ public class Location2D {
 
 	/**
 	 * Sets the x-coordinate of this location.
-	 * @param x the new x-coordinate of this location.
+	 * @param x the new x-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public void setX(double x){
@@ -141,7 +141,7 @@ public class Location2D {
 
 	/**
 	 * Sets the x-coordinate of this location.
-	 * @param x the new x-coordinate of this location.
+	 * @param x the new x-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public void setX(int x){
@@ -150,7 +150,7 @@ public class Location2D {
 
 	/**
 	 * Sets the y-coordinate of this location.
-	 * @param y the new y-coordinate of this location.
+	 * @param y the new y-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public void setY(float y){
@@ -159,7 +159,7 @@ public class Location2D {
 
 	/**
 	 * Sets the y-coordinate of this location.
-	 * @param y the new y-coordinate of this location.
+	 * @param y the new y-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public void setY(double y){
@@ -168,7 +168,7 @@ public class Location2D {
 
 	/**
 	 * Sets the y-coordinate of this location.
-	 * @param y the new y-coordinate of this location.
+	 * @param y the new y-coordinate of this location
 	 * @since 0.3.0
 	 */
 	public void setY(int y){
@@ -177,8 +177,8 @@ public class Location2D {
 
 	/**
 	 * Creates a Location2D from the x- and y-coordinates of the given {@link Location Bukkit location}.
-	 * @param location the {@link Location Bukkit location} to create a Location2D from.
-	 * @return the new Location2D.
+	 * @param location the {@link Location Bukkit location} to create a Location2D from
+	 * @return the new Location2D
 	 * @since 0.3.0
 	 */
 	public static Location2D valueOfXY(Location location){
@@ -187,8 +187,8 @@ public class Location2D {
 
 	/**
 	 * Creates a Location2D from the x- and z-coordinates of the given {@link Location Bukkit location}.
-	 * @param location the {@link Location Bukkit location} to create a Location2D from.
-	 * @return the new Location2D.
+	 * @param location the {@link Location Bukkit location} to create a Location2D from
+	 * @return the new Location2D
 	 * @since 0.3.0
 	 */
 	public static Location2D valueOfXZ(Location location){
@@ -197,8 +197,8 @@ public class Location2D {
 
 	/**
 	 * Creates a Location2D from the y- and z-coordinates of the given {@link Location Bukkit location}.
-	 * @param location the {@link Location Bukkit location} to create a Location2D from.
-	 * @return the new Location2D.
+	 * @param location the {@link Location Bukkit location} to create a Location2D from
+	 * @return the new Location2D
 	 * @since 0.3.0
 	 */
 	public static Location2D valueOfYZ(Location location){

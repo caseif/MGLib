@@ -15,7 +15,7 @@ public class MGRoundEvent extends MGLibEvent {
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param round The {@link Round} associated with this event.
+	 * @param round the {@link Round} associated with this event
 	 * @since 0.2.0
 	 */
 	public MGRoundEvent(final Round round){
@@ -32,7 +32,7 @@ public class MGRoundEvent extends MGLibEvent {
 
 	/**
 	 * Retrieves the {@link Round} associated with this event.
-	 * @return the {@link Round} associated with this event.
+	 * @return the {@link Round} associated with this event
 	 * @since 0.2.0
 	 */
 	public Round getRound(){

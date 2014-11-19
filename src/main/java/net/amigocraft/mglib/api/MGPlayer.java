@@ -49,9 +49,9 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Creates a new MGPlayer instance.
-	 * @param plugin the plugin to associate the MGPlayer with.
-	 * @param name   the username of the player.
-	 * @param arena  the arena of the player.
+	 * @param plugin the plugin to associate the MGPlayer with
+	 * @param name   the username of the player
+	 * @param arena  the arena of the player
 	 * @since 0.1.0
 	 */
 	public MGPlayer(String plugin, String name, String arena){
@@ -62,7 +62,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the minigame plugin associated with this {@link MGPlayer}.
-	 * @return the minigame plugin associated with this {@link MGPlayer}.
+	 * @return the minigame plugin associated with this {@link MGPlayer}
 	 * @since 0.1.0
 	 */
 	public String getPlugin(){
@@ -71,7 +71,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
-	 * @return the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
+	 * @return the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}
 	 * @since 0.1.0
 	 */
 	public Minigame getMinigame(){
@@ -80,7 +80,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the username of this {@link MGPlayer}.
-	 * @return the username of this {@link MGPlayer}.
+	 * @return the username of this {@link MGPlayer}
 	 * @since 0.1.0
 	 */
 	public String getName(){
@@ -89,7 +89,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the arena associated with this {@link MGPlayer}.
-	 * @return the arena associated with this {@link MGPlayer}.
+	 * @return the arena associated with this {@link MGPlayer}
 	 * @since 0.1.0
 	 */
 	public String getArena(){
@@ -98,7 +98,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves the prefix of this player (used on lobby signs).
-	 * @return the prefix of this player.
+	 * @return the prefix of this player
 	 * @since 0.1.0
 	 */
 	public String getPrefix(){
@@ -107,7 +107,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves the name of the team this player is on, or null if they are not on a team.
-	 * @return the name of the team this player is on, or null if they are not on a team.
+	 * @return the name of the team this player is on, or null if they are not on a team
 	 * @since 0.3.0
 	 */
 	public String getTeam(){
@@ -126,7 +126,7 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Sets the arena of this {@link MGPlayer}. Please do not call this method unless you understand the implications of
 	 * doing so.
-	 * @param arena the new arena of this {@link MGPlayer}.
+	 * @param arena the new arena of this {@link MGPlayer}
 	 * @since 0.1.0
 	 */
 	public void setArena(String arena){
@@ -135,7 +135,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Gets the {@link Round} associated with this player.
-	 * @return the {@link Round} associated with this player.
+	 * @return the {@link Round} associated with this player
 	 * @since 0.1.0
 	 */
 	public Round getRound(){
@@ -154,7 +154,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Sets whether this player is spectating or not.
-	 * @param spectating whether the player is spectating.
+	 * @param spectating whether the player is spectating
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("unchecked")
@@ -265,7 +265,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Sets the prefix of this player (used on lobby signs).
-	 * @param prefix the new prefix of this player.
+	 * @param prefix the new prefix of this player
 	 * @since 0.1.0
 	 */
 	public void setPrefix(String prefix){
@@ -274,11 +274,11 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Adds this {@link MGPlayer} to the given {@link Round round}.
-	 * @param round The name of the round to add the player to.
-	 * @return the result of this player being added to the round.
-	 * @throws PlayerOfflineException if the player is not online.
-	 * @throws PlayerPresentException if the player is already in a round.
-	 * @throws RoundFullException     if the round is full.
+	 * @param round the name of the round to add the player to
+	 * @return the result of this player being added to the round
+	 * @throws PlayerOfflineException if the player is not online
+	 * @throws PlayerPresentException if the player is already in a round
+	 * @throws RoundFullException     if the round is full
 	 * @since 0.1.0
 	 */
 	public JoinResult addToRound(String round) throws PlayerOfflineException, PlayerPresentException, RoundFullException{
@@ -289,8 +289,8 @@ public class MGPlayer implements Metadatable {
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the
 	 *                 round's default exit point.
-	 * @throws NoSuchPlayerException  if the given player is not in a round.
-	 * @throws PlayerOfflineException if the given player is not online.
+	 * @throws NoSuchPlayerException  if the given player is not in a round
+	 * @throws PlayerOfflineException if the given player is not online
 	 * @since 0.1.0
 	 */
 	public void removeFromRound(Location location) throws NoSuchPlayerException, PlayerOfflineException{
@@ -299,8 +299,8 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
-	 * @throws NoSuchPlayerException  if the player is not in a round.
-	 * @throws PlayerOfflineException if the player is not online.
+	 * @throws NoSuchPlayerException  if the player is not in a round
+	 * @throws PlayerOfflineException if the player is not online
 	 * @since 0.1.0
 	 */
 	public void removeFromRound() throws NoSuchPlayerException, PlayerOfflineException{
@@ -309,7 +309,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
-	 * @param location The location to teleport the player to, or null to skip teleportation.
+	 * @param location the location to teleport the player to, or null to skip teleportation
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
@@ -368,16 +368,16 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
-	 * @throws PlayerOfflineException if the player is not online.
+	 * @throws PlayerOfflineException if the player is offline
 	 * @since 0.1.0
 	 */
-	public void reset() throws PlayerOfflineException{
+	public void reset() throws PlayerOfflineException {
 		reset(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
 	}
 
 	/**
 	 * You probably shouldn't use this unless you know what it does.
-	 * @return the player's previous gamemode.
+	 * @return the player's previous gamemode
 	 * @since 0.1.0
 	 */
 	public GameMode getPrevGameMode(){
@@ -386,7 +386,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * You probably shouldn't use this unless you know what it does.
-	 * @param gameMode the player's previous gamemode.
+	 * @param gameMode the player's previous gamemode
 	 * @since 0.1.0
 	 */
 	public void setPrevGameMode(GameMode gameMode){
@@ -395,7 +395,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves the {@link Bukkit Player} object for this {@link MGPlayer}.
-	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
+	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}
 	 * @since 0.2.0
 	 */
 	@SuppressWarnings("deprecation")
@@ -406,7 +406,7 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Convenience method for {@link MGPlayer#getBukkitPlayer()}. Use this only if aesthetic ambiguity is not a point of
 	 * concern.
-	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}.
+	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}
 	 * @since 0.3.0
 	 */
 	public Player b(){
@@ -415,7 +415,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Retrieves whether the player is frozen.
-	 * @return whether the player is frozen.
+	 * @return whether the player is frozen
 	 * @since 0.3.0
 	 */
 	public boolean isFrozen(){
@@ -425,7 +425,7 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Cleanly freezes or unfreezes the player. The library will automatically revert the player to their previous speed
 	 * when unfrozen so as to let them go, <i>let them go!</i>
-	 * @param frozen whether the player should be frozen.
+	 * @param frozen whether the player should be frozen
 	 * @since 0.3.0
 	 */
 	public void setFrozen(boolean frozen){
@@ -461,7 +461,7 @@ public class MGPlayer implements Metadatable {
 
 	/**
 	 * Respawns the player at the given spawn.
-	 * @param spawn the index of the spawn to send the player to.
+	 * @param spawn the index of the spawn to send the player to
 	 * @since 0.3.0
 	 */
 	public void spawnIn(int spawn){

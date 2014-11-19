@@ -16,9 +16,9 @@ public class MGPlayerDeathEvent extends MGPlayerEvent {
 
 	/**
 	 * Creates a new instance of this event.
-	 * @param player the player who has died.
-	 * @param cause  the cause of death (i.e. the cause of the damage resulting in death).
-	 * @param killer the entity which killed this player (null may be used in the event that there is none.
+	 * @param player the player who has died
+	 * @param cause  the cause of death (i.e. the cause of the damage resulting in death)
+	 * @param killer the entity which killed this player (null may be used in the event that there is none
 	 * @since 0.3.0
 	 */
 	public MGPlayerDeathEvent(MGPlayer player, DamageCause cause, Entity killer){
@@ -29,7 +29,7 @@ public class MGPlayerDeathEvent extends MGPlayerEvent {
 
 	/**
 	 * Retrieves the cause of death (i.e. the cause of the damage resulting in death).
-	 * @return the cause of death.
+	 * @return the cause of death
 	 * @since 0.3.0
 	 */
 	public DamageCause getCause(){
@@ -38,7 +38,7 @@ public class MGPlayerDeathEvent extends MGPlayerEvent {
 
 	/**
 	 * Retrieves the entity which killed the player, if applicable.
-	 * @return the entity which killed the player, or null if none applies.
+	 * @return the entity which killed the player, or null if none applies
 	 * @since 0.3.0
 	 */
 	public Entity getKiller(){
