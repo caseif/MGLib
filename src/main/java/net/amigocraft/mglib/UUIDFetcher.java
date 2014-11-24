@@ -118,7 +118,9 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 	}
 
 	public static void uninitialize(){
-		uuids.clear();
-		uuids = null;
+		if (Main.isDisabling()){
+			uuids.clear();
+			uuids = null;
+		}
 	}
 }

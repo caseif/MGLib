@@ -1,5 +1,6 @@
 package net.amigocraft.mglib.event;
 
+import net.amigocraft.mglib.Main;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -36,12 +37,14 @@ public class MGLibEvent extends Event {
 	}
 
 	/**
-	 * Unsets all static variables in this class.
-	 * <strong>Please do not call this from your plugin unless you want to ruin
-	 * everything for everyone.</strong>
+	 * Unsets all static objects in this class.
+	 * This method will not do anything unless MGLib is in the process of disabling.
+	 * @since 0.1.0
 	 */
 	public static void uninitialize(){
-		handlers = null;
+		if (Main.isDisabling()){
+			handlers = null;
+		}
 	}
 
 }

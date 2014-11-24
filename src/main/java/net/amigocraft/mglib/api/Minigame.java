@@ -228,11 +228,11 @@ public class Minigame {
 
 		if (corner1 != null && corner2 != null){
 			if (!spawn.getWorld().getName().equals(corner1.getWorld().getName())){
-			// spawn's in a different world than the first corner
+				// spawn's in a different world than the first corner
 				throw new InvalidLocationException();
 			}
 			if (!spawn.getWorld().getName().equals(corner2.getWorld().getName())){
-			// spawn's in a different world than the second corner
+				// spawn's in a different world than the second corner
 				throw new InvalidLocationException();
 			}
 
@@ -471,14 +471,17 @@ public class Minigame {
 	}
 
 	/**
-	 * Unsets all static variables in this class.
-	 * <strong>Please do not call this from your plugin unless you want to ruin
-	 * everything for everyone.</strong>
+	 * Unsets all static objects in this class.
+	 * This method will not do anything unless MGLib is in the process of disabling.
 	 * @since 0.1.0
 	 */
 	public static void uninitialize(){
-		registeredInstances.clear(); // unregister all minigame instances
-		registeredInstances = null; // why not?
+		if (Main.isDisabling()){
+			for (Minigame mg : registeredInstances.values()){
+				mg = null;
+			}
+			registeredInstances = null;
+		}
 	}
 
 	/**

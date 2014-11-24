@@ -380,4 +380,19 @@ public class MGUtil {
 		}
 	}
 
+	/**
+	 * Unsets all static objects in this class.
+	 * This method will not do anything unless MGLib is in the process of disabling.
+	 * @since 0.3.1
+	 */
+	public static void uninitialize(){
+		if (Main.isDisabling()){
+			packetPlayOutAnimation = null;
+			packetPlayOutPlayerInfo = null;
+			getHandle = null;
+			playerConnection = null;
+			sendPacket = null;
+		}
+	}
+
 }

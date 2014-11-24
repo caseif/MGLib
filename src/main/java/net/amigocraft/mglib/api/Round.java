@@ -525,25 +525,26 @@ public class Round implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void end(boolean timeUp){
-		setStage(Stage.RESETTING);
+		Stage prevStage = this.getStage();
+		this.setStage(Stage.RESETTING);
 		MinigameRoundEndEvent event = new MinigameRoundEndEvent(this, timeUp);
 		MGUtil.callEvent(event);
 		if (event.isCancelled()){
-			setStage(Stage.PLAYING);
+			this.setStage(prevStage);
 			return;
 		}
-		setStage(Stage.RESETTING);
-		setTime(-1);
-		if (timerHandle != -1){
-			Bukkit.getScheduler().cancelTask(timerHandle); // cancel the round's timer task
+		this.setTime(-1);
+		if (this.getTimerHandle() != -1){
+			Bukkit.getScheduler().cancelTask(this.getTimerHandle()); // cancel the round's timer task
 		}
-		timerHandle = -1; // reset timer handle since the task no longer exists
+		this.timerHandle = -1; // reset timer handle since the task no longer exists
 		for (MGPlayer mp : getPlayerList()){ // iterate and remove players
 			try {
 				removePlayer(mp.getName());
 			}
 			catch (Exception ex){
-			} // I don't care if this happens
+				// I don't care if this happens
+			}
 		}
 		if (getConfigManager().isRollbackEnabled()) // check if rollbacks are enabled
 		{

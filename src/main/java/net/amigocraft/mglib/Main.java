@@ -63,6 +63,8 @@ public class Main extends JavaPlugin {
 	 */
 	public static Locale locale;
 
+	private static boolean disabling = false;
+
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override
 	 * @since 0.1.0
@@ -143,6 +145,7 @@ public class Main extends JavaPlugin {
 	 * @since 0.1.0
 	 */
 	public void onDisable(){
+		this.disabling = true;
 		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("ending-rounds"));
 		for (Minigame mg : Minigame.getMinigameInstances()){
 			for (Round r : mg.getRoundList()){
@@ -151,6 +154,7 @@ public class Main extends JavaPlugin {
 		}
 		Minigame.uninitialize();
 		MGLibEvent.uninitialize();
+		MGUtil.uninitialize();
 		UUIDFetcher.uninitialize();
 		log.info(this + " " + locale.getMessage("disabled"));
 		Main.uninitialize();
@@ -205,6 +209,16 @@ public class Main extends JavaPlugin {
 	 */
 	public static boolean isVanillaSpectatingDisabled(){
 		return VANILLA_SPECTATING_DISABLED;
+	}
+
+	/**
+	 * Determines whether MGLib is in the process of disabling.
+	 * This is to provide security when unsetting static objects.
+	 * @return whether MGLib is in the process of disabling.
+	 * @since 0.3.1
+	 */
+	public static boolean isDisabling(){
+		return disabling;
 	}
 
 }
