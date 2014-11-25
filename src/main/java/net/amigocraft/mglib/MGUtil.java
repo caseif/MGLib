@@ -5,6 +5,7 @@ import net.amigocraft.mglib.api.MGYamlConfiguration;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.event.MGLibEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -23,57 +24,74 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Utility methods for use within MGLib. You probably shouldn't call them from your plugin, since this isn't an API
- * class per se.
+ * Utility methods for use within MGLib. Developers are advised not to use them in a separate plugin, since this isn't
+ * an API class and as such is subject to removals and refactors.
  * @since 0.1.0
  */
 public class MGUtil {
 
-	private static String VERSION_STRING = "v1_7_R4."; // ignored unless JUnit is loaded
+	private static String VERSION_STRING;
 
 	private static boolean NMS_SUPPORT = true;
-	private static Constructor<?> packetPlayOutAnimation;
 	private static Constructor<?> packetPlayOutPlayerInfo;
+	private static Field pingField;
 	private static Method getHandle;
 	private static Field playerConnection;
 	private static Method sendPacket;
 
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_WHITE = "\u001B[37m";
+	private static Method getOnlinePlayers;
+	public static boolean newOnlinePlayersMethod = false;
 
-	static{
+	public static GameMode SPECTATE_GAMEMODE = null;
+
+	static {
 		try {
-			try {
-				Class.forName("org.junit.Assert"); // arbitrary class from JUnit
-			}
-			catch (ClassNotFoundException ex){
-				String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
-				VERSION_STRING = array.length == 4 ? array[3] + "." : "";
+			getOnlinePlayers = Bukkit.class.getMethod("getOnlinePlayers");
+			if (getOnlinePlayers.getReturnType() == Collection.class){
+				newOnlinePlayersMethod = true;
 			}
 
+			String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+			VERSION_STRING = array.length == 4 ? array[3] + "." : "";
 
 			//get the constructor of the packet
 			try {
-				packetPlayOutAnimation = getMCClass("PacketPlayOutAnimation").getConstructor(getMCClass("Entity"), int.class); // 1.7.x and above
 				packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo").getConstructor(String.class, boolean.class, int.class); // 1.7.x and above
 			}
 			catch (ClassNotFoundException ex){
-				packetPlayOutAnimation = getMCClass("Packet18ArmAnimation").getConstructor(getMCClass("Entity"), int.class); // 1.6.x and below
 				packetPlayOutPlayerInfo = getMCClass("Packet201PlayerInfo").getConstructor(String.class, boolean.class, int.class); // 1.6.x and below
 			}
-			//get method for recieving craftplayer's entityplayer
+			// field for player ping
+			pingField = getNMSClass("EntityPlayer").getDeclaredField("ping");
+			// get method for recieving CraftPlayer's EntityPlayer
 			getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle"); // same between versions
-			//get the playerconnection of the entityplayer
+			// get the PlayerConnection of the EntityPlayer
 			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection"); // same between versions
-			//method to send the packet
+			// method to send the packet
 			sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet")); // same between versions
 		}
 		catch (Exception e){
 			Main.log("Cannot access NMS codebase! Packet manipulation disabled.", LogLevel.WARNING);
 			NMS_SUPPORT = false;
+		}
+
+		try {
+			SPECTATE_GAMEMODE = GameMode.valueOf("SPECTATOR");
+		}
+		catch (IllegalArgumentException ex1){
+			try {
+				SPECTATE_GAMEMODE = GameMode.valueOf("SPECTATING");
+			}
+			catch (IllegalArgumentException ex2){
+				try {
+					SPECTATE_GAMEMODE = GameMode.valueOf("SPECTATE");
+				}
+				catch (IllegalArgumentException ex3){} // guess we don't have spectator support then
+			}
 		}
 	}
 
@@ -139,8 +157,8 @@ public class MGUtil {
 			return true;
 		}
 		catch (NumberFormatException ex){
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -223,7 +241,8 @@ public class MGUtil {
 			Block adjBlock = block.getRelative(face);
 			if (adjBlock.getState() instanceof Sign){
 				if (face != BlockFace.UP){
-					@SuppressWarnings("deprecation") byte data = adjBlock.getData();
+					@SuppressWarnings("deprecation")
+					byte data = adjBlock.getData();
 					byte north = 0x2;
 					byte south = 0x3;
 					byte west = 0x4;
@@ -251,38 +270,6 @@ public class MGUtil {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Applies a damage effect to the given player.
-	 * @param p the player to apply the effect to
-	 * @since 0.3.0
-	 */
-	public static void damage(Player p){
-		if (NMS_SUPPORT){
-			try {
-				Object nms_entity = getHandle.invoke(p);
-				System.out.println(nms_entity);
-				Object packet = packetPlayOutAnimation.newInstance(nms_entity, 1);
-
-				for (Player pl : p.getWorld().getPlayers()){
-					if (pl.getName().equals(p.getName())){
-						continue;
-					}
-					if (pl.getLocation().distance(p.getLocation()) <= 50){
-						Object nms_player = getHandle.invoke(pl);
-						Object nms_connection = playerConnection.get(nms_player);
-						sendPacket.invoke(nms_connection, packet);
-					}
-				}
-			}
-			catch (InvocationTargetException ex){
-				ex.getCause().printStackTrace();
-			}
-			catch (Exception ex){
-				ex.printStackTrace();
-			}
-		}
 	}
 
 	/**
@@ -332,36 +319,38 @@ public class MGUtil {
 				if (f.getName().equals("region")){
 					return Environment.NORMAL;
 				}
-				else if (f.getName().equals("DIM-1")){
-					nether = true;
-				}
 				else if (f.getName().equals("DIM1")){
-					end = true;
-				}
-				if (nether){
-					return Environment.NETHER;
-				}
-				else if (end){
 					return Environment.THE_END;
+				}
+				else if (f.getName().equals("DIM-1")){
+					return Environment.NETHER;
 				}
 			}
 		}
 		return null;
 	}
 
-	//TODO: probably store the classes/fields
+	/**
+	 * Sends a PlayerInfoPacket to the specified {@link Player}.
+	 * @param recipient the player to receive the packet
+	 * @param subject   the player addressed by the packet
+	 * @return whether the packet was successfully sent
+	 * @since 0.3.0
+	 */
 	public static boolean sendPlayerInfoPacket(final Player recipient, final Player subject){
-		try {
-			int ping = (Integer)getNMSClass("EntityPlayer").getDeclaredField("ping").get(getHandle.invoke(subject));
-			Object packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), true, (Integer)ping);
-			sendPacket.invoke(
-					playerConnection.get(getHandle.invoke(recipient)), packet);
-			return true;
-		}
-		catch (Exception ex){ // just in case
-			ex.printStackTrace();
-			Main.log("Failed to send player info packet! Your server software may be incompatible with MGLib.",
-					LogLevel.SEVERE);
+		if (NMS_SUPPORT){
+			try {
+				int ping = (Integer)pingField.get(getHandle.invoke(subject));
+				Object packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), true, (Integer)ping);
+				sendPacket.invoke(
+						playerConnection.get(getHandle.invoke(recipient)), packet);
+				return true;
+			}
+			catch (Exception ex){ // just in case
+				ex.printStackTrace();
+				Main.log("Failed to send player info packet!",
+						LogLevel.WARNING);
+			}
 		}
 		return false;
 	}
@@ -381,14 +370,33 @@ public class MGUtil {
 	}
 
 	/**
+	 * Version-independent getOnlinePlayers() method.
+	 * @since 0.3.1
+	 */
+	public static Object getOnlinePlayers(){
+		try {
+			return getOnlinePlayers.invoke(null);
+		}
+		catch (IllegalAccessException ex){
+			ex.printStackTrace();
+			Main.log("Failed to get online player list!", LogLevel.SEVERE);
+		}
+		catch (InvocationTargetException ex){
+			ex.printStackTrace();
+			Main.log("Failed to get online player list!", LogLevel.SEVERE);
+		}
+		return null;
+	}
+
+	/**
 	 * Unsets all static objects in this class.
 	 * This method will not do anything unless MGLib is in the process of disabling.
 	 * @since 0.3.1
 	 */
 	public static void uninitialize(){
 		if (Main.isDisabling()){
-			packetPlayOutAnimation = null;
 			packetPlayOutPlayerInfo = null;
+			pingField = null;
 			getHandle = null;
 			playerConnection = null;
 			sendPacket = null;

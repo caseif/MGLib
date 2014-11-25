@@ -312,6 +312,7 @@ class Metrics {
 	/**
 	 * Generic method that posts a plugin to the metrics website
 	 */
+	@SuppressWarnings("unchecked") // non-standard, added by MGLib
 	private void postPlugin(final boolean isPing) throws IOException{
 		// Server software specific section
 		PluginDescriptionFile description = plugin.getDescription();
@@ -320,21 +321,11 @@ class Metrics {
 		String pluginVersion = description.getVersion();
 		String serverVersion = Bukkit.getVersion();
 		int playersOnline = 0;
-		// workaround for Wolverness's brilliant plan to change the return type of Bukkit.getOnlinePlayers()
-		try {
-			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
-				playersOnline = ((Collection<?>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).size();
-			}
-			else {
-				playersOnline = ((Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).length;
-			}
-		}
-		catch (NoSuchMethodException ex){
-		} // can never happen
-		catch (InvocationTargetException ex){
-		} // can also never happen
-		catch (IllegalAccessException ex){
-		} // can still never happen
+		// begin non-standard code (workaround for getOnlinePlayers() refactor)
+		playersOnline = MGUtil.newOnlinePlayersMethod ?
+				((Collection<? extends Player>)MGUtil.getOnlinePlayers()).size() :
+				((Player[])MGUtil.getOnlinePlayers()).length;
+		// end non-standard code
 		// END server software specific section -- all code below does not use any code outside of this class / Java
 
 		// Construct the post data

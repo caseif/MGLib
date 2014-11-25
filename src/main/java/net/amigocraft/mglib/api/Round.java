@@ -480,6 +480,11 @@ public class Round implements Metadatable {
 								Player pl = p.getBukkitPlayer();
 								Location l = pl.getLocation();
 								boolean event = true;
+								boolean toggleFlip = false;
+								if (!getMinigame().getConfigManager().isTeleportationAllowed()){
+									getMinigame().getConfigManager().setTeleportationAllowed(true);
+									toggleFlip = true;
+								}
 								if (l.getX() < r.getMinBound().getX()){
 									pl.teleport(new Location(l.getWorld(), r.getMinBound().getX(), l.getY(), l.getZ()), TeleportCause.PLUGIN);
 								}
@@ -500,6 +505,9 @@ public class Round implements Metadatable {
 								}
 								else {
 									event = false;
+								}
+								if (toggleFlip){
+									getMinigame().getConfigManager().setTeleportationAllowed(false);
 								}
 								if (event){
 									MGUtil.callEvent(new PlayerHitArenaBorderEvent(p));

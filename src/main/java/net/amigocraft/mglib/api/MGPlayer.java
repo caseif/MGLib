@@ -169,51 +169,27 @@ public class MGPlayer implements Metadatable {
 			final Player p = getBukkitPlayer();
 			if (p != null){ // check that player is online
 				p.closeInventory(); // close any inventory they have open
-				try {
-					if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
-						for (final Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
-							pl.hidePlayer(p);
-							if (this.getRound().getConfigManager().areSpectatorsInTabList())
-								MGUtil.sendPlayerInfoPacket(pl, p);
-						}
-					}
-					else {
-						for (final Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
-							pl.hidePlayer(p);
-							if (this.getRound().getConfigManager().areSpectatorsInTabList())
-								MGUtil.sendPlayerInfoPacket(pl, p);
+				if (MGUtil.newOnlinePlayersMethod){
+					for (final Player pl : (Collection<? extends Player>)MGUtil.getOnlinePlayers()){
+						pl.hidePlayer(p);
+						if (this.getRound().getConfigManager().areSpectatorsInTabList()){
+							MGUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 				}
-				catch (NoSuchMethodException ex){ // can never happen
-					ex.printStackTrace();
-				}
-				catch (InvocationTargetException ex){ // can also never happen
-					ex.printStackTrace();
-				}
-				catch (IllegalAccessException ex){ // can still never happen
-					ex.printStackTrace();
-				}
-				GameMode spectateMode = null; // in anticipation of 1.8
-				if (!Main.isVanillaSpectatingDisabled() && this.getRound().getConfigManager().isUsingVanillaSpectating()){
-					try {
-						spectateMode = GameMode.valueOf("SPECTATOR");
-					}
-					catch (IllegalArgumentException ex1){
-						try {
-							spectateMode = GameMode.valueOf("SPECTATING");
-						}
-						catch (IllegalArgumentException ex2){
-							try {
-								spectateMode = GameMode.valueOf("SPECTATE");
-							}
-							catch (IllegalArgumentException ex3){
-							} // guess we don't have spectator support then
+				else {
+					for (final Player pl : (Player[])MGUtil.getOnlinePlayers()){
+						pl.hidePlayer(p);
+						if (this.getRound().getConfigManager().areSpectatorsInTabList()){
+							MGUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 				}
-				if (spectateMode != null){
-					p.setGameMode(spectateMode);
+
+				if (!Main.isVanillaSpectatingDisabled() &&
+						this.getRound().getConfigManager().isUsingVanillaSpectating() &&
+						MGUtil.SPECTATE_GAMEMODE != null){
+					p.setGameMode(MGUtil.SPECTATE_GAMEMODE);
 					p.sendMessage(ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating")); // tell them
 				}
 				else {
