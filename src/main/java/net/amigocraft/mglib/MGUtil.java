@@ -371,6 +371,7 @@ public class MGUtil {
 
 	/**
 	 * Version-independent getOnlinePlayers() method.
+	 * @return a list of online players in the form of a {@link Player} array or {@link List}, depending on the server software version.
 	 * @since 0.3.1
 	 */
 	public static Object getOnlinePlayers(){
