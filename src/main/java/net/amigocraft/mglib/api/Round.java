@@ -241,15 +241,27 @@ public class Round implements Metadatable {
 
 	/**
 	 * Sets the current stage of this {@link Round}.
-	 * @param s the stage to set this {@link Round} to
-	 * @since 0.1.0
+	 * @param stage the stage to set this {@link Round} to
+	 * @param resetTimer whether to reset the round timer (defaults to true if omitted)
+	 * @since 0.3.1
 	 */
-	public void setStage(Stage s){
+	public void setStage(Stage stage, boolean resetTimer){
 		MinigameRoundStageChangeEvent event = new MinigameRoundStageChangeEvent(this, stage, s);
 		MGUtil.callEvent(event);
 		if (!event.isCancelled()){
-			stage = s;
+			this.stage = stage;
+			if (resetTimer)
+				setTime(0);
 		}
+	}
+
+	/**
+	 * Sets the current stage of this {@link Round}.
+	 * @param stage the stage to set this {@link Round} to
+	 * @since 0.1.0
+	 */
+	public void setStage(Stage stage){
+		this.setStage(stage, true);
 	}
 
 	/**
