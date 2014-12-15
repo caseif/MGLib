@@ -246,7 +246,7 @@ public class Round implements Metadatable {
 	 * @since 0.3.1
 	 */
 	public void setStage(Stage stage, boolean resetTimer){
-		MinigameRoundStageChangeEvent event = new MinigameRoundStageChangeEvent(this, stage, s);
+		MinigameRoundStageChangeEvent event = new MinigameRoundStageChangeEvent(this, this.stage, stage);
 		MGUtil.callEvent(event);
 		if (!event.isCancelled()){
 			this.stage = stage;
