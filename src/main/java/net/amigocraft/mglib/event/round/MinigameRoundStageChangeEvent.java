@@ -2,15 +2,18 @@ package net.amigocraft.mglib.event.round;
 
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.api.Stage;
+import org.bukkit.event.Cancellable;
 
 /**
  * Fired when the stage of an {@link net.amigocraft.mglib.api.Round MGLib round} changes.
  * @since 0.3.0
  */
-public class MinigameRoundStageChangeEvent extends MGRoundEvent {
+public class MinigameRoundStageChangeEvent extends MGRoundEvent implements Cancellable {
 
 	private Stage before;
 	private Stage after;
+
+	private boolean cancelled = false;
 
 	/**
 	 * Creates a new instance of this event.
@@ -41,6 +44,16 @@ public class MinigameRoundStageChangeEvent extends MGRoundEvent {
 	 */
 	public Stage getStageAfter(){
 		return after;
+	}
+
+	@Override
+	public boolean isCancelled(){
+		return this.cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancelled){
+		this.cancelled = cancelled;
 	}
 
 }
