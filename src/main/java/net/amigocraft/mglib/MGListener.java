@@ -68,7 +68,8 @@ class MGListener implements Listener {
 				if (mp != null){
 					try {
 						mp.removeFromRound();
-						if (!p.equalsIgnoreCase("Testing123")){ // it won't break when I'm testing, but offline servers still get screwed up
+						if (!p.equalsIgnoreCase("Testing123")){
+							// it won't break when I'm testing, but offline servers still get screwed up
 							String pUUID = UUIDFetcher.getUUIDOf(p).toString();
 							UUIDFetcher.removeUUID(p);
 							YamlConfiguration y = new YamlConfiguration();
@@ -110,7 +111,8 @@ class MGListener implements Listener {
 			else if (damager instanceof Projectile) // damager is an arrow or something
 			{
 				if (((Projectile)damager).getShooter() instanceof Player){
-					pl = (Player)((Projectile)damager).getShooter(); // a player shot the projectile (e.g. an arrow from a bow)
+					// a player shot the projectile (e.g. an arrow from a bow)
+					pl = (Player)((Projectile)damager).getShooter();
 				}
 			}
 
@@ -129,10 +131,12 @@ class MGListener implements Listener {
 					if (pl != null){
 						MGPlayer p = mg.getMGPlayer(pl.getName());
 						if (p != null && (p.isSpectating() || !p.getRound().isPvPAllowed())){
-							e.setCancelled(true); // we don't want any spooky ghosts meddling in the affairs of the living
+							e.setCancelled(true); // we don't want any spooky ghosts harassing the living
 							return;
 						}
-						else if (p != null && !mg.getConfigManager().isItemFrameDamageAllowed() && e.getEntity() instanceof ItemFrame){
+						else if (p != null &&
+								!mg.getConfigManager().isItemFrameDamageAllowed() &&
+								e.getEntity() instanceof ItemFrame){
 							e.setCancelled(true);
 							return;
 						}
@@ -140,8 +144,12 @@ class MGListener implements Listener {
 					if (pl != null && p2 != null){
 						MGPlayer m1 = mg.getMGPlayer(pl.getName());
 						MGPlayer m2 = mg.getMGPlayer(p2.getName());
-						if (m1 != null && m2 != null && !mg.getConfigManager().isTeamDamageAllowed() &&
-								m1.getTeam() != null && m2.getTeam() != null && m1.getTeam().equalsIgnoreCase(m2.getTeam())){
+						if (m1 != null &&
+								m2 != null &&
+								!mg.getConfigManager().isTeamDamageAllowed() &&
+								m1.getTeam() != null &&
+								m2.getTeam() != null &&
+								m1.getTeam().equalsIgnoreCase(m2.getTeam())){
 							e.setCancelled(true);
 							return;
 						}
@@ -156,110 +164,6 @@ class MGListener implements Listener {
 					e.setCancelled(true);
 					return;
 				}
-				/*if (p != null && p.getRound() != null && p.getRound().getConfigManager().isOverrideDeathEvent()){
-					// override the death event with a custom one
-					double actualDamage = 0;
-					boolean force = false;
-					try {
-						e.getClass().getMethod("getFinalDamage", new Class<?>[]{}); // test for new damage API
-						actualDamage = e.getFinalDamage();
-					}
-					catch (NoSuchMethodException ex){ // no support for new damage API so we need to guesstimate it ourselves
-						int armor = 0;
-						// calculate armor-based damage reduction
-						if (e.getCause() == DamageCause.ENTITY_ATTACK ||
-								e.getCause() == DamageCause.PROJECTILE ||
-								e.getCause() == DamageCause.FIRE ||
-								e.getCause() == DamageCause.BLOCK_EXPLOSION || 
-								e.getCause() == DamageCause.CONTACT ||
-								e.getCause() == DamageCause.LAVA ||
-								e.getCause() == DamageCause.ENTITY_EXPLOSION ||
-								e.getCause() == DamageCause.LIGHTNING){
-							HashMap<Material, Integer> protection = new HashMap<Material, Integer>();
-							protection.put(Material.LEATHER_HELMET, 1);
-							protection.put(Material.LEATHER_CHESTPLATE, 3);
-							protection.put(Material.LEATHER_LEGGINGS, 2);
-							protection.put(Material.LEATHER_BOOTS, 1);
-							protection.put(Material.IRON_HELMET, 2);
-							protection.put(Material.IRON_CHESTPLATE, 5);
-							protection.put(Material.IRON_LEGGINGS, 3);
-							protection.put(Material.IRON_BOOTS, 1);
-							protection.put(Material.CHAINMAIL_HELMET, 2);
-							protection.put(Material.CHAINMAIL_CHESTPLATE, 5);
-							protection.put(Material.CHAINMAIL_LEGGINGS, 3);
-							protection.put(Material.CHAINMAIL_BOOTS, 1);
-							protection.put(Material.GOLD_HELMET, 2);
-							protection.put(Material.GOLD_CHESTPLATE, 6);
-							protection.put(Material.GOLD_LEGGINGS, 5);
-							protection.put(Material.GOLD_BOOTS, 2);
-							protection.put(Material.DIAMOND_HELMET, 3);
-							protection.put(Material.DIAMOND_CHESTPLATE, 8);
-							protection.put(Material.DIAMOND_LEGGINGS, 6);
-							protection.put(Material.DIAMOND_BOOTS, 3);
-							if (p2.getInventory().getArmorContents()[0] != null)
-								if (protection.containsKey(p2.getInventory().getArmorContents()[0].getType()))
-									armor += protection.get(p2.getInventory().getArmorContents()[0].getType());
-							if (p2.getInventory().getArmorContents()[1] != null)
-								if (protection.containsKey(p2.getInventory().getArmorContents()[1].getType()))
-									armor += protection.get(p2.getInventory().getArmorContents()[1].getType());
-							if (p2.getInventory().getArmorContents()[2] != null)
-								if (protection.containsKey(p2.getInventory().getArmorContents()[2].getType()))
-									armor += protection.get(p2.getInventory().getArmorContents()[2].getType());
-							if (p2.getInventory().getArmorContents()[3] != null)
-								if (protection.containsKey(p2.getInventory().getArmorContents()[3].getType()))
-									armor += protection.get(p2.getInventory().getArmorContents()[3].getType());
-						}
-						double armorMod = armor * .04 * e.getDamage(); // armor-based damage reduction
-						double enchantMod = 0;
-						// calculate enchantment-based damage reduction
-						for (ItemStack a : p2.getInventory().getArmorContents()){
-							for (Enchantment en : a.getEnchantments().keySet()){
-								if (en == Enchantment.PROTECTION_ENVIRONMENTAL)
-									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 0.75 / 3);
-								else if (en == Enchantment.PROTECTION_EXPLOSIONS &&
-										e.getCause() == DamageCause.BLOCK_EXPLOSION || e.getCause() == DamageCause.ENTITY_EXPLOSION)
-									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.5 / 3);
-								else if (en == Enchantment.PROTECTION_FALL &&
-										e.getCause() == DamageCause.FALL)
-									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 2.5 / 3);
-								else if (en == Enchantment.PROTECTION_FIRE &&
-										e.getCause() == DamageCause.FIRE || e.getCause() == DamageCause.FIRE_TICK || e.getCause() == DamageCause.LAVA ||
-										(e.getCause() == DamageCause.PROJECTILE && e instanceof EntityDamageByEntityEvent && // extra reassurance
-										((EntityDamageByEntityEvent)e).getDamager().getType() == EntityType.FIREBALL))
-									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.25 / 3);
-								else if (en == Enchantment.PROTECTION_PROJECTILE &&
-										e.getCause() == DamageCause.PROJECTILE)
-									enchantMod += Math.floor((6 + Math.pow(a.getEnchantmentLevel(en), 2)) * 1.5 / 3);
-							}
-						}
-						enchantMod = Math.max(Math.ceil(Math.max(enchantMod, 25) * 0.75f), 20) * 0.04 * e.getDamage(); // this is how MC calculates it
-						double potionMod = 1;
-						if (e.getCause() != DamageCause.VOID)
-							for (PotionEffect pe : p2.getActivePotionEffects())
-								if (pe.getType() == PotionEffectType.DAMAGE_RESISTANCE)
-									potionMod = (float)(25 - ((pe.getAmplifier() + 1) * 5)) / 25.0f;
-						actualDamage = (int)(e.getDamage() * potionMod - armorMod - enchantMod);
-						force = true;
-					}
-					Main.log("damage: " + p2.getWorld().getTime() + ", " +
-							p2.getName() + ", " + actualDamage + ", " + ((Player)e.getEntity()).getHealth(), LogLevel.DEBUG);
-					if (actualDamage >= ((Player)e.getEntity()).getHealth()){
-						e.setCancelled(true);
-						MGUtil.callEvent(new MGPlayerDeathEvent(p, e.getCause(),
-								e instanceof EntityDamageByEntityEvent ?
-										((EntityDamageByEntityEvent)e).getDamager() instanceof Projectile ?
-												(Entity)((Projectile)((EntityDamageByEntityEvent)e).getDamager()).getShooter() :
-													((EntityDamageByEntityEvent)e).getDamager() :
-														null));
-					}
-					else if (mg.getConfigManager().isForcePreciseDamage() && force){
-						e.setCancelled(true);
-						p2.setHealth(p2.getHealth() - actualDamage);
-						p2.getWorld().playSound(p2.getLocation(), Sound.HURT_FLESH, 10, 1);
-						MGUtil.damage(p2);
-					}
-					break;
-				}*/
 			}
 		}
 	}
@@ -275,25 +179,21 @@ class MGListener implements Listener {
 				try {
 					// oh God why did I think this was a good idea
 					Class<?> packetClass;
-					Object packet;
-					try {
-						packetClass = MGUtil.getMCClass("PacketPlayInClientCommand");
-						packet = packetClass.getConstructor(MGUtil.getMCClass("EnumClientCommand")).newInstance(Enum.valueOf((Class<? extends Enum>)MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"));
-					}
-					catch (Exception ex){
-						packetClass = MGUtil.getMCClass("Packet205ClientCommand");
-						packet = packetClass.getConstructor().newInstance();
-						packetClass.getDeclaredField("a").set(packet, 1);
-					}
-					Object nmsPlayer = MGUtil.getCraftClass("entity.CraftPlayer").getMethod("getHandle").invoke(e.getEntity());
-					Object conn = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
-					conn.getClass().getMethod("a", packetClass).invoke(conn, packet);
+					Object nmsPlayer = MGUtil.getHandle.invoke(e.getEntity());
+					Object conn = MGUtil.playerConnection.get(nmsPlayer);
+					MGUtil.sendPacket.invoke(conn, MGUtil.clientCommandPacket);
 				}
 				catch (Exception ex){
 					ex.printStackTrace();
 				}
 				EntityDamageEvent ed = e.getEntity().getLastDamageCause();
-				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(), ed instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent)ed).getDamager() instanceof Projectile ? (Entity)((Projectile)((EntityDamageByEntityEvent)ed).getDamager()).getShooter() : ((EntityDamageByEntityEvent)ed).getDamager() : null));
+				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(),
+						ed instanceof EntityDamageByEntityEvent ?
+								((EntityDamageByEntityEvent)ed).getDamager() instanceof Projectile ?
+										(Entity)((Projectile)((EntityDamageByEntityEvent)ed).getDamager())
+												.getShooter() :
+										((EntityDamageByEntityEvent)ed).getDamager()
+								: null));
 			}
 		}
 	}
@@ -404,7 +304,8 @@ class MGListener implements Listener {
 					return;
 				}
 				if (e.getInventory().getHolder() instanceof BlockState){
-					mg.getRollbackManager().logInventoryChange(e.getInventory(), ((BlockState)e.getInventory().getHolder()).getBlock(), mp.getArena());
+					mg.getRollbackManager().logInventoryChange(e.getInventory(),
+							((BlockState)e.getInventory().getHolder()).getBlock(), mp.getArena());
 					return;
 				}
 			}
@@ -453,8 +354,13 @@ class MGListener implements Listener {
 							//TODO: handle rollback of attached blocks
 							for (int y = 1; e.getBlock().getY() + y < 256; y++){
 								Material type = e.getBlock().getLocation().add(0, y, 0).getBlock().getType();
-								if (type == Material.SAND || type == Material.GRAVEL || type == Material.ANVIL || type == Material.DRAGON_EGG){
-									mg.getRollbackManager().logBlockChange(e.getBlock().getLocation().add(0, y, 0).getBlock(), r.getArena());
+								if (type == Material.SAND ||
+										type == Material.GRAVEL ||
+										type == Material.ANVIL ||
+										type == Material.DRAGON_EGG){
+									mg.getRollbackManager().logBlockChange(
+											e.getBlock().getLocation().add(0, y, 0).getBlock(), r.getArena()
+									);
 								}
 							}
 						}
@@ -707,10 +613,12 @@ class MGListener implements Listener {
 			for (Minigame mg : Minigame.getMinigameInstances()){ // iterate registered minigames
 				if (e.getLine(0).equalsIgnoreCase(mg.getConfigManager().getSignId())){ // it's a lobby sign-to-be
 					if (e.getPlayer().hasPermission(mg.getPlugin().getName() + ".lobby.create")){
-						if (!e.getLine(1).equalsIgnoreCase("players") || MGUtil.isInteger(e.getLine(3))){ // make sure last line (sign index) is a number if it's a player sign
+						// make sure last line (sign index) is a number if it's a player sign
+						if (!e.getLine(1).equalsIgnoreCase("players") || MGUtil.isInteger(e.getLine(3))){
 							try {
 								int index = MGUtil.isInteger(e.getLine(3)) ? Integer.parseInt(e.getLine(3)) : 0;
-								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(2), LobbyType.fromString(e.getLine(1)), index);
+								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(2),
+										LobbyType.fromString(e.getLine(1)), index);
 							}
 							catch (NoSuchArenaException ex){
 								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-not-exists"));
@@ -767,7 +675,8 @@ class MGListener implements Listener {
 								r = mg.createRound(ls.getArena());
 							}
 							catch (NoSuchArenaException ex){
-								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-load-fail").replace("%", ls.getArena()));
+								e.getPlayer().sendMessage(ChatColor.RED +
+										locale.getMessage("arena-load-fail").replace("%", ls.getArena()));
 								return;
 							}
 						}
@@ -802,8 +711,10 @@ class MGListener implements Listener {
 				}
 			}
 		}
-		else if (e.getMessage().startsWith("msg") || e.getMessage().startsWith("tell") || e.getMessage().startsWith("r ") ||
-				e.getMessage().startsWith("me")){
+		else if (e.getMessage().startsWith("msg ") ||
+				e.getMessage().startsWith("tell ") ||
+				e.getMessage().startsWith("r ") ||
+				e.getMessage().startsWith("me ")){
 			for (Minigame mg : Minigame.getMinigameInstances()){
 				if (mg.isPlayer(e.getPlayer().getName())){
 					if (!mg.getConfigManager().arePMsAllowed()){
@@ -844,7 +755,11 @@ class MGListener implements Listener {
 			for (Round r : mg.getRoundList()){
 				if (r.hasMetadata("tntBlocks")){
 					List<Location3D> list = (List<Location3D>)r.getMetadata("tntBlocks");
-					if (list.contains(new Location3D(e.getLocation().getBlockX(), e.getLocation().getBlockY(), e.getLocation().getBlockZ()))){
+					if (list.contains(new Location3D(
+							e.getLocation().getBlockX(),
+							e.getLocation().getBlockY(),
+							e.getLocation().getBlockZ()
+					))){
 						for (Block b : e.blockList()){
 							mg.getRollbackManager().logBlockChange(b, r.getArena());
 						}
@@ -871,10 +786,14 @@ class MGListener implements Listener {
 						if (!sender.getRound().getArena().equals(recipient.getRound().getArena())){
 							remove.add(pl);
 						}
-						else if (mg.getConfigManager().isTeamChatEnabled() && (sender.getTeam() != null && !sender.getTeam().equals(recipient.getTeam()))){
+						else if (mg.getConfigManager().isTeamChatEnabled() &&
+								(sender.getTeam() != null &&
+								!sender.getTeam().equals(recipient.getTeam()))){
 							remove.add(pl);
 						}
-						else if (mg.getConfigManager().isSpectatorChatSeparate() && sender.isSpectating() && !recipient.isSpectating()){
+						else if (mg.getConfigManager().isSpectatorChatSeparate() &&
+								sender.isSpectating() &&
+								!recipient.isSpectating()){
 							remove.add(pl);
 						}
 					}
@@ -913,9 +832,13 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onHangingBreak(HangingBreakByEntityEvent e){
-		if (e.getRemover() instanceof Player || (e.getRemover() instanceof Projectile && ((Projectile)e.getRemover()).getShooter() instanceof Player)){
+		if (e.getRemover() instanceof Player ||
+				(e.getRemover() instanceof Projectile &&
+				((Projectile)e.getRemover()).getShooter() instanceof Player)){
 			for (Minigame mg : Minigame.getMinigameInstances()){
-				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(e.getRemover() instanceof Player ? ((Player)e.getRemover()).getName() : ((Player)((Projectile)e.getRemover()).getShooter()).getName())){
+				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(e.getRemover() instanceof Player ?
+						((Player)e.getRemover()).getName() :
+						((Player)((Projectile)e.getRemover()).getShooter()).getName())){
 					e.setCancelled(true);
 				}
 			}

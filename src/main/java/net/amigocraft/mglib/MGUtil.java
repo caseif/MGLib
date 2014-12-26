@@ -39,12 +39,14 @@ public class MGUtil {
 	private static boolean NMS_SUPPORT = true;
 	private static Constructor<?> packetPlayOutPlayerInfo;
 	private static Field pingField;
-	private static Method getHandle;
-	private static Field playerConnection;
-	private static Method sendPacket;
+	public static Method getHandle;
+	public static Field playerConnection;
+	public static Method sendPacket;
 
 	private static Method getOnlinePlayers;
 	public static boolean newOnlinePlayersMethod = false;
+
+	public static Object clientCommandPacket;
 
 	public static GameMode SPECTATE_GAMEMODE = null;
 
@@ -60,19 +62,29 @@ public class MGUtil {
 
 			//get the constructor of the packet
 			try {
-				packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo").getConstructor(String.class, boolean.class, int.class); // 1.7.x and above
+				packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo")
+						.getConstructor(String.class, boolean.class, int.class); // 1.7.x and above
+				Object PERFORM_RESPAWN = Enum.valueOf(
+						(Class<? extends Enum>)MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"
+				);
+				clientCommandPacket = getMCClass("PacketPlayInClientCommand")
+						.getConstructor(PERFORM_RESPAWN.getClass())
+						.newInstance(PERFORM_RESPAWN);
 			}
 			catch (ClassNotFoundException ex){
-				packetPlayOutPlayerInfo = getMCClass("Packet201PlayerInfo").getConstructor(String.class, boolean.class, int.class); // 1.6.x and below
+				packetPlayOutPlayerInfo = getMCClass("Packet201PlayerInfo")
+						.getConstructor(String.class, boolean.class, int.class); // 1.6.x and below
+				clientCommandPacket = MGUtil.getMCClass("Packet205ClientCommand").getConstructor().newInstance();
+				clientCommandPacket.getClass().getDeclaredField("a").set(clientCommandPacket, 1);
 			}
 			// field for player ping
 			pingField = getNMSClass("EntityPlayer").getDeclaredField("ping");
 			// get method for recieving CraftPlayer's EntityPlayer
-			getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle"); // same between versions
+			getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle");
 			// get the PlayerConnection of the EntityPlayer
-			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection"); // same between versions
+			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection");
 			// method to send the packet
-			sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet")); // same between versions
+			sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet"));
 		}
 		catch (Exception e){
 			Main.log("Cannot access NMS codebase! Packet manipulation disabled.", LogLevel.WARNING);
