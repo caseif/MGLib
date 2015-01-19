@@ -1,6 +1,8 @@
 .git/
+.gradle/
 .idea/
 bin/
+build/
 doc/
 target/
 .classpath
