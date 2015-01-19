@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ import java.util.concurrent.Callable;
  * Utility class for use with Mojang's UUID API.
  * <br><br>
  * This class has been modified from the original for use with MGLib.
+ *
  * @author evilmidget38
  */
 public class UUIDFetcher implements Callable<Map<String, UUID>> {
@@ -52,31 +53,31 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 	private final List<String> names;
 	private final boolean rateLimiting;
 
-	public UUIDFetcher(List<String> names, boolean rateLimiting){
+	public UUIDFetcher(List<String> names, boolean rateLimiting) {
 		this.names = ImmutableList.copyOf(names);
 		this.rateLimiting = rateLimiting;
 	}
 
-	public UUIDFetcher(List<String> names){
+	public UUIDFetcher(List<String> names) {
 		this(names, true);
 	}
 
-	public Map<String, UUID> call() throws Exception{
+	public Map<String, UUID> call() throws Exception {
 		Map<String, UUID> uuidMap = new HashMap<String, UUID>();
 		int requests = (int)Math.ceil(names.size() / PROFILES_PER_REQUEST);
-		for (int i = 0; i < requests; i++){
+		for (int i = 0; i < requests; i++) {
 			HttpURLConnection connection = createConnection();
 			String body = JSONArray.toJSONString(names.subList(i * 100, Math.min((i + 1) * 100, names.size())));
 			writeBody(connection, body);
 			JSONArray array = (JSONArray)jsonParser.parse(new InputStreamReader(connection.getInputStream()));
-			for (Object profile : array){
+			for (Object profile : array) {
 				JSONObject jsonProfile = (JSONObject)profile;
 				String id = (String)jsonProfile.get("id");
 				String name = (String)jsonProfile.get("name");
 				UUID uuid = UUIDFetcher.getUUID(id);
 				uuidMap.put(name, uuid);
 			}
-			if (rateLimiting && i != requests - 1){
+			if (rateLimiting && i != requests - 1) {
 				Thread.sleep(100L);
 			}
 		}
@@ -84,14 +85,14 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 		return uuidMap;
 	}
 
-	private static void writeBody(HttpURLConnection connection, String body) throws Exception{
+	private static void writeBody(HttpURLConnection connection, String body) throws Exception {
 		OutputStream stream = connection.getOutputStream();
 		stream.write(body.getBytes());
 		stream.flush();
 		stream.close();
 	}
 
-	private static HttpURLConnection createConnection() throws Exception{
+	private static HttpURLConnection createConnection() throws Exception {
 		URL url = new URL(PROFILE_URL);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestMethod("POST");
@@ -102,19 +103,20 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 		return connection;
 	}
 
-	private static UUID getUUID(String id){
-		return UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
+	private static UUID getUUID(String id) {
+		return UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" +
+				id.substring(16, 20) + "-" + id.substring(20, 32));
 	}
 
-	public static byte[] toBytes(UUID uuid){
+	public static byte[] toBytes(UUID uuid) {
 		ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
 		byteBuffer.putLong(uuid.getMostSignificantBits());
 		byteBuffer.putLong(uuid.getLeastSignificantBits());
 		return byteBuffer.array();
 	}
 
-	public static UUID fromBytes(byte[] array){
-		if (array.length != 16){
+	public static UUID fromBytes(byte[] array) {
+		if (array.length != 16) {
 			throw new IllegalArgumentException("Illegal byte array length: " + array.length);
 		}
 		ByteBuffer byteBuffer = ByteBuffer.wrap(array);
@@ -123,8 +125,8 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 		return new UUID(mostSignificant, leastSignificant);
 	}
 
-	public static UUID getUUIDOf(String name) throws Exception{
-		if (uuids.containsKey(name)){
+	public static UUID getUUIDOf(String name) throws Exception {
+		if (uuids.containsKey(name)) {
 			return uuids.get(name);
 		}
 		UUID uuid = new UUIDFetcher(Arrays.asList(name)).call().get(name);
@@ -132,16 +134,16 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 		return uuid;
 	}
 
-	public static void addUUID(String name, UUID uuid){
+	public static void addUUID(String name, UUID uuid) {
 		uuids.put(name, uuid);
 	}
 
-	public static void removeUUID(String name){
+	public static void removeUUID(String name) {
 		uuids.remove(name);
 	}
 
-	public static void uninitialize(){
-		if (Main.isDisabling()){
+	public static void uninitialize() {
+		if (Main.isDisabling()) {
 			uuids.clear();
 			uuids = null;
 		}

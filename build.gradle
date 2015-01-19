@@ -102,6 +102,7 @@ checkstyle {
 }
 
 tasks.withType(Checkstyle){
+	exclude '**/Metrics.java'
 	exclude '**/*.csv'
 	exclude '**/*.yml'
 }

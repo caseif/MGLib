@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package net.amigocraft.mglib.exception;
 
 /**
  * Thrown when a player joins a round but it is full.
+ *
  * @since 0.2.0
  */
 public class RoundFullException extends Exception {

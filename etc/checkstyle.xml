@@ -28,6 +28,7 @@
 			<property name="option" value="TEXT"/>
 			<property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
 		</module>
+        <module name="NeedBraces"/>
 		<module name="LeftCurly">
 			<property name="maxLineLength" value="150"/>
 		</module>
@@ -35,6 +36,14 @@
 			<property name="option" value="alone"/>
 			<property name="tokens" value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO, STATIC_INIT, INSTANCE_INIT"/>
 		</module>
+        <module name="WhitespaceAround">
+            <property name="allowEmptyConstructors" value="true"/>
+            <property name="allowEmptyMethods" value="true"/>
+            <message key="ws.notFollowed"
+                     value="WhitespaceAround: ''{0}'' is not followed by whitespace."/>
+            <message key="ws.notPreceded"
+                     value="WhitespaceAround: ''{0}'' is not preceded with whitespace."/>
+        </module>
 		<module name="OneStatementPerLine"/>
 		<module name="ArrayTypeStyle"/>
 		<module name="MissingSwitchDefault"/>
@@ -85,7 +94,6 @@
 			          value="BAND, BOR, BSR, BXOR, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR "/>
 		</module>
 		<module name="RedundantImport"/>
-		<module name="UnusedImports"/>
 		<module name="NoWhitespaceBefore">
 			<property name="tokens" value="SEMI, POST_DEC, POST_INC"/>
 		</module>

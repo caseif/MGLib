@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@ public class LobbySign {
 
 	/**
 	 * Creates a new {@link LobbySign} object.
+	 *
 	 * @param x      the x-coordinate of the physical sign
 	 * @param y      the y-coordinate of the physical sign
 	 * @param z      the z-coordinate of the physical sign
@@ -60,7 +61,7 @@ public class LobbySign {
 	 * @param type   the {@link LobbyType type} of the sign
 	 * @since 0.1.0
 	 */
-	public LobbySign(int x, int y, int z, String plugin, String world, String arena, int number, LobbyType type){
+	public LobbySign(int x, int y, int z, String plugin, String world, String arena, int number, LobbyType type) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -73,197 +74,218 @@ public class LobbySign {
 
 	/**
 	 * Retrieves the physical x-coordinate of this lobby sign.
+	 *
 	 * @return the physical x-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
-	public int getX(){
+	public int getX() {
 		return x;
 	}
 
 	/**
 	 * Sets the physical x-coordinate of this lobby sign.
+	 *
 	 * @param x the physical x-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
-	public void setX(int x){
+	public void setX(int x) {
 		this.x = x;
 	}
 
 	/**
 	 * Retrieves the physical y-coordinate of this lobby sign.
+	 *
 	 * @return the physical y-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
-	public int getY(){
+	public int getY() {
 		return y;
 	}
 
 	/**
 	 * Sets the physical y-coordinate of this lobby sign.
+	 *
 	 * @param y the physical y-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
-	public void setY(int y){
+	public void setY(int y) {
 		this.y = y;
 	}
 
 	/**
 	 * Retrieves the physical z-coordinate of this lobby sign.
+	 *
 	 * @return the physical z-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
-	public int getZ(){
+	public int getZ() {
 		return z;
 	}
 
 	/**
 	 * Sets the physical z-coordinate of this lobby sign.
+	 *
 	 * @param z the physical z-coordinate of this lobby sign
 	 * @since 0.1.0
 	 */
-	public void setZ(int z){
+	public void setZ(int z) {
 		this.z = z;
 	}
 
 	/**
 	 * Retrieves the plugin this lobby sign is associated with.
+	 *
 	 * @return the plugin this lobby sign is associated with
 	 * @since 0.1.0
 	 */
-	public String getPlugin(){
+	public String getPlugin() {
 		return plugin;
 	}
 
 	/**
 	 * Retrieves the name of the world containing this physical lobby sign.
+	 *
 	 * @return the name of the world containing this physical lobby sign
 	 * @since 0.1.0
 	 */
-	public String getWorld(){
+	public String getWorld() {
 		return world;
 	}
 
 	/**
 	 * Sets the name of the world containing this physical lobby sign.
+	 *
 	 * @param world the name of the world containing this physical lobby sign
 	 * @since 0.1.0
 	 */
-	public void setWorld(String world){
+	public void setWorld(String world) {
 		this.world = world;
 	}
 
 	/**
 	 * Retrieves the arena associated with this lobby sign.
+	 *
 	 * @return the arena associated with this lobby sign
 	 * @since 0.1.0
 	 */
-	public String getArena(){
+	public String getArena() {
 		return arena;
 	}
 
 	/**
 	 * Sets the arena associated with this lobby sign.
+	 *
 	 * @param arena the arena associated with this lobby sign
 	 * @since 0.1.0
 	 */
-	public void setArena(String arena){
+	public void setArena(String arena) {
 		this.arena = arena;
 	}
 
 	/**
 	 * Retrieves the number of this lobby sign.
+	 *
 	 * @return the number of this lobby sign
 	 * @since 0.1.0
 	 */
-	public int getNumber(){
+	public int getNumber() {
 		return number;
 	}
 
 	/**
 	 * Sets the number of this lobby sign.
+	 *
 	 * @param number the number of this lobby sign
 	 * @since 0.1.0
 	 */
-	public void setNumber(int number){
+	public void setNumber(int number) {
 		this.number = number;
 	}
 
 	/**
 	 * Retrieves the {@link LobbyType type} of this lobby sign.
+	 *
 	 * @return the {@link LobbyType type} of this lobby sign
 	 * @since 0.1.0
 	 */
-	public LobbyType getType(){
+	public LobbyType getType() {
 		return type;
 	}
 
 	/**
 	 * Sets the {@link LobbyType type} of this lobby sign.
+	 *
 	 * @param type the {@link LobbyType type} of this lobby sign
 	 * @since 0.1.0
 	 */
-	public void setType(LobbyType type){
+	public void setType(LobbyType type) {
 		this.type = type;
 	}
 
 	/**
 	 * Retrieves the internal index of this lobby sign.
+	 *
 	 * @return the internal index of this lobby sign
 	 * @since 0.1.0
 	 */
-	public int getIndex(){
+	public int getIndex() {
 		return index;
 	}
 
 	/**
 	 * Sets the internal index of this lobby sign.
+	 *
 	 * @param index the internal index of this lobby sign
 	 * @since 0.1.0
 	 */
-	public void setIndex(int index){
+	public void setIndex(int index) {
 		this.index = index;
 	}
 
 	/**
 	 * Saves this lobby sign's data to disk.
+	 *
 	 * @since 0.1.0
 	 */
-	public void save(){
+	public void save() {
 		Minigame.getMinigameInstance(plugin).getLobbyManager().save(this);
 	}
 
 	/**
 	 * Saves this lobby sign's data to disk and removes it from memory.
+	 *
 	 * @since 0.1.0
 	 */
-	public void remove(){
+	public void remove() {
 		LobbyManager lm = Minigame.getMinigameInstance(plugin).getLobbyManager();
 		lm.remove(this);
 	}
 
 	/**
 	 * Updates this lobby sign's text based on its arena's current status.
+	 *
 	 * @since 0.1.0
 	 */
-	public void update(){
+	public void update() {
 		Round r = Minigame.getMinigameInstance(plugin).getRound(arena);
-		if (r != null){
+		if (r != null) {
 			World w = Bukkit.getWorld(this.getWorld());
-			if (w != null){
+			if (w != null) {
 				Block b = w.getBlockAt(this.getX(), this.getY(), this.getZ());
-				if (b != null){
-					if (b.getState() instanceof Sign){
+				if (b != null) {
+					if (b.getState() instanceof Sign) {
 						final Sign sign = (Sign)b.getState();
 						ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
-						if (this.getType() == LobbyType.STATUS){
+						if (this.getType() == LobbyType.STATUS) {
 							sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
 							String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
-							if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0){
+							if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0) {
 								max = "∞";
 							}
 							String playerCount = r.getPlayers().size() + "/" + max;
-							if (!max.equals("∞")){
-								if (r.getPlayers().size() >= Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers()){
+							if (!max.equals("∞")) {
+								if (r.getPlayers().size() >=
+										Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers()) {
 									playerCount = cm.getLobbyPlayerCountFullColor() + playerCount;
 								}
 								else {
@@ -276,7 +298,7 @@ public class LobbySign {
 							sign.setLine(1, playerCount);
 							Stage status = r.getStage();
 							ChatColor color = null;
-							switch (status){
+							switch (status) {
 								case WAITING:
 									color = cm.getLobbyWaitingColor();
 									break;
@@ -289,13 +311,15 @@ public class LobbySign {
 								case RESETTING:
 									color = cm.getLobbyResettingColor();
 									break;
+								default:
+									color = ChatColor.BLACK;
 							}
 							sign.setLine(2, color + Main.locale.getMessage(status.toString()));
 							String time = "";
-							if (status != Stage.WAITING && status != Stage.RESETTING){
-								if (r.getRemainingTime() == -1){
+							if (status != Stage.WAITING && status != Stage.RESETTING) {
+								if (r.getRemainingTime() == -1) {
 									String seconds = Integer.toString(r.getTime() % 60);
-									if (seconds.length() == 1){
+									if (seconds.length() == 1) {
 										seconds = "0" + seconds;
 									}
 									time = cm.getLobbyTimeInfiniteColor() +
@@ -303,11 +327,11 @@ public class LobbySign {
 								}
 								else {
 									String seconds = Integer.toString(r.getRemainingTime() % 60);
-									if (seconds.length() == 1){
+									if (seconds.length() == 1) {
 										seconds = "0" + seconds;
 									}
 									time = df.format(r.getRemainingTime() / 60) + ":" + seconds;
-									if (r.getRemainingTime() <= 60){
+									if (r.getRemainingTime() <= 60) {
 										time = cm.getLobbyTimeWarningColor() + time;
 									}
 									else {
@@ -317,13 +341,17 @@ public class LobbySign {
 							}
 							sign.setLine(3, time);
 						}
-						else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0){
-							for (int i = 0; i <= 3; i++){
-								List<MGPlayer> players = Minigame.getMinigameInstance(plugin).getConfigManager().areSpectatorsOnLobbySigns() ? r.getPlayerList() : r.getAlivePlayerList();
-								if (players.size() >= (this.getNumber() - 1) * 4 + i + 1){
+						else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0) {
+							for (int i = 0; i <= 3; i++) {
+								List<MGPlayer> players =
+										Minigame.getMinigameInstance(plugin).getConfigManager()
+												.areSpectatorsOnLobbySigns() ?
+												r.getPlayerList() :
+												r.getAlivePlayerList();
+								if (players.size() >= (this.getNumber() - 1) * 4 + i + 1) {
 									MGPlayer p = players.get((this.getNumber() - 1) * 4 + i);
 									String name = p.getPrefix() + p.getName();
-									if (name.length() > 16){
+									if (name.length() > 16) {
 										name = name.substring(0, 16);
 									}
 									sign.setLine(i, name);
@@ -333,9 +361,9 @@ public class LobbySign {
 								}
 							}
 						}
-						if (Main.plugin.isEnabled()){
+						if (Main.plugin.isEnabled()) {
 							Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
-								public void run(){
+								public void run() {
 									sign.update();
 								}
 							});
@@ -354,40 +382,41 @@ public class LobbySign {
 
 	/**
 	 * Resets this lobby sign's text as if its arena was empty and in {@link Stage#WAITING}.
+	 *
 	 * @since 0.1.0
 	 */
-	public void reset(){
+	public void reset() {
 		World w = Bukkit.getWorld(this.getWorld());
-		if (w != null){
+		if (w != null) {
 			Block b = w.getBlockAt(this.getX(), this.getY(), this.getZ());
-			if (b != null){
-				if (b.getState() instanceof Sign){
+			if (b != null) {
+				if (b.getState() instanceof Sign) {
 					final Sign sign = (Sign)b.getState();
 					ConfigManager cm = Minigame.getMinigameInstance(plugin).getConfigManager();
-					if (this.getType() == LobbyType.STATUS){
+					if (this.getType() == LobbyType.STATUS) {
 						sign.setLine(0, cm.getLobbyArenaColor() + this.getArena());
 						String max = Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() + "";
-						if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0){
+						if (Minigame.getMinigameInstance(plugin).getConfigManager().getMaxPlayers() <= 0) {
 							max = "∞";
 						}
 						sign.setLine(1, cm.getLobbyPlayerCountColor() + "0/" + max);
 						sign.setLine(2, cm.getLobbyWaitingColor() + Main.locale.getMessage("waiting"));
 						sign.setLine(3, "");
 					}
-					else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0){
-						for (int i = 0; i <= 3; i++){
+					else if (this.getType() == LobbyType.PLAYERS && this.getNumber() > 0) {
+						for (int i = 0; i <= 3; i++) {
 							sign.setLine(i, "");
 						}
 					}
 					Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
-						public void run(){
+						public void run() {
 							sign.update();
 						}
 					});
 				}
 				else {
 					Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
-						public void run(){
+						public void run() {
 							remove();
 						}
 					});

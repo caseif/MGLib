@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package net.amigocraft.mglib.exception;
 
 /**
  * Thrown when a player is added to a round but is already in one.
+ *
  * @since 0.2.0
  */
 public class PlayerPresentException extends Exception {

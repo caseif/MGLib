@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,8 @@ import net.amigocraft.mglib.api.Stage;
 import org.bukkit.event.Cancellable;
 
 /**
- * Fired when the stage of an {@link net.amigocraft.mglib.api.Round MGLib round} changes.
+ * Called when the stage of an {@link net.amigocraft.mglib.api.Round MGLib round} changes.
+ *
  * @since 0.3.0
  */
 public class MinigameRoundStageChangeEvent extends MGRoundEvent implements Cancellable {
@@ -40,12 +41,13 @@ public class MinigameRoundStageChangeEvent extends MGRoundEvent implements Cance
 
 	/**
 	 * Creates a new instance of this event.
+	 *
 	 * @param round  the round associated with this event
 	 * @param before the stage before the change
 	 * @param after  the stage after the change
 	 * @since 0.3.0
 	 */
-	public MinigameRoundStageChangeEvent(Round round, Stage before, Stage after){
+	public MinigameRoundStageChangeEvent(Round round, Stage before, Stage after) {
 		super(round);
 		this.before = before;
 		this.after = after;
@@ -53,29 +55,31 @@ public class MinigameRoundStageChangeEvent extends MGRoundEvent implements Cance
 
 	/**
 	 * Gets the stage of the round before the event.
+	 *
 	 * @return the stage of the round before the event
 	 * @since 0.3.0
 	 */
-	public Stage getStageBefore(){
+	public Stage getStageBefore() {
 		return before;
 	}
 
 	/**
 	 * Gets the stage of the round after the event.
+	 *
 	 * @return the stage of the round after the event
 	 * @since 0.3.0
 	 */
-	public Stage getStageAfter(){
+	public Stage getStageAfter() {
 		return after;
 	}
 
 	@Override
-	public boolean isCancelled(){
+	public boolean isCancelled() {
 		return this.cancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean cancelled){
+	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
 	}
 

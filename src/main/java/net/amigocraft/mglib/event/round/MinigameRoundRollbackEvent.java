@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +26,19 @@ package net.amigocraft.mglib.event.round;
 import net.amigocraft.mglib.api.Round;
 
 /**
- * Fired when an {@link Round MGLib round} is rolled back.
+ * Called when an {@link Round MGLib round} is rolled back.
+ *
  * @since 0.1.0
  */
 public class MinigameRoundRollbackEvent extends MGRoundEvent {
 
 	/**
 	 * Creates a new instance of this event.
+	 *
 	 * @param round the round associated with this event
 	 * @since 0.1.0
 	 */
-	public MinigameRoundRollbackEvent(Round round){
+	public MinigameRoundRollbackEvent(Round round) {
 		super(round);
 	}
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 
 /**
  * MGLib's primary (central) class
+ *
  * @author Maxim Roncacé
  * @version 0.3.1-SNAPSHOT
  * @since 0.1.0
@@ -54,6 +55,7 @@ public class Main extends JavaPlugin {
 	 * <br><br>
 	 * <strong>This is for use within the library; please do not modify this in
 	 * your plugin or everything will break.</strong>
+	 *
 	 * @since 0.1.0
 	 */
 	public static Main plugin;
@@ -63,6 +65,7 @@ public class Main extends JavaPlugin {
 	 * <br><br>
 	 * <strong>This is for use within the library; please do not use this in your plugin or you'll
 	 * confuse the server owner.</strong>
+	 *
 	 * @since 0.1.0
 	 */
 	public static Logger log;
@@ -91,10 +94,11 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Standard {@link JavaPlugin#onEnable()} override
+	 *
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("unchecked")
-	public void onEnable(){
+	public void onEnable() {
 
 		plugin = this;
 		log = getLogger();
@@ -102,7 +106,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 		IMMEDIATE_LOGGING = getConfig().getBoolean("immediate-logging");
 		LOGGING_LEVEL = LogLevel.valueOf(getConfig().getString("logging-level").toUpperCase());
-		if (LOGGING_LEVEL == null){
+		if (LOGGING_LEVEL == null) {
 			LOGGING_LEVEL = LogLevel.WARNING;
 			Main.log("The configured logging level is invalid!", LogLevel.WARNING);
 		}
@@ -112,51 +116,52 @@ public class Main extends JavaPlugin {
 		locale.initialize();
 
 		// updater
-		if (getConfig().getBoolean("enable-updater")){
+		if (getConfig().getBoolean("enable-updater")) {
 			new Updater(this, 74979, this.getFile(), Updater.UpdateType.DEFAULT, true);
 		}
 
 		// submit metrics
-		if (getConfig().getBoolean("enable-metrics")){
+		if (getConfig().getBoolean("enable-metrics")) {
 			try {
 				Metrics metrics = new Metrics(this);
 				metrics.start();
 			}
-			catch (IOException ex){
+			catch (IOException ex) {
 				log.warning(locale.getMessage("metrics-fail"));
 			}
 		}
-		if (this.getDescription().getVersion().contains("dev")){
+		if (this.getDescription().getVersion().contains("dev")) {
 			log.warning(locale.getMessage("dev-build"));
 		}
 
 		// store UUIDs of online players
 		List<String> names = new ArrayList<String>();
 		try {
-			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class){
-				for (Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) {
+				for (Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers",
+						new Class<?>[0]).invoke(null)) {
 					names.add(pl.getName());
 				}
 			}
 			else {
-				for (Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)){
+				for (Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)) {
 					names.add(pl.getName());
 				}
 			}
 		}
-		catch (NoSuchMethodException ex){ // can never happen
+		catch (NoSuchMethodException ex) { // can never happen
 			ex.printStackTrace();
 		}
-		catch (InvocationTargetException ex){ // can also never happen
+		catch (InvocationTargetException ex) { // can also never happen
 			ex.printStackTrace();
 		}
-		catch (IllegalAccessException ex){ // can still never happen
+		catch (IllegalAccessException ex) { // can still never happen
 			ex.printStackTrace();
 		}
 		try {
 			new UUIDFetcher(names).call();
 		}
-		catch (Exception ex){
+		catch (Exception ex) {
 			ex.printStackTrace();
 			Main.log.severe(locale.getMessage("uuid-fail"));
 		}
@@ -166,13 +171,14 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Standard {@link JavaPlugin#onDisable()} override.
+	 *
 	 * @since 0.1.0
 	 */
-	public void onDisable(){
+	public void onDisable() {
 		this.disabling = true;
 		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("ending-rounds"));
-		for (Minigame mg : Minigame.getMinigameInstances()){
-			for (Round r : mg.getRoundList()){
+		for (Minigame mg : Minigame.getMinigameInstances()) {
+			for (Round r : mg.getRoundList()) {
 				r.end(false);
 			}
 		}
@@ -186,30 +192,32 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * This method should not be called from your plugin. So don't use it. Please.
+	 *
 	 * @param plugin the name of the plugin to register worlds for
 	 */
-	public static void registerWorlds(String plugin){
+	public static void registerWorlds(String plugin) {
 		MGListener.addWorlds(plugin);
 	}
 
-	private static void uninitialize(){
+	private static void uninitialize() {
 		log = null;
 		plugin = null;
 	}
 
 	/**
 	 * Internal convenience method for logging. <strong>Please do not call this from your plugin.</strong>
+	 *
 	 * @param message the message to log.
 	 * @param level   the {@link LogLevel level} at which to log the message
 	 * @since 0.3.0
 	 */
-	public static void log(String message, LogLevel level){
+	public static void log(String message, LogLevel level) {
 		MGUtil.log(message, "MGLib", level);
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-		if (label.equalsIgnoreCase("mglib")){
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (label.equalsIgnoreCase("mglib")) {
 			sender.sendMessage(ChatColor.LIGHT_PURPLE +
 					"This server is using MGLib version " + this.getDescription().getVersion() + " by Maxim Roncacé");
 			return true;
@@ -219,29 +227,32 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
+	 *
 	 * @return a hashmap mapping the names of online players to their respective UUIDs
 	 * @since 0.3.0
 	 */
-	public static HashMap<String, UUID> getOnlineUUIDs(){
+	public static HashMap<String, UUID> getOnlineUUIDs() {
 		return UUIDFetcher.uuids;
 	}
 
 	/**
 	 * Retrieves whether vanilla spectating has been globally disabled by MGLib's config.yml file.
+	 *
 	 * @return whether vanilla spectating has been globally disabled by MGLib's config.yml file
 	 * @since 0.3.0
 	 */
-	public static boolean isVanillaSpectatingDisabled(){
+	public static boolean isVanillaSpectatingDisabled() {
 		return VANILLA_SPECTATING_DISABLED;
 	}
 
 	/**
 	 * Determines whether MGLib is in the process of disabling.
 	 * This is to provide security when unsetting static objects.
+	 *
 	 * @return whether MGLib is in the process of disabling.
 	 * @since 0.3.1
 	 */
-	public static boolean isDisabling(){
+	public static boolean isDisabling() {
 		return disabling;
 	}
 

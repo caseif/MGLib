@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,8 @@ import net.amigocraft.mglib.event.MGLibEvent;
 import org.bukkit.Bukkit;
 
 /**
- * Fired when an event involving an active {@link Round minigame round} occurs.
+ * Called when an event involving an active {@link Round minigame round} occurs.
+ *
  * @since 0.2.0
  */
 public class MGRoundEvent extends MGLibEvent {
@@ -38,15 +39,16 @@ public class MGRoundEvent extends MGLibEvent {
 
 	/**
 	 * Creates a new instance of this event.
+	 *
 	 * @param round the {@link Round} associated with this event
 	 * @since 0.2.0
 	 */
-	public MGRoundEvent(final Round round){
+	public MGRoundEvent(final Round round) {
 		super(round.getPlugin());
 		this.round = round;
-		if (Main.plugin.isEnabled()){
+		if (Main.plugin.isEnabled()) {
 			Bukkit.getScheduler().runTaskLater(Main.plugin, new Runnable() {
-				public void run(){
+				public void run() {
 					round.getMinigame().getLobbyManager().update(round.getArena());
 				}
 			}, 2L);
@@ -55,10 +57,11 @@ public class MGRoundEvent extends MGLibEvent {
 
 	/**
 	 * Retrieves the {@link Round} associated with this event.
+	 *
 	 * @return the {@link Round} associated with this event
 	 * @since 0.2.0
 	 */
-	public Round getRound(){
+	public Round getRound() {
 		return round;
 	}
 

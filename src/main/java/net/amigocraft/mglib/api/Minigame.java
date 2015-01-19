@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,7 @@ import java.util.UUID;
  * against this version of the library is <i>highly discouraged</i>. This is a development build, and as such, is very
  * prone to change. Methods may be in this version that will disappear in the next release, and existing methods may be
  * temporarily refactored.
+ *
  * @author Maxim Roncacé
  * @version 0.3.1-SNAPSHOT
  * @since 0.1.0
@@ -67,12 +68,13 @@ public class Minigame {
 
 	protected HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
-	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0");
+	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0", "0.3.1");
 
-	boolean customRoundClass = false, customPlayerClass = false;
+	boolean customRoundClass = false;
+	boolean customPlayerClass = false;
 
-	private Minigame(final JavaPlugin plugin){
-		if (!registeredInstances.containsKey(plugin.getName())){
+	private Minigame(final JavaPlugin plugin) {
+		if (!registeredInstances.containsKey(plugin.getName())) {
 			this.plugin = plugin;
 			registeredInstances.put(plugin.getName(), this);// list this instance for use in other parts of the API
 			Main.log.info(plugin + " has successfully hooked into MGLib!");
@@ -89,14 +91,14 @@ public class Minigame {
 		lobbyManager = new LobbyManager(plugin.getName());
 		lobbyManager.loadSigns();
 		Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				lobbyManager.reset();
 			}
 		});
 		Main.registerWorlds(plugin.getName()); // registers worlds containing arenas for use with the event listener
 		locale = new Locale(plugin.getName());
 		Bukkit.getScheduler().runTask(Main.plugin, new Runnable() { // add delay so that the plugin has a chance to change its default locale
-			public void run(){
+			public void run() {
 				locale.initialize();
 			}
 		});
@@ -104,103 +106,111 @@ public class Minigame {
 
 	/**
 	 * Registers a plugin with the MGLib API.
-	 * @param  plugin an instance of your plugin (can be substituted with this if called from your main class)
+	 *
+	 * @param plugin an instance of your plugin (can be substituted with this if called from your main class)
 	 * @return a minigame object which may be used for most core API methods, with the exception of some pertaining
 	 * exclusively to players or rounds.
 	 * @since 0.1.0
 	 */
-	public static Minigame registerPlugin(JavaPlugin plugin){
+	public static Minigame registerPlugin(JavaPlugin plugin) {
 		return new Minigame(plugin);
 	}
 
 	/**
 	 * Retrieves the {@link JavaPlugin} associated with this {@link Minigame} instance.
+	 *
 	 * @return the {@link JavaPlugin} associated with this {@link Minigame} instance
 	 */
-	public JavaPlugin getPlugin(){
+	public JavaPlugin getPlugin() {
 		return plugin;
 	}
 
 	/**
 	 * Retrieves a {@link List list} of all registered {@link Minigame minigame} instances.
-	 * @return  a {@link List list} of all registered {@link Minigame minigame} instances
+	 *
+	 * @return a {@link List list} of all registered {@link Minigame minigame} instances
 	 * @since 0.1.0
 	 */
-	public static List<Minigame> getMinigameInstances(){
+	public static List<Minigame> getMinigameInstances() {
 		return Lists.newArrayList(registeredInstances.values());
 	}
 
 	/**
 	 * Finds the instance of the MGLib API associated with a given plugin
+	 *
 	 * @param plugin the name of the plugin to search for
 	 * @return the instance of the MGLib API (Minigame.class) associated with the given plugin
 	 * @since 0.1.0
 	 */
-	public static Minigame getMinigameInstance(String plugin){
+	public static Minigame getMinigameInstance(String plugin) {
 		return registeredInstances.get(plugin);
 	}
 
 	/**
 	 * Finds the instance of the MGLib API associated with a given plugin
+	 *
 	 * @param plugin the plugin to search for
 	 * @return the instance of the MGLib API (Minigame.class) associated with the given plugin
 	 * @since 0.1.0
 	 */
-	public static Minigame getMinigameInstance(JavaPlugin plugin){
+	public static Minigame getMinigameInstance(JavaPlugin plugin) {
 		return getMinigameInstance(plugin.getName());
 	}
 
 	/**
 	 * Retrieves a hashmap containing all rounds associated with the instance which registered this API instance.
-	 * @return  a hashmap containing all rounds associated with the instance which registered this API instance
+	 *
+	 * @return a hashmap containing all rounds associated with the instance which registered this API instance
 	 * @since 0.1.0
 	 */
-	public HashMap<String, Round> getRounds(){
+	public HashMap<String, Round> getRounds() {
 		return rounds;
 	}
 
 	/**
 	 * Retrieves a list containing all rounds associated with the instance which registered this API instance.
-	 * @return  a list containing all rounds associated with the instance which registered this API instance
+	 *
+	 * @return a list containing all rounds associated with the instance which registered this API instance
 	 * @since 0.1.0
 	 */
-	public List<Round> getRoundList(){
+	public List<Round> getRoundList() {
 		return Lists.newArrayList(rounds.values());
 	}
 
 	/**
 	 * Creates and stores a new round with the given parameters.
-	 * @param  arena the name of the arena to create the round in
-	 * @return  the created round
-	 * @throws  NoSuchArenaException if the given arena does not exist
+	 *
+	 * @param arena the name of the arena to create the round in
+	 * @return the created round
+	 * @throws NoSuchArenaException if the given arena does not exist
 	 * @since 0.1.0
 	 */
 	public Round createRound(String arena) throws NoSuchArenaException {
 		Round r = null;
-		if (this.customRoundClass){
+		if (this.customRoundClass) {
 			try {
 				Constructor con = getConfigManager().getRoundClass().getDeclaredConstructor(String.class, String.class);
-				r = (Round) con.newInstance(plugin.getName(), arena.toLowerCase());
+				r = (Round)con.newInstance(plugin.getName(), arena.toLowerCase());
 				r.setStage(Stage.WAITING); // default to waiting stage
 				rounds.put(arena.toLowerCase(), r); // register arena with MGLib
 			}
-			catch (NoSuchMethodException ex){ // thrown when the required constructor does not exist
+			catch (NoSuchMethodException ex) { // thrown when the required constructor does not exist
 				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
 						" is malformed!");
 				ex.printStackTrace();
 			}
-			catch (InvocationTargetException ex){ // any error thrown from the called constructor
+			catch (InvocationTargetException ex) { // any error thrown from the called constructor
 				ex.getTargetException().printStackTrace();
 			}
-			catch (SecurityException ex){ // I have no idea why this would happen.
+			catch (SecurityException ex) { // I have no idea why this would happen.
 				ex.printStackTrace();
 			}
-			catch (InstantiationException ex){ // if this happens then the overriding plugin seriously screwed something up
+			catch (InstantiationException ex) { // if this happens then the overriding plugin screwed something up
 				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
 						" is malformed!");
 				ex.printStackTrace();
 			}
-			catch (IllegalAccessException ex){ // thrown if the called method from the overriding class is not public
+			catch (IllegalAccessException ex) { // thrown if the called method from the overriding class is not public
 				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
 						" is not visible!");
 				ex.printStackTrace();
@@ -214,27 +224,29 @@ public class Minigame {
 
 	/**
 	 * Retrieves the instance of the round associated with the given arena.
-	 * @param  name the name of the round to retrieve
-	 * @return  the instance of the round associated with the given arena, or null if it does not exist
+	 *
+	 * @param name the name of the round to retrieve
+	 * @return the instance of the round associated with the given arena, or null if it does not exist
 	 * @since 0.1.0
 	 */
-	public Round getRound(String name){
+	public Round getRound(String name) {
 		return rounds.get(name.toLowerCase());
 	}
 
 	/**
 	 * Creates an arena for use with MGLib.
-	 * @param  name    the name of the arena (used to identify it)
-	 * @param  spawn   the initial spawn point of the arena (more may be added later)
-	 * @param  corner1 a corner of the arena
-	 * @param  corner2 the corner of the arena opposite <b>corner1</b>
-	 * @return  the new arena's {@link ArenaFactory}
-	 * @throws  InvalidLocationException if the given locations are not in the same world
-	 * @throws  ArenaExistsException     if an arena of the same name already exists
+	 *
+	 * @param name    the name of the arena (used to identify it)
+	 * @param spawn   the initial spawn point of the arena (more may be added later)
+	 * @param corner1 a corner of the arena
+	 * @param corner2 the corner of the arena opposite <b>corner1</b>
+	 * @return the new arena's {@link ArenaFactory}
+	 * @throws InvalidLocationException if the given locations are not in the same world
+	 * @throws ArenaExistsException     if an arena of the same name already exists
 	 * @since 0.1.0
 	 */
 	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2)
-			throws InvalidLocationException, ArenaExistsException{
+			throws InvalidLocationException, ArenaExistsException {
 
 		double minX = Double.NaN;
 		double minY = Double.NaN;
@@ -249,12 +261,12 @@ public class Minigame {
 		double y2;
 		double z2;
 
-		if (corner1 != null && corner2 != null){
-			if (!spawn.getWorld().getName().equals(corner1.getWorld().getName())){
+		if (corner1 != null && corner2 != null) {
+			if (!spawn.getWorld().getName().equals(corner1.getWorld().getName())) {
 				// spawn's in a different world than the first corner
 				throw new InvalidLocationException();
 			}
-			if (!spawn.getWorld().getName().equals(corner2.getWorld().getName())){
+			if (!spawn.getWorld().getName().equals(corner2.getWorld().getName())) {
 				// spawn's in a different world than the second corner
 				throw new InvalidLocationException();
 			}
@@ -267,7 +279,7 @@ public class Minigame {
 			z2 = corner2.getZ();
 
 			// this whole bit just determines which coords are the maxes and mins
-			if (x1 < x2){
+			if (x1 < x2) {
 				minX = x1;
 				maxX = x2;
 			}
@@ -275,7 +287,7 @@ public class Minigame {
 				minX = x2;
 				maxX = x1;
 			}
-			if (y1 < y2){
+			if (y1 < y2) {
 				minY = y1;
 				maxY = y2;
 			}
@@ -283,7 +295,7 @@ public class Minigame {
 				minY = y2;
 				maxY = y1;
 			}
-			if (z1 < z2){
+			if (z1 < z2) {
 				minZ = z1;
 				maxZ = z2;
 			}
@@ -294,11 +306,11 @@ public class Minigame {
 		}
 
 		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName());
-		if (!a.isNewArena()){
+		if (!a.isNewArena()) {
 			throw new ArenaExistsException();
 		}
 		a.addSpawn(spawn);
-		if (minX == minX){
+		if (minX == minX) {
 			a.setMinBound(minX, minY, minZ).setMaxBound(maxX, maxY, maxZ);
 		}
 		return a;
@@ -306,36 +318,37 @@ public class Minigame {
 
 	/**
 	 * Creates an arena for use with MGLib.
-	 * @param  name  the name of the arena (used to identify it)
-	 * @param  spawn the initial spawn point of the arena (more may be added later)
-	 * @throws  ArenaExistsException if an arena of the same name already exists
+	 *
+	 * @param name  the name of the arena (used to identify it)
+	 * @param spawn the initial spawn point of the arena (more may be added later)
+	 * @throws ArenaExistsException if an arena of the same name already exists
 	 * @since 0.1.0
 	 */
-	public void createArena(String name, Location spawn) throws ArenaExistsException{
+	public void createArena(String name, Location spawn) throws ArenaExistsException {
 		try {
 			createArena(name, spawn, null, null);
 		}
-		catch (InvalidLocationException ex){
+		catch (InvalidLocationException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	/**
 	 * Removes an arena from the plugin's config, effectively deleting it.
-	 * @param  name the arena to delete
-	 * @throws  NoSuchArenaException if an arena by the specified name does not exist
+	 *
+	 * @param name the arena to delete
+	 * @throws NoSuchArenaException if an arena by the specified name does not exist
 	 * @since 0.1.0
 	 */
-	public void deleteArena(String name) throws NoSuchArenaException{
+	public void deleteArena(String name) throws NoSuchArenaException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName()); // convenience method for loading the YAML file
-		if (!y.contains(name)) // arena doesn't exist
-		{
+		if (!y.contains(name)) { // arena doesn't exist
 			throw new NoSuchArenaException();
 		}
 		y.set(name, null); // remove the arena from the arenas.yml file
 		MGUtil.saveArenaYaml(plugin.getName(), y);
 		Round r = Minigame.getMinigameInstance(plugin).getRound(name); // get the Round object if it exists
-		if (r != null){
+		if (r != null) {
 			r.end(); // end the round
 			r.destroy(); // get rid of the object (or just its assets)
 		}
@@ -343,15 +356,14 @@ public class Minigame {
 
 	/**
 	 * Returns the {@link MGPlayer} associated with the given username.
-	 * @param  player the username to search for
-	 * @return  the {@link MGPlayer} associated with the given username, or <b>null</b> if none is found
+	 *
+	 * @param player the username to search for
+	 * @return the {@link MGPlayer} associated with the given username, or <b>null</b> if none is found
 	 * @since 0.1.0
 	 */
-	public MGPlayer getMGPlayer(String player){
-		for (Round r : rounds.values()) // iterate registered rounds
-		{
-			if (r.getMGPlayer(player) != null) // check if the player is in the round
-			{
+	public MGPlayer getMGPlayer(String player) {
+		for (Round r : rounds.values()) { // iterate registered rounds
+			if (r.getMGPlayer(player) != null) { // check if the player is in the round
 				return r.getMGPlayer(player);
 			}
 		}
@@ -361,146 +373,162 @@ public class Minigame {
 	/**
 	 * Convenience method for checking if an {@link MGPlayer} is associated with the given username. <br><br> This
 	 * method simply checks if {@link Minigame#getMGPlayer(String) Minigame#getMGPlayer(p)} is <b>null</b>.
-	 * @param  p the username to search for
-	 * @return  Whether an associated {@link MGPlayer} was found
+	 *
+	 * @param p the username to search for
+	 * @return Whether an associated {@link MGPlayer} was found
 	 * @since 0.1.0
 	 */
-	public boolean isPlayer(String p){
+	public boolean isPlayer(String p) {
 		return getMGPlayer(p) != null;
 	}
 
 	/**
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
-	 * @param  arena the name of the arena to retrieve an {@link ArenaFactory} for
-	 * @return  the arena's {@link ArenaFactory}
+	 *
+	 * @param arena the name of the arena to retrieve an {@link ArenaFactory} for
+	 * @return the arena's {@link ArenaFactory}
 	 * @throws NoSuchArenaException if the given arena does not exist. In this case, you should instead use {@link
 	 *                              ArenaFactory#createArenaFactory(String, String, String)}.
 	 * @since 0.1.0
 	 */
-	public ArenaFactory getArenaFactory(String arena) throws NoSuchArenaException{
+	public ArenaFactory getArenaFactory(String arena) throws NoSuchArenaException {
 		YamlConfiguration y = MGUtil.loadArenaYaml(plugin.getName());
-		if (y.isSet(arena + ".world")){
-			return ArenaFactory.createArenaFactory(plugin.getName(), arena, MGUtil.loadArenaYaml(plugin.getName()).getString(arena + ".world"));
+		if (y.isSet(arena + ".world")) {
+			return ArenaFactory.createArenaFactory(plugin.getName(), arena,
+					MGUtil.loadArenaYaml(plugin.getName()).getString(arena + ".world"));
 		}
 		throw new NoSuchArenaException();
 	}
 
 	/**
 	 * For use within the library <b><i>only</i></b>. Please do not modify the returned map.
-	 * @return  a map of arena names and their corresponding {@link ArenaFactory ArenaFactories}
+	 *
+	 * @return a map of arena names and their corresponding {@link ArenaFactory ArenaFactories}
 	 */
-	public HashMap<String, ArenaFactory> getArenaFactories(){
+	public HashMap<String, ArenaFactory> getArenaFactories() {
 		return arenaFactories;
 	}
 
 	/**
 	 * Retrieves this minigame's rollback manager.
-	 * @return  this minigame's rollback manager
+	 *
+	 * @return this minigame's rollback manager
 	 * @since 0.1.0
 	 */
-	public RollbackManager getRollbackManager(){
+	public RollbackManager getRollbackManager() {
 		return rbManager;
 	}
 
 	/**
 	 * Retrieves this minigame's lobby manager.
-	 * @return  this minigame's lobby manager
+	 *
+	 * @return this minigame's lobby manager
 	 * @since 0.1.0
 	 */
-	public LobbyManager getLobbyManager(){
+	public LobbyManager getLobbyManager() {
 		return lobbyManager;
 	}
 
 	/**
 	 * Retrieves this minigame's config manager.
-	 * @return  this minigame's config manager
+	 *
+	 * @return this minigame's config manager
 	 * @since 0.1.0
 	 */
-	public ConfigManager getConfigManager(){
+	public ConfigManager getConfigManager() {
 		return configManager;
 	}
 
 	/**
 	 * Returns the {@link Locale} for this minigame.
-	 * @return  the {@link Locale} for this minigame
+	 *
+	 * @return the {@link Locale} for this minigame
 	 * @since 0.3.0
 	 */
-	public Locale getLocale(){
+	public Locale getLocale() {
 		return locale;
 	}
 
 	/**
 	 * Logs the given message at the specified logging level.
-	 * @param  message the message to log
-	 * @param  level   the level at which to log the message
+	 *
+	 * @param message the message to log
+	 * @param level   the level at which to log the message
 	 * @since 0.3.0
 	 */
-	public void log(String message, LogLevel level){
+	public void log(String message, LogLevel level) {
 		MGUtil.log(message, plugin.getName(), level);
 	}
 
 	/**
 	 * Logs the given message at {@link LogLevel#SEVERE}.
-	 * @param  message the message to log
+	 *
+	 * @param message the message to log
 	 * @since 0.3.0
 	 */
-	public void severe(String message){
+	public void severe(String message) {
 		this.log(message, LogLevel.SEVERE);
 	}
 
 	/**
 	 * Logs the given message at {@link LogLevel#WARNING}.
-	 * @param  message the message to log
+	 *
+	 * @param message the message to log
 	 * @since 0.3.0
 	 */
-	public void warning(String message){
+	public void warning(String message) {
 		this.log(message, LogLevel.WARNING);
 	}
 
 	/**
 	 * Logs the given message at {@link LogLevel#INFO}.
-	 * @param  message the message to log
+	 *
+	 * @param message the message to log
 	 * @since 0.3.0
 	 */
-	public void info(String message){
+	public void info(String message) {
 		this.log(message, LogLevel.INFO);
 	}
 
 	/**
 	 * Logs the given message at {@link LogLevel#DEBUG}.
-	 * @param  message the message to log
+	 *
+	 * @param message the message to log
 	 * @since 0.3.0
 	 */
-	public void debug(String message){
+	public void debug(String message) {
 		this.log(message, LogLevel.DEBUG);
 	}
 
 	/**
 	 * Logs the given message at {@link LogLevel#VERBOSE}.
-	 * @param  message the message to log
+	 *
+	 * @param message the message to log
 	 * @since 0.3.0
 	 */
-	public void verbose(String message){
+	public void verbose(String message) {
 		this.log(message, LogLevel.VERBOSE);
 	}
 
 	/**
 	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
-	 * @return  a hashmap mapping the names of online players to their respective UUIDs
+	 *
+	 * @return a hashmap mapping the names of online players to their respective UUIDs
 	 * @since 0.3.0
 	 */
-	public static HashMap<String, UUID> getOnlineUUIDs(){
+	public static HashMap<String, UUID> getOnlineUUIDs() {
 		return Main.getOnlineUUIDs();
 	}
 
 	/**
 	 * Unsets all static objects in this class.
 	 * This method will not do anything unless MGLib is in the process of disabling.
+	 *
 	 * @since 0.1.0
 	 */
-	public static void uninitialize(){
-		if (Main.isDisabling()){
-			for (Minigame mg : registeredInstances.values()){
+	public static void uninitialize() {
+		if (Main.isDisabling()) {
+			for (Minigame mg : registeredInstances.values()) {
 				mg = null;
 			}
 			registeredInstances = null;
@@ -509,11 +537,12 @@ public class Minigame {
 
 	/**
 	 * Determines whether this version of MGLib is compatibile with the specified minimum required version.
-	 * @param  minReqVersion the minimum required version of MGLib
-	 * @return  whether this version of MGLib is compatibile with the specified minimum required version
+	 *
+	 * @param minReqVersion the minimum required version of MGLib
+	 * @return whether this version of MGLib is compatibile with the specified minimum required version
 	 * @since 0.3.0
 	 */
-	public static boolean isMGLibCompatible(String minReqVersion){
+	public static boolean isMGLibCompatible(String minReqVersion) {
 		return versions.contains(minReqVersion);
 	}
 

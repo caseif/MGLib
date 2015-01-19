@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package net.amigocraft.mglib.api;
 
 /**
  * Enum containing possible stages of a {@link Round} object.
+ *
  * @author Maxim Roncacé
  * @since 0.1.0
  */

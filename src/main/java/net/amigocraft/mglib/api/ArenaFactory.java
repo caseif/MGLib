@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,17 +44,17 @@ public class ArenaFactory {
 
 	private int timerHandle = -1;
 
-	private ArenaFactory(String plugin, String arena, String world){
+	private ArenaFactory(String plugin, String arena, String world) {
 		this.plugin = plugin;
 		MGYamlConfiguration y = MGUtil.loadArenaYaml(plugin);
 		String display = "";
-		if (y != null && y.contains(arena + ".displayname")){
+		if (y != null && y.contains(arena + ".displayname")) {
 			display = y.getString(arena + ".displayname");
 		}
-		else if (y != null){
+		else if (y != null) {
 			y.set(arena + ".displayname", arena);
 		}
-		if (display.equalsIgnoreCase(arena)){
+		if (display.equalsIgnoreCase(arena)) {
 			this.arena = display;
 		}
 		else {
@@ -68,18 +68,19 @@ public class ArenaFactory {
 
 	/**
 	 * Creates a new {@link ArenaFactory arena} object, used to modify an arena's assets.
+	 *
 	 * @param plugin the plugin this arena is owned by
 	 * @param arena  the name of the arena
 	 * @param world  the world containing the arena
 	 * @return the created ArenaFactory, or the existing one if present
 	 * @since 0.1.0
 	 */
-	public static ArenaFactory createArenaFactory(String plugin, String arena, String world){
+	public static ArenaFactory createArenaFactory(String plugin, String arena, String world) {
 		ArenaFactory af = Minigame.getMinigameInstance(plugin).arenaFactories.get(arena.toLowerCase());
-		if (af == null){
+		if (af == null) {
 			boolean nA = false;
 			String displayName = arena;
-			if (MGUtil.loadArenaYaml(plugin).get(arena) == null){
+			if (MGUtil.loadArenaYaml(plugin).get(arena) == null) {
 				nA = true;
 			}
 			else {
@@ -99,42 +100,46 @@ public class ArenaFactory {
 
 	/**
 	 * Retrieves the name of the plugin associated with this {@link ArenaFactory}.
+	 *
 	 * @return the name of the plugin associated with this {@link ArenaFactory}
 	 * @since 0.1.0
 	 */
-	public String getPlugin(){
+	public String getPlugin() {
 		return plugin;
 	}
 
 	/**
 	 * Retrieves the name of the arena associated with this {@link ArenaFactory}.
+	 *
 	 * @return the name of the arena associated with this {@link ArenaFactory}
 	 * @since 0.1.0
 	 */
-	public String getArena(){
+	public String getArena() {
 		return arena;
 	}
 
 	/**
 	 * Retrieves the display name of the arena associated with this {@link ArenaFactory}.
+	 *
 	 * @return the display name of the arena associated with this {@link ArenaFactory}
 	 * @since 0.1.0
 	 */
-	public String getDisplayName(){
+	public String getDisplayName() {
 		return arena;
 	}
 
 	/**
 	 * Retrieves the name of the world associated with this {@link ArenaFactory}'s arena.
+	 *
 	 * @return the name of the world associated with this {@link ArenaFactory}'s arena
 	 * @since 0.1.0
 	 */
-	public String getWorld(){
+	public String getWorld() {
 		return world;
 	}
 
-	private ArenaFactory setDisplayName(String displayName){
-		if (yaml == null){
+	private ArenaFactory setDisplayName(String displayName) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
@@ -142,15 +147,15 @@ public class ArenaFactory {
 		}
 		yaml.set(arena + ".displayname", displayName);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
 		return this;
 	}
 
-	private ArenaFactory setWorld(String world){
-		if (yaml == null){
+	private ArenaFactory setWorld(String world) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
@@ -158,7 +163,7 @@ public class ArenaFactory {
 		}
 		yaml.set(arena + ".world", world);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
@@ -167,23 +172,25 @@ public class ArenaFactory {
 
 	/**
 	 * Adds a spawn to the given arena with the given coordinates, pitch, and yaw.
-	 * @param x the x-coordinate of the new spawn
-	 * @param y the y-coordinate of the new spawn
-	 * @param z the z-coordinate of the new spawn
+	 *
+	 * @param x     the x-coordinate of the new spawn
+	 * @param y     the y-coordinate of the new spawn
+	 * @param z     the z-coordinate of the new spawn
 	 * @param pitch the pitch (x- and z-rotation) of the new spawn
-	 * @param yaw the yaw (y-rotation) of the new spawn
+	 * @param yaw   the yaw (y-rotation) of the new spawn
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
-	public ArenaFactory addSpawn(double x, double y, double z, float pitch, float yaw){
-		if (yaml == null){
+	public ArenaFactory addSpawn(double x, double y, double z, float pitch, float yaw) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		}
 		Minigame mg = Minigame.getMinigameInstance(plugin);
-		if (Minigame.getMinigameInstance(plugin).getRounds().containsKey(arena)){ // check if round is taking place in arena
+		// check if round is taking place in arena
+		if (Minigame.getMinigameInstance(plugin).getRounds().containsKey(arena)) {
 			Round r = mg.getRound(arena); // get the round object
 			Location l = new Location(Bukkit.getWorld(r.getWorld()), x, y, z); // self-explanatory
 			l.setPitch(pitch);
@@ -191,14 +198,13 @@ public class ArenaFactory {
 			r.getSpawns().add(l); // add spawn to the live round
 		}
 		ConfigurationSection cs = yaml.getConfigurationSection(arena);
-		if (cs == null){
+		if (cs == null) {
 			yaml.createSection(arena);
 			cs = yaml.getConfigurationSection(arena);
 		}
 		int min; // the minimum available spawn number
-		for (min = 0; min >= 0; min++) // this feels like a bad idea, but I think it should work
-		{
-			if (cs.getString("spawns." + min) == null){
+		for (min = 0; min >= 0; min++) { // this feels like a bad idea, but I think it should work
+			if (cs.getString("spawns." + min) == null) {
 				break;
 			}
 		}
@@ -208,7 +214,7 @@ public class ArenaFactory {
 		cs.set("spawns." + min + ".pitch", pitch);
 		cs.set("spawns." + min + ".yaw", yaw);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
@@ -219,29 +225,32 @@ public class ArenaFactory {
 	 * Adds a spawn to the given arena with the given coordinates. <br><br> <b>Note:</b> it is recommended that you use
 	 * {@link ArenaFactory#addSpawn(Location) addSpawn(Location)} if an instance of a Location at these coordinates
 	 * already exists.
+	 *
 	 * @param x the x-coordinate of the new spawn
 	 * @param y the y-coordinate of the new spawn
 	 * @param z the z-coordinate of the new spawn
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
-	public ArenaFactory addSpawn(double x, double y, double z){
+	public ArenaFactory addSpawn(double x, double y, double z) {
 		return addSpawn(x, y, z, 90f, 0f);
 	}
 
 	/**
 	 * Adds a spawn to the given arena with the given {@link Location}.
-	 * @param location the location of the new spawn
+	 *
+	 * @param location        the location of the new spawn
 	 * @param saveOrientation whether to save the {@link Location}'s pitch and yaw to the spawn (Defaults to false if
 	 *                        omitted).
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
-	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException{
-		if (location.getWorld().getName().equals(world)){
-			if (saveOrientation){
-				return addSpawn(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getPitch(), location.getYaw());
+	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException {
+		if (location.getWorld().getName().equals(world)) {
+			if (saveOrientation) {
+				return addSpawn(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getPitch(),
+						location.getYaw());
 			}
 			return addSpawn(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		}
@@ -252,47 +261,49 @@ public class ArenaFactory {
 
 	/**
 	 * Adds a spawn to the given arena with the given {@link Location}.
+	 *
 	 * @param location the location of the new spawn
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
-	public ArenaFactory addSpawn(Location location) throws InvalidLocationException{
+	public ArenaFactory addSpawn(Location location) throws InvalidLocationException {
 		return addSpawn(location, false);
 	}
 
 	/**
 	 * Deletes a spawn from the given arena at the given coordinates.
+	 *
 	 * @param x the x-coordinate of the spawn to delete
 	 * @param y the y-coordinate of the spawn to delete
 	 * @param z the z-coordinate of the spawn to delete
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
-	public ArenaFactory deleteSpawn(double x, double y, double z){
-		if (yaml == null){
+	public ArenaFactory deleteSpawn(double x, double y, double z) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		}
 		Minigame mg = Minigame.getMinigameInstance(plugin);
-		if (mg.getRound(arena) != null){
+		if (mg.getRound(arena) != null) {
 			Round r = mg.getRound(arena);
-			for (Location l : r.getSpawns()){
-				if (l.getX() == x && l.getY() == y && l.getZ() == z){
+			for (Location l : r.getSpawns()) {
+				if (l.getX() == x && l.getY() == y && l.getZ() == z) {
 					r.getSpawns().remove(l);
 				}
 			}
 		}
 		ConfigurationSection spawns = yaml.getConfigurationSection(arena + ".spawns"); // make the code easier to read
-		for (String k : spawns.getKeys(false)){
-			if (spawns.getDouble(k + ".x") == x && spawns.getDouble(k + ".y") == y && spawns.getDouble(k + ".z") == z){
+		for (String k : spawns.getKeys(false)) {
+			if (spawns.getDouble(k + ".x") == x && spawns.getDouble(k + ".y") == y && spawns.getDouble(k + ".z") == z) {
 				spawns.set(k, null); // delete it from the config
 			}
 		}
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
@@ -301,22 +312,24 @@ public class ArenaFactory {
 
 	/**
 	 * Deletes a spawn from the given arena at the given {@link Location}.
+	 *
 	 * @param location the {@link Location} of the spawn to delete
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
-	public ArenaFactory deleteSpawn(Location location){
+	public ArenaFactory deleteSpawn(Location location) {
 		return deleteSpawn(location.getX(), location.getY(), location.getZ());
 	}
 
 	/**
 	 * Deletes a spawn from the given arena at the given {@link Location}.
+	 *
 	 * @param index the internal index of the spawn to delete
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
-	public ArenaFactory deleteSpawn(int index){
-		if (yaml == null){
+	public ArenaFactory deleteSpawn(int index) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
@@ -324,22 +337,22 @@ public class ArenaFactory {
 		}
 		Minigame mg = Minigame.getMinigameInstance(plugin);
 		ConfigurationSection spawns = yaml.getConfigurationSection(arena + ".spawns"); // make the code easier to read
-		if (spawns.contains(index + "")){
+		if (spawns.contains(index + "")) {
 			int x = spawns.getInt(index + ".x");
 			int y = spawns.getInt(index + ".y");
 			int z = spawns.getInt(index + ".z");
 			spawns.set(index + "", null);
-			if (mg.getRound(arena) != null){
+			if (mg.getRound(arena) != null) {
 				Round r = mg.getRound(arena);
-				for (Location l : r.getSpawns()){
-					if (l.getX() == x && l.getY() == y && l.getZ() == z){
+				for (Location l : r.getSpawns()) {
+					if (l.getX() == x && l.getY() == y && l.getZ() == z) {
 						r.getSpawns().remove(l);
 					}
 				}
 			}
 		}
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
@@ -348,21 +361,23 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the minimum boundary of this arena.
+	 *
 	 * @param x the minimum x-value
 	 * @param y the minimum y-value
 	 * @param z the minimum z-value
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
-	public ArenaFactory setMinBound(double x, double y, double z){
-		if (yaml == null){
+	public ArenaFactory setMinBound(double x, double y, double z) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		}
 		Minigame mg = Minigame.getMinigameInstance(plugin);
-		if (Minigame.getMinigameInstance(plugin).getRounds().containsKey(arena)){ // check if round is taking place in arena
+		// check if round is taking place in arena
+		if (Minigame.getMinigameInstance(plugin).getRounds().containsKey(arena)) {
 			Round r = mg.getRound(arena); // get the round object
 			r.setMinBound(x, y, z); // add spawn to the live round
 		}
@@ -371,7 +386,7 @@ public class ArenaFactory {
 		cs.set("minY", y);
 		cs.set("minZ", z);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
@@ -380,13 +395,14 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the minimum boundary of this arena.
+	 *
 	 * @param location the {@link Location} representing the maximum boundary
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
-	public ArenaFactory setMinBound(Location location) throws InvalidLocationException{
-		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))){
+	public ArenaFactory setMinBound(Location location) throws InvalidLocationException {
+		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))) {
 			return setMinBound(location.getX(), location.getY(), location.getZ());
 		}
 		else {
@@ -396,21 +412,23 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the maximum boundary of this arena.
+	 *
 	 * @param x the maximum x-value
 	 * @param y the maximum y-value
 	 * @param z the maximum z-value
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.1.0
 	 */
-	public ArenaFactory setMaxBound(double x, double y, double z){
-		if (yaml == null){
+	public ArenaFactory setMaxBound(double x, double y, double z) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		}
 		Minigame mg = Minigame.getMinigameInstance(plugin);
-		if (Minigame.getMinigameInstance(plugin).getRounds().containsKey(arena)){ // check if round is taking place in arena
+		// check if round is taking place in arena
+		if (Minigame.getMinigameInstance(plugin).getRounds().containsKey(arena)) {
 			Round r = mg.getRound(arena); // get the round object
 			r.setMaxBound(x, y, z); // add spawn to the live round
 		}
@@ -419,7 +437,7 @@ public class ArenaFactory {
 		cs.set("maxY", y);
 		cs.set("maxZ", z);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
@@ -428,13 +446,14 @@ public class ArenaFactory {
 
 	/**
 	 * Sets the maximum boundary of this arena.
+	 *
 	 * @param location the {@link Location} representing the maximum boundary
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @throws InvalidLocationException if the provided location's world does not match the arena's world
 	 * @since 0.1.0
 	 */
-	public ArenaFactory setMaxBound(Location location) throws InvalidLocationException{
-		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))){
+	public ArenaFactory setMaxBound(Location location) throws InvalidLocationException {
+		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))) {
 			return setMaxBound(location.getX(), location.getY(), location.getZ());
 		}
 		else {
@@ -444,13 +463,14 @@ public class ArenaFactory {
 
 	/**
 	 * Attaches an arbitrary key-value pair to the arena.
+	 *
 	 * @param key   the key to set for the arena
 	 * @param value the value to associate with the key
 	 * @return the instance of {@link ArenaFactory} which this method was called from
 	 * @since 0.3.0
 	 */
-	public ArenaFactory setData(String key, Object value){
-		if (yaml == null){
+	public ArenaFactory setData(String key, Object value) {
+		if (yaml == null) {
 			yaml = MGUtil.loadArenaYaml(plugin);
 		}
 		else {
@@ -458,14 +478,14 @@ public class ArenaFactory {
 		}
 		yaml.set(arena + "." + key, value);
 		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
-			public void run(){
+			public void run() {
 				writeChanges();
 			}
 		}, 1L).getTaskId();
 		return this;
 	}
 
-	private void writeChanges(){
+	private void writeChanges() {
 		MGUtil.saveArenaYaml(plugin, yaml);
 		yaml = null;
 	}
@@ -474,27 +494,30 @@ public class ArenaFactory {
 	 * Determines whether this instance is newly created for the server session. This will return false for the rest of
 	 * the session after the {@link ArenaFactory#createArenaFactory(String, String, String) createArenaFactory()} method
 	 * is called a second time.
+	 *
 	 * @return whether this instance is newly created
 	 * @since 0.1.0
 	 */
-	public boolean isNewInstance(){
+	public boolean isNewInstance() {
 		return newInstance;
 	}
 
 	/**
 	 * Determines whether this arena is newly created. This will permanently return false until the arena is deleted.
+	 *
 	 * @return whether this arena is newly created
 	 * @since 0.3.0
 	 */
-	public boolean isNewArena(){
+	public boolean isNewArena() {
 		return newArena;
 	}
 
 	/**
 	 * Destroys this arena factory.
+	 *
 	 * @since 0.1.0
 	 */
-	public void destroy(){
+	public void destroy() {
 		Minigame.getMinigameInstance(plugin).getArenaFactories().remove(arena);
 	}
 

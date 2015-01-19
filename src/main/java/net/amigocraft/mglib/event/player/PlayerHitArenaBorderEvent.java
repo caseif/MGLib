@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +27,12 @@ import net.amigocraft.mglib.api.MGPlayer;
 
 /**
  * Called when a player collides with the border of an arena.
+ *
  * @since 0.3.0
  */
 public class PlayerHitArenaBorderEvent extends MGPlayerEvent {
 
-	public PlayerHitArenaBorderEvent(MGPlayer player){
+	public PlayerHitArenaBorderEvent(MGPlayer player) {
 		super(player);
 	}
 

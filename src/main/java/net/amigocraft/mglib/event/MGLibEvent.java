@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,9 @@ import net.amigocraft.mglib.Main;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * The base event type for the MGLib.
+ */
 public class MGLibEvent extends Event {
 
 	private static HandlerList handlers = new HandlerList();
@@ -35,37 +38,40 @@ public class MGLibEvent extends Event {
 
 	/**
 	 * Creates a new instance of this event.
+	 *
 	 * @param plugin the name of the plugin involved in this {@link MGLibEvent}
 	 * @since 0.1.0
 	 */
-	public MGLibEvent(String plugin){
+	public MGLibEvent(String plugin) {
 		this.plugin = plugin;
 	}
 
 	/**
 	 * Retrieves the name of the plugin involved in this {@link MGLibEvent}.
+	 *
 	 * @return the name of the plugin involved in this {@link MGLibEvent}
 	 * @since 0.1.0
 	 */
-	public String getPlugin(){
+	public String getPlugin() {
 		return plugin;
 	}
 
-	public HandlerList getHandlers(){
+	public HandlerList getHandlers() {
 		return handlers;
 	}
 
-	public static HandlerList getHandlerList(){
+	public static HandlerList getHandlerList() {
 		return handlers;
 	}
 
 	/**
 	 * Unsets all static objects in this class.
 	 * This method will not do anything unless MGLib is in the process of disabling.
+	 *
 	 * @since 0.1.0
 	 */
-	public static void uninitialize(){
-		if (Main.isDisabling()){
+	public static void uninitialize() {
+		if (Main.isDisabling()) {
 			handlers = null;
 		}
 	}

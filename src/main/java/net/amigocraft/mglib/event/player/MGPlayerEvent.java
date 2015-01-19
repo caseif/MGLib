@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,8 @@ import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.event.MGLibEvent;
 
 /**
- * Fired when an event involving a {@link MGPlayer player} occurs.
+ * Called when an event involving a {@link MGPlayer player} occurs.
+ *
  * @since 0.1.0
  */
 public class MGPlayerEvent extends MGLibEvent {
@@ -36,20 +37,22 @@ public class MGPlayerEvent extends MGLibEvent {
 
 	/**
 	 * Creates a new instance of this event.
+	 *
 	 * @param player the {@link MGPlayer player} involved in this {@link MGPlayerEvent event}
 	 * @since 0.1.0
 	 */
-	public MGPlayerEvent(MGPlayer player){
+	public MGPlayerEvent(MGPlayer player) {
 		super(player.getPlugin());
 		this.player = player;
 	}
 
 	/**
 	 * Retrieves the {@link MGPlayer player} involved in this {@link MGPlayerEvent event}.
+	 *
 	 * @return the {@link MGPlayer player} involved in this {@link MGPlayerEvent event}
 	 * @since 0.1.0
 	 */
-	public MGPlayer getPlayer(){
+	public MGPlayer getPlayer() {
 		return player;
 	}
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Maxim Roncacé
+ * Copyright (c) 2014-2015 Maxim Roncacé
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,8 @@ import net.amigocraft.mglib.api.Round;
 import org.bukkit.event.Cancellable;
 
 /**
- * Fired when an {@link Round MGLib round}'s preparation period begins.
+ * Called when an {@link Round MGLib round}'s preparation period begins.
+ *
  * @since 0.1.0
  */
 public class MinigameRoundPrepareEvent extends MGRoundEvent implements Cancellable {
@@ -36,20 +37,21 @@ public class MinigameRoundPrepareEvent extends MGRoundEvent implements Cancellab
 
 	/**
 	 * Creates a new instance of this event.
+	 *
 	 * @param round the round associated with this event
 	 * @since 0.1.0
 	 */
-	public MinigameRoundPrepareEvent(Round round){
+	public MinigameRoundPrepareEvent(Round round) {
 		super(round);
 	}
 
 	@Override
-	public boolean isCancelled(){
+	public boolean isCancelled() {
 		return this.cancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean cancel){
+	public void setCancelled(boolean cancel) {
 		this.cancelled = cancel;
 	}
 
