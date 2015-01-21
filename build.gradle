@@ -128,8 +128,10 @@ uploadArchives {
 	repositories.mavenDeployer {
 		setUniqueVersion(true)
 		configuration = configurations.deployerJars
-		repository(url: mavenRepo) {
-			authentication(userName: mavenUser, password: mavenPass)
+		if (project.hasProperty("mavenRepo")) {
+			repository(url: project.property("mavenRepo")) {
+				authentication(userName: project.property("mavenUser"), password: project.property("mavenPass"))
+			}
 		}
 
 		pom {
