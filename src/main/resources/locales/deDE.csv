@@ -1,17 +1,15 @@
-key|value|alles nach zweite "|" ist ignorieren
-
-enabled|wurde aktiviert!
-disabled|wurde deaktiviert!
-metrics-fail|MCStats könnte nicht gestartet werden!
-arena-not-exists|Diese Arena existiert nicht!
-waiting|WARTEN
-preparing|VORBEREITUNG
-playing|SPIELEN
-resetting|RESETTING
-in-round|Sie sind bereits in einer Runde!
-round-full|Die Runde ist voll!
-no-kits|Du kannst im Spiel keine Kits wählen!
-no-pms|Du darfst keine Privaten Nachrichten schicken während du in einem Spiel bist!
-inv-load-fail|Fehler: Inventar konnte nicht geladen werden!
-inv-save-fail|Inventar konnte nicht gespeichert werden!
-no-join-progress|Das Spiel hat bereits begonnen!
+enabled=wurde aktiviert!
+disabled=wurde deaktiviert!
+metrics-fail=MCStats könnte nicht gestartet werden!
+arena-not-exists=Diese Arena existiert nicht!
+waiting=WARTEN
+preparing=VORBEREITUNG
+playing=SPIELEN
+resetting=RESETTING
+in-round=Sie sind bereits in einer Runde!
+round-full=Die Runde ist voll!
+no-kits=Du kannst im Spiel keine Kits wählen!
+no-pms=Du darfst keine Privaten Nachrichten schicken während du in einem Spiel bist!
+inv-load-fail=Fehler: Inventar konnte nicht geladen werden!
+inv-save-fail=Inventar konnte nicht gespeichert werden!
+no-join-progress=Das Spiel hat bereits begonnen!
