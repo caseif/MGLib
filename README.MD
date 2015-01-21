@@ -16,20 +16,28 @@ I've written up [a tutorial on BukkitDev](http://dev.bukkit.org/bukkit-plugins/m
 how to build your own plugin using the library. I don't want to convert it to Markdown or maintain two copies, so for
 now I must ask you to use that tutorial for reference.
 
-Additionally, the library has [official documentation](http://ci.amigocraft.net/job/MGLib/37/javadoc/) compiled
-automatically by [my build server](http://ci.amigocraft.net/job/MGLib) for each commit. Feel free to reference that or
+Additionally, the library has [official documentation](http://jd.caseif.net/mglib) compiled
+automatically by [my build server](http://ci.caseif.net/job/MGLib) for each commit. Feel free to reference that or
 the documentation for any other build while using MGLib.
+
+### Building ###
+
+MGLib uses Gradle as its build system. To build the plugin from scratch:
+
+- `git clone https://github.com/caseif/mglib`
+- `cd mglib`
+- `./gradlew` (`gradlew` on Windows)
 
 ### Contribution guidelines ###
 
 Have an idea for MGLib? Know how to Java? Awesome! First, be sure the idea follows MGLib's goals as a library. While it
 is indeed very high-level, certain functionalities should still be left to the authors of the minigame plugins
 themselves (e.g. something such as a gun system). Once you're certain your idea adheres to this guideline, fork the repo
-and go to town implementing it. If I like what you've done, I'll merge it with the master branch, and it'll show up in
-the next version of the library!
+and go to town implementing it, then submit a pull request when it's finished. If I like what you've done, I'll merge it
+with the master branch, and it'll show up in the next version of the library!
 
 Don't know how to Java? You can still contribute by
-[submitting a ticket on JIRA](http://jira.amigocraft.net/browse/MGLIB/). Just describe what you want added in detail,
+[creating an issue on Github](https://github.com/caseif/MGLib/issues). Just describe what you want added in detail,
 and I'll review it and possibly add it to the library. As is the case with pull requests, you should verify that the
 suggestion meets MGLib's goals.
 
