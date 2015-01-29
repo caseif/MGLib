@@ -642,14 +642,14 @@ class MGListener implements Listener {
 										LobbyType.fromString(e.getLine(1)), index);
 							}
 							catch (NoSuchArenaException ex) {
-								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena-not-exists"));
+								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena.alert.dne"));
 							}
 							catch (IllegalArgumentException ex) {
 								if (ex.getMessage().contains("index")) {
-									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-index"));
+									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.invalid-index"));
 								}
 								else if (ex.getMessage().contains("Invalid string!")) {
-									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-type"));
+									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.invalid-type"));
 								}
 								else {
 									ex.printStackTrace();
@@ -657,7 +657,7 @@ class MGListener implements Listener {
 							}
 						}
 						else {
-							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("invalid-sign-index"));
+							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.invalid-index"));
 						}
 					}
 					break;
@@ -697,7 +697,7 @@ class MGListener implements Listener {
 							}
 							catch (NoSuchArenaException ex) {
 								e.getPlayer().sendMessage(ChatColor.RED +
-										locale.getMessage("arena-load-fail").replace("%", ls.getArena()));
+										locale.getMessage("error.personal.load-fail").replace("%", ls.getArena()));
 								return;
 							}
 						}
@@ -709,10 +709,10 @@ class MGListener implements Listener {
 							ex.printStackTrace();
 						}
 						catch (PlayerPresentException ex) {
-							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("in-round"));
+							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.in-round"));
 						}
 						catch (RoundFullException ex) {
-							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("round-full"));
+							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.round-full"));
 						}
 					}
 				}
@@ -727,7 +727,7 @@ class MGListener implements Listener {
 				if (mg.isPlayer(e.getPlayer().getName())) {
 					if (!mg.getConfigManager().areKitsAllowed()) {
 						e.setCancelled(true);
-						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("no-kits"));
+						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.kits"));
 					}
 				}
 			}
@@ -740,7 +740,7 @@ class MGListener implements Listener {
 				if (mg.isPlayer(e.getPlayer().getName())) {
 					if (!mg.getConfigManager().arePMsAllowed()) {
 						e.setCancelled(true);
-						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("no-pms"));
+						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.pm"));
 					}
 				}
 			}

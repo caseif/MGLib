@@ -127,11 +127,11 @@ public class Main extends JavaPlugin {
 				metrics.start();
 			}
 			catch (IOException ex) {
-				log.warning(locale.getMessage("metrics-fail"));
+				log.warning(locale.getMessage("plugin.alert.metrics-fail"));
 			}
 		}
 		if (this.getDescription().getVersion().contains("dev")) {
-			log.warning(locale.getMessage("dev-build"));
+			log.warning(locale.getMessage("plugin.alert.dev-build"));
 		}
 
 		// store UUIDs of online players
@@ -163,10 +163,10 @@ public class Main extends JavaPlugin {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe(locale.getMessage("uuid-fail"));
+			Main.log.severe(locale.getMessage("plugin.alert.uuid-fail"));
 		}
 
-		log.info(this + " " + locale.getMessage("plugin.event.enable"));
+		log.info(locale.getMessage("plugin.event.enable", this.toString()));
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class Main extends JavaPlugin {
 	 */
 	public void onDisable() {
 		this.disabling = true;
-		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("ending-rounds"));
+		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("plugin.event.restart"));
 		for (Minigame mg : Minigame.getMinigameInstances()) {
 			for (Round r : mg.getRoundList()) {
 				r.end(false);
@@ -186,7 +186,7 @@ public class Main extends JavaPlugin {
 		MGLibEvent.uninitialize();
 		MGUtil.uninitialize();
 		UUIDFetcher.uninitialize();
-		log.info(this + " " + locale.getMessage("disabled"));
+		log.info(this + " " + locale.getMessage("plugin.event.disable"));
 		Main.uninitialize();
 	}
 

@@ -226,14 +226,14 @@ public class MGPlayer implements Metadatable {
 						this.getRound().getConfigManager().isUsingVanillaSpectating() &&
 						MGUtil.SPECTATOR_SUPPORT) {
 					p.setGameMode(GameMode.SPECTATOR);
-					p.sendMessage(ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating")); // tell them
+					p.sendMessage(ChatColor.DARK_PURPLE + Main.locale.getMessage("info.personal.spectating")); // tell them
 				}
 				else {
 					p.setGameMode(GameMode.ADVENTURE); // disable block breaking
-					String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("spectating"); // tell them
+					String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("info.personal.spectating"); // tell them
 					if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()) {
 						p.setAllowFlight(true); // enable flight
-						message += " " + locale.getMessage("flight-enabled");
+						message += " " + locale.getMessage("info.personal.flight");
 					}
 					p.sendMessage(message);
 				}
@@ -382,7 +382,7 @@ public class MGPlayer implements Metadatable {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			p.sendMessage(ChatColor.RED + locale.getMessage("inv-load-fail"));
+			p.sendMessage(ChatColor.RED + locale.getMessage("error.personal.inv-load-fail"));
 		}
 		if (location != null) {
 			p.teleport(location, TeleportCause.PLUGIN); // teleport the player

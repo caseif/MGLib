@@ -833,13 +833,13 @@ public class Round implements Metadatable {
 		}
 		if (getStage() == Stage.PREPARING) {
 			if (!getConfigManager().getAllowJoinRoundWhilePreparing()) {
-				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-prepare"));
+				p.sendMessage(ChatColor.RED + locale.getMessage("alert.personal.already-preparing"));
 				return JoinResult.ROUND_PREPARING;
 			}
 		}
 		else if (getStage() == Stage.PLAYING) {
 			if (!getConfigManager().getAllowJoinRoundInProgress()) {
-				p.sendMessage(ChatColor.RED + locale.getMessage("no-join-progress"));
+				p.sendMessage(ChatColor.RED + locale.getMessage("alert.personal.already-playing"));
 				return JoinResult.ROUND_PLAYING;
 			}
 		}
@@ -884,7 +884,7 @@ public class Round implements Metadatable {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			p.sendMessage(ChatColor.RED + locale.getMessage("inv-save-fail"));
+			p.sendMessage(ChatColor.RED + locale.getMessage("error.personal.inv-save-fail"));
 			return JoinResult.INVENTORY_SAVE_ERROR;
 		}
 		p.getInventory().clear();

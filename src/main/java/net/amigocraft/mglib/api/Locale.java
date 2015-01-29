@@ -34,8 +34,9 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * MGLib's locale API. It can be used for easy localization; you need only supply the translations themselves in the
- * form of CSV files using "|" symbols as separators.
+ * MGLib's locale API. It can be used for easy localization; you
+ * need only supply the translations themselves in the form of
+ * *.properties files.
  *
  * @since 0.3.0
  */
@@ -59,8 +60,10 @@ public class Locale {
 	private boolean legacy = false;
 
 	/**
-	 * Creates a new locale manager for the given plugin (yours). MGLib attempts to load locales first from the
-	 * "locales" directory in the plugin's data folder, then from the locales directory in the plugin JAR's root.
+	 * Creates a new locale manager for the given plugin (yours).
+	 * MGLib attempts to load locales first from the "locales"
+	 * directory in the plugin's data folder, then from the locales
+	 * directory in the plugin JAR's root.
 	 *
 	 * @param plugin the plugin to create a locale manager for
 	 * @since 0.3.0
@@ -71,24 +74,36 @@ public class Locale {
 	}
 
 	/**
-	 * Retrieves a message from a given key.
+	 * Retrieves the message with the given key from the
+	 * current locale, and replaces placeholder sequences
+	 * (<code>%i</code>) with the corresponding vararg
+	 * parameter.
 	 *
-	 * @param key the key to search for
-	 * @return the message associated with the given key
-	 * @since 0.3.0
+	 * <p><i>Note: placeholder sequences should start at
+	 * index 1.</i></p>
+	 *
+	 * @param key the key of the message to retrieve
+	 * @return the message associated with the given key,
+	 * or the key if the message is not defined
+	 * @since 0.3.1 (exists in 0.3.0 without varargs)
 	 */
-	public String getMessage(String key) {
+	public String getMessage(String key, String... replacements) {
 		String message = messages.get(key.toLowerCase());
 		if (message != null) {
+			for (int i = 0; i < replacements.length; i++) {
+				message.replace("%" + (i + 1), replacements[i]);
+			}
 			return message;
 		}
 		return key;
 	}
 
 	/**
-	 * Returns whether this was loaded from a legacy locale file.
+	 * Returns whether this object was loaded from a legacy
+	 * locale file.
 	 *
-	 * @return whether this was loaded from a legacy locale file.
+	 * @return whether this object was loaded from a legacy
+	 * locale file.
 	 * @since 0.3.1
 	 */
 	public boolean isLegacy() {
@@ -96,7 +111,8 @@ public class Locale {
 	}
 
 	/**
-	 * Initializes the locale manager. This must be called, or {@link Locale#getMessage(String)} will always return its
+	 * Initializes the locale manager. This must be called, or
+	 * {@link Locale#getMessage(String, String...)} will always return its
 	 * parameter.
 	 *
 	 * @since 0.3.0
@@ -125,8 +141,8 @@ public class Locale {
 					try {
 						defaultIs = Locale.class.getResourceAsStream("/locales/" +
 								defaultLocale + ".csv");
-						File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator +
-								"locales" + File.separator +
+						File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() +
+								File.separator + "locales" + File.separator +
 								Main.plugin.getConfig().getString("locale") + ".csv");
 						is = new FileInputStream(file);
 						Main.log("Loaded locale from " + file.getAbsolutePath(), LogLevel.INFO);
