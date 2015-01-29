@@ -103,8 +103,8 @@ public class RollbackManager {
 		ConfigurationSection cs = y.getConfigurationSection(arena + ".blockChanges." +
 				block.getX() + "," + block.getY() + "," + block.getZ());
 		cs.set("world", block.getWorld().getName());
-		if (!cs.isSet("type")) { // make sure it hasn't already been changed
-			cs.set("type", block.getType().toString());
+		if (!cs.isSet("help.lobby.line.2.content")) { // make sure it hasn't already been changed
+			cs.set("help.lobby.line.2.content", block.getType().toString());
 			cs.set("data", block.getData());
 			if (block.getState() instanceof Sign) {
 				for (int i = 0; i < 4; i++) {

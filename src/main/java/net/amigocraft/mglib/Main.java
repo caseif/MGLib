@@ -166,7 +166,7 @@ public class Main extends JavaPlugin {
 			Main.log.severe(locale.getMessage("uuid-fail"));
 		}
 
-		log.info(this + " " + locale.getMessage("enabled"));
+		log.info(this + " " + locale.getMessage("plugin.event.enable"));
 	}
 
 	/**
