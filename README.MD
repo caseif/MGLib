@@ -22,11 +22,12 @@ the documentation for any other build while using MGLib.
 
 ### Building ###
 
-MGLib uses Gradle as its build system. To build the plugin from scratch:
+MGLib uses Gradle as its build system. To clone and build the plugin from scratch:
 
 - `git clone https://github.com/caseif/mglib`
 - `cd mglib`
-- `./gradlew` (`gradlew` on Windows)
+- `cp scripts/* .git/hooks`
+- `./gradlew` (`gradlew` or `sh ./gradlew` on Windows)
 
 ### Contribution guidelines ###
 
