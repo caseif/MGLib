@@ -357,7 +357,7 @@ public class MGPlayer implements Metadatable {
 				YamlConfiguration invY = new YamlConfiguration();
 				invY.load(invF);
 				ItemStack[] invI = new ItemStack[36];
-				PlayerInventory pInv = (PlayerInventory)p.getInventory();
+				PlayerInventory pInv = p.getInventory();
 				for (String k : invY.getKeys(false)) {
 					if (MGUtil.isInteger(k)) {
 						invI[Integer.parseInt(k)] = invY.getItemStack(k);

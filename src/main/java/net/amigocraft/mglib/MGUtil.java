@@ -59,9 +59,9 @@ import java.util.List;
 public class MGUtil {
 
 
-	private static String VERSION_STRING;
+	private static final String VERSION_STRING;
 
-	private static boolean NMS_SUPPORT = true;
+	private static final boolean NMS_SUPPORT;
 	private static Constructor<?> packetPlayOutPlayerInfo;
 	private static Field pingField;
 	public static Method getHandle;
@@ -76,6 +76,8 @@ public class MGUtil {
 	public static final boolean SPECTATOR_SUPPORT;
 
 	static {
+		boolean nmsException = false;
+		String version = "";
 		try {
 			getOnlinePlayers = Bukkit.class.getMethod("getOnlinePlayers");
 			if (getOnlinePlayers.getReturnType() == Collection.class) {
@@ -83,7 +85,7 @@ public class MGUtil {
 			}
 
 			String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
-			VERSION_STRING = array.length == 4 ? array[3] + "." : "";
+			version = array.length == 4 ? array[3] + "." : "";
 
 			//get the constructor of the packet
 			try {
@@ -114,23 +116,16 @@ public class MGUtil {
 		}
 		catch (Exception e) {
 			Main.log("Cannot access NMS codebase! Packet manipulation disabled.", LogLevel.WARNING);
-			NMS_SUPPORT = false;
+			nmsException = true;
 		}
 
-		if (GameMode.valueOf("SPECTATOR") != null) {
-			SPECTATOR_SUPPORT = true;
-		}
-		else {
-			SPECTATOR_SUPPORT = false;
-		}
+		VERSION_STRING = version;
+		NMS_SUPPORT = !nmsException;
+		SPECTATOR_SUPPORT = GameMode.valueOf("SPECTATOR") != null;
 	}
 
 	/**
 	 * Loads and returns the given plugin's arenas.yml file.
-	 * <br><br>
-	 * <strong>Note:</strong> arena names are converted to lower case when saved. The custom class will automatically
-	 * take this into account should you choose to use it. However, if you store the returned object as a vanilla
-	 * {@link YamlConfiguration}, you will need to do so yourself, as the methods will not be overridden.
 	 *
 	 * @param plugin The plugin to load the YAML file from.
 	 * @return The loaded {@link YamlConfiguration} object.
@@ -357,8 +352,6 @@ public class MGUtil {
 	public static Environment getEnvironment(String world) {
 		File worldFolder = new File(Bukkit.getWorldContainer(), world);
 		if (worldFolder.exists()) {
-			boolean nether = false;
-			boolean end = false;
 			for (File f : worldFolder.listFiles()) {
 				if (f.getName().equals("region")) {
 					return Environment.NORMAL;

@@ -138,7 +138,12 @@ public class RollbackManager {
 				block.getX() + "," + block.getY() + "," + block.getZ());
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("inventory")) { // make sure it hasn't already been changed
-			cs.set("inventory", InventorySerializer.InventoryToString(inventory));
+			for (int i = 0; i < inventory.getSize(); i++) {
+				ItemStack is = inventory.getItem(i);
+				if (is != null) {
+					cs.set("inventory." + i, is);
+				}
+			}
 		}
 		if (logging) {
 			try {
@@ -219,9 +224,14 @@ public class RollbackManager {
 				if (w != null && x == x && y == y && z == z) {
 					Location l = new Location(w, x, y, z);
 					if (l.getBlock().getState() instanceof InventoryHolder) {
-						((InventoryHolder)l.getBlock().getState()).getInventory().setContents(
-								InventorySerializer.StringToInventory(cs2.getString(k + ".inventory")).getContents()
-						);
+						Inventory inv = ((InventoryHolder)l.getBlock().getState()).getInventory();
+						ConfigurationSection ymlInv = cs2.getConfigurationSection(k + ".inventory");
+						for (String kk : ymlInv.getKeys(false)) {
+							if (MGUtil.isInteger(kk)) {
+								int slot = Integer.parseInt(kk);
+								inv.setItem(slot, ymlInv.getItemStack(kk));
+							}
+						}
 					}
 				}
 			}

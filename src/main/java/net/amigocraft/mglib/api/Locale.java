@@ -83,9 +83,11 @@ public class Locale {
 	 * index 1.</i></p>
 	 *
 	 * @param key the key of the message to retrieve
+	 * @param replacements an array or vararg list of
+	 * strings to replace placeholder sequences (%i) with
 	 * @return the message associated with the given key,
 	 * or the key if the message is not defined
-	 * @since 0.3.1 (exists in 0.3.0 without varargs)
+	 * @since 0.3.1 (exists in 0.3.0 without vararg parameter)
 	 */
 	public String getMessage(String key, String... replacements) {
 		String message = messages.get(key.toLowerCase());
