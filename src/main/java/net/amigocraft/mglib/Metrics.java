@@ -36,7 +36,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;

@@ -432,17 +432,29 @@ public class MGUtil {
 
 	/**
 	 * Unsets all static objects in this class.
-	 * This method will not do anything unless MGLib is in the process of disabling.
+	 *
+	 * @throws UnsupportedOperationException if MGLib is not currently disabling
 	 *
 	 * @since 0.3.1
 	 */
 	public static void uninitialize() {
-		if (Main.isDisabling()) {
-			packetPlayOutPlayerInfo = null;
-			pingField = null;
-			getHandle = null;
-			playerConnection = null;
-			sendPacket = null;
+		MGUtil.verifyDisablingStatus();
+		packetPlayOutPlayerInfo = null;
+		pingField = null;
+		getHandle = null;
+		playerConnection = null;
+		sendPacket = null;
+	}
+
+	/**
+	 * Throws an {@link UnsupportedOperationException} if MGLib is not disabling.
+	 *
+	 * @throws UnsupportedOperationException if MGLib is not currently disabling
+	 * @since 0.3.1
+	 */
+	public static void verifyDisablingStatus() throws UnsupportedOperationException {
+		if (!Main.isDisabling()) {
+			throw new UnsupportedOperationException(Main.locale.getMessage("plugin.alert.not-disabling"));
 		}
 	}
 }

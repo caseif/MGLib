@@ -23,7 +23,7 @@
  */
 package net.amigocraft.mglib.event;
 
-import net.amigocraft.mglib.Main;
+import net.amigocraft.mglib.MGUtil;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -66,14 +66,14 @@ public class MGLibEvent extends Event {
 
 	/**
 	 * Unsets all static objects in this class.
-	 * This method will not do anything unless MGLib is in the process of disabling.
+	 *
+	 * @throws UnsupportedOperationException if MGLib is not currently disabling
 	 *
 	 * @since 0.1.0
 	 */
 	public static void uninitialize() {
-		if (Main.isDisabling()) {
-			handlers = null;
-		}
+		MGUtil.verifyDisablingStatus();
+		handlers = null;
 	}
 
 }

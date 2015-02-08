@@ -523,17 +523,17 @@ public class Minigame {
 
 	/**
 	 * Unsets all static objects in this class.
-	 * This method will not do anything unless MGLib is in the process of disabling.
+	 *
+	 * @throws UnsupportedOperationException if MGLib is not currently disabling
 	 *
 	 * @since 0.1.0
 	 */
 	public static void uninitialize() {
-		if (Main.isDisabling()) {
-			for (Minigame mg : registeredInstances.values()) {
-				mg = null;
-			}
-			registeredInstances = null;
+		MGUtil.verifyDisablingStatus();
+		for (Minigame mg : registeredInstances.values()) {
+			mg = null;
 		}
+		registeredInstances = null;
 	}
 
 	/**
