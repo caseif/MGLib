@@ -97,6 +97,7 @@ public class Main extends JavaPlugin {
 	 *
 	 * @since 0.1.0
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void onEnable() {
 
@@ -174,6 +175,7 @@ public class Main extends JavaPlugin {
 	 *
 	 * @since 0.1.0
 	 */
+	@Override
 	public void onDisable() {
 		disabling = true;
 		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("plugin.event.restart"));
@@ -219,7 +221,7 @@ public class Main extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (label.equalsIgnoreCase("mglib")) {
 			sender.sendMessage(ChatColor.LIGHT_PURPLE +
-					"This server is using MGLib version " + this.getDescription().getVersion() + " by Maxim Roncacé");
+					locale.getMessage("plugin.event.info", getDescription().getVersion(), "Maxim Roncacé"));
 			return true;
 		}
 		return false;

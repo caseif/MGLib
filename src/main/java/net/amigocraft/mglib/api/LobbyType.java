@@ -23,6 +23,8 @@
  */
 package net.amigocraft.mglib.api;
 
+import net.amigocraft.mglib.Main;
+
 public enum LobbyType {
 
 	STATUS,
@@ -44,7 +46,7 @@ public enum LobbyType {
 			return LobbyType.PLAYERS;
 		}
 		else {
-			throw new IllegalArgumentException("Invalid string!");
+			throw new IllegalArgumentException(Main.locale.getMessage("plugin.alert.invalid-string"));
 		}
 	}
 

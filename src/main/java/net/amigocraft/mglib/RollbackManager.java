@@ -243,7 +243,7 @@ public class RollbackManager {
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-				Main.log.severe("An exception occurred while saving data for arena " + arena);
+				Main.log.severe(Main.locale.getMessage("plugin.alert.arena-data.save", arena));
 			}
 		}
 		if (r != null) {

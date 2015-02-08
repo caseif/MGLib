@@ -789,8 +789,7 @@ public class Round implements Metadatable {
 					mp = (MGPlayer)con.newInstance(plugin, name, arena.toLowerCase());
 				}
 				catch (NoSuchMethodException ex) { // thrown when the required constructor does not exist
-					Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
-							" is malformed!");
+					Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", plugin));
 					ex.printStackTrace();
 					return JoinResult.INTERNAL_ERROR;
 				}
@@ -803,14 +802,12 @@ public class Round implements Metadatable {
 					return JoinResult.INTERNAL_ERROR;
 				}
 				catch (InstantiationException ex) { // if this happens then the overriding plugin screwed something up
-					Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
-							" is malformed!");
+					Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", plugin));
 					ex.printStackTrace();
 					return JoinResult.INTERNAL_ERROR;
 				}
 				catch (IllegalAccessException ex) { // thrown if the called method is not public
-					Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
-							" is not visible!");
+					Main.log.severe(locale.getMessage("plugin.alert.invisible-constructor", plugin));
 					ex.printStackTrace();
 					return JoinResult.INTERNAL_ERROR;
 				}

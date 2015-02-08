@@ -126,6 +126,7 @@ public class Locale {
 			String defaultLocale = Minigame.getMinigameInstance(plugin) != null ?
 					Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() :
 					"enUS";
+			String loc = null;
 			try {
 				defaultIs = Locale.class.getResourceAsStream("/locales/" +
 						defaultLocale + ".properties");
@@ -133,7 +134,7 @@ public class Locale {
 						"locales" + File.separator +
 						Main.plugin.getConfig().getString("locale") + ".properties");
 				is = new FileInputStream(file);
-				Main.log("Loaded locale from " + file.getAbsolutePath(), LogLevel.INFO);
+				loc = file.getAbsolutePath();
 
 			}
 			catch (Exception ex) {
@@ -147,7 +148,7 @@ public class Locale {
 								File.separator + "locales" + File.separator +
 								Main.plugin.getConfig().getString("locale") + ".csv");
 						is = new FileInputStream(file);
-						Main.log("Loaded locale from " + file.getAbsolutePath(), LogLevel.INFO);
+						loc = file.getAbsolutePath();
 						legacy = true;
 					}
 					catch (Exception ex2) {
@@ -188,6 +189,7 @@ public class Locale {
 					MGUtil.log("Neither the defined nor default locale could be loaded. " +
 							"Localized messages will be displayed only as their keys!", prefix, LogLevel.SEVERE);
 				}
+				Main.log(this.getMessage("plugin.event.loaded-locale", loc), LogLevel.INFO);
 			}
 			catch (IOException e) {
 				e.printStackTrace();

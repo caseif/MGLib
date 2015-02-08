@@ -106,7 +106,9 @@ public class LobbyManager {
 						);
 					}
 					else {
-						throw new IllegalArgumentException("Invalid player sign index for arena " + arena);
+						throw new IllegalArgumentException(
+								Main.locale.getMessage("lobby.alert.invalid-index.passive", arena)
+						);
 					}
 				}
 				else {
@@ -214,7 +216,7 @@ public class LobbyManager {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.warning("An error occurred while creating a lobby sign for plugin " + plugin);
+			Main.log.warning(Main.locale.getMessage("lobby.alert.create", plugin));
 		}
 		return key;
 	}
@@ -263,14 +265,14 @@ public class LobbyManager {
 						signs.put(Location3D.valueOf(l), ls);
 					}
 					else {
-						Main.log.warning("Incomplete data for lobby sign at index " + k + "! Removing from disk...");
+						Main.log.warning(Main.locale.getMessage("lobby.alert.incomplete", plugin, k));
 					}
 				}
 			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe("An exception occurred while loading lobby signs for plugin " + plugin);
+			Main.log.warning(Main.locale.getMessage("lobby.alert.load", plugin));
 		}
 	}
 

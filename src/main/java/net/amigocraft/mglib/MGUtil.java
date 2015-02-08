@@ -386,8 +386,7 @@ public class MGUtil {
 			}
 			catch (Exception ex) { // just in case
 				ex.printStackTrace();
-				Main.log("Failed to send player info packet!",
-						LogLevel.WARNING);
+				Main.log(Main.locale.getMessage("plugin.alert.nms.player-info"), LogLevel.WARNING);
 			}
 		}
 		return false;
@@ -422,11 +421,11 @@ public class MGUtil {
 		}
 		catch (IllegalAccessException ex) {
 			ex.printStackTrace();
-			Main.log("Failed to get online player list!", LogLevel.SEVERE);
+			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players"), LogLevel.SEVERE);
 		}
 		catch (InvocationTargetException ex) {
 			ex.printStackTrace();
-			Main.log("Failed to get online player list!", LogLevel.SEVERE);
+			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players"), LogLevel.SEVERE);
 		}
 		return null;
 	}
@@ -446,5 +445,4 @@ public class MGUtil {
 			sendPacket = null;
 		}
 	}
-
 }

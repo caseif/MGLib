@@ -48,6 +48,7 @@ import org.bukkit.event.player.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,13 +72,15 @@ class MGListener implements Listener {
 				List<String> worldList = new ArrayList<String>();
 				y.load(f);
 				for (String k : y.getKeys(false)) {
-					worldList.add(k);
+					if (y.isSet(k + ".world")) {
+						worldList.add(y.getString(k + ".world"));
+					}
 				}
 				worlds.put(plugin, worldList);
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-				Main.log.severe("An exception occurred while loading world list for plugin " + plugin);
+				Main.log.severe(Main.locale.getMessage("plugin.alert.world-list.load", plugin));
 			}
 		}
 	}
@@ -91,8 +94,9 @@ class MGListener implements Listener {
 				if (mp != null) {
 					try {
 						mp.removeFromRound();
-						if (!p.equalsIgnoreCase("Testing123")) {
-							// it won't break when I'm testing, but offline servers still get screwed up
+						// this bit is so it won't break when I'm testing, but offline servers will still get screwed up
+						List<String> testAccounts = Arrays.asList("testing123", "testing456", "testing789");
+						if (!testAccounts.contains(e.getPlayer().getName().toLowerCase())) {
 							String pUuid = UUIDFetcher.getUUIDOf(p).toString();
 							UUIDFetcher.removeUUID(p);
 							YamlConfiguration y = new YamlConfiguration();
@@ -111,7 +115,7 @@ class MGListener implements Listener {
 					}
 					catch (Exception ex) {
 						ex.printStackTrace();
-						Main.log.severe("An exception occurred while saving data for " + p);
+						Main.log.severe(locale.getMessage("plugin.alert.player-data.save", p));
 					}
 				}
 			}
@@ -236,7 +240,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe("Failed to fetch UUID for player " + p);
+			Main.log.severe(Main.locale.getMessage("plugin.alert.uuid-fail.spec", p));
 		}
 		try {
 			YamlConfiguration y = new YamlConfiguration();
@@ -259,7 +263,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe("An exception occurred while loading data for " + p);
+			Main.log.severe(Main.locale.getMessage("plugin.alert.player-data.load", p));
 		}
 	}
 
@@ -865,5 +869,4 @@ class MGListener implements Listener {
 			}
 		}
 	}
-
 }

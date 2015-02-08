@@ -77,13 +77,17 @@ public class Minigame {
 		if (!registeredInstances.containsKey(plugin.getName())) {
 			this.plugin = plugin;
 			registeredInstances.put(plugin.getName(), this);// list this instance for use in other parts of the API
-			Main.log.info(plugin + " has successfully hooked into MGLib!");
+			Main.log.info(locale.getMessage("plugin.event.hook", plugin.getName()));
 		}
 		else {
-			throw new IllegalStateException(plugin +
-					" attempted to hook into MGLib while an instance of the API was already " +
-					"registered. This is a bug, and should be reported this to the author of the hooking plugin (" +
-					plugin + ").");
+			String authors = "";
+			for (String s : plugin.getDescription().getAuthors()) {
+				authors += s + ", ";
+			}
+			if (authors.length() > 0) {
+				authors = " " + authors.substring(0, authors.length() - 2);
+			}
+			throw new IllegalStateException(locale.getMessage("plugin.alert.invalid-hook", plugin.toString(), authors));
 		}
 		configManager = new ConfigManager(plugin.getName());
 		rbManager = new RollbackManager(plugin); // register rollback manager
@@ -195,8 +199,7 @@ public class Minigame {
 				rounds.put(arena.toLowerCase(), r); // register arena with MGLib
 			}
 			catch (NoSuchMethodException ex) { // thrown when the required constructor does not exist
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
-						" is malformed!");
+				Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", "Round", plugin.getName()));
 				ex.printStackTrace();
 			}
 			catch (InvocationTargetException ex) { // any error thrown from the called constructor
@@ -206,13 +209,11 @@ public class Minigame {
 				ex.printStackTrace();
 			}
 			catch (InstantiationException ex) { // if this happens then the overriding plugin screwed something up
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
-						" is malformed!");
+				Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", "Round", plugin.getName()));
 				ex.printStackTrace();
 			}
 			catch (IllegalAccessException ex) { // thrown if the called method from the overriding class is not public
-				Main.log.severe("The constructor overriding MGLib's default MGPlayer for plugin " + plugin +
-						" is not visible!");
+				Main.log.severe(locale.getMessage("plugin.alert.invisible-constructor", "Round", plugin.getName()));
 				ex.printStackTrace();
 			}
 		}
