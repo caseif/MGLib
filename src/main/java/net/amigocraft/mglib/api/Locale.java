@@ -77,12 +77,14 @@ public class Locale {
 	 * Retrieves the message with the given key from the
 	 * current locale.
 	 *
+	 * <p>This method is redundant, but included for signature
+	 * reverse-compatibility.</p>
+	 *
 	 * @param key the key of the message to retrieve
 	 * @return the message associated with the given key,
 	 * or the key if the message is not defined
 	 * @since 0.3.0
 	 */
-	@Deprecated
 	public String getMessage(String key) {
 		return getMessage(key, new String[0]);
 	}

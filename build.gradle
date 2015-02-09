@@ -23,7 +23,11 @@ ext.description = 'A high-level API for Bukkit minigame creation.'
 ext.inceptionYear = '2014'
 ext.packaging = 'jar'
 ext.versionSuffix = version.contains('SNAPSHOT') ? (
-		(System.getenv('GIT_COMMIT') ? '-git' + System.getenv('GIT_COMMIT') : '') +
+		(
+			System.getenv('GIT_COMMIT') ? ('-git-(' +
+			(System.getenv('GIT_BRANCH').contains('/') ? System.getenv('GIT_BRANCH').split('/')[1] : System.getenv('GIT_BRANCH')) + '-' +
+			System.getenv('GIT_COMMIT').substring(0, 7) + ')') : ''
+		) +
 		(System.getenv('BUILD_NUMBER') ? '-jnks' + System.getenv('BUILD_NUMBER') : '')
 ) : ''
 
