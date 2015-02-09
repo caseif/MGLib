@@ -33,6 +33,8 @@ import net.amigocraft.mglib.exception.PlayerPresentException;
 import net.amigocraft.mglib.exception.RoundFullException;
 import net.amigocraft.mglib.misc.JoinResult;
 import net.amigocraft.mglib.misc.Metadatable;
+import net.amigocraft.mglib.util.NmsUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -205,26 +207,26 @@ public class MGPlayer implements Metadatable {
 			final Player p = getBukkitPlayer();
 			if (p != null) { // check that player is online
 				p.closeInventory(); // close any inventory they have open
-				if (MGUtil.newOnlinePlayersMethod) {
-					for (final Player pl : (Collection<? extends Player>)MGUtil.getOnlinePlayers()) {
+				if (NmsUtil.newOnlinePlayersMethod) {
+					for (final Player pl : (Collection<? extends Player>)NmsUtil.getOnlinePlayers()) {
 						pl.hidePlayer(p);
 						if (this.getRound().getConfigManager().areSpectatorsInTabList()) {
-							MGUtil.sendPlayerInfoPacket(pl, p);
+							NmsUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 				}
 				else {
-					for (final Player pl : (Player[])MGUtil.getOnlinePlayers()) {
+					for (final Player pl : (Player[])NmsUtil.getOnlinePlayers()) {
 						pl.hidePlayer(p);
 						if (this.getRound().getConfigManager().areSpectatorsInTabList()) {
-							MGUtil.sendPlayerInfoPacket(pl, p);
+							NmsUtil.sendPlayerInfoPacket(pl, p);
 						}
 					}
 				}
 
 				if (!Main.isVanillaSpectatingDisabled() &&
 						this.getRound().getConfigManager().isUsingVanillaSpectating() &&
-						MGUtil.SPECTATOR_SUPPORT) {
+						NmsUtil.SPECTATOR_SUPPORT) {
 					p.setGameMode(GameMode.SPECTATOR);
 					p.sendMessage(ChatColor.DARK_PURPLE + Main.locale.getMessage("info.personal.spectating")); // tell them
 				}

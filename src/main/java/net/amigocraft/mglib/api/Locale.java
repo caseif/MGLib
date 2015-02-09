@@ -70,7 +70,21 @@ public class Locale {
 	 */
 	public Locale(String plugin) {
 		this.plugin = plugin;
-		prefix = plugin.equals("MGLib") ? "" : "[" + plugin + "]";
+		prefix = plugin.equals("MGLib") ? null : "[" + plugin + "]";
+	}
+
+	/**
+	 * Retrieves the message with the given key from the
+	 * current locale.
+	 *
+	 * @param key the key of the message to retrieve
+	 * @return the message associated with the given key,
+	 * or the key if the message is not defined
+	 * @since 0.3.0
+	 */
+	@Deprecated
+	public String getMessage(String key) {
+		return getMessage(key, new String[0]);
 	}
 
 	/**
@@ -87,13 +101,13 @@ public class Locale {
 	 * strings to replace placeholder sequences (%i) with
 	 * @return the message associated with the given key,
 	 * or the key if the message is not defined
-	 * @since 0.3.1 (exists in 0.3.0 without vararg parameter)
+	 * @since 0.3.1
 	 */
 	public String getMessage(String key, String... replacements) {
 		String message = messages.get(key.toLowerCase());
 		if (message != null) {
 			for (int i = 0; i < replacements.length; i++) {
-				message.replace("%" + (i + 1), replacements[i]);
+				message = message.replace("%" + (i + 1), replacements[i]);
 			}
 			return message;
 		}
@@ -184,12 +198,14 @@ public class Locale {
 							}
 						}
 					}
+					if (loc != null) {
+						Main.log(this.getMessage("plugin.event.loaded-locale", loc), LogLevel.INFO);
+					}
 				}
 				else {
 					MGUtil.log("Neither the defined nor default locale could be loaded. " +
 							"Localized messages will be displayed only as their keys!", prefix, LogLevel.SEVERE);
 				}
-				Main.log(this.getMessage("plugin.event.loaded-locale", loc), LogLevel.INFO);
 			}
 			catch (IOException e) {
 				e.printStackTrace();

@@ -27,6 +27,8 @@
  */
 package net.amigocraft.mglib;
 
+import net.amigocraft.mglib.util.NmsUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -328,9 +330,9 @@ class Metrics {
 		String serverVersion = Bukkit.getVersion();
 		int playersOnline = 0;
 		// begin non-standard code (workaround for getOnlinePlayers() refactor)
-		playersOnline = MGUtil.newOnlinePlayersMethod ?
-				((Collection<? extends Player>)MGUtil.getOnlinePlayers()).size() :
-				((Player[])MGUtil.getOnlinePlayers()).length;
+		playersOnline = NmsUtil.newOnlinePlayersMethod ?
+				((Collection<? extends Player>)NmsUtil.getOnlinePlayers()).size() :
+				((Player[])NmsUtil.getOnlinePlayers()).length;
 		// end non-standard code
 		// END server software specific section -- all code below does not use any code outside of this class / Java
 

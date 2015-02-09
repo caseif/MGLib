@@ -28,6 +28,8 @@ import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.round.LobbyClickEvent;
 import net.amigocraft.mglib.exception.*;
 import net.amigocraft.mglib.misc.JoinResult;
+import net.amigocraft.mglib.util.NmsUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -56,7 +58,7 @@ import static net.amigocraft.mglib.Main.locale;
 
 class MGListener implements Listener {
 
-	static HashMap<String, List<String>> worlds = new HashMap<String, List<String>>();
+	public static HashMap<String, List<String>> worlds = new HashMap<String, List<String>>();
 
 	static void initialize() {
 		for (Minigame mg : Minigame.getMinigameInstances()) {
@@ -82,6 +84,42 @@ class MGListener implements Listener {
 				ex.printStackTrace();
 				Main.log.severe(Main.locale.getMessage("plugin.alert.world-list.load", plugin));
 			}
+		}
+	}
+
+	/**
+	 * Retrieves worlds registered with MGLib's event listener.
+	 *
+	 * @return worlds registered with MGLib's event listener
+	 * @since 0.1.0
+	 */
+	public static List<String> getWorlds() {
+		List<String> worlds = new ArrayList<String>();
+		for (List<String> l : MGListener.worlds.values()) {
+			for (String w : l) {
+				if (!worlds.contains(w)) {
+					worlds.add(w);
+				}
+			}
+		}
+		return worlds;
+	}
+
+	/**
+	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
+	 *
+	 * @param plugin the plugin to retrieve worlds for
+	 * @return worlds registered with MGLib's event listener for the given plugin
+	 * @since 0.2.0
+	 */
+	public static List<String> getWorlds(String plugin) {
+		if (MGListener.worlds.containsKey(plugin)) {
+			return MGListener.worlds.get(plugin);
+		}
+		else {
+			List<String> l = new ArrayList<String>();
+			MGListener.worlds.put(plugin, l);
+			return l;
 		}
 	}
 
@@ -202,11 +240,10 @@ class MGListener implements Listener {
 				e.setKeepLevel(true);
 				e.getDrops().clear();
 				try {
-					// oh God why did I think this was a good idea
 					Class<?> packetClass;
-					Object nmsPlayer = MGUtil.getHandle.invoke(e.getEntity());
-					Object conn = MGUtil.playerConnection.get(nmsPlayer);
-					MGUtil.sendPacket.invoke(conn, MGUtil.clientCommandPacket);
+					Object nmsPlayer = NmsUtil.craftPlayer_getHandle.invoke(e.getEntity());
+					Object conn = NmsUtil.playerConnection.get(nmsPlayer);
+					NmsUtil.playerConnection_sendPacket.invoke(conn, NmsUtil.clientCommandPacketInstance);
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
@@ -633,31 +670,43 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler
-	public void onSignChange(SignChangeEvent e) throws IndexOutOfBoundsException, InvalidLocationException {
+	public void onSignChange(SignChangeEvent e) {
 		if (e.getBlock().getState() instanceof Sign) { // just in case
 			for (Minigame mg : Minigame.getMinigameInstances()) { // iterate registered minigames
-				if (e.getLine(0).equalsIgnoreCase(mg.getConfigManager().getSignId())) { // it's a lobby sign-to-be
+				System.out.println(e.getLine(0) + ", " + mg.getConfigManager().getSignId());
+				String[] lines = {
+						ChatColor.stripColor(e.getLine(0)),
+						ChatColor.stripColor(e.getLine(1)),
+						ChatColor.stripColor(e.getLine(2)),
+						ChatColor.stripColor(e.getLine(3))};
+				if (lines[0].equalsIgnoreCase(mg.getConfigManager().getSignId())) { // it's a lobby sign-to-be
 					if (e.getPlayer().hasPermission(mg.getPlugin().getName() + ".lobby.create")) {
 						// make sure last line (sign index) is a number if it's a player sign
-						if (!e.getLine(1).equalsIgnoreCase("players") || MGUtil.isInteger(e.getLine(3))) {
+						if (!lines[1].equalsIgnoreCase("players") || MGUtil.isInteger(lines[3])) {
 							try {
-								int index = MGUtil.isInteger(e.getLine(3)) ? Integer.parseInt(e.getLine(3)) : 0;
-								mg.getLobbyManager().add(e.getBlock().getLocation(), e.getLine(2),
-										LobbyType.fromString(e.getLine(1)), index);
+								int index = MGUtil.isInteger(lines[3]) ? Integer.parseInt(lines[3]) : 0;
+								mg.getLobbyManager().add(e.getBlock().getLocation(), lines[2],
+										LobbyType.fromString(lines[1]), index);
 							}
 							catch (NoSuchArenaException ex) {
 								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena.alert.dne"));
 							}
 							catch (IllegalArgumentException ex) {
 								if (ex.getMessage().contains("index")) {
-									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.invalid-index"));
+									e.getPlayer().sendMessage(ChatColor.RED +
+											locale.getMessage("lobby.alert.invalid-index"));
 								}
-								else if (ex.getMessage().contains("Invalid string!")) {
-									e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.invalid-type"));
+								else if (ex.getMessage()
+										.contains(Main.locale.getMessage("plugin.alert.invalid-string"))) {
+									e.getPlayer().sendMessage(ChatColor.RED +
+											locale.getMessage("lobby.alert.invalid-type"));
 								}
 								else {
 									ex.printStackTrace();
 								}
+							}
+							catch (InvalidLocationException ex) {
+								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.no-sign"));
 							}
 						}
 						else {

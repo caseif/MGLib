@@ -63,7 +63,7 @@ public class ArenaFactory {
 		this.world = world;
 		setWorld(world);
 		setDisplayName(arena);
-		MGUtil.getWorlds(plugin).add(world); // register world with event listener
+		Main.getWorlds(plugin).add(world); // register world with event listener
 	}
 
 	/**

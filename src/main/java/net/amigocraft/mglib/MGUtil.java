@@ -23,6 +23,7 @@
  */
 package net.amigocraft.mglib;
 
+import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.MGYamlConfiguration;
 import net.amigocraft.mglib.api.Minigame;
@@ -58,71 +59,6 @@ import java.util.List;
  */
 public class MGUtil {
 
-
-	private static final String VERSION_STRING;
-
-	private static final boolean NMS_SUPPORT;
-	private static Constructor<?> packetPlayOutPlayerInfo;
-	private static Field pingField;
-	public static Method getHandle;
-	public static Field playerConnection;
-	public static Method sendPacket;
-
-	private static Method getOnlinePlayers;
-	public static boolean newOnlinePlayersMethod = false;
-
-	public static Object clientCommandPacket;
-
-	public static final boolean SPECTATOR_SUPPORT;
-
-	static {
-		boolean nmsException = false;
-		String version = "";
-		try {
-			getOnlinePlayers = Bukkit.class.getMethod("getOnlinePlayers");
-			if (getOnlinePlayers.getReturnType() == Collection.class) {
-				newOnlinePlayersMethod = true;
-			}
-
-			String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
-			version = array.length == 4 ? array[3] + "." : "";
-
-			//get the constructor of the packet
-			try {
-				packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo")
-						.getConstructor(String.class, boolean.class, int.class); // 1.7.x and above
-				@SuppressWarnings("unchecked")
-				Object performRespawn = Enum.valueOf(
-						(Class<? extends Enum>)MGUtil.getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"
-				);
-				clientCommandPacket = getMCClass("PacketPlayInClientCommand")
-						.getConstructor(performRespawn.getClass())
-						.newInstance(performRespawn);
-			}
-			catch (ClassNotFoundException ex) {
-				packetPlayOutPlayerInfo = getMCClass("Packet201PlayerInfo")
-						.getConstructor(String.class, boolean.class, int.class); // 1.6.x and below
-				clientCommandPacket = MGUtil.getMCClass("Packet205ClientCommand").getConstructor().newInstance();
-				clientCommandPacket.getClass().getDeclaredField("a").set(clientCommandPacket, 1);
-			}
-			// field for player ping
-			pingField = getNMSClass("EntityPlayer").getDeclaredField("ping");
-			// get method for recieving CraftPlayer's EntityPlayer
-			getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle");
-			// get the PlayerConnection of the EntityPlayer
-			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection");
-			// method to send the packet
-			sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet"));
-		}
-		catch (Exception e) {
-			Main.log("Cannot access NMS codebase! Packet manipulation disabled.", LogLevel.WARNING);
-			nmsException = true;
-		}
-
-		VERSION_STRING = version;
-		NMS_SUPPORT = !nmsException;
-		SPECTATOR_SUPPORT = GameMode.valueOf("SPECTATOR") != null;
-	}
 
 	/**
 	 * Loads and returns the given plugin's arenas.yml file.
@@ -190,42 +126,6 @@ public class MGUtil {
 	}
 
 	/**
-	 * Retrieves worlds registered with MGLib's event listener.
-	 *
-	 * @return worlds registered with MGLib's event listener
-	 * @since 0.1.0
-	 */
-	public static List<String> getWorlds() {
-		List<String> worlds = new ArrayList<String>();
-		for (List<String> l : MGListener.worlds.values()) {
-			for (String w : l) {
-				if (!worlds.contains(w)) {
-					worlds.add(w);
-				}
-			}
-		}
-		return worlds;
-	}
-
-	/**
-	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
-	 *
-	 * @param plugin the plugin to retrieve worlds for
-	 * @return worlds registered with MGLib's event listener for the given plugin
-	 * @since 0.2.0
-	 */
-	public static List<String> getWorlds(String plugin) {
-		if (MGListener.worlds.containsKey(plugin)) {
-			return MGListener.worlds.get(plugin);
-		}
-		else {
-			List<String> l = new ArrayList<String>();
-			MGListener.worlds.put(plugin, l);
-			return l;
-		}
-	}
-
-	/**
 	 * Logs the given message if verbose logging is enabled.
 	 *
 	 * @param message the message to log
@@ -235,7 +135,18 @@ public class MGUtil {
 	 */
 	public static void log(String message, String prefix, LogLevel level) {
 		if (Main.LOGGING_LEVEL.compareTo(level) >= 0) {
-			System.out.println("[" + level.toString() + "][" + prefix + "] " + message);
+			StringBuilder sb = new StringBuilder();
+			sb.append("[").append(level.toString()).append("]");
+			if (prefix != null) {
+				sb.append("[").append(prefix).append("]");
+			}
+			sb.append(" ").append(message);
+			if (level == LogLevel.SEVERE) {
+				System.err.println(sb.toString());
+			}
+			else {
+				System.out.println(sb.toString());
+			}
 		}
 	}
 
@@ -308,41 +219,6 @@ public class MGUtil {
 	}
 
 	/**
-	 * Retrieves a class by the given name from the package <code>net.minecraft.server</code>.
-	 *
-	 * @param name the class to retrieve
-	 * @return the class object from the package <code>net.minecraft.server</code>
-	 * @throws ClassNotFoundException if the class does not exist in the package
-	 */
-	public static Class<?> getMCClass(String name) throws ClassNotFoundException {
-		String className = "net.minecraft.server." + VERSION_STRING + name;
-		return Class.forName(className);
-	}
-
-	/**
-	 * Retrieves a class by the given name from the package <code>net.minecraft.server</code>.
-	 *
-	 * @param name the class to retrieve
-	 * @return the class object from the package <code>net.minecraft.server</code>
-	 * @throws ClassNotFoundException if the class does not exist in the package
-	 */
-	public static Class<?> getNMSClass(String name) throws ClassNotFoundException {
-		return getMCClass(name);
-	}
-
-	/**
-	 * Retrieves a class by the given name from the package <code>org.bukkit.craftbukkit</code>.
-	 *
-	 * @param name the class to retrieve
-	 * @return the class object from the package <code>org.bukkit.craftbukkit</code>
-	 * @throws ClassNotFoundException if the class does not exist in the package
-	 */
-	public static Class<?> getCraftClass(String name) throws ClassNotFoundException {
-		String className = "org.bukkit.craftbukkit." + VERSION_STRING + name;
-		return Class.forName(className);
-	}
-
-	/**
 	 * Determines the environment of the given world based on its folder structure.
 	 *
 	 * @param world the name of the world to determine the environment of
@@ -368,31 +244,6 @@ public class MGUtil {
 	}
 
 	/**
-	 * Sends a PlayerInfoPacket to the specified {@link Player}.
-	 *
-	 * @param recipient the player to receive the packet
-	 * @param subject   the player addressed by the packet
-	 * @return whether the packet was successfully sent
-	 * @since 0.3.0
-	 */
-	public static boolean sendPlayerInfoPacket(final Player recipient, final Player subject) {
-		if (NMS_SUPPORT) {
-			try {
-				int ping = (Integer)pingField.get(getHandle.invoke(subject));
-				Object packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), true, ping);
-				sendPacket.invoke(
-						playerConnection.get(getHandle.invoke(recipient)), packet);
-				return true;
-			}
-			catch (Exception ex) { // just in case
-				ex.printStackTrace();
-				Main.log(Main.locale.getMessage("plugin.alert.nms.player-info"), LogLevel.WARNING);
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Deletes a folder recursively.
 	 *
 	 * @param folder the folder to delete
@@ -407,43 +258,6 @@ public class MGUtil {
 				f.delete();
 			}
 		}
-	}
-
-	/**
-	 * Version-independent getOnlinePlayers() method.
-	 *
-	 * @return a list of online players in the form of a {@link Player} array or {@link List}, depending on the server software version.
-	 * @since 0.3.1
-	 */
-	public static Object getOnlinePlayers() {
-		try {
-			return getOnlinePlayers.invoke(null);
-		}
-		catch (IllegalAccessException ex) {
-			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players"), LogLevel.SEVERE);
-		}
-		catch (InvocationTargetException ex) {
-			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players"), LogLevel.SEVERE);
-		}
-		return null;
-	}
-
-	/**
-	 * Unsets all static objects in this class.
-	 *
-	 * @throws UnsupportedOperationException if MGLib is not currently disabling
-	 *
-	 * @since 0.3.1
-	 */
-	public static void uninitialize() {
-		MGUtil.verifyDisablingStatus();
-		packetPlayOutPlayerInfo = null;
-		pingField = null;
-		getHandle = null;
-		playerConnection = null;
-		sendPacket = null;
 	}
 
 	/**

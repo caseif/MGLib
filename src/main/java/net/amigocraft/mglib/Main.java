@@ -28,6 +28,8 @@ import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.MGLibEvent;
+import net.amigocraft.mglib.util.NmsUtil;
+
 import net.gravitydevelopment.updater.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -186,7 +188,7 @@ public class Main extends JavaPlugin {
 		}
 		Minigame.uninitialize();
 		MGLibEvent.uninitialize();
-		MGUtil.uninitialize();
+		NmsUtil.uninitialize();
 		UUIDFetcher.uninitialize();
 		log.info(this + " " + locale.getMessage("plugin.event.disable"));
 		Main.uninitialize();
@@ -225,6 +227,17 @@ public class Main extends JavaPlugin {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
+	 *
+	 * @param plugin the plugin to retrieve worlds for
+	 * @return worlds registered with MGLib's event listener for the given plugin
+	 * @since 0.3.1
+	 */
+	public static List<String> getWorlds(String plugin) {
+		return MGListener.getWorlds();
 	}
 
 	/**

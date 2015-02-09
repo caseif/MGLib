@@ -77,7 +77,6 @@ public class Minigame {
 		if (!registeredInstances.containsKey(plugin.getName())) {
 			this.plugin = plugin;
 			registeredInstances.put(plugin.getName(), this);// list this instance for use in other parts of the API
-			Main.log.info(locale.getMessage("plugin.event.hook", plugin.getName()));
 		}
 		else {
 			String authors = "";
@@ -85,9 +84,11 @@ public class Minigame {
 				authors += s + ", ";
 			}
 			if (authors.length() > 0) {
-				authors = " " + authors.substring(0, authors.length() - 2);
+				authors = " (" + authors.substring(0, authors.length() - 2) + ")";
 			}
-			throw new IllegalStateException(locale.getMessage("plugin.alert.invalid-hook", plugin.toString(), authors));
+			throw new IllegalStateException(plugin + " attempted to hook into MGLib while an instance of the API was " +
+					"already registered. This is a bug, and should be reported this to the author(s) of the hooking " +
+					"plugin" + authors);
 		}
 		configManager = new ConfigManager(plugin.getName());
 		rbManager = new RollbackManager(plugin); // register rollback manager
@@ -101,9 +102,11 @@ public class Minigame {
 		});
 		Main.registerWorlds(plugin.getName()); // registers worlds containing arenas for use with the event listener
 		locale = new Locale(plugin.getName());
-		Bukkit.getScheduler().runTask(Main.plugin, new Runnable() { // add delay so that the plugin has a chance to change its default locale
+		Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
+			// add delay so that the plugin has a chance to change its default locale
 			public void run() {
 				locale.initialize();
+				Main.log.info(locale.getMessage("plugin.event.hook", plugin.getName()));
 			}
 		});
 	}
