@@ -22,7 +22,10 @@ ext.projectName = 'mglib'
 ext.description = 'A high-level API for Bukkit minigame creation.'
 ext.inceptionYear = '2014'
 ext.packaging = 'jar'
-ext.versionSuffix = version.contains('SNAPSHOT') && System.getenv("BUILD_NUMBER") ? '-jnks' + System.getenv("BUILD_NUMBER") : ''
+ext.versionSuffix = version.contains('SNAPSHOT') ? (
+		(System.getenv('GIT_COMMIT') ? '-git' + System.getenv('GIT_COMMIT') : '') +
+		(System.getenv('BUILD_NUMBER') ? '-jnks' + System.getenv('BUILD_NUMBER') : '')
+) : ''
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
