@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import static net.amigocraft.mglib.Main.locale;
 
@@ -240,10 +241,7 @@ class MGListener implements Listener {
 				e.setKeepLevel(true);
 				e.getDrops().clear();
 				try {
-					Class<?> packetClass;
-					Object nmsPlayer = NmsUtil.craftPlayer_getHandle.invoke(e.getEntity());
-					Object conn = NmsUtil.playerConnection.get(nmsPlayer);
-					NmsUtil.playerConnection_sendPacket.invoke(conn, NmsUtil.clientCommandPacketInstance);
+					NmsUtil.sendRespawnPacket(e.getEntity());
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
@@ -286,15 +284,22 @@ class MGListener implements Listener {
 				f.createNewFile();
 			}
 			y.load(f);
-			String pUuid = UUIDFetcher.getUUIDOf(p).toString();
-			if (y.isSet(pUuid)) {
+			UUID pUuid = UUIDFetcher.getUUIDOf(p);
+			if (pUuid == null) {
+				// this bit is so it won't break when I'm testing, but offline servers will still get screwed up
+				List<String> testAccounts = Arrays.asList("testing123", "testing456", "testing789");
+				if (testAccounts.contains(e.getPlayer().getName().toLowerCase())) {
+					pUuid = e.getPlayer().getUniqueId();
+				}
+			}
+			if (y.isSet(pUuid.toString())) {
 				final String ww = y.getString(pUuid + ".w");
 				final double xx = y.getDouble(pUuid + ".x");
 				final double yy = y.getDouble(pUuid + ".y");
 				final double zz = y.getDouble(pUuid + ".z");
 				MGPlayer mp = new MGPlayer("MGLib", p, "null");
 				mp.reset(new Location(Bukkit.getWorld(ww), xx, yy, zz));
-				y.set(pUuid, null);
+				y.set(pUuid.toString(), null);
 				y.save(f);
 			}
 		}

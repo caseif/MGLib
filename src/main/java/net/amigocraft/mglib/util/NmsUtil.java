@@ -31,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -54,13 +55,14 @@ public class NmsUtil {
 	public static Method craftPlayer_getHandle;
 	public static Field playerConnection;
 	public static Method playerConnection_sendPacket;
+	public static Method playerConnection_a_packetPlayInClientCommand;
 
 	// for respawning players automatically
 	public static Object clientCommandPacketInstance;
 
 	// for removing players from the player list
 	private static Constructor<?> packetPlayOutPlayerInfo;
-	private static Object enumPlayerInfoAction_updateLatency;
+	private static Object enumPlayerInfoAction_addPlayer;
 	private static Field entityPlayer_ping;
 
 	private static Method getOnlinePlayers;
@@ -85,6 +87,8 @@ public class NmsUtil {
 			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection");
 			// method to send the packet
 			playerConnection_sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet"));
+			playerConnection_a_packetPlayInClientCommand = getMCClass("PlayerConnection")
+					.getMethod("a", getMCClass("PacketPlayInClientCommand"));
 
 			//get the constructor of the packet
 			try {
@@ -93,9 +97,10 @@ public class NmsUtil {
 					@SuppressWarnings("unchecked")
 					Class<? extends Enum> enumPlayerInfoAction =
 							(Class<? extends Enum>)getMCClass("EnumPlayerInfoAction");
-					enumPlayerInfoAction_updateLatency = Enum.valueOf(enumPlayerInfoAction, "UPDATE_LATENCY");
+					enumPlayerInfoAction_addPlayer = Enum.valueOf(enumPlayerInfoAction, "ADD_PLAYER");
 					packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo").getConstructor(
-							enumPlayerInfoAction_updateLatency.getClass(), Object[].class
+							enumPlayerInfoAction_addPlayer.getClass(),
+							Array.newInstance(craftPlayer_getHandle.getReturnType(), 0).getClass()
 					);
 				}
 				catch (ClassNotFoundException ex1) {
@@ -201,10 +206,10 @@ public class NmsUtil {
 			try {
 				int ping = (Integer)entityPlayer_ping.get(craftPlayer_getHandle.invoke(subject));
 				Object packet;
-				if (enumPlayerInfoAction_updateLatency != null) {
-					packet = packetPlayOutPlayerInfo.newInstance(
-							enumPlayerInfoAction_updateLatency, craftPlayer_getHandle.invoke(subject)
-					);
+				if (enumPlayerInfoAction_addPlayer != null) {
+					Object array = Array.newInstance(craftPlayer_getHandle.getReturnType(), 1);
+					Array.set(array, 0, craftPlayer_getHandle.invoke(subject));
+					packet = packetPlayOutPlayerInfo.newInstance(enumPlayerInfoAction_addPlayer, array);
 				}
 				else {
 					packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), true, ping);
@@ -219,6 +224,19 @@ public class NmsUtil {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Sends a PlayInClientCommand packet to the given player.
+	 *
+	 * @param player the {@link Player} to send the packet to
+	 * @throws Exception if an exception occurs while sending the packet
+	 */
+	public static void sendRespawnPacket(Player player) throws Exception {
+		Class<?> packetClass;
+		Object nmsPlayer = NmsUtil.craftPlayer_getHandle.invoke(player);
+		Object conn = NmsUtil.playerConnection.get(nmsPlayer);
+		NmsUtil.playerConnection_a_packetPlayInClientCommand.invoke(conn, NmsUtil.clientCommandPacketInstance);
 	}
 
 	/**
