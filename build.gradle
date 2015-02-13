@@ -87,7 +87,7 @@ processResources {
 license {
 	header file('LICENSE')
 	excludes([
-			'**/*.csv',
+			'**/*.properties',
 			'**/*.yml',
 			'**/Metrics.java'
 	])
@@ -110,7 +110,7 @@ checkstyle {
 
 tasks.withType(Checkstyle){
 	exclude '**/Metrics.java'
-	exclude '**/*.csv'
+	exclude '**/*.properties'
 	exclude '**/*.yml'
 }
 

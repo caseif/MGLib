@@ -190,7 +190,7 @@ public class Main extends JavaPlugin {
 		MGLibEvent.uninitialize();
 		NmsUtil.uninitialize();
 		UUIDFetcher.uninitialize();
-		log.info(this + " " + locale.getMessage("plugin.event.disable"));
+		log.info(locale.getMessage("plugin.event.disable", this.toString()));
 		Main.uninitialize();
 	}
 
