@@ -80,15 +80,15 @@ public class NmsUtil {
 			}
 
 			// field for player ping
-			entityPlayer_ping = getNMSClass("EntityPlayer").getDeclaredField("ping");
+			entityPlayer_ping = getNmsClass("EntityPlayer").getDeclaredField("ping");
 			// get method for recieving CraftPlayer's EntityPlayer
 			craftPlayer_getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle");
 			// get the PlayerConnection of the EntityPlayer
-			playerConnection = getMCClass("EntityPlayer").getDeclaredField("playerConnection");
+			playerConnection = getNmsClass("EntityPlayer").getDeclaredField("playerConnection");
 			// method to send the packet
-			playerConnection_sendPacket = getMCClass("PlayerConnection").getMethod("sendPacket", getMCClass("Packet"));
-			playerConnection_a_packetPlayInClientCommand = getMCClass("PlayerConnection")
-					.getMethod("a", getMCClass("PacketPlayInClientCommand"));
+			playerConnection_sendPacket = getNmsClass("PlayerConnection").getMethod("sendPacket", getNmsClass("Packet"));
+			playerConnection_a_packetPlayInClientCommand = getNmsClass("PlayerConnection")
+					.getMethod("a", getNmsClass("PacketPlayInClientCommand"));
 
 			//get the constructor of the packet
 			try {
@@ -96,9 +96,9 @@ public class NmsUtil {
 					// 1.8.x and above
 					@SuppressWarnings("unchecked")
 					Class<? extends Enum> enumPlayerInfoAction =
-							(Class<? extends Enum>)getMCClass("EnumPlayerInfoAction");
+							(Class<? extends Enum>)getNmsClass("EnumPlayerInfoAction");
 					enumPlayerInfoAction_addPlayer = Enum.valueOf(enumPlayerInfoAction, "ADD_PLAYER");
-					packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo").getConstructor(
+					packetPlayOutPlayerInfo = getNmsClass("PacketPlayOutPlayerInfo").getConstructor(
 							enumPlayerInfoAction_addPlayer.getClass(),
 							Array.newInstance(craftPlayer_getHandle.getReturnType(), 0).getClass()
 					);
@@ -106,13 +106,13 @@ public class NmsUtil {
 				catch (ClassNotFoundException ex1) {
 					try {
 						// 1.7.x
-						packetPlayOutPlayerInfo = getMCClass("PacketPlayOutPlayerInfo").getConstructor(
+						packetPlayOutPlayerInfo = getNmsClass("PacketPlayOutPlayerInfo").getConstructor(
 								String.class, boolean.class, int.class
 						);
 					}
 					catch (ClassNotFoundException ex2) {
 						// 1.6.x and below
-						packetPlayOutPlayerInfo = getMCClass("Packet201PlayerInfo").getConstructor(
+						packetPlayOutPlayerInfo = getNmsClass("Packet201PlayerInfo").getConstructor(
 								String.class, boolean.class, int.class
 						);
 					}
@@ -125,14 +125,14 @@ public class NmsUtil {
 				try {
 					@SuppressWarnings("unchecked")
 					Object performRespawn = Enum.valueOf(
-							(Class<? extends Enum>)getMCClass("EnumClientCommand"), "PERFORM_RESPAWN"
+							(Class<? extends Enum>)getNmsClass("EnumClientCommand"), "PERFORM_RESPAWN"
 					);
-					clientCommandPacketInstance = getMCClass("PacketPlayInClientCommand")
+					clientCommandPacketInstance = getNmsClass("PacketPlayInClientCommand")
 							.getConstructor(performRespawn.getClass())
 							.newInstance(performRespawn);
 				}
 				catch (ClassNotFoundException ex) {
-					clientCommandPacketInstance = getMCClass("Packet205ClientCommand").getConstructor().newInstance();
+					clientCommandPacketInstance = getNmsClass("Packet205ClientCommand").getConstructor().newInstance();
 					clientCommandPacketInstance.getClass().getDeclaredField("a").set(clientCommandPacketInstance, 1);
 				}
 			}
@@ -159,23 +159,9 @@ public class NmsUtil {
 	 * @throws ClassNotFoundException if the class does not exist in the
 	 * package
 	 */
-	public static Class<?> getMCClass(String name) throws ClassNotFoundException {
+	public static Class<?> getNmsClass(String name) throws ClassNotFoundException {
 		String className = "net.minecraft.server." + VERSION_STRING + name;
 		return Class.forName(className);
-	}
-
-	/**
-	 * Retrieves a class by the given name from the package
-	 * <code>net.minecraft.server</code>.
-	 *
-	 * @param name the class to retrieve
-	 * @return the class object from the package
-	 * <code>net.minecraft.server</code>
-	 * @throws ClassNotFoundException if the class does not exist in the
-	 * package
-	 */
-	public static Class<?> getNMSClass(String name) throws ClassNotFoundException {
-		return getMCClass(name);
 	}
 
 	/**

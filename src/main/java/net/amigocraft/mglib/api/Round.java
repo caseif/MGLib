@@ -835,7 +835,7 @@ public class Round implements Metadatable {
 		if (mp == null) {
 			if (this.getMinigame().customPlayerClass) {
 				try {
-					Constructor con = getConfigManager().getPlayerClass()
+					Constructor<?> con = getConfigManager().getPlayerClass()
 							.getDeclaredConstructor(String.class, String.class, String.class);
 					mp = (MGPlayer)con.newInstance(plugin, name, arena.toLowerCase());
 				}

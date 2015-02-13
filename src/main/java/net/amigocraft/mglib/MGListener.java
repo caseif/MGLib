@@ -612,7 +612,7 @@ class MGListener implements Listener {
 		for (String p : worlds.keySet()) {
 			for (int i = 0; i < worlds.get(p).size(); i++) {
 				if (worlds.get(p).get(i).equals(w)) {
-					if (!Minigame.getMinigameInstance(p).getConfigManager().isBlockPhysicsAllowed()) {
+					if (!Minigame.getMinigameInstance(p).getConfigManager().areBlockPhysicsAllowed()) {
 						e.setCancelled(true);
 						cancelled = true;
 						break;
@@ -865,7 +865,7 @@ class MGListener implements Listener {
 		for (String p : worlds.keySet()) {
 			for (int i = 0; i < worlds.get(p).size(); i++) {
 				if (worlds.get(p).get(i).equals(w)) {
-					if (!Minigame.getMinigameInstance(p).getConfigManager().isEntityExplosionsAllowed()) {
+					if (!Minigame.getMinigameInstance(p).getConfigManager().areEntityExplosionsAllowed()) {
 						e.setCancelled(true);
 						break;
 					}
