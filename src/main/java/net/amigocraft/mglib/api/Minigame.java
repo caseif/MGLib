@@ -211,7 +211,7 @@ public class Minigame {
 		Round r = null;
 		if (this.customRoundClass) {
 			try {
-				Constructor<?> con = getConfigManager().roundClass.getDeclaredConstructor(String.class, String.class);
+				Constructor<?> con = getConfigManager().getRoundClass().getDeclaredConstructor(String.class, String.class);
 				r = (Round)con.newInstance(plugin.getName(), arena.toLowerCase());
 				r.setStage(Stage.WAITING); // default to waiting stage
 				rounds.put(arena.toLowerCase(), r); // register arena with MGLib
