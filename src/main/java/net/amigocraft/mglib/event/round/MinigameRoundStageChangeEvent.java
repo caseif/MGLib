@@ -25,10 +25,12 @@ package net.amigocraft.mglib.event.round;
 
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.api.Stage;
+
 import org.bukkit.event.Cancellable;
 
 /**
- * Called when the stage of an {@link net.amigocraft.mglib.api.Round MGLib round} changes.
+ * Called when the stage of an {@link net.amigocraft.mglib.api.Round MGLib
+ * round} changes.
  *
  * @since 0.3.0
  */

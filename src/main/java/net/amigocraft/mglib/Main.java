@@ -40,11 +40,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
- * MGLib's primary (central) class
+ * MGLib's primary (central) class.
  *
  * @author Maxim Roncacé
  * @version 0.3.1-SNAPSHOT
@@ -54,9 +58,9 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * The current instance of the plugin.
-	 * <br><br>
-	 * <strong>This is for use within the library; please do not modify this in
-	 * your plugin or everything will break.</strong>
+	 *
+	 * <p><strong>This is for use within the library; please do not modify this
+	 * in your plugin or everything will break.</strong></p>
 	 *
 	 * @since 0.1.0
 	 */
@@ -64,38 +68,38 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * MGLib's logger.
-	 * <br><br>
-	 * <strong>This is for use within the library; please do not use this in your plugin or you'll
-	 * confuse the server owner.</strong>
+	 *
+	 * <p><strong>This is for use within the library; please do not use this in
+	 * your plugin or you'll confuse the server owner.</strong></p>
 	 *
 	 * @since 0.1.0
 	 */
 	public static Logger log;
 
 	/**
-	 * Whether block changes should be logged immediately
+	 * Whether block changes should be logged immediately.
 	 */
 	public static boolean IMMEDIATE_LOGGING;
 
 	/**
-	 * The minimum level at which messages should be logged
+	 * The minimum level at which messages should be logged.
 	 */
 	public static LogLevel LOGGING_LEVEL;
 
 	/**
-	 * Whether vanilla spectating is globally disabled
+	 * Whether vanilla spectating is globally disabled.
 	 */
 	private static boolean VANILLA_SPECTATING_DISABLED;
 
 	/**
-	 * The locale for MGLib itself
+	 * The locale for MGLib itself.
 	 */
 	public static Locale locale;
 
 	private static boolean disabling = false;
 
 	/**
-	 * Standard {@link JavaPlugin#onEnable()} override
+	 * Standard {@link JavaPlugin#onEnable()} override.
 	 *
 	 * @since 0.1.0
 	 */
@@ -195,7 +199,8 @@ public class Main extends JavaPlugin {
 	}
 
 	/**
-	 * This method should not be called from your plugin. So don't use it. Please.
+	 * <p>This method should not be called from your plugin. So don't use it.
+	 * Please.</p>
 	 *
 	 * @param plugin the name of the plugin to register worlds for
 	 */
@@ -209,7 +214,8 @@ public class Main extends JavaPlugin {
 	}
 
 	/**
-	 * Internal convenience method for logging. <strong>Please do not call this from your plugin.</strong>
+	 * Internal convenience method for logging. <strong>Please do not call this
+	 * from your plugin.</strong>
 	 *
 	 * @param message the message to log.
 	 * @param level   the {@link LogLevel level} at which to log the message
@@ -230,10 +236,12 @@ public class Main extends JavaPlugin {
 	}
 
 	/**
-	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
+	 * Retrieves worlds registered with MGLib's event listener for the given
+	 * plugin.
 	 *
 	 * @param plugin the plugin to retrieve worlds for
-	 * @return worlds registered with MGLib's event listener for the given plugin
+	 * @return worlds registered with MGLib's event listener for the given
+	 * plugin
 	 * @since 0.3.1
 	 */
 	public static List<String> getWorlds(String plugin) {
@@ -241,9 +249,11 @@ public class Main extends JavaPlugin {
 	}
 
 	/**
-	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
+	 * Retrieves a hashmap mapping the names of online players to their
+	 * respective UUIDs.
 	 *
-	 * @return a hashmap mapping the names of online players to their respective UUIDs
+	 * @return a hashmap mapping the names of online players to their
+	 * respective UUIDs
 	 * @since 0.3.0
 	 */
 	public static HashMap<String, UUID> getOnlineUUIDs() {
@@ -251,9 +261,11 @@ public class Main extends JavaPlugin {
 	}
 
 	/**
-	 * Retrieves whether vanilla spectating has been globally disabled by MGLib's config.yml file.
+	 * Retrieves whether vanilla spectating has been globally disabled by
+	 * MGLib's config.yml file.
 	 *
-	 * @return whether vanilla spectating has been globally disabled by MGLib's config.yml file
+	 * @return whether vanilla spectating has been globally disabled by MGLib's
+	 * config.yml file
 	 * @since 0.3.0
 	 */
 	public static boolean isVanillaSpectatingDisabled() {

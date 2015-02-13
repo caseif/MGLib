@@ -24,6 +24,7 @@
 package net.amigocraft.mglib.event;
 
 import net.amigocraft.mglib.MGUtil;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

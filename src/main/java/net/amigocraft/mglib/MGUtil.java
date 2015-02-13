@@ -43,8 +43,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 /**
- * Utility methods for use within MGLib. Developers are advised not to use them in a separate plugin, since this isn't
- * an API class and as such is subject to removals and refactors.
+ * Utility methods for use within MGLib. Developers are advised not to use them
+ * in a separate plugin, since this isn't an API class and as such is subject to
+ * removals and refactors.
  *
  * @since 0.1.0
  */
@@ -120,7 +121,8 @@ public class MGUtil {
 	 * Logs the given message if verbose logging is enabled.
 	 *
 	 * @param message the message to log
-	 * @param prefix  the prefix to place in front of the message. This will automatically be placed within brackets
+	 * @param prefix  the prefix to place in front of the message. This will
+	 *                automatically be placed within brackets
 	 * @param level   the {@link LogLevel level} at which to log the message
 	 * @since 0.3.0
 	 */
@@ -143,7 +145,8 @@ public class MGUtil {
 
 	/**
 	 * Calls an event, but sends it only to the appropriate plugin.
-	 * <strong>Please do not call this from your pluginv unless you are aware of the implications.</strong>
+	 * <strong>Please do not call this from your pluginv unless you are aware of
+	 * the implications.</strong>
 	 *
 	 * @param event the event to call
 	 * @since 0.3.0
@@ -163,10 +166,12 @@ public class MGUtil {
 	}
 
 	/**
-	 * Retrieves the sign attached to a given block, or null if ones does not exist.
+	 * Retrieves the sign attached to a given block, or null if ones does not
+	 * exist.
 	 *
 	 * @param block the block to check for an attached sign
-	 * @return the sign attached to a given block, or null if ones does not exist
+	 * @return the sign attached to a given block, or null if ones does not
+	 * exist
 	 */
 	public static Block getAttachedSign(Block block) {
 		BlockFace[] faces = new BlockFace[]{
@@ -210,7 +215,8 @@ public class MGUtil {
 	}
 
 	/**
-	 * Determines the environment of the given world based on its folder structure.
+	 * Determines the environment of the given world based on its folder
+	 * structure.
 	 *
 	 * @param world the name of the world to determine the environment of
 	 * @return the environment of the given world
@@ -252,9 +258,11 @@ public class MGUtil {
 	}
 
 	/**
-	 * Throws an {@link UnsupportedOperationException} if MGLib is not disabling.
+	 * Throws an {@link UnsupportedOperationException} if MGLib is not
+	 * disabling.
 	 *
-	 * @throws UnsupportedOperationException if MGLib is not currently disabling
+	 * @throws UnsupportedOperationException if MGLib is not currently
+	 *                                       disabling
 	 * @since 0.3.1
 	 */
 	public static void verifyDisablingStatus() throws UnsupportedOperationException {

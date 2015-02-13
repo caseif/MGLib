@@ -33,13 +33,17 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 /**
  * Utility class for use with Mojang's UUID API.
- * <br><br>
- * This class has been modified from the original for use with MGLib.
+ *
+ * <p>This class has been modified from the original for use with MGLib.</p>
  *
  * @author evilmidget38
  */

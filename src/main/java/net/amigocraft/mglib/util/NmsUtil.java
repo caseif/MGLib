@@ -233,7 +233,6 @@ public class NmsUtil {
 	 * @throws Exception if an exception occurs while sending the packet
 	 */
 	public static void sendRespawnPacket(Player player) throws Exception {
-		Class<?> packetClass;
 		Object nmsPlayer = NmsUtil.craftPlayer_getHandle.invoke(player);
 		Object conn = NmsUtil.playerConnection.get(nmsPlayer);
 		NmsUtil.playerConnection_a_packetPlayInClientCommand.invoke(conn, NmsUtil.clientCommandPacketInstance);

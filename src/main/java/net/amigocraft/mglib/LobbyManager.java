@@ -23,11 +23,15 @@
  */
 package net.amigocraft.mglib;
 
-import com.google.common.collect.Lists;
-import net.amigocraft.mglib.api.*;
+import net.amigocraft.mglib.api.LobbySign;
+import net.amigocraft.mglib.api.LobbyType;
+import net.amigocraft.mglib.api.Location3D;
+import net.amigocraft.mglib.api.Minigame;
+import net.amigocraft.mglib.api.Stage;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 import net.amigocraft.mglib.exception.NoSuchArenaException;
 
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -56,7 +60,8 @@ public class LobbyManager {
 	}
 
 	/**
-	 * Retrieves a hashmap mapping locations to lobby signs registered with this lobby manager.
+	 * Retrieves a hashmap mapping locations to lobby signs registered with this
+	 * lobby manager.
 	 *
 	 * @return a hashmap of signs registered with this lobby manager
 	 * @since 0.1.0
@@ -76,15 +81,18 @@ public class LobbyManager {
 	}
 
 	/**
-	 * Creates a new LobbySign to be managed
+	 * Creates a new LobbySign to be managed.
 	 *
 	 * @param l     the location to create the sign at
 	 * @param arena the name of the arena the sign will be linked to
 	 * @param type  the type of the sign ("status" or "players")
-	 * @param index the number of the sign (applicable only for "players" signs)
+	 * @param index the number of the sign (applicable only for "players"
+	 *              signs)
 	 * @throws NoSuchArenaException     if the specified arena does not exist
-	 * @throws InvalidLocationException if the specified location does not contain a sign
-	 * @throws IllegalArgumentException if the specified index for a player sign is less than 1
+	 * @throws InvalidLocationException if the specified location does not
+	 *                                  contain a sign
+	 * @throws IllegalArgumentException if the specified index for a player sign
+	 *                                  is less than 1
 	 * @since 0.1.0
 	 */
 	public void add(Location l, String arena, LobbyType type, int index)
@@ -143,8 +151,9 @@ public class LobbyManager {
 	}
 
 	/**
-	 * Resets all lobby signs to their default state ({@link Stage#WAITING waiting stage} for {@link LobbyType#STATUS
-	 * status} signs, blank for {@link LobbyType#PLAYERS player signs}).
+	 * Resets all lobby signs to their default state ({@link Stage#WAITING
+	 * waiting stage} for {@link LobbyType#STATUS status} signs, blank for
+	 * {@link LobbyType#PLAYERS player signs}).
 	 *
 	 * @since 0.1.0
 	 */
@@ -223,10 +232,12 @@ public class LobbyManager {
 	}
 
 	/**
-	 * Retrieves the lobby sign at the specified location, or null if it does not exist.
+	 * Retrieves the lobby sign at the specified location, or null if it does
+	 * not exist.
 	 *
 	 * @param location the location to search for a lobby sign at
-	 * @return the lobby sign at the specified location, or null if it does not exist
+	 * @return the lobby sign at the specified location, or null if it does not
+	 * exist
 	 * @since 0.1.0
 	 */
 	public LobbySign getSign(Location3D location) {

@@ -25,9 +25,15 @@ package net.amigocraft.mglib.api;
 
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
+
 import org.bukkit.Bukkit;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,8 +101,8 @@ public class Locale {
 	 * (<code>%i</code>) with the corresponding vararg
 	 * parameter.
 	 *
-	 * <p><i>Note: placeholder sequences should start at
-	 * index 1.</i></p>
+	 * <p><strong>Note:</strong> placeholder sequences should start at
+	 * index 1.</p>
 	 *
 	 * @param key the key of the message to retrieve
 	 * @param replacements an array or vararg list of

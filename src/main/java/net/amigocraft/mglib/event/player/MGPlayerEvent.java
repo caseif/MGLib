@@ -38,7 +38,8 @@ public class MGPlayerEvent extends MGLibEvent {
 	/**
 	 * Creates a new instance of this event.
 	 *
-	 * @param player the {@link MGPlayer player} involved in this {@link MGPlayerEvent event}
+	 * @param player the {@link MGPlayer player} involved in this {@link
+	 *               MGPlayerEvent event}
 	 * @since 0.1.0
 	 */
 	public MGPlayerEvent(MGPlayer player) {
@@ -47,9 +48,11 @@ public class MGPlayerEvent extends MGLibEvent {
 	}
 
 	/**
-	 * Retrieves the {@link MGPlayer player} involved in this {@link MGPlayerEvent event}.
+	 * Retrieves the {@link MGPlayer player} involved in this {@link
+	 * MGPlayerEvent event}.
 	 *
-	 * @return the {@link MGPlayer player} involved in this {@link MGPlayerEvent event}
+	 * @return the {@link MGPlayer player} involved in this {@link MGPlayerEvent
+	 * event}
 	 * @since 0.1.0
 	 */
 	public MGPlayer getPlayer() {

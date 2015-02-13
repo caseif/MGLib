@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A custom class for managing YAML files which forces the first section title to be made lowercase. This is to allow
- * for case-insensitive arena names.
+ * A custom class for managing YAML files which forces the first section title
+ * to be made lowercase. This is to allow for case-insensitive arena names.
  *
  * @since 0.3.0
  */

@@ -26,8 +26,8 @@ package net.amigocraft.mglib.api;
 import org.bukkit.Location;
 
 /**
- * Represents an arbitrary two-dimensional point. This class is more reliable for comparisons than the vanilla Bukkit
- * {@link Location} class.
+ * Represents an arbitrary two-dimensional point. This class is more reliable
+ * for comparisons than the vanilla Bukkit {@link Location} class.
  *
  * @since 0.3.0
  */
@@ -118,7 +118,8 @@ public class Location2D {
 	/**
 	 * Retrieves the name of the world of this location.
 	 *
-	 * @return the name of the world of this location, or an empty string if one was not provided
+	 * @return the name of the world of this location, or an empty string if one
+	 * was not provided
 	 * @since 0.3.0
 	 */
 	public String getWorld() {
@@ -128,7 +129,8 @@ public class Location2D {
 	/**
 	 * Sets the name of the world of this location.
 	 *
-	 * @param world the name of the world of this location, or null if one was not provided
+	 * @param world the name of the world of this location, or null if one was
+	 *              not provided
 	 * @since 0.3.0
 	 */
 	public void setWorld(String world) {
@@ -216,9 +218,11 @@ public class Location2D {
 	}
 
 	/**
-	 * Creates a Location2D from the x- and y-coordinates of the given {@link Location Bukkit location}.
+	 * Creates a Location2D from the x- and y-coordinates of the given {@link
+	 * Location Bukkit location}.
 	 *
-	 * @param location the {@link Location Bukkit location} to create a Location2D from
+	 * @param location the {@link Location Bukkit location} to create a
+	 *                 Location2D from
 	 * @return the new Location2D
 	 * @since 0.3.0
 	 */
@@ -227,9 +231,11 @@ public class Location2D {
 	}
 
 	/**
-	 * Creates a Location2D from the x- and z-coordinates of the given {@link Location Bukkit location}.
+	 * Creates a Location2D from the x- and z-coordinates of the given {@link
+	 * Location Bukkit location}.
 	 *
-	 * @param location the {@link Location Bukkit location} to create a Location2D from
+	 * @param location the {@link Location Bukkit location} to create a
+	 *                 Location2D from
 	 * @return the new Location2D
 	 * @since 0.3.0
 	 */
@@ -238,9 +244,11 @@ public class Location2D {
 	}
 
 	/**
-	 * Creates a Location2D from the y- and z-coordinates of the given {@link Location Bukkit location}.
+	 * Creates a Location2D from the y- and z-coordinates of the given {@link
+	 * Location Bukkit location}.
 	 *
-	 * @param location the {@link Location Bukkit location} to create a Location2D from
+	 * @param location the {@link Location Bukkit location} to create a
+	 *                 Location2D from
 	 * @return the new Location2D
 	 * @since 0.3.0
 	 */

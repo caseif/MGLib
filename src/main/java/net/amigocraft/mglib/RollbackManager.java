@@ -54,7 +54,7 @@ public class RollbackManager {
 	EntityDamageEvent lastEvent;
 
 	/**
-	 * Creates a new rollback manager for the specified plugin
+	 * Creates a new rollback manager for the specified plugin.
 	 *
 	 * @param plugin the plugin to create the rollback manager for
 	 * @since 0.1.0
@@ -124,7 +124,7 @@ public class RollbackManager {
 	}
 
 	/**
-	 * Logs an inventory change
+	 * Logs an inventory change.
 	 *
 	 * @param inventory the inventory to log
 	 * @param block     the block containing the inventory
@@ -158,9 +158,9 @@ public class RollbackManager {
 
 	/**
 	 * Rolls back the given arena.
-	 * <br><br>
-	 * This method <strong>should not</strong> be called from your plugin unless
-	 * you understand the implications.
+	 *
+	 * <p>This method <strong>should not</strong> be called from your plugin unless
+	 * you understand the implications.</p>
 	 *
 	 * @param arena the arena to roll back
 	 * @since 0.1.0

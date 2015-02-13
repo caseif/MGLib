@@ -35,7 +35,8 @@ public enum LobbyType {
 	 *
 	 * @param s the string to match
 	 * @return a LobbySign value corresponding to the given string
-	 * @throws IllegalArgumentException if the given string does not match a lobby type
+	 * @throws IllegalArgumentException if the given string does not match a
+	 *                                  lobby type
 	 * @since 0.1.0
 	 */
 	public static LobbyType fromString(String s) {

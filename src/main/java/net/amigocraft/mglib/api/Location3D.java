@@ -26,8 +26,8 @@ package net.amigocraft.mglib.api;
 import org.bukkit.Location;
 
 /**
- * Represents an arbitrary three-dimensional point. This class is more reliable for comparisons than the vanilla Bukkit
- * {@link Location} class.
+ * Represents an arbitrary three-dimensional point. This class is more reliable
+ * for comparisons than the vanilla Bukkit {@link Location} class.
  *
  * @since 0.3.0
  */
@@ -131,7 +131,8 @@ public class Location3D {
 	/**
 	 * Retrieves the name of the world of this location.
 	 *
-	 * @return the name of the world of this location, or an empty string if one was not provided.
+	 * @return the name of the world of this location, or an empty string if one
+	 * was not provided.
 	 * @since 0.3.0
 	 */
 	public String getWorld() {
@@ -141,7 +142,8 @@ public class Location3D {
 	/**
 	 * Sets the name of the world of this location.
 	 *
-	 * @param world the name of the world of this location, or null if one was not provided.
+	 * @param world the name of the world of this location, or null if one was
+	 *              not provided.
 	 * @since 0.3.0
 	 */
 	public void setWorld(String world) {
@@ -271,7 +273,8 @@ public class Location3D {
 	/**
 	 * Creates a Location3D from the given {@link Location Bukkit location}.
 	 *
-	 * @param location the {@link Location Bukkit location} to create a Location3D from.
+	 * @param location the {@link Location Bukkit location} to create a
+	 *                 Location3D from.
 	 * @return the new Location3D.
 	 * @since 0.3.0
 	 */

@@ -23,6 +23,8 @@
  */
 package net.amigocraft.mglib.api;
 
+import static net.amigocraft.mglib.Main.locale;
+
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.UUIDFetcher;
@@ -52,8 +54,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
-
-import static net.amigocraft.mglib.Main.locale;
 
 /**
  * Represents a player participating in a minigame.
@@ -98,9 +98,11 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Gets the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}.
+	 * Gets the MGLib API instance registered by the minigame plugin associated
+	 * with this {@link MGPlayer}.
 	 *
-	 * @return the MGLib API instance registered by the minigame plugin associated with this {@link MGPlayer}
+	 * @return the MGLib API instance registered by the minigame plugin
+	 * associated with this {@link MGPlayer}
 	 * @since 0.1.0
 	 */
 	public Minigame getMinigame() {
@@ -138,9 +140,11 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Retrieves the name of the team this player is on, or null if they are not on a team.
+	 * Retrieves the name of the team this player is on, or null if they are not
+	 * on a team.
 	 *
-	 * @return the name of the team this player is on, or null if they are not on a team
+	 * @return the name of the team this player is on, or null if they are not
+	 * on a team
 	 * @since 0.3.0
 	 */
 	public String getTeam() {
@@ -150,7 +154,8 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Sets the name of the team this player is on.
 	 *
-	 * @param team the name of the team this player is on. Set to null for no team.
+	 * @param team the name of the team this player is on. Set to null for no
+	 *             team.
 	 * @since 0.3.0
 	 */
 	public void setTeam(String team) {
@@ -158,8 +163,8 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Sets the arena of this {@link MGPlayer}. Please do not call this method unless you understand the implications of
-	 * doing so.
+	 * Sets the arena of this {@link MGPlayer}. Please do not call this method
+	 * unless you understand the implications of doing so.
 	 *
 	 * @param arena the new arena of this {@link MGPlayer}
 	 * @since 0.1.0
@@ -179,10 +184,11 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Gets whether this player is spectating their round, as opposed to participating in it.
+	 * Gets whether this player is spectating their round, as opposed to
+	 * participating in it.
 	 *
-	 * @return whether this player is spectating their round (can return true even if {@link Player#isDead()} returns
-	 * false).
+	 * @return whether this player is spectating their round (can return true
+	 * even if {@link Player#isDead()} returns false).
 	 * @since 0.1.0
 	 */
 	public boolean isSpectating() {
@@ -310,8 +316,9 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Removes this {@link MGPlayer} from the round they are currently in.
 	 *
-	 * @param location the location to teleport this player to. Please omit it if you wish to teleport them to the
-	 *                 round's default exit point.
+	 * @param location the location to teleport this player to. Please omit it
+	 *                 if you wish to teleport them to the round's default exit
+	 *                 point.
 	 * @throws NoSuchPlayerException  if the given player is not in a round
 	 * @throws PlayerOfflineException if the given player is not online
 	 * @since 0.1.0
@@ -334,7 +341,8 @@ public class MGPlayer implements Metadatable {
 	/**
 	 * Resets the {@link Player Bukkit player} after they've left a round.
 	 *
-	 * @param location the location to teleport the player to, or null to skip teleportation
+	 * @param location the location to teleport the player to, or null to skip
+	 *                 teleportation
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
@@ -433,8 +441,8 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Convenience method for {@link MGPlayer#getBukkitPlayer()}. Use this only if aesthetic ambiguity is not a point of
-	 * concern.
+	 * Convenience method for {@link MGPlayer#getBukkitPlayer()}. Use this only
+	 * if aesthetic ambiguity is not a point of concern.
 	 *
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}
 	 * @since 0.3.0
@@ -454,8 +462,9 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Cleanly freezes or unfreezes the player. The library will automatically revert the player to their previous speed
-	 * when unfrozen so as to let them go, <i>let them go!</i>
+	 * Cleanly freezes or unfreezes the player. The library will automatically
+	 * revert the player to their previous speed when unfrozen and let it go,
+	 * <em>let it go!</em>
 	 *
 	 * @param frozen whether the player should be frozen
 	 * @since 0.3.0
@@ -515,7 +524,8 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * Respawns the player at a random or sequential spawn, depending on your configuration.
+	 * Respawns the player at a random or sequential spawn, depending on your
+	 * configuration.
 	 *
 	 * @since 0.3.0
 	 */

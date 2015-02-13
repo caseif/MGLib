@@ -37,12 +37,24 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
@@ -136,11 +148,13 @@ class Metrics {
 	}
 
 	/**
-	 * Construct and create a Graph that can be used to separate specific plotters to their own graphs on the metrics
-	 * website. Plotters can be added to the graph object returned.
+	 * Construct and create a Graph that can be used to separate specific
+	 * plotters to their own graphs on the metrics website. Plotters can be
+	 * added to the graph object returned.
 	 *
 	 * @param name The name of the graph
-	 * @return Graph object created. Will never return NULL under normal circumstances unless bad parameters are given
+	 * @return Graph object created. Will never return NULL under normal
+	 * circumstances unless bad parameters are given
 	 */
 	public Graph createGraph(final String name) {
 		if (name == null) {
@@ -158,7 +172,8 @@ class Metrics {
 	}
 
 	/**
-	 * Add a Graph object to BukkitMetrics that represents data for the plugin that should be sent to the backend
+	 * Add a Graph object to BukkitMetrics that represents data for the plugin
+	 * that should be sent to the backend
 	 *
 	 * @param graph The name of the graph
 	 */
@@ -171,9 +186,10 @@ class Metrics {
 	}
 
 	/**
-	 * Start measuring statistics. This will immediately create an async repeating task as the plugin and send the
-	 * initial data to the metrics backend, and then after that it will post in increments of PING_INTERVAL * 1200
-	 * ticks.
+	 * Start measuring statistics. This will immediately create an async
+	 * repeating task as the plugin and send the initial data to the metrics
+	 * backend, and then after that it will post in increments of PING_INTERVAL
+	 * * 1200 ticks.
 	 *
 	 * @return True if statistics measuring is running, otherwise false.
 	 */
@@ -258,7 +274,8 @@ class Metrics {
 	}
 
 	/**
-	 * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
+	 * Enables metrics for the server by setting "opt-out" to false in the
+	 * config file and starting the metrics task.
 	 *
 	 * @throws java.io.IOException
 	 */
@@ -279,7 +296,8 @@ class Metrics {
 	}
 
 	/**
-	 * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
+	 * Disables metrics for the server by setting "opt-out" to true in the
+	 * config file and canceling the metrics task.
 	 *
 	 * @throws java.io.IOException
 	 */
@@ -301,7 +319,8 @@ class Metrics {
 	}
 
 	/**
-	 * Gets the File object of the config file that should be used to store data such as the GUID and opt-out status
+	 * Gets the File object of the config file that should be used to store data
+	 * such as the GUID and opt-out status
 	 *
 	 * @return the File object for the config file
 	 */
@@ -517,7 +536,8 @@ class Metrics {
 	}
 
 	/**
-	 * Check if mineshafter is present. If it is, we need to bypass it to send POST requests
+	 * Check if mineshafter is present. If it is, we need to bypass it to send
+	 * POST requests
 	 *
 	 * @return true if mineshafter is installed on the server
 	 */
@@ -630,8 +650,8 @@ class Metrics {
 	public static class Graph {
 
 		/**
-		 * The graph's name, alphanumeric and spaces only :) If it does not comply to the above when submitted, it is
-		 * rejected
+		 * The graph's name, alphanumeric and spaces only :) If it does not
+		 * comply to the above when submitted, it is rejected
 		 */
 		private final String name;
 
@@ -672,7 +692,8 @@ class Metrics {
 		}
 
 		/**
-		 * Gets an <b>unmodifiable</b> set of the plotter objects in the graph
+		 * Gets an <strong>unmodifiable</strong> set of the plotter objects in
+		 * the graph
 		 *
 		 * @return an unmodifiable {@link java.util.Set} of the plotter objects
 		 */
@@ -696,7 +717,8 @@ class Metrics {
 		}
 
 		/**
-		 * Called when the server owner decides to opt-out of BukkitMetrics while the server is running.
+		 * Called when the server owner decides to opt-out of BukkitMetrics
+		 * while the server is running.
 		 */
 		protected void onOptOut() {
 		}
@@ -722,16 +744,19 @@ class Metrics {
 		/**
 		 * Construct a plotter with a specific plot name
 		 *
-		 * @param name the name of the plotter to use, which will show up on the website
+		 * @param name the name of the plotter to use, which will show up on the
+		 *             website
 		 */
 		public Plotter(final String name) {
 			this.name = name;
 		}
 
 		/**
-		 * Get the current value for the plotted point. Since this function defers to an external function it may or may
-		 * not return immediately thus cannot be guaranteed to be thread friendly or safe. This function can be called
-		 * from any thread so care should be taken when accessing resources that need to be synchronized.
+		 * Get the current value for the plotted point. Since this function
+		 * defers to an external function it may or may not return immediately
+		 * thus cannot be guaranteed to be thread friendly or safe. This
+		 * function can be called from any thread so care should be taken when
+		 * accessing resources that need to be synchronized.
 		 *
 		 * @return the current value for the point to be plotted.
 		 */

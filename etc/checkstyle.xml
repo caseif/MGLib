@@ -44,6 +44,7 @@
             <message key="ws.notPreceded"
                      value="WhitespaceAround: ''{0}'' is not preceded with whitespace."/>
         </module>
+		<module name="AvoidStarImport"/>
 		<module name="OneStatementPerLine"/>
 		<module name="ArrayTypeStyle"/>
 		<module name="MissingSwitchDefault"/>
@@ -96,6 +97,10 @@
 		<module name="RedundantImport"/>
 		<module name="NoWhitespaceBefore">
 			<property name="tokens" value="SEMI, POST_DEC, POST_INC"/>
+		</module>
+
+		<module name="JavadocStyle">
+			<property name="checkEmptyJavadoc" value="true"/>
 		</module>
 	</module>
 </module>

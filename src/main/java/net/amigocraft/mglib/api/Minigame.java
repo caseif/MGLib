@@ -23,7 +23,6 @@
  */
 package net.amigocraft.mglib.api;
 
-import com.google.common.collect.Lists;
 import net.amigocraft.mglib.LobbyManager;
 import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
@@ -31,6 +30,8 @@ import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.exception.ArenaExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 import net.amigocraft.mglib.exception.NoSuchArenaException;
+
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -44,10 +45,13 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The primary API class. Contains necessary methods to create a minigame plugin from the library. <br><br> Building
- * against this version of the library is <i>highly discouraged</i>. This is a development build, and as such, is very
- * prone to change. Methods may be in this version that will disappear in the next release, and existing methods may be
- * temporarily refactored.
+ * The primary API class. Contains necessary methods to create a minigame plugin
+ * from the library.
+ *
+ * <p>Building against this version of the library is <em>highly
+ * discouraged</em>. This is a development build, and as such, is very prone to
+ * change. Methods may be in this version that will disappear in the next
+ * release, and existing methods may be temporarily refactored.</p>
  *
  * @author Maxim Roncacé
  * @version 0.3.1-SNAPSHOT
@@ -66,7 +70,7 @@ public class Minigame {
 	private LobbyManager lobbyManager;
 	private Locale locale;
 
-	protected HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
+	HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
 	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0", "0.3.1");
 
@@ -76,7 +80,7 @@ public class Minigame {
 	private Minigame(final JavaPlugin plugin) {
 		if (!registeredInstances.containsKey(plugin.getName())) {
 			this.plugin = plugin;
-			registeredInstances.put(plugin.getName(), this);// list this instance for use in other parts of the API
+			registeredInstances.put(plugin.getName(), this); // list this instance for use in other parts of the API
 		}
 		else {
 			String authors = "";
@@ -114,9 +118,10 @@ public class Minigame {
 	/**
 	 * Registers a plugin with the MGLib API.
 	 *
-	 * @param plugin an instance of your plugin (can be substituted with this if called from your main class)
-	 * @return a minigame object which may be used for most core API methods, with the exception of some pertaining
-	 * exclusively to players or rounds.
+	 * @param plugin an instance of your plugin (can be substituted with this if
+	 *               called from your main class)
+	 * @return a minigame object which may be used for most core API methods,
+	 * with the exception of some pertaining exclusively to players or rounds.
 	 * @since 0.1.0
 	 */
 	public static Minigame registerPlugin(JavaPlugin plugin) {
@@ -124,18 +129,22 @@ public class Minigame {
 	}
 
 	/**
-	 * Retrieves the {@link JavaPlugin} associated with this {@link Minigame} instance.
+	 * Retrieves the {@link JavaPlugin} associated with this {@link Minigame}
+	 * instance.
 	 *
-	 * @return the {@link JavaPlugin} associated with this {@link Minigame} instance
+	 * @return the {@link JavaPlugin} associated with this {@link Minigame}
+	 * instance
 	 */
 	public JavaPlugin getPlugin() {
 		return plugin;
 	}
 
 	/**
-	 * Retrieves a {@link List list} of all registered {@link Minigame minigame} instances.
+	 * Retrieves a {@link List list} of all registered {@link Minigame minigame}
+	 * instances.
 	 *
-	 * @return a {@link List list} of all registered {@link Minigame minigame} instances
+	 * @return a {@link List list} of all registered {@link Minigame minigame}
+	 * instances
 	 * @since 0.1.0
 	 */
 	public static List<Minigame> getMinigameInstances() {
@@ -143,10 +152,11 @@ public class Minigame {
 	}
 
 	/**
-	 * Finds the instance of the MGLib API associated with a given plugin
+	 * Finds the instance of the MGLib API associated with a given plugin.
 	 *
 	 * @param plugin the name of the plugin to search for
-	 * @return the instance of the MGLib API (Minigame.class) associated with the given plugin
+	 * @return the instance of the MGLib API (Minigame.class) associated with
+	 * the given plugin
 	 * @since 0.1.0
 	 */
 	public static Minigame getMinigameInstance(String plugin) {
@@ -154,10 +164,11 @@ public class Minigame {
 	}
 
 	/**
-	 * Finds the instance of the MGLib API associated with a given plugin
+	 * Finds the instance of the MGLib API associated with a given plugin.
 	 *
 	 * @param plugin the plugin to search for
-	 * @return the instance of the MGLib API (Minigame.class) associated with the given plugin
+	 * @return the instance of the MGLib API (Minigame.class) associated with
+	 * the given plugin
 	 * @since 0.1.0
 	 */
 	public static Minigame getMinigameInstance(JavaPlugin plugin) {
@@ -165,9 +176,11 @@ public class Minigame {
 	}
 
 	/**
-	 * Retrieves a hashmap containing all rounds associated with the instance which registered this API instance.
+	 * Retrieves a hashmap containing all rounds associated with the instance
+	 * which registered this API instance.
 	 *
-	 * @return a hashmap containing all rounds associated with the instance which registered this API instance
+	 * @return a hashmap containing all rounds associated with the instance
+	 * which registered this API instance
 	 * @since 0.1.0
 	 */
 	public HashMap<String, Round> getRounds() {
@@ -175,9 +188,11 @@ public class Minigame {
 	}
 
 	/**
-	 * Retrieves a list containing all rounds associated with the instance which registered this API instance.
+	 * Retrieves a list containing all rounds associated with the instance which
+	 * registered this API instance.
 	 *
-	 * @return a list containing all rounds associated with the instance which registered this API instance
+	 * @return a list containing all rounds associated with the instance which
+	 * registered this API instance
 	 * @since 0.1.0
 	 */
 	public List<Round> getRoundList() {
@@ -230,7 +245,8 @@ public class Minigame {
 	 * Retrieves the instance of the round associated with the given arena.
 	 *
 	 * @param name the name of the round to retrieve
-	 * @return the instance of the round associated with the given arena, or null if it does not exist
+	 * @return the instance of the round associated with the given arena, or
+	 * null if it does not exist
 	 * @since 0.1.0
 	 */
 	public Round getRound(String name) {
@@ -241,12 +257,15 @@ public class Minigame {
 	 * Creates an arena for use with MGLib.
 	 *
 	 * @param name    the name of the arena (used to identify it)
-	 * @param spawn   the initial spawn point of the arena (more may be added later)
+	 * @param spawn   the initial spawn point of the arena (more may be added
+	 *                later)
 	 * @param corner1 a corner of the arena
-	 * @param corner2 the corner of the arena opposite <b>corner1</b>
+	 * @param corner2 the corner of the arena opposite <code>corner1</code>
 	 * @return the new arena's {@link ArenaFactory}
-	 * @throws InvalidLocationException if the given locations are not in the same world
-	 * @throws ArenaExistsException     if an arena of the same name already exists
+	 * @throws InvalidLocationException if the given locations are not in the
+	 *                                  same world
+	 * @throws ArenaExistsException     if an arena of the same name already
+	 *                                  exists
 	 * @since 0.1.0
 	 */
 	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2)
@@ -324,7 +343,8 @@ public class Minigame {
 	 * Creates an arena for use with MGLib.
 	 *
 	 * @param name  the name of the arena (used to identify it)
-	 * @param spawn the initial spawn point of the arena (more may be added later)
+	 * @param spawn the initial spawn point of the arena (more may be added
+	 *              later)
 	 * @throws ArenaExistsException if an arena of the same name already exists
 	 * @since 0.1.0
 	 */
@@ -341,7 +361,8 @@ public class Minigame {
 	 * Removes an arena from the plugin's config, effectively deleting it.
 	 *
 	 * @param name the arena to delete
-	 * @throws NoSuchArenaException if an arena by the specified name does not exist
+	 * @throws NoSuchArenaException if an arena by the specified name does not
+	 *                              exist
 	 * @since 0.1.0
 	 */
 	public void deleteArena(String name) throws NoSuchArenaException {
@@ -362,7 +383,8 @@ public class Minigame {
 	 * Returns the {@link MGPlayer} associated with the given username.
 	 *
 	 * @param player the username to search for
-	 * @return the {@link MGPlayer} associated with the given username, or <b>null</b> if none is found
+	 * @return the {@link MGPlayer} associated with the given username, or
+	 * <code>null</code> if none is found
 	 * @since 0.1.0
 	 */
 	public MGPlayer getMGPlayer(String player) {
@@ -375,8 +397,11 @@ public class Minigame {
 	}
 
 	/**
-	 * Convenience method for checking if an {@link MGPlayer} is associated with the given username. <br><br> This
-	 * method simply checks if {@link Minigame#getMGPlayer(String) Minigame#getMGPlayer(p)} is <b>null</b>.
+	 * Convenience method for checking if an {@link MGPlayer} is associated with
+	 * the given username.
+	 *
+	 * <p>This method simply checks if {@link Minigame#getMGPlayer(String)
+	 * Minigame#getMGPlayer(p)} is <code>null</code>.</p>
 	 *
 	 * @param p the username to search for
 	 * @return Whether an associated {@link MGPlayer} was found
@@ -389,10 +414,13 @@ public class Minigame {
 	/**
 	 * Retrieves an {@link ArenaFactory} for the arena of the specified name.
 	 *
-	 * @param arena the name of the arena to retrieve an {@link ArenaFactory} for
+	 * @param arena the name of the arena to retrieve an {@link ArenaFactory}
+	 *              for
 	 * @return the arena's {@link ArenaFactory}
-	 * @throws NoSuchArenaException if the given arena does not exist. In this case, you should instead use {@link
-	 *                              ArenaFactory#createArenaFactory(String, String, String)}.
+	 * @throws NoSuchArenaException if the given arena does not exist. In this
+	 *                              case, you should instead use {@link
+	 *                              ArenaFactory#createArenaFactory(String,
+	 *                              String, String)}.
 	 * @since 0.1.0
 	 */
 	public ArenaFactory getArenaFactory(String arena) throws NoSuchArenaException {
@@ -402,15 +430,6 @@ public class Minigame {
 					MGUtil.loadArenaYaml(plugin.getName()).getString(arena + ".world"));
 		}
 		throw new NoSuchArenaException();
-	}
-
-	/**
-	 * For use within the library <b><i>only</i></b>. Please do not modify the returned map.
-	 *
-	 * @return a map of arena names and their corresponding {@link ArenaFactory ArenaFactories}
-	 */
-	public HashMap<String, ArenaFactory> getArenaFactories() {
-		return arenaFactories;
 	}
 
 	/**
@@ -515,9 +534,11 @@ public class Minigame {
 	}
 
 	/**
-	 * Retrieves a hashmap mapping the names of online players to their respective UUIDs.
+	 * Retrieves a hashmap mapping the names of online players to their
+	 * respective UUIDs.
 	 *
-	 * @return a hashmap mapping the names of online players to their respective UUIDs
+	 * @return a hashmap mapping the names of online players to their respective
+	 * UUIDs
 	 * @since 0.3.0
 	 */
 	public static HashMap<String, UUID> getOnlineUUIDs() {
@@ -527,8 +548,8 @@ public class Minigame {
 	/**
 	 * Unsets all static objects in this class.
 	 *
-	 * @throws UnsupportedOperationException if MGLib is not currently disabling
-	 *
+	 * @throws UnsupportedOperationException if MGLib is not currently
+	 *                                       disabling
 	 * @since 0.1.0
 	 */
 	public static void uninitialize() {
@@ -540,10 +561,12 @@ public class Minigame {
 	}
 
 	/**
-	 * Determines whether this version of MGLib is compatibile with the specified minimum required version.
+	 * Determines whether this version of MGLib is compatibile with the
+	 * specified minimum required version.
 	 *
 	 * @param minReqVersion the minimum required version of MGLib
-	 * @return whether this version of MGLib is compatibile with the specified minimum required version
+	 * @return whether this version of MGLib is compatibile with the specified
+	 * minimum required version
 	 * @since 0.3.0
 	 */
 	public static boolean isMGLibCompatible(String minReqVersion) {

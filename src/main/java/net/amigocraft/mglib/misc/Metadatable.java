@@ -37,8 +37,10 @@ public interface Metadatable {
 	public Object getMetadata(String key);
 
 	/**
-	 * Adds a key-value pair to this object's metadata. <br><br> <b>Note:</b> This method consists of a single call to
-	 * {@link HashMap#put(Object, Object)}, so existing keys will be overwritten.
+	 * Adds a key-value pair to this object's metadata.
+	 *
+	 * <p><strong>Note:</strong> This method consists of a single call to
+	 * {@link HashMap#put(Object, Object)}, so existing keys will be overwritten.</p>
 	 *
 	 * @param key   the key to store in the round's metadata.
 	 * @param value the value to assign to the given key.

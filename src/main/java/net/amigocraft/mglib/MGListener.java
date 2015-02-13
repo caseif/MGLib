@@ -23,10 +23,22 @@
  */
 package net.amigocraft.mglib;
 
-import net.amigocraft.mglib.api.*;
+import static net.amigocraft.mglib.Main.locale;
+
+import net.amigocraft.mglib.api.LobbySign;
+import net.amigocraft.mglib.api.LobbyType;
+import net.amigocraft.mglib.api.Location3D;
+import net.amigocraft.mglib.api.MGPlayer;
+import net.amigocraft.mglib.api.Minigame;
+import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.player.MGPlayerDeathEvent;
 import net.amigocraft.mglib.event.round.LobbyClickEvent;
-import net.amigocraft.mglib.exception.*;
+import net.amigocraft.mglib.exception.InvalidLocationException;
+import net.amigocraft.mglib.exception.NoSuchArenaException;
+import net.amigocraft.mglib.exception.NoSuchPlayerException;
+import net.amigocraft.mglib.exception.PlayerOfflineException;
+import net.amigocraft.mglib.exception.PlayerPresentException;
+import net.amigocraft.mglib.exception.RoundFullException;
 import net.amigocraft.mglib.misc.JoinResult;
 import net.amigocraft.mglib.util.NmsUtil;
 
@@ -38,15 +50,43 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,8 +94,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import static net.amigocraft.mglib.Main.locale;
 
 class MGListener implements Listener {
 
@@ -107,10 +145,12 @@ class MGListener implements Listener {
 	}
 
 	/**
-	 * Retrieves worlds registered with MGLib's event listener for the given plugin.
+	 * Retrieves worlds registered with MGLib's event listener for the given
+	 * plugin.
 	 *
 	 * @param plugin the plugin to retrieve worlds for
-	 * @return worlds registered with MGLib's event listener for the given plugin
+	 * @return worlds registered with MGLib's event listener for the given
+	 * plugin
 	 * @since 0.2.0
 	 */
 	public static List<String> getWorlds(String plugin) {
@@ -124,7 +164,8 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST) // so that we can prepare everything for the hooking plugins
+	@EventHandler(priority = EventPriority.LOWEST)
+	// so that we can prepare everything for the hooking plugins
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		final String p = e.getPlayer().getName();
 		for (Minigame mg : Minigame.getMinigameInstances()) {
@@ -267,7 +308,8 @@ class MGListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST) // so that we can prepare everything for the hooking plugins
+	@EventHandler(priority = EventPriority.LOWEST)
+	// so that we can prepare everything for the hooking plugins
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		final String p = e.getPlayer().getName();
 		try {
