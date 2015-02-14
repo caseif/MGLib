@@ -35,7 +35,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -61,6 +63,15 @@ public class Locale {
 	 * @since 0.3.0
 	 */
 	public final Map<String, String> messages = new HashMap<String, String>();
+
+	/**
+	 * An enumeration of message keys found in the default locale, but not the
+	 * defined one.
+	 *
+	 * @since 0.3.1
+	 */
+	public final List<String> undefinedMessages = new ArrayList<String>();
+
 	private String prefix;
 
 	private boolean legacy = false;
@@ -150,8 +161,7 @@ public class Locale {
 					"enUS";
 			String loc = null;
 			try {
-				defaultIs = Locale.class.getResourceAsStream("/locales/" +
-						defaultLocale + ".properties");
+				defaultIs = Locale.class.getResourceAsStream("/locales/" + defaultLocale + ".properties");
 				File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator +
 						"locales" + File.separator +
 						Main.plugin.getConfig().getString("locale") + ".properties");
@@ -186,11 +196,10 @@ public class Locale {
 				}
 			}
 			try {
-				InputStream is2 = is != null ? is : defaultIs;
-				if (is2 != null) {
+				if (is != null) {
 					if (!legacy) {
 						Properties props = new Properties();
-						props.load(is2);
+						props.load(is);
 						for (Map.Entry<Object, Object> e : props.entrySet()) {
 							messages.put(e.getKey().toString(), e.getValue().toString());
 						}
@@ -198,7 +207,7 @@ public class Locale {
 					else {
 						BufferedReader br;
 						String line;
-						br = new BufferedReader(new InputStreamReader(is2, Charset.forName("UTF-8")));
+						br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 						while ((line = br.readLine()) != null) {
 							String[] params = line.split("\\|");
 							if (params.length > 1) {
@@ -210,7 +219,36 @@ public class Locale {
 						Main.log(this.getMessage("plugin.event.loaded-locale", loc), LogLevel.INFO);
 					}
 				}
-				else {
+				if (defaultIs != null) {
+					if (!legacy) {
+						Properties props = new Properties();
+						props.load(defaultIs);
+						for (Map.Entry<Object, Object> e : props.entrySet()) {
+							if (!messages.containsKey(e.getKey().toString())) {
+								messages.put(e.getKey().toString(), e.getValue().toString());
+								undefinedMessages.add(e.getKey().toString());
+							}
+						}
+					}
+					else {
+						BufferedReader br;
+						String line;
+						br = new BufferedReader(new InputStreamReader(defaultIs, Charset.forName("UTF-8")));
+						while ((line = br.readLine()) != null) {
+							String[] params = line.split("\\|");
+							if (params.length > 1) {
+								if (!messages.containsKey(params[0])) {
+									messages.put(params[0], params[1]);
+									undefinedMessages.add(params[0]);
+								}
+							}
+						}
+					}
+					if (loc != null) {
+						Main.log(this.getMessage("plugin.event.loaded-locale", loc), LogLevel.INFO);
+					}
+				}
+				if (is == null && defaultIs == null) {
 					MGUtil.log("Neither the defined nor default locale could be loaded. " +
 							"Localized messages will be displayed only as their keys!", prefix, LogLevel.SEVERE);
 				}

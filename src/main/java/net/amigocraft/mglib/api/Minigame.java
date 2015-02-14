@@ -108,9 +108,10 @@ public class Minigame {
 		locale = new Locale(plugin.getName());
 		Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
 			// add delay so that the plugin has a chance to change its default locale
+			//TODO: locale messages are not available in the same method call that constructs this object
 			public void run() {
 				locale.initialize();
-				Main.log.info(locale.getMessage("plugin.event.hook", plugin.getName()));
+				Main.log.info(Main.locale.getMessage("plugin.event.hook", plugin.getName()));
 			}
 		});
 	}
