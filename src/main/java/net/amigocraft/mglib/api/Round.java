@@ -290,6 +290,19 @@ public class Round implements Metadatable {
 	}
 
 	/**
+	 * Returns whether this round's timer is currently ticking.
+	 *
+	 * <p>This method simply checks whether {@link Round#getTimerHandle()}
+	 * returns a number greater than or equal to <code>0</code>.</p>
+	 *
+	 * @return whether this round's timer is currently ticking.
+	 * @since 0.3.1
+	 */
+	public boolean isTicking() {
+		return this.getTimerHandle() >= 0;
+	}
+
+	/**
 	 * Sets the associated arena of this {@link Round}.
 	 *
 	 * @param arena the arena to associate with this {@link Round}
@@ -300,7 +313,8 @@ public class Round implements Metadatable {
 	}
 
 	/**
-	 * Sets the current stage of this {@link Round}.
+	 * Sets the current stage of this {@link Round}. Note that this <em>will not
+	 * </em> start or restart the round.
 	 *
 	 * @param stage      the stage to set this {@link Round} to
 	 * @param resetTimer whether to reset the round timer (defaults to true if
@@ -526,7 +540,7 @@ public class Round implements Metadatable {
 	}
 
 	/**
-	 * Begin the round and start its timer. If the round's current stage is
+	 * Begins the round and starts its timer. If the round's current stage is
 	 * {@link Stage#PREPARING}, it will be set to {@link Stage#PLAYING} and the
 	 * timer will be reset when it reaches 0. Otherwise, its stage will be set
 	 * to {@link Stage#PREPARING} and it will begins its preparation stage.
@@ -540,9 +554,9 @@ public class Round implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void start() {
-		if (stage == Stage.WAITING) { // make sure the round isn't already started
-			final Round r = this;
-			if (r.getPreparationTime() > 0) {
+		final Round r = this;
+		if (stage == Stage.WAITING || stage == Stage.PREPARING) { // make sure the round isn't already started
+			if (r.getPreparationTime() > 0 && stage == Stage.WAITING) {
 				MinigameRoundPrepareEvent event = new MinigameRoundPrepareEvent(r);
 				MGUtil.callEvent(event);
 				if (event.isCancelled()) {
