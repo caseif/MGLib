@@ -42,6 +42,11 @@ Don't know how to Java? You can still contribute by
 and I'll review it and possibly add it to the library. As is the case with pull requests, you should verify that the
 suggestion meets MGLib's goals.
 
+## Localization ##
+
+I want to make MGLib available in as many languages as possible. If you know a language other than English, you can help
+translate the plugin on the [Crowdin page](https://crowdin.com/project/mglib).
+
 ### Who do I talk to? ###
 
 I can be contacted [via email at mproncace@gmail.com](mailto:mproncace@gmail.com) or
