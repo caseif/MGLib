@@ -195,7 +195,7 @@ class MGListener implements Listener {
 					}
 					catch (Exception ex) {
 						ex.printStackTrace();
-						Main.log.severe(locale.getMessage("plugin.alert.player-data.save", p));
+						Main.log.severe(locale.getMessage("plugin.alert.data.save", p));
 					}
 				}
 			}
@@ -347,7 +347,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe(Main.locale.getMessage("plugin.alert.player-data.load", p));
+			Main.log.severe(Main.locale.getMessage("plugin.alert.data.load", p));
 		}
 	}
 

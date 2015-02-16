@@ -244,7 +244,7 @@ public class RollbackManager {
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-				Main.log.severe(Main.locale.getMessage("plugin.alert.arena-data.save", arena));
+				Main.log.severe(Main.locale.getMessage("plugin.alert.data.save", arena));
 			}
 		}
 		if (r != null) {

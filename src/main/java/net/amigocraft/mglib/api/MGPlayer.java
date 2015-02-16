@@ -241,7 +241,6 @@ public class MGPlayer implements Metadatable {
 					String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("info.personal.spectating"); // tell them
 					if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()) {
 						p.setAllowFlight(true); // enable flight
-						message += " " + locale.getMessage("info.personal.flight");
 					}
 					p.sendMessage(message);
 				}

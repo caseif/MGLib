@@ -206,7 +206,6 @@ public class NmsUtil {
 			}
 			catch (Exception ex) { // just in case
 				ex.printStackTrace();
-				Main.log(Main.locale.getMessage("plugin.alert.nms.player-info.send"), LogLevel.WARNING);
 			}
 		}
 		return false;
