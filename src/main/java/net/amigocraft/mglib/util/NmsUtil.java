@@ -71,7 +71,7 @@ public class NmsUtil {
 	static {
 		SPECTATOR_SUPPORT = GameMode.valueOf("SPECTATOR") != null;
 		boolean nmsException = false;
-		String[] array = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+		String[] array = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
 		VERSION_STRING = array.length == 4 ? array[3] + "." : "";
 		try {
 			getOnlinePlayers = Bukkit.class.getMethod("getOnlinePlayers");
