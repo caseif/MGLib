@@ -29,6 +29,7 @@ import net.amigocraft.mglib.exception.InvalidLocationException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -250,6 +251,31 @@ public class ArenaFactory {
 	}
 
 	/**
+	 * Adds a spawn to the given arena with the given {@link Location3D}.
+	 *
+	 * @param location        the location of the new spawn
+	 * @param saveOrientation whether to save the {@link Location3D}'s pitch and
+	 *                        yaw to the spawn (Defaults to false if omitted).
+	 * @return the instance of {@link ArenaFactory} which this method was called
+	 * from
+	 * @throws InvalidLocationException if the provided location's world does
+	 *                                  not match the arena's world
+	 * @since 0.1.0
+	 */
+	public ArenaFactory addSpawn(Location3D location, boolean saveOrientation) throws InvalidLocationException {
+		if (location.getWorld().equals(world)) {
+			if (saveOrientation) {
+				return addSpawn(Math.floor(location.getX()), Math.floor(location.getY()), Math.floor(location.getZ()),
+						location.getPitch(), location.getYaw());
+			}
+			return addSpawn(location.getX(), location.getY(), location.getZ());
+		}
+		else {
+			throw new InvalidLocationException();
+		}
+	}
+
+	/**
 	 * Adds a spawn to the given arena with the given {@link Location}.
 	 *
 	 * @param location        the location of the new spawn
@@ -259,19 +285,12 @@ public class ArenaFactory {
 	 * from
 	 * @throws InvalidLocationException if the provided location's world does
 	 *                                  not match the arena's world
-	 * @since 0.1.0
+	 * @deprecated Use {@link ArenaFactory#addSpawn(Location3D, boolean)}
+	 * @since 0.3.1
 	 */
+	@Deprecated
 	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException {
-		if (location.getWorld().getName().equals(world)) {
-			if (saveOrientation) {
-				return addSpawn(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getPitch(),
-						location.getYaw());
-			}
-			return addSpawn(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-		}
-		else {
-			throw new InvalidLocationException();
-		}
+		return addSpawn(new Location3D(location.getWorld().getName(), location.getX(), location.getY(), location.getZ()), saveOrientation);
 	}
 
 	/**
@@ -284,8 +303,24 @@ public class ArenaFactory {
 	 *                                  not match the arena's world
 	 * @since 0.1.0
 	 */
-	public ArenaFactory addSpawn(Location location) throws InvalidLocationException {
+	public ArenaFactory addSpawn(Location3D location) throws InvalidLocationException {
 		return addSpawn(location, false);
+	}
+
+	/**
+	 * Adds a spawn to the given arena with the given {@link Location}.
+	 *
+	 * @param location the location of the new spawn
+	 * @return the instance of {@link ArenaFactory} which this method was called
+	 * from
+	 * @throws InvalidLocationException if the provided location's world does
+	 *                                  not match the arena's world
+	 * @deprecated Use {@link ArenaFactory#addSpawn(Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public ArenaFactory addSpawn(Location location) throws InvalidLocationException {
+		return addSpawn(MGUtil.fromBukkitLocation(location));
 	}
 
 	/**
@@ -329,13 +364,27 @@ public class ArenaFactory {
 	}
 
 	/**
+	 * Deletes a spawn from the given arena at the given {@link Location3D}.
+	 *
+	 * @param location the {@link Location3D} of the spawn to delete
+	 * @return the instance of {@link ArenaFactory} which this method was called
+	 * from
+	 * @since 0.3.1
+	 */
+	public ArenaFactory deleteSpawn(Location3D location) {
+		return deleteSpawn(location.getX(), location.getY(), location.getZ());
+	}
+
+	/**
 	 * Deletes a spawn from the given arena at the given {@link Location}.
 	 *
 	 * @param location the {@link Location} of the spawn to delete
 	 * @return the instance of {@link ArenaFactory} which this method was called
 	 * from
+	 * @deprecated Use {@link ArenaFactory#deleteSpawn(Location3D)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public ArenaFactory deleteSpawn(Location location) {
 		return deleteSpawn(location.getX(), location.getY(), location.getZ());
 	}
@@ -417,20 +466,36 @@ public class ArenaFactory {
 	/**
 	 * Sets the minimum boundary of this arena.
 	 *
-	 * @param location the {@link Location} representing the maximum boundary
+	 * @param location the {@link Location3D} representing the maximum boundary
 	 * @return the instance of {@link ArenaFactory} which this method was called
 	 * from
 	 * @throws InvalidLocationException if the provided location's world does
 	 *                                  not match the arena's world
-	 * @since 0.1.0
+	 * @since 0.3.1
 	 */
-	public ArenaFactory setMinBound(Location location) throws InvalidLocationException {
-		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))) {
+	public ArenaFactory setMinBound(Location3D location) throws InvalidLocationException {
+		if (location.getWorld().equals(yaml.get(arena + ".world"))) {
 			return setMinBound(location.getX(), location.getY(), location.getZ());
 		}
 		else {
 			throw new InvalidLocationException();
 		}
+	}
+
+	/**
+	 * Sets the minimum boundary of this arena.
+	 *
+	 * @param location the {@link Location} representing the maximum boundary
+	 * @return the instance of {@link ArenaFactory} which this method was called
+	 * from
+	 * @throws InvalidLocationException if the provided location's world does
+	 *                                  not match the arena's world
+	 * @deprecated Use {@link ArenaFactory#setMinBound(Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public ArenaFactory setMinBound(Location location) throws InvalidLocationException {
+		return setMinBound(new Location3D(location.getWorld().getName(), location.getX(), location.getY(), location.getZ()));
 	}
 
 	/**
@@ -471,20 +536,36 @@ public class ArenaFactory {
 	/**
 	 * Sets the maximum boundary of this arena.
 	 *
-	 * @param location the {@link Location} representing the maximum boundary
+	 * @param location the {@link Location3D} representing the maximum boundary
 	 * @return the instance of {@link ArenaFactory} which this method was called
 	 * from
 	 * @throws InvalidLocationException if the provided location's world does
 	 *                                  not match the arena's world
-	 * @since 0.1.0
+	 * @since 0.3.1
 	 */
-	public ArenaFactory setMaxBound(Location location) throws InvalidLocationException {
-		if (location.getWorld().getName().equals(yaml.get(arena + ".world"))) {
+	public ArenaFactory setMaxBound(Location3D location) throws InvalidLocationException {
+		if (location.getWorld().equals(yaml.get(arena + ".world"))) {
 			return setMaxBound(location.getX(), location.getY(), location.getZ());
 		}
 		else {
 			throw new InvalidLocationException();
 		}
+	}
+
+	/**
+	 * Sets the maximum boundary of this arena.
+	 *
+	 * @param location the {@link Location} representing the maximum boundary
+	 * @return the instance of {@link ArenaFactory} which this method was called
+	 * from
+	 * @throws InvalidLocationException if the provided location's world does
+	 *                                  not match the arena's world
+	 * @deprecated Use {@link ArenaFactory#setMinBound(Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public ArenaFactory setMaxBound(Location location) throws InvalidLocationException {
+		return setMaxBound(new Location3D(location.getWorld().getName(), location.getX(), location.getY(), location.getZ()));
 	}
 
 	/**

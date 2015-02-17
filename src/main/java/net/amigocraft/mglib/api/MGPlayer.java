@@ -39,7 +39,6 @@ import net.amigocraft.mglib.util.NmsUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -233,11 +232,11 @@ public class MGPlayer implements Metadatable {
 				if (!Main.isVanillaSpectatingDisabled() &&
 						this.getRound().getConfigManager().isUsingVanillaSpectating() &&
 						NmsUtil.SPECTATOR_SUPPORT) {
-					p.setGameMode(GameMode.SPECTATOR);
+					p.setGameMode(org.bukkit.GameMode.SPECTATOR);
 					p.sendMessage(ChatColor.DARK_PURPLE + Main.locale.getMessage("info.personal.spectating")); // tell them
 				}
 				else {
-					p.setGameMode(GameMode.ADVENTURE); // disable block breaking
+					p.setGameMode(org.bukkit.GameMode.ADVENTURE); // disable block breaking
 					String message = ChatColor.DARK_PURPLE + Main.locale.getMessage("info.personal.spectating"); // tell them
 					if (Bukkit.getAllowFlight() && getRound().getConfigManager().isSpectatorFlightAllowed()) {
 						p.setAllowFlight(true); // enable flight
@@ -251,7 +250,7 @@ public class MGPlayer implements Metadatable {
 			if (p != null) { // check that player is online
 				if (!Main.isVanillaSpectatingDisabled() &&
 						this.getRound().getConfigManager().isUsingVanillaSpectating()) {
-					p.setGameMode(this.getRound().getConfigManager().getDefaultGameMode());
+					p.setGameMode(org.bukkit.GameMode.valueOf(this.getRound().getConfigManager().getDefaultGameMode().toString()));
 				}
 				try {
 					if (Bukkit.class.getMethod("getOnlinePlayers",
@@ -279,7 +278,7 @@ public class MGPlayer implements Metadatable {
 				}
 				if (getRound() != null) {
 					// set them to the default gamemode for arenas
-					p.setGameMode(getRound().getConfigManager().getDefaultGameMode());
+					p.setGameMode(org.bukkit.GameMode.valueOf(getRound().getConfigManager().getDefaultGameMode().name()));
 				}
 				p.setFlying(false); // disable flight
 			}
@@ -320,8 +319,24 @@ public class MGPlayer implements Metadatable {
 	 *                 point.
 	 * @throws NoSuchPlayerException  if the given player is not in a round
 	 * @throws PlayerOfflineException if the given player is not online
+	 * @since 0.3.1
+	 */
+	public void removeFromRound(Location3D location) throws NoSuchPlayerException, PlayerOfflineException {
+		getRound().removePlayer(name, location);
+	}
+
+	/**
+	 * Removes this {@link MGPlayer} from the round they are currently in.
+	 *
+	 * @param location the location to teleport this player to. Please omit it
+	 *                 if you wish to teleport them to the round's default exit
+	 *                 point.
+	 * @throws NoSuchPlayerException  if the given player is not in a round
+	 * @throws PlayerOfflineException if the given player is not online
+	 * @deprecated Use {@link MGPlayer#removeFromRound(Location3D)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void removeFromRound(Location location) throws NoSuchPlayerException, PlayerOfflineException {
 		getRound().removePlayer(name, location);
 	}
@@ -345,7 +360,7 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.1.0
 	 */
 	@SuppressWarnings("deprecation")
-	public void reset(Location location) {
+	public void reset(Location3D location) {
 		final Player p = getBukkitPlayer();
 		if (p == null) { // check that the specified player is online
 			return;
@@ -394,8 +409,25 @@ public class MGPlayer implements Metadatable {
 			p.sendMessage(ChatColor.RED + locale.getMessage("error.personal.inv-load-fail"));
 		}
 		if (location != null) {
-			p.teleport(location, TeleportCause.PLUGIN); // teleport the player
+			// teleport the player
+			p.teleport(
+					new Location(Bukkit.getWorld(location.getWorld()), location.getX(), location.getY(), location.getZ()),
+					TeleportCause.PLUGIN
+			);
 		}
+	}
+
+	/**
+	 * Resets the {@link Player Bukkit player} after they've left a round.
+	 *
+	 * @param location the location to teleport the player to, or null to skip
+	 *                 teleportation
+	 * @deprecated Use {@link MGPlayer#reset(Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public void reset(Location location) {
+		reset(MGUtil.fromBukkitLocation(location));
 	}
 
 	/**
@@ -414,6 +446,7 @@ public class MGPlayer implements Metadatable {
 	 * @return the player's previous gamemode
 	 * @since 0.1.0
 	 */
+	//TODO: deprecate
 	public GameMode getPrevGameMode() {
 		return prevGameMode;
 	}
@@ -422,18 +455,32 @@ public class MGPlayer implements Metadatable {
 	 * You probably shouldn't use this unless you know what it does.
 	 *
 	 * @param gameMode the player's previous gamemode
-	 * @since 0.1.0
+	 * @since 0.3.1
 	 */
 	public void setPrevGameMode(GameMode gameMode) {
 		this.prevGameMode = gameMode;
 	}
 
 	/**
+	 * You probably shouldn't use this unless you know what it does.
+	 *
+	 * @param gameMode the player's previous gamemode
+	 * @deprecated Use {@link MGPlayer#setPrevGameMode(GameMode)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public void setPrevGameMode(org.bukkit.GameMode gameMode) {
+		setPrevGameMode(GameMode.valueOf(gameMode.name()));
+	}
+
+	/**
 	 * Retrieves the {@link Bukkit Player} object for this {@link MGPlayer}.
 	 *
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}
+	 * @deprecated Use {@link Bukkit#getPlayer(String)}
 	 * @since 0.2.0
 	 */
+	@Deprecated
 	@SuppressWarnings("deprecation")
 	public Player getBukkitPlayer() {
 		return Bukkit.getPlayer(name);
@@ -444,6 +491,7 @@ public class MGPlayer implements Metadatable {
 	 * if aesthetic ambiguity is not a point of concern.
 	 *
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}
+	 * @deprecated Use {@link Bukkit#getPlayer(String)}
 	 * @since 0.3.0
 	 */
 	public Player b() {

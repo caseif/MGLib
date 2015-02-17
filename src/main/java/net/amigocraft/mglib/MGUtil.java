@@ -23,12 +23,14 @@
  */
 package net.amigocraft.mglib;
 
+import net.amigocraft.mglib.api.Location3D;
 import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.MGYamlConfiguration;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.event.MGLibEvent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -269,5 +271,18 @@ public class MGUtil {
 		if (!Main.isDisabling()) {
 			throw new UnsupportedOperationException(Main.locale.getMessage("plugin.alert.not-disabling"));
 		}
+	}
+
+	/**
+	 * Converts a Bukkit {@link Location} to a {@link Location3D}.
+	 *
+	 * @param location the {@link Location} to convert
+	 * @return the new {@link Location3D}
+	 * @since 0.3.1
+	 */
+	public static Location3D fromBukkitLocation(Location location) {
+		return new Location3D(location.getWorld().getName(),
+				(float)location.getX(), (float)location.getY(), (float)location.getZ(),
+				location.getPitch(), location.getYaw());
 	}
 }

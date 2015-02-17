@@ -135,7 +135,10 @@ public class Minigame {
 	 *
 	 * @return the {@link JavaPlugin} associated with this {@link Minigame}
 	 * instance
+	 * @deprecated Depends on Bukkit
+	 * @since 0.1.0
 	 */
+	@Deprecated
 	public JavaPlugin getPlugin() {
 		return plugin;
 	}
@@ -170,8 +173,10 @@ public class Minigame {
 	 * @param plugin the plugin to search for
 	 * @return the instance of the MGLib API (Minigame.class) associated with
 	 * the given plugin
+	 * @deprecated Use {@link Minigame#getMinigameInstance(String)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public static Minigame getMinigameInstance(JavaPlugin plugin) {
 		return getMinigameInstance(plugin.getName());
 	}
@@ -267,9 +272,9 @@ public class Minigame {
 	 *                                  same world
 	 * @throws ArenaExistsException     if an arena of the same name already
 	 *                                  exists
-	 * @since 0.1.0
+	 * @since 0.3.1
 	 */
-	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2)
+	public ArenaFactory createArena(String name, Location3D spawn, Location3D corner1, Location3D corner2)
 			throws InvalidLocationException, ArenaExistsException {
 
 		double minX = Double.NaN;
@@ -286,11 +291,11 @@ public class Minigame {
 		double z2;
 
 		if (corner1 != null && corner2 != null) {
-			if (!spawn.getWorld().getName().equals(corner1.getWorld().getName())) {
+			if (!spawn.getWorld().equals(corner1.getWorld())) {
 				// spawn's in a different world than the first corner
 				throw new InvalidLocationException();
 			}
-			if (!spawn.getWorld().getName().equals(corner2.getWorld().getName())) {
+			if (!spawn.getWorld().equals(corner2.getWorld())) {
 				// spawn's in a different world than the second corner
 				throw new InvalidLocationException();
 			}
@@ -329,7 +334,7 @@ public class Minigame {
 			}
 		}
 
-		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld().getName());
+		ArenaFactory a = ArenaFactory.createArenaFactory(plugin.getName(), name, spawn.getWorld());
 		if (!a.isNewArena()) {
 			throw new ArenaExistsException();
 		}
@@ -343,19 +348,62 @@ public class Minigame {
 	/**
 	 * Creates an arena for use with MGLib.
 	 *
+	 * @param name    the name of the arena (used to identify it)
+	 * @param spawn   the initial spawn point of the arena (more may be added
+	 *                later)
+	 * @param corner1 a corner of the arena
+	 * @param corner2 the corner of the arena opposite <code>corner1</code>
+	 * @return the new arena's {@link ArenaFactory}
+	 * @throws InvalidLocationException if the given locations are not in the
+	 *                                  same world
+	 * @throws ArenaExistsException     if an arena of the same name already
+	 *                                  exists
+	 * @deprecated Use
+	 * {@link Minigame#createArena(String, Location3D, Location3D, Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public ArenaFactory createArena(String name, Location spawn, Location corner1, Location corner2)
+			throws InvalidLocationException, ArenaExistsException {
+		return createArena(
+				name,
+				MGUtil.fromBukkitLocation(spawn),
+				MGUtil.fromBukkitLocation(corner1),
+				MGUtil.fromBukkitLocation(corner2)
+		);
+	}
+
+	/**
+	 * Creates an arena for use with MGLib.
+	 *
 	 * @param name  the name of the arena (used to identify it)
 	 * @param spawn the initial spawn point of the arena (more may be added
 	 *              later)
 	 * @throws ArenaExistsException if an arena of the same name already exists
-	 * @since 0.1.0
+	 * @since 0.3.1
 	 */
-	public void createArena(String name, Location spawn) throws ArenaExistsException {
+	public void createArena(String name, Location3D spawn) throws ArenaExistsException {
 		try {
 			createArena(name, spawn, null, null);
 		}
 		catch (InvalidLocationException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	/**
+	 * Creates an arena for use with MGLib.
+	 *
+	 * @param name  the name of the arena (used to identify it)
+	 * @param spawn the initial spawn point of the arena (more may be added
+	 *              later)
+	 * @throws ArenaExistsException if an arena of the same name already exists
+	 * @deprecated Use {@link Minigame#createArena(String, Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public void createArena(String name, Location spawn) throws ArenaExistsException {
+		createArena(name, MGUtil.fromBukkitLocation(spawn));
 	}
 
 	/**

@@ -23,9 +23,10 @@
  */
 package net.amigocraft.mglib.api;
 
+import net.amigocraft.mglib.MGUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -41,7 +42,7 @@ public class ConfigManager {
 
 	private String plugin;
 
-	private Location exitLocation;
+	private Location3D exitLocation;
 	private int minPlayers = 0;
 	private int maxPlayers = 32;
 	private String signId;
@@ -52,7 +53,7 @@ public class ConfigManager {
 	private boolean pmsAllowed = true;
 	private boolean kitsAllowed = true;
 	private boolean spectateJoin = false;
-	private HashMap<String, ChatColor> lobbyColors = new HashMap<String, ChatColor>();
+	private HashMap<String, Color> lobbyColors = new HashMap<String, Color>();
 	private HashMap<String, Boolean> actions = new HashMap<String, Boolean>();
 	private Class<? extends MGPlayer> playerClass = MGPlayer.class;
 	private Class<? extends Round> roundClass = Round.class;
@@ -83,19 +84,19 @@ public class ConfigManager {
 	 */
 	public ConfigManager(String plugin) {
 		this.plugin = plugin;
-		this.exitLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
+		this.exitLocation = MGUtil.fromBukkitLocation(Bukkit.getWorlds().get(0).getSpawnLocation());
 		this.signId = "[" + plugin + "]";
 
-		lobbyColors.put("arena", ChatColor.DARK_RED);
-		lobbyColors.put("waiting", ChatColor.DARK_GRAY);
-		lobbyColors.put("preparing", ChatColor.RED);
-		lobbyColors.put("playing", ChatColor.DARK_PURPLE);
-		lobbyColors.put("resetting", ChatColor.DARK_GRAY);
-		lobbyColors.put("time", ChatColor.GREEN);
-		lobbyColors.put("time-warning", ChatColor.RED);
-		lobbyColors.put("time-infinite", ChatColor.GREEN);
-		lobbyColors.put("player-count", ChatColor.GREEN);
-		lobbyColors.put("player-count-full", ChatColor.RED);
+		lobbyColors.put("arena", Color.DARK_RED);
+		lobbyColors.put("waiting", Color.DARK_GRAY);
+		lobbyColors.put("preparing", Color.RED);
+		lobbyColors.put("playing", Color.DARK_PURPLE);
+		lobbyColors.put("resetting", Color.DARK_GRAY);
+		lobbyColors.put("time", Color.GREEN);
+		lobbyColors.put("time-warning", Color.RED);
+		lobbyColors.put("time-infinite", Color.GREEN);
+		lobbyColors.put("player-count", Color.GREEN);
+		lobbyColors.put("player-count-full", Color.RED);
 
 		actions.put("teleport", true);
 		actions.put("block-place", false);
@@ -138,10 +139,12 @@ public class ConfigManager {
 	 * the spawn point of the main world).
 	 *
 	 * @return the default exit location for players upon round end
+	 * @deprecated Use {@link ConfigManager#getDefaultExitLocation()}
 	 * @since 0.1.0
 	 */
+	//TODO: figure out how to transition to Location3D
 	public Location getDefaultExitLocation() {
-		return exitLocation;
+		return new Location(Bukkit.getWorld(exitLocation.getWorld()), exitLocation.getX(), exitLocation.getY(), exitLocation.getZ());
 	}
 
 	/**
@@ -152,8 +155,22 @@ public class ConfigManager {
 	 *                     Round round} ending
 	 * @since 0.1.0
 	 */
-	public void setDefaultExitLocation(Location exitLocation) {
+	public void setDefaultExitLocation(Location3D exitLocation) {
 		this.exitLocation = exitLocation;
+	}
+
+	/**
+	 * Sets this default exit location for players upon a {@link Round round}
+	 * ending (default: the spawn point of the main world).
+	 *
+	 * @param exitLocation this default exit location for players upon a {@link
+	 *                     Round round} ending
+	 * @deprecated Use {@link ConfigManager#setDefaultExitLocation(Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public void setDefaultExitLocation(Location exitLocation) {
+		setDefaultExitLocation(new Location3D(exitLocation.getWorld().getName(), exitLocation.getX(), exitLocation.getY(), exitLocation.getZ()));
 	}
 
 	/**
@@ -363,17 +380,29 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyArenaColor() {
-		return lobbyColors.get("arena");
+		return ChatColor.getByChar(lobbyColors.get("arena").getCode());
 	}
 
 	/**
 	 * Sets the color of the top line (the arena name) of a lobby sign.
 	 *
 	 * @param color the new color of the top line of a lobby sign
+	 * @since 0.3.1
+	 */
+	public void setLobbyArenaColor(Color color) {
+		lobbyColors.put("arena", color);
+	}
+
+	/**
+	 * Sets the color of the top line (the arena name) of a lobby sign.
+	 *
+	 * @param color the new color of the top line of a lobby sign
+	 * @deprecated Use {@link ConfigManager#setLobbyArenaColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyArenaColor(ChatColor color) {
-		lobbyColors.put("arena", color);
+		setLobbyArenaColor(Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -384,7 +413,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyWaitingColor() {
-		return lobbyColors.get("waiting");
+		return ChatColor.getByChar(lobbyColors.get("waiting").getCode());
 	}
 
 	/**
@@ -392,10 +421,23 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#WAITING
 	 *              WAITING} status
+	 * @since 0.3.1
+	 */
+	public void setLobbyWaitingColor(Color color) {
+		lobbyColors.put("waiting", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's {@link Stage#WAITING WAITING} status.
+	 *
+	 * @param color the new color of a lobby sign's {@link Stage#WAITING
+	 *              WAITING} status
+	 * @deprecated Use {@link ConfigManager#setLobbyWaitingColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyWaitingColor(ChatColor color) {
-		lobbyColors.put("waiting", color);
+		setLobbyWaitingColor(Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -407,7 +449,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyPreparingColor() {
-		return lobbyColors.get("preparing");
+		return ChatColor.getByChar(lobbyColors.get("preparing").getCode());
 	}
 
 	/**
@@ -416,10 +458,24 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#PREPARING
 	 *              PREPARING} status
+	 * @since 0.3.1
+	 */
+	public void setLobbyPreparingColor(Color color) {
+		lobbyColors.put("preparing", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's {@link Stage#PREPARING PREPARING}
+	 * status.
+	 *
+	 * @param color the new color of a lobby sign's {@link Stage#PREPARING
+	 *              PREPARING} status
+	 * @deprecated Use {@link ConfigManager#setLobbyPreparingColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyPreparingColor(ChatColor color) {
-		lobbyColors.put("preparing", color);
+		setLobbyPreparingColor(Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -430,7 +486,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyPlayingColor() {
-		return lobbyColors.get("playing");
+		return ChatColor.getByChar(lobbyColors.get("playing").getCode());
 	}
 
 	/**
@@ -438,10 +494,23 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#PLAYING
 	 *              PLAYING} status
+	 * @since 0.3.1
+	 */
+	public void setLobbyPlayingColor(Color color) {
+		lobbyColors.put("playing", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's {@link Stage#PLAYING PLAYING} status.
+	 *
+	 * @param color the new color of a lobby sign's {@link Stage#PLAYING
+	 *              PLAYING} status
+	 * @deprecated Use {@link ConfigManager#setLobbyPlayingColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyPlayingColor(ChatColor color) {
-		lobbyColors.put("playing", color);
+		setLobbyPlayingColor(Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -453,7 +522,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyResettingColor() {
-		return lobbyColors.get("resetting");
+		return ChatColor.getByChar(lobbyColors.get("resetting").getCode());
 	}
 
 	/**
@@ -462,10 +531,24 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#RESETTING
 	 *              RESETTING} status
+	 * @since 0.3.1
+	 */
+	public void setLobbyResettingColor(Color color) {
+		lobbyColors.put("resetting", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's {@link Stage#RESETTING RESETTING}
+	 * status.
+	 *
+	 * @param color the new color of a lobby sign's {@link Stage#RESETTING
+	 *              RESETTING} status
+	 * @deprecated Use {@link ConfigManager#setLobbyResettingColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyResettingColor(ChatColor color) {
-		lobbyColors.put("resetting", color);
+		lobbyColors.put("resetting", Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -477,7 +560,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyTimeColor() {
-		return lobbyColors.get("time");
+		return ChatColor.getByChar(lobbyColors.get("time").getCode());
 	}
 
 	/**
@@ -486,10 +569,24 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's timer when remaining time is
 	 *              greater than 60 seconds
+	 * @since 0.3.1
+	 */
+	public void setLobbyTimeColor(Color color) {
+		lobbyColors.put("time", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's timer when remaining time is greater
+	 * than 60 seconds.
+	 *
+	 * @param color the new color of a lobby sign's timer when remaining time is
+	 *              greater than 60 seconds
+	 * @deprecated Use {@link ConfigManager#setLobbyTimeColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyTimeColor(ChatColor color) {
-		lobbyColors.put("time", color);
+		lobbyColors.put("time", Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -501,7 +598,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyTimeWarningColor() {
-		return lobbyColors.get("time-warning");
+		return ChatColor.getByChar(lobbyColors.get("time-warning").getCode());
 	}
 
 	/**
@@ -510,10 +607,24 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's timer when remaining time is
 	 *              less than 60 seconds
+	 * @since 0.3.1
+	 */
+	public void setLobbyTimeWarningColor(Color color) {
+		lobbyColors.put("time-warning", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's timer when remaining time is less than
+	 * 60 seconds.
+	 *
+	 * @param color the new color of a lobby sign's timer when remaining time is
+	 *              less than 60 seconds
+	 * @deprecated Use {@link ConfigManager#setLobbyTimeWarningColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyTimeWarningColor(ChatColor color) {
-		lobbyColors.put("time-warning", color);
+		lobbyColors.put("time-warning", Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -524,7 +635,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyTimeInfiniteColor() {
-		return lobbyColors.get("time-infinite");
+		return ChatColor.getByChar(lobbyColors.get("time-infinite").getCode());
 	}
 
 	/**
@@ -532,10 +643,23 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's timer when remaining time is
 	 *              infinite
+	 * @since 0.3.1
+	 */
+	public void setLobbyTimeInfiniteColor(Color color) {
+		lobbyColors.put("time-infinite", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's timer when remaining time is infinite.
+	 *
+	 * @param color the new color of a lobby sign's timer when remaining time is
+	 *              infinite
+	 * @deprecated Use {@link ConfigManager#setLobbyTimeInfiniteColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyTimeInfiniteColor(ChatColor color) {
-		lobbyColors.put("time-infinite", color);
+		lobbyColors.put("time-infinite", Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -547,7 +671,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyPlayerCountColor() {
-		return lobbyColors.get("player-count");
+		return ChatColor.getByChar(lobbyColors.get("player-count").getCode());
 	}
 
 	/**
@@ -556,10 +680,24 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's player count when the round
 	 *              is not full
+	 * @since 0.3.1
+	 */
+	public void setLobbyPlayerCountColor(Color color) {
+		lobbyColors.put("player-count", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's player count when the round is not
+	 * full.
+	 *
+	 * @param color the new color of a lobby sign's player count when the round
+	 *              is not full
+	 * @deprecated Use {@link ConfigManager#setLobbyPlayerCountColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyPlayerCountColor(ChatColor color) {
-		lobbyColors.put("player-count", color);
+		lobbyColors.put("player-count", Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -570,7 +708,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyPlayerCountFullColor() {
-		return lobbyColors.get("player-count-full");
+		return ChatColor.getByChar(lobbyColors.get("player-count-full").getCode());
 	}
 
 	/**
@@ -578,10 +716,23 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's player count when the round
 	 *              is full
+	 * @since 0.3.1
+	 */
+	public void setLobbyPlayerCountFullColor(Color color) {
+		lobbyColors.put("player-count-full", color);
+	}
+
+	/**
+	 * Sets the color of a lobby sign's player count when the round is full.
+	 *
+	 * @param color the new color of a lobby sign's player count when the round
+	 *              is full
+	 * @deprecated Use {@link ConfigManager#setLobbyPlayerCountFullColor(Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyPlayerCountFullColor(ChatColor color) {
-		lobbyColors.put("player-count-full", color);
+		lobbyColors.put("player-count-full", Color.fromCode(color.getChar()));
 	}
 
 	/**
@@ -607,7 +758,7 @@ public class ConfigManager {
 	 * @since 0.1.0
 	 */
 	public ChatColor getLobbyColorAttribute(String key) {
-		return lobbyColors.get(key);
+		return ChatColor.getByChar(lobbyColors.get(key).getCode());
 	}
 
 	/**
@@ -618,10 +769,26 @@ public class ConfigManager {
 	 * @param key   the key of the color attribute (e.g. arena, player-count,
 	 *              time)
 	 * @param color the color to associate with aforementioned key
+	 * @since 0.3.1
+	 */
+	public void setLobbyColor(String key, Color color) {
+		lobbyColors.put(key, color);
+	}
+
+	/**
+	 * Sets a specific color attribute for lobby signs associated with this
+	 * manager's plugin. If the provided key is not used in the library, this
+	 * method will have no effect.
+	 *
+	 * @param key   the key of the color attribute (e.g. arena, player-count,
+	 *              time)
+	 * @param color the color to associate with aforementioned key
+	 * @deprecated Use {@link ConfigManager#setLobbyColor(String, Color)}
 	 * @since 0.1.0
 	 */
+	@Deprecated
 	public void setLobbyColor(String key, ChatColor color) {
-		lobbyColors.put(key, color);
+		lobbyColors.put(key, Color.fromCode(color.getChar()));
 	}
 
 	/**

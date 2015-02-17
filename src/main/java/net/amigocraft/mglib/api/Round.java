@@ -736,6 +736,7 @@ public class Round implements Metadatable {
 	 * have boundaries.
 	 * @since 0.1.0
 	 */
+	//TODO: deprecate
 	public Location getMinBound() {
 		return minBound;
 	}
@@ -749,6 +750,7 @@ public class Round implements Metadatable {
 	 * have boundaries.
 	 * @since 0.1.0
 	 */
+	//TODO: deprecate
 	public Location getMaxBound() {
 		return maxBound;
 	}
@@ -783,6 +785,7 @@ public class Round implements Metadatable {
 	 * @return a list of possible spawns for this round's arena
 	 * @since 0.1.0
 	 */
+	//TODO: deprecate
 	public List<Location> getSpawns() {
 		return spawns;
 	}
@@ -950,7 +953,7 @@ public class Round implements Metadatable {
 			return JoinResult.INVENTORY_SAVE_ERROR;
 		}
 		p.getInventory().clear();
-		p.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+		p.getInventory().setArmorContents(new ItemStack[4]);
 		p.updateInventory();
 		for (PotionEffect pe : p.getActivePotionEffects()) {
 			p.removePotionEffect(pe.getType()); // remove any potion effects before adding the player
@@ -962,7 +965,7 @@ public class Round implements Metadatable {
 			mp.setSpectating(false);
 		}
 		mp.setPrevGameMode(p.getGameMode());
-		p.setGameMode(getConfigManager().getDefaultGameMode());
+		p.setGameMode(org.bukkit.GameMode.valueOf(getConfigManager().getDefaultGameMode().name()));
 		players.put(name, mp); // register player with round object
 		mp.spawnIn(spawn);
 		if (getStage() == Stage.WAITING && getPlayerCount() >= getMinPlayers() && getPlayerCount() > 0) {
@@ -981,7 +984,7 @@ public class Round implements Metadatable {
 	 * @throws NoSuchPlayerException  if the player are not in this round
 	 * @since 0.1.0
 	 */
-	public void removePlayer(String name, Location location) throws PlayerOfflineException, NoSuchPlayerException {
+	public void removePlayer(String name, Location3D location) throws PlayerOfflineException, NoSuchPlayerException {
 		@SuppressWarnings("deprecation") Player p = Bukkit.getPlayer(name);
 		MGPlayer mp = players.get(name);
 		if (mp == null) {
@@ -995,13 +998,29 @@ public class Round implements Metadatable {
 			}
 			mp.setSpectating(false); // make sure they're not spectating when they join a new round
 			players.remove(name); // remove player from round
-			p.setGameMode(mp.getPrevGameMode()); // restore the player's gamemode
+			p.setGameMode(org.bukkit.GameMode.valueOf(mp.getPrevGameMode().name())); // restore the player's gamemode
 			mp.reset(location); // reset the object and send the player to the exit point
 			mp.setArena(null); // they're not in an arena anymore
 			if (this.getPlayerCount() < this.getMinPlayers()) {
 				this.setStage(Stage.WAITING);
 			}
 		}
+	}
+
+	/**
+	 * Removes a given player from this {@link Round round} and teleports them
+	 * to the given location.
+	 *
+	 * @param name     the player to remove from this {@link Round round}
+	 * @param location the location to teleport the player to
+	 * @throws PlayerOfflineException if the player is not online
+	 * @throws NoSuchPlayerException  if the player are not in this round
+	 * @deprecated Use {@link Round#removePlayer(String, Location3D)}
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public void removePlayer(String name, Location location) throws PlayerOfflineException, NoSuchPlayerException {
+		removePlayer(name, MGUtil.fromBukkitLocation(location));
 	}
 
 	/**
@@ -1096,6 +1115,7 @@ public class Round implements Metadatable {
 	 * @return this round's exit location
 	 * @since 0.1.0
 	 */
+	//TODO: deprecate
 	public Location getExitLocation() {
 		return exitLocation;
 	}
