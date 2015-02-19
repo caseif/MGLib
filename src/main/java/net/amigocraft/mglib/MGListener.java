@@ -463,10 +463,7 @@ class MGListener implements Listener {
 							//TODO: handle rollback of attached blocks
 							for (int y = 1; e.getBlock().getY() + y < 256; y++) {
 								Material type = e.getBlock().getLocation().add(0, y, 0).getBlock().getType();
-								if (type == Material.SAND ||
-										type == Material.GRAVEL ||
-										type == Material.ANVIL ||
-										type == Material.DRAGON_EGG) {
+								if (type.hasGravity()) {
 									mg.getRollbackManager().logBlockChange(
 											e.getBlock().getLocation().add(0, y, 0).getBlock(), r.getArena()
 									);
