@@ -717,7 +717,6 @@ class MGListener implements Listener {
 	public void onSignChange(SignChangeEvent e) {
 		if (e.getBlock().getState() instanceof Sign) { // just in case
 			for (Minigame mg : Minigame.getMinigameInstances()) { // iterate registered minigames
-				System.out.println(e.getLine(0) + ", " + mg.getConfigManager().getSignId());
 				String[] lines = {
 						ChatColor.stripColor(e.getLine(0)),
 						ChatColor.stripColor(e.getLine(1)),
@@ -777,7 +776,8 @@ class MGListener implements Listener {
 		if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (e.getClickedBlock().getState() instanceof Sign) {
 				for (Minigame mg : Minigame.getMinigameInstances()) {
-					LobbySign ls = mg.getLobbyManager().getSign(Location3D.valueOf(e.getClickedBlock().getLocation()));
+					Location3D clickedLoc = MGUtil.fromBukkitLocation(e.getClickedBlock().getLocation());
+					LobbySign ls = mg.getLobbyManager().getSign(clickedLoc);
 					if (ls != null) {
 						e.setCancelled(true);
 						if (e.getAction() == Action.LEFT_CLICK_BLOCK && e.getPlayer().isSneaking()) {
@@ -793,8 +793,7 @@ class MGListener implements Listener {
 								r = mg.createRound(ls.getArena());
 							}
 							catch (NoSuchArenaException ex) {
-								e.getPlayer().sendMessage(ChatColor.RED +
-										locale.getMessage("error.personal.load-fail").replace("%", ls.getArena()));
+								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("error.personal.load-fail").replace("%", ls.getArena()));
 								return;
 							}
 						}

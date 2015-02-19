@@ -23,6 +23,8 @@
  */
 package net.amigocraft.mglib.util.vector;
 
+import com.google.common.base.Objects;
+
 /**
  * Represents a three-dimensional point.
  *
@@ -118,8 +120,7 @@ public class Vector3f {
 
 	@Override
 	public int hashCode() {
-		return 47 + ((Float.valueOf(x).hashCode() * 53 + Float.valueOf(y).hashCode() * 67 +
-				Float.valueOf(z).hashCode() * 17) * 23);
+		return Objects.hashCode(x, y, z);
 	}
 
 }

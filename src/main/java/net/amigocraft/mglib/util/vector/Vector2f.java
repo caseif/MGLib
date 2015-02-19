@@ -23,6 +23,8 @@
  */
 package net.amigocraft.mglib.util.vector;
 
+import com.google.common.base.Objects;
+
 /**
  * Represents a two-dimensional point.
  *
@@ -87,14 +89,14 @@ public class Vector2f {
 
 	@Override
 	public boolean equals(Object otherVector) {
-		return otherVector instanceof Vector3f &&
-				this.x == ((Vector3f)otherVector).getX() &&
-				this.y == ((Vector3f)otherVector).getY();
+		return otherVector instanceof Vector2f &&
+				this.x == ((Vector2f)otherVector).getX() &&
+				this.y == ((Vector2f)otherVector).getY();
 	}
 
 	@Override
 	public int hashCode() {
-		return 47 + ((Float.valueOf(x).hashCode() * 17 + Float.valueOf(y).hashCode() * 27) * 23);
+		return Objects.hashCode(x, y);
 	}
 
 }

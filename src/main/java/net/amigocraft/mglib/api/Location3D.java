@@ -23,13 +23,15 @@
  */
 package net.amigocraft.mglib.api;
 
+import com.google.common.base.Objects;
 import net.amigocraft.mglib.util.vector.Vector2f;
 import net.amigocraft.mglib.util.vector.Vector3f;
 import org.bukkit.Location;
 
 /**
- * Represents an arbitrary three-dimensional point. This class is more reliable
- * for comparisons than the vanilla Bukkit {@link Location} class.
+ * Represents a three-dimensional point in a world with orientation. This class
+ * is more reliable for comparisons than the vanilla Bukkit {@link Location}
+ * class.
  *
  * @since 0.3.0
  */
@@ -410,9 +412,31 @@ public class Location3D {
 	 */
 	@Deprecated
 	public static Location3D valueOf(Location location) {
-		return new Location3D(location.getWorld().getName(),
-				(float)location.getX(), (float)location.getY(), (float)location.getZ(),
-				location.getPitch(), location.getYaw());
+		return valueOf(location, false);
+	}
+
+	/**
+	 * Creates a Location3D from the given {@link Location Bukkit location}.
+	 *
+	 * @param location the {@link Location Bukkit location} to create a
+	 *                 Location3D from.
+	 * @param copyOrientation whether the pitch and yaw of <code>location</code>
+	 *                        will be stored in the new {@link Location3D}.
+	 * @return the new Location3D.
+	 * @deprecated Depends on Bukkit
+	 * @since 0.3.0
+	 */
+	@Deprecated
+	public static Location3D valueOf(Location location, boolean copyOrientation) {
+		if (copyOrientation) {
+			return new Location3D(location.getWorld().getName(),
+					(float)location.getX(), (float)location.getY(), (float)location.getZ(),
+					location.getPitch(), location.getYaw());
+		}
+		else {
+			return new Location3D(location.getWorld().getName(),
+					(float)location.getX(), (float)location.getY(), (float)location.getZ());
+		}
 	}
 
 	@Override
@@ -425,7 +449,7 @@ public class Location3D {
 
 	@Override
 	public int hashCode() {
-		return 47 + (world.hashCode() * 61 + (position.hashCode() * 17) + (rotation.hashCode() * 23) * 93);
+		return Objects.hashCode(world, position, rotation);
 	}
 
 }
