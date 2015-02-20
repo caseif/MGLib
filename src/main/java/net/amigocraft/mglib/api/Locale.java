@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+//TODO: rewrite this class to be less chaotic
 /**
  * MGLib's locale API. It can be used for easy localization; you
  * need only supply the translations themselves in the form of
@@ -153,39 +154,48 @@ public class Locale {
 	 * @since 0.3.0
 	 */
 	public void initialize() {
-		if (Locale.class.getClassLoader().getResource("locales") != null) {
+		if (Bukkit.getPluginManager().getPlugin(plugin).getClass().getClassLoader().getResource("locales") != null) {
 			InputStream is;
 			InputStream defaultIs = null;
 			String defaultLocale = Minigame.getMinigameInstance(plugin) != null ?
-					Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() :
-					"enUS";
+			                       Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() :
+			                       "enUS";
+			String locale = Main.plugin.getConfig().getString("locale");
 			String loc = null;
 			try {
-				defaultIs = Locale.class.getResourceAsStream("/locales/" + defaultLocale + ".properties");
+				defaultIs = Bukkit.getPluginManager().getPlugin(plugin).getClass()
+						.getResourceAsStream("/locales/" + defaultLocale + ".properties");
 				File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator +
-						"locales" + File.separator +
-						Main.plugin.getConfig().getString("locale") + ".properties");
+						"locales" + File.separator + locale + ".properties");
 				is = new FileInputStream(file);
 				loc = file.getAbsolutePath();
 
 			}
 			catch (Exception ex) {
-				is = Bukkit.getPluginManager().getPlugin(plugin).getClass().getResourceAsStream("/locales/" +
-						Main.plugin.getConfig().getString("locale") + ".properties");
+				is = Bukkit.getPluginManager().getPlugin(plugin).getClass()
+						.getResourceAsStream("/locales/" + locale +".properties");
 				if (is == null) {
 					try {
-						defaultIs = Locale.class.getResourceAsStream("/locales/" +
-								defaultLocale + ".csv");
-						File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() +
-								File.separator + "locales" + File.separator +
-								Main.plugin.getConfig().getString("locale") + ".csv");
-						is = new FileInputStream(file);
-						loc = file.getAbsolutePath();
-						legacy = true;
+						if (defaultIs == null) {
+							try {
+								defaultIs = Bukkit.getPluginManager().getPlugin(plugin).getClass().getResourceAsStream("/locales/" + defaultLocale + ".csv");
+							}
+							catch (Exception swallow) {} // eh
+							File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() +
+									File.separator + "locales" + File.separator + locale + ".csv");
+							is = new FileInputStream(file);
+							loc = file.getAbsolutePath();
+							legacy = true;
+						}
+						else {
+							MGUtil.log("Locale defined in config not found in JAR or plugin folder; defaulting to " +
+									defaultLocale, prefix, LogLevel.WARNING);
+							is = defaultIs;
+						}
 					}
 					catch (Exception ex2) {
-						is = Bukkit.getPluginManager().getPlugin(plugin).getClass().getResourceAsStream("/locales/" +
-								Main.plugin.getConfig().getString("locale") + ".csv");
+						is = Bukkit.getPluginManager().getPlugin(plugin).getClass()
+								.getResourceAsStream("/locales/" + locale + ".csv");
 						legacy = true;
 						if (is == null) {
 							MGUtil.log("Locale defined in config not found in JAR or plugin folder; defaulting to " +
