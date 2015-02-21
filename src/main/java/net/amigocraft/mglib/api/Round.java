@@ -67,7 +67,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -960,16 +959,21 @@ public class Round implements Metadatable {
 		players.put(name, mp); // register player with round object
 		// update everyone's tablist
 		// this needs to be called before the player is teleported
+		List<Player> toAdd = new ArrayList<Player>();
+		List<Player> toRemove = new ArrayList<Player>();
 		for (Player pl : NmsUtil.getOnlinePlayers()) {
 			if (players.containsKey(pl.getName())) {
-				NmsUtil.addToTabList(pl, p);
-				NmsUtil.addToTabList(p, pl);
+				NmsUtil.addPlayer(pl, p);
+				toAdd.add(pl);
 			}
 			else {
-				NmsUtil.removeFromTabList(pl, p);
-				NmsUtil.removeFromTabList(p, pl);
+				NmsUtil.removePlayer(pl, p);
+				toRemove.add(pl);
 			}
 		}
+		NmsUtil.addPlayers(p, toAdd);
+		NmsUtil.removePlayers(p, toRemove);
+
 		mp.spawnIn(spawn);
 		if (getStage() == Stage.WAITING && getPlayerCount() >= getMinPlayers() && getPlayerCount() > 0) {
 			start();
@@ -1010,13 +1014,13 @@ public class Round implements Metadatable {
 			for (Player pl : NmsUtil.getOnlinePlayers()) {
 				for (Minigame mg : Minigame.getMinigameInstances()) {
 					if (mg.isPlayer(pl.getName())) {
-						NmsUtil.removeFromTabList(pl, p);
-						NmsUtil.removeFromTabList(p, pl);
+						NmsUtil.removePlayer(pl, p);
+						NmsUtil.removePlayer(p, pl);
 						continue outer;
 					}
 				}
-				NmsUtil.addToTabList(pl, p);
-				NmsUtil.addToTabList(p, pl);
+				NmsUtil.addPlayer(pl, p);
+				NmsUtil.addPlayer(p, pl);
 			}
 			mp.reset(location); // reset the object and send the player to the exit point
 			if (this.getPlayerCount() < this.getMinPlayers()) {

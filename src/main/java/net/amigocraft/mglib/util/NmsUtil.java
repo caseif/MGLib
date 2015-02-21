@@ -183,6 +183,18 @@ public class NmsUtil {
 	}
 
 	/**
+	 * Adds each player from <code>subjects</code> to <code>recipient</code>'s
+	 * tablist.
+	 *
+	 * @param recipient the player whose tablist will be modified
+	 * @param subjects  the players added to the tablist
+	 * @return whether the info packet was successfully sent
+	 * @since 0.3.1
+	 */
+	public static boolean addPlayers(Player recipient, Collection<? extends Player> subjects) {
+		return sendPlayerInfoPacket(recipient, subjects, true);
+	}
+	/**
 	 * Adds <code>subject</code> to <code>recipient</code>'s tablist.
 	 *
 	 * @param recipient the player whose tablist will be modified
@@ -190,8 +202,21 @@ public class NmsUtil {
 	 * @return whether the info packet was successfully sent
 	 * @since 0.3.1
 	 */
-	public static boolean addToTabList(Player recipient, Player subject) {
-		return sendPlayerInfoPacket(recipient, subject, true);
+	public static boolean addPlayer(Player recipient, Player subject) {
+		return addPlayers(recipient, Arrays.asList(subject));
+	}
+
+	/**
+	 * Removes each player from <code>subjects</code> from
+	 * <code>recipient</code>'s tablist.
+	 *
+	 * @param recipient the player whose tablist will be modified
+	 * @param subjects  the players removed from the tablist
+	 * @return whether the info packet was successfully sent
+	 * @since 0.3.1
+	 */
+	public static boolean removePlayers(Player recipient, Collection<? extends Player> subjects) {
+		return sendPlayerInfoPacket(recipient, subjects, false);
 	}
 
 	/**
@@ -202,29 +227,39 @@ public class NmsUtil {
 	 * @return whether the info packet was successfully sent
 	 * @since 0.3.1
 	 */
-	public static boolean removeFromTabList(Player recipient, Player subject) {
-		return sendPlayerInfoPacket(recipient, subject, false);
+	public static boolean removePlayer(Player recipient, Player subject) {
+		return removePlayers(recipient, Arrays.asList(subject));
 	}
 
-	private static boolean sendPlayerInfoPacket(final Player recipient, final Player subject, boolean visible) {
+	private static boolean sendPlayerInfoPacket(final Player recipient, final Collection<? extends Player> subjects, boolean visible) {
 		if (NMS_SUPPORT) {
 			try {
-				int ping = (Integer)entityPlayer_ping.get(craftPlayer_getHandle.invoke(subject));
-				Object packet;
 				if ((visible && enumPlayerInfoAction_addPlayer != null) ||
 						(!visible && enumPlayerInfoAction_removePlayer != null)) {
-					Object array = Array.newInstance(craftPlayer_getHandle.getReturnType(), 1);
-					Array.set(array, 0, craftPlayer_getHandle.invoke(subject));
-					packet = packetPlayOutPlayerInfo.newInstance(
+					Object array = Array.newInstance(craftPlayer_getHandle.getReturnType(), subjects.size());
+					int i = 0;
+					for (Player subject : subjects) {
+						Array.set(array, i, craftPlayer_getHandle.invoke(subject));
+						++i;
+					}
+					Object packet = packetPlayOutPlayerInfo.newInstance(
 							visible ? enumPlayerInfoAction_addPlayer : enumPlayerInfoAction_removePlayer,
 							array
 					);
+					playerConnection_sendPacket.invoke(
+							playerConnection.get(craftPlayer_getHandle.invoke(recipient)), packet);
 				}
 				else {
-					packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), visible, ping);
+					for (Player subject : subjects) {
+						if (subject == null) {
+							continue;
+						}
+						int ping = (Integer)entityPlayer_ping.get(craftPlayer_getHandle.invoke(subject));
+						Object packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), visible, ping);
+						playerConnection_sendPacket.invoke(
+								playerConnection.get(craftPlayer_getHandle.invoke(recipient)), packet);
+					}
 				}
-				playerConnection_sendPacket.invoke(
-						playerConnection.get(craftPlayer_getHandle.invoke(recipient)), packet);
 				return true;
 			}
 			catch (Exception ex) { // just in case

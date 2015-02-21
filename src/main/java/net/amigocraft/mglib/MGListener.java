@@ -91,6 +91,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -354,17 +355,25 @@ class MGListener implements Listener {
 		// no idea why it needs to be in a scheduler, but it doesn't work if it's not
 		Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
+				List<Player> toAdd = new ArrayList<Player>();
+				List<Player> toRemove = new ArrayList<Player>();
 				outer:
 				for (Player pl : NmsUtil.getOnlinePlayers()) {
 					for (Minigame mg : Minigame.getMinigameInstances()) {
 						if (mg.isPlayer(pl.getName())) {
-							NmsUtil.removeFromTabList(pl, e.getPlayer());
-							NmsUtil.removeFromTabList(e.getPlayer(), pl);
+							NmsUtil.removePlayer(pl, e.getPlayer());
+							toRemove.add(pl);
 							continue outer;
 						}
 					}
-					NmsUtil.addToTabList(pl, e.getPlayer());
-					NmsUtil.addToTabList(e.getPlayer(), pl);
+					NmsUtil.addPlayer(pl, e.getPlayer());
+					toAdd.add(pl);
+				}
+				if (!toAdd.isEmpty()) {
+					NmsUtil.addPlayers(e.getPlayer(), toAdd);
+				}
+				if (!toRemove.isEmpty()) {
+					NmsUtil.removePlayers(e.getPlayer(), toRemove);
 				}
 			}
 		});

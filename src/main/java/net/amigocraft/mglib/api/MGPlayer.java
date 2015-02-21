@@ -214,10 +214,10 @@ public class MGPlayer implements Metadatable {
 				for (final Player pl : Bukkit.getWorld(this.getRound().getWorld()).getPlayers()) {
 					pl.hidePlayer(p);
 					if (this.getRound().getConfigManager().areSpectatorsInTabList()) {
-						NmsUtil.addToTabList(pl, p);
+						NmsUtil.addPlayer(pl, p);
 					}
 					else {
-						NmsUtil.removeFromTabList(pl, p);
+						NmsUtil.removePlayer(pl, p);
 					}
 				}
 
