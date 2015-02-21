@@ -76,6 +76,7 @@ public class MGUtil {
 	 * @since 0.1.0
 	 */
 	public static MGYamlConfiguration loadArenaYaml(String plugin) {
+		@SuppressWarnings("deprecation")
 		JavaPlugin jp = Minigame.getMinigameInstance(plugin).getPlugin();
 		File f = new File(jp.getDataFolder(), "arenas.yml");
 		try {
@@ -103,6 +104,7 @@ public class MGUtil {
 	 * @param y      the {@link YamlConfiguration} to save
 	 */
 	public static void saveArenaYaml(String plugin, YamlConfiguration y) {
+		@SuppressWarnings("deprecation")
 		JavaPlugin jp = Minigame.getMinigameInstance(plugin).getPlugin();
 		File f = new File(jp.getDataFolder(), "arenas.yml");
 		try {

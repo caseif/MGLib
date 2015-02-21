@@ -96,7 +96,6 @@ public class RollbackManager {
 	 * @param arena the arena in which the block is contained
 	 * @since 0.1.0
 	 */
-	@SuppressWarnings("deprecation")
 	public void logBlockChange(Block block, String arena) {
 		if (!y.isSet(arena + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ())) {
 			y.createSection(arena + ".blockChanges." + block.getX() + "," + block.getY() + "," + block.getZ());
@@ -106,7 +105,9 @@ public class RollbackManager {
 		cs.set("world", block.getWorld().getName());
 		if (!cs.isSet("type")) { // make sure it hasn't already been changed
 			cs.set("type", block.getType().toString());
-			cs.set("data", block.getData());
+			@SuppressWarnings("deprecation")
+			int data = block.getData();
+			cs.set("data", data);
 			if (block.getState() instanceof Sign) {
 				for (int i = 0; i < 4; i++) {
 					cs.set("sign-text-" + i, ((Sign)block.getState()).getLine(i));

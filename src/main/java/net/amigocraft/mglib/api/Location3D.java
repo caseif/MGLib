@@ -411,6 +411,7 @@ public class Location3D {
 	 * @since 0.3.0
 	 */
 	@Deprecated
+	@SuppressWarnings("deprecation")
 	public static Location3D valueOf(Location location) {
 		return valueOf(location, false);
 	}

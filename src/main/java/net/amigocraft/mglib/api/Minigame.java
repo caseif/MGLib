@@ -217,6 +217,7 @@ public class Minigame {
 		Round r = null;
 		if (this.customRoundClass) {
 			try {
+				@SuppressWarnings("deprecation")
 				Constructor<?> con = getConfigManager().getRoundClass().getDeclaredConstructor(String.class, String.class);
 				r = (Round)con.newInstance(plugin.getName(), arena.toLowerCase());
 				r.setStage(Stage.WAITING); // default to waiting stage
@@ -226,10 +227,10 @@ public class Minigame {
 				Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", "Round", plugin.getName()));
 				ex.printStackTrace();
 			}
-			catch (InvocationTargetException ex) { // any error thrown from the called constructor
+			catch (InvocationTargetException ex) { // any exception thrown from the called constructor
 				ex.getTargetException().printStackTrace();
 			}
-			catch (SecurityException ex) { // I have no idea why this would happen.
+			catch (SecurityException ex) { // I have no idea why this would be possible
 				ex.printStackTrace();
 			}
 			catch (InstantiationException ex) { // if this happens then the overriding plugin screwed something up
@@ -421,7 +422,7 @@ public class Minigame {
 		}
 		y.set(name, null); // remove the arena from the arenas.yml file
 		MGUtil.saveArenaYaml(plugin.getName(), y);
-		Round r = Minigame.getMinigameInstance(plugin).getRound(name); // get the Round object if it exists
+		Round r = Minigame.getMinigameInstance(plugin.getName()).getRound(name); // get the Round object if it exists
 		if (r != null) {
 			r.end(); // end the round
 			r.destroy(); // get rid of the object (or just its assets)

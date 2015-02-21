@@ -124,7 +124,7 @@ public class LobbyManager {
 					throw new NullPointerException();
 				}
 				save(ls);
-				signs.put(Location3D.valueOf(l), ls);
+				signs.put(MGUtil.fromBukkitLocation(l), ls);
 				update(arena);
 			}
 			else {
@@ -274,7 +274,7 @@ public class LobbyManager {
 								y.getString(k + ".arena"), y.getInt(k + ".number"),
 								LobbyType.fromString(y.getString(k + ".type").toUpperCase()));
 						ls.setIndex(Integer.parseInt(k));
-						signs.put(Location3D.valueOf(l), ls);
+						signs.put(MGUtil.fromBukkitLocation(l), ls);
 					}
 					else {
 						Main.log.warning(Main.locale.getMessage("lobby.alert.incomplete", plugin, k));

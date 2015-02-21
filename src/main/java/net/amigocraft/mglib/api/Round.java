@@ -83,7 +83,7 @@ public class Round implements Metadatable {
 	private int maxPlayers;
 	private int prepareTime;
 	private int roundTime;
-	private Location exitLocation;
+	private Location3D exitLocation;
 
 	private String plugin;
 	private int time = 0;
@@ -159,7 +159,7 @@ public class Round implements Metadatable {
 		this.roundTime = cm.getDefaultPlayingTime();
 		this.minPlayers = cm.getMinPlayers();
 		this.maxPlayers = cm.getMaxPlayers();
-		this.exitLocation = cm.getDefaultExitLocation();
+		this.exitLocation = MGUtil.fromBukkitLocation(cm.getDefaultExitLocation());
 		this.damage = cm.isDamageAllowed();
 		this.pvp = cm.isPvPAllowed();
 		this.rollback = cm.isRollbackEnabled();
@@ -604,7 +604,8 @@ public class Round implements Metadatable {
 							// this whole bit handles keeping player inside the arena
 							//TODO: Possibly make an event for when a player wanders out of an arena
 							for (MGPlayer p : r.getPlayerList()) {
-								Player pl = p.getBukkitPlayer();
+								@SuppressWarnings("deprecation")
+								Player pl = Bukkit.getPlayer(p.getName());
 								Location l = pl.getLocation();
 								boolean event = true;
 								boolean toggleFlip = false;
@@ -844,14 +845,15 @@ public class Round implements Metadatable {
 	 * @throws RoundFullException     if the round is full
 	 * @since 0.3.0
 	 */
-	@SuppressWarnings("deprecation")
 	public JoinResult addPlayer(String name, int spawn)
 			throws PlayerOfflineException, PlayerPresentException, RoundFullException {
+		@SuppressWarnings("deprecation")
 		final Player p = Bukkit.getPlayer(name);
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null) {
 			if (this.getMinigame().customPlayerClass) {
 				try {
+					@SuppressWarnings("deprecation")
 					Constructor<?> con = getConfigManager().getPlayerClass()
 							.getDeclaredConstructor(String.class, String.class, String.class);
 					mp = (MGPlayer)con.newInstance(plugin, name, arena.toLowerCase());
@@ -964,7 +966,7 @@ public class Round implements Metadatable {
 		else {
 			mp.setSpectating(false);
 		}
-		mp.setPrevGameMode(p.getGameMode());
+		mp.setPrevGameMode(GameMode.getGameMode(p.getGameMode().name()));
 		p.setGameMode(org.bukkit.GameMode.valueOf(getConfigManager().getDefaultGameMode().name()));
 		players.put(name, mp); // register player with round object
 		mp.spawnIn(spawn);
@@ -1033,8 +1035,9 @@ public class Round implements Metadatable {
 	 * @throws PlayerOfflineException if the given player is offline
 	 * @since 0.1.0
 	 */
+	@SuppressWarnings("deprecation")
 	public void removePlayer(String name) throws PlayerOfflineException, NoSuchPlayerException {
-		removePlayer(name, getConfigManager().getDefaultExitLocation());
+		removePlayer(name, MGUtil.fromBukkitLocation(getConfigManager().getDefaultExitLocation()));
 	}
 
 	/**
@@ -1113,11 +1116,14 @@ public class Round implements Metadatable {
 	 * Retrieves this round's exit location.
 	 *
 	 * @return this round's exit location
+	 * @deprecated Depends on Bukkit
 	 * @since 0.1.0
 	 */
-	//TODO: deprecate
+	@Deprecated
 	public Location getExitLocation() {
-		return exitLocation;
+		return new Location(Bukkit.getWorld(exitLocation.getWorld()),
+				exitLocation.getX(), exitLocation.getY(), exitLocation.getZ(),
+				exitLocation.getYaw(), exitLocation.getPitch());
 	}
 
 	/**
@@ -1126,8 +1132,20 @@ public class Round implements Metadatable {
 	 * @param location the new exit location for this round
 	 * @since 0.1.0
 	 */
-	public void setExitLocation(Location location) {
+	public void setExitLocation(Location3D location) {
 		this.exitLocation = location;
+	}
+
+	/**
+	 * Sets this round's exit location.
+	 *
+	 * @param location the new exit location for this round
+	 * @deprecated Depends on Bukkit. Use {@link Round#setExitLocation(Location3D)}.
+	 * @since 0.1.0
+	 */
+	@Deprecated
+	public void setExitLocation(Location location) {
+		setExitLocation(MGUtil.fromBukkitLocation(location));
 	}
 
 	/**
@@ -1222,8 +1240,10 @@ public class Round implements Metadatable {
 	 */
 	public void broadcast(String message, boolean broadcastToSpectators) {
 		for (MGPlayer p : players.values()) {
-			if ((!p.isSpectating() || broadcastToSpectators) && p.getBukkitPlayer() != null) {
-				p.getBukkitPlayer().sendMessage(message);
+			@SuppressWarnings("deprecation")
+			Player bP = Bukkit.getPlayer(p.getName());
+			if ((!p.isSpectating() || broadcastToSpectators) && bP != null) {
+				bP.sendMessage(message);
 			}
 		}
 	}

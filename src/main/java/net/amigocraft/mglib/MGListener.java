@@ -340,7 +340,7 @@ class MGListener implements Listener {
 				final double yy = y.getDouble(pUuid + ".y");
 				final double zz = y.getDouble(pUuid + ".z");
 				MGPlayer mp = new MGPlayer("MGLib", p, "null");
-				mp.reset(new Location(Bukkit.getWorld(ww), xx, yy, zz));
+				mp.reset(MGUtil.fromBukkitLocation(new Location(Bukkit.getWorld(ww), xx, yy, zz)));
 				y.set(pUuid.toString(), null);
 				y.save(f);
 			}
@@ -358,8 +358,8 @@ class MGListener implements Listener {
 			for (Round r : mg.getRoundList()) {
 				MGPlayer p = r.getMGPlayer(e.getPlayer().getName());
 				if (p != null) {
-					Location l = e.getTo();
-					if (!l.getWorld().getName().equals(r.getWorld())) {
+					Location3D l = MGUtil.fromBukkitLocation(e.getTo());
+					if (!l.getWorld().equals(r.getWorld())) {
 						found = true;
 						try {
 							p.removeFromRound(l);
@@ -436,7 +436,7 @@ class MGListener implements Listener {
 							if (r.hasMetadata("tntBlocks")) {
 								list = (List<Location3D>)r.getMetadata("tntBlocks");
 							}
-							list.add(Location3D.valueOf(e.getBlock().getLocation()));
+							list.add(MGUtil.fromBukkitLocation(e.getBlock().getLocation()));
 							r.setMetadata("tntBlocks", list);
 						}
 						else {
@@ -873,6 +873,7 @@ class MGListener implements Listener {
 				if (r.hasMetadata("tntBlocks")) {
 					List<Location3D> list = (List<Location3D>)r.getMetadata("tntBlocks");
 					if (list.contains(new Location3D(
+							e.getLocation().getWorld().getName(),
 							e.getLocation().getBlockX(),
 							e.getLocation().getBlockY(),
 							e.getLocation().getBlockZ()

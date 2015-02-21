@@ -209,7 +209,8 @@ public class MGPlayer implements Metadatable {
 			if (event.isCancelled()) {
 				return;
 			}
-			final Player p = getBukkitPlayer();
+			@SuppressWarnings("deprecation")
+			final Player p = Bukkit.getPlayer(this.getName());
 			if (p != null) { // check that player is online
 				p.closeInventory(); // close any inventory they have open
 				if (NmsUtil.newOnlinePlayersMethod) {
@@ -246,7 +247,8 @@ public class MGPlayer implements Metadatable {
 			}
 		}
 		else {
-			Player p = getBukkitPlayer();
+			@SuppressWarnings("deprecation")
+			Player p = Bukkit.getPlayer(this.getName());
 			if (p != null) { // check that player is online
 				if (!Main.isVanillaSpectatingDisabled() &&
 						this.getRound().getConfigManager().isUsingVanillaSpectating()) {
@@ -337,6 +339,7 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.1.0
 	 */
 	@Deprecated
+	@SuppressWarnings("deprecation")
 	public void removeFromRound(Location location) throws NoSuchPlayerException, PlayerOfflineException {
 		getRound().removePlayer(name, location);
 	}
@@ -349,7 +352,7 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void removeFromRound() throws NoSuchPlayerException, PlayerOfflineException {
-		removeFromRound(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
+		removeFromRound(MGUtil.fromBukkitLocation(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation()));
 	}
 
 	/**
@@ -365,10 +368,6 @@ public class MGPlayer implements Metadatable {
 		if (p == null) { // check that the specified player is online
 			return;
 		}
-		// uncommenting this causes the method to stop dead in its tracks
-			/*for (String k : this.getAllMetadata().keySet()){
-				this.removeMetadata(k);
-			}*/
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(new ItemStack[4]);
 		for (PotionEffect pe : p.getActivePotionEffects()) {
@@ -437,7 +436,7 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void reset() throws PlayerOfflineException {
-		reset(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation());
+		reset(MGUtil.fromBukkitLocation(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation()));
 	}
 
 	/**
@@ -470,7 +469,7 @@ public class MGPlayer implements Metadatable {
 	 */
 	@Deprecated
 	public void setPrevGameMode(org.bukkit.GameMode gameMode) {
-		setPrevGameMode(GameMode.valueOf(gameMode.name()));
+		setPrevGameMode(GameMode.getGameMode(gameMode.name()));
 	}
 
 	/**
@@ -491,9 +490,12 @@ public class MGPlayer implements Metadatable {
 	 * if aesthetic ambiguity is not a point of concern.
 	 *
 	 * @return the {@link Bukkit Player} object for this {@link MGPlayer}
-	 * @deprecated Use {@link Bukkit#getPlayer(String)}
+	 * @deprecated Encourages poor coding practice; please use
+	 * {@link Bukkit#getPlayer(String)}
 	 * @since 0.3.0
 	 */
+	@Deprecated
+	@SuppressWarnings("deprecation")
 	public Player b() {
 		return getBukkitPlayer();
 	}
@@ -517,32 +519,33 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.3.0
 	 */
 	public void setFrozen(boolean frozen) {
+		@SuppressWarnings("deprecation")
+		Player p = Bukkit.getPlayer(this.getName());
 		if (frozen) {
 			if (!this.isFrozen()) {
-				this.setMetadata("prev-walk-speed", this.getBukkitPlayer().getWalkSpeed());
-				this.setMetadata("prev-fly-speed", this.getBukkitPlayer().getFlySpeed());
-				for (PotionEffect pe : getBukkitPlayer().getActivePotionEffects()) {
+				this.setMetadata("prev-walk-speed", p.getWalkSpeed());
+				this.setMetadata("prev-fly-speed", p.getFlySpeed());
+				for (PotionEffect pe : p.getActivePotionEffects()) {
 					if (pe.getType() == PotionEffectType.JUMP) {
 						this.setMetadata("prev-jump-level", pe.getAmplifier());
 						this.setMetadata("prev-jump-duration", pe.getDuration());
 					}
 				}
-				this.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
-				this.getBukkitPlayer().setWalkSpeed(0f);
-				this.getBukkitPlayer().setFlySpeed(0f);
+				p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
+				p.setWalkSpeed(0f);
+				p.setFlySpeed(0f);
 			}
 		}
 		else if (this.isFrozen()) {
-			this.getBukkitPlayer().setWalkSpeed(this.hasMetadata("prev-walk-speed") ?
-					(Float)this.getMetadata("prev-walk-speed") :
-					0.2f);
-			this.getBukkitPlayer().setFlySpeed(this.hasMetadata("prev-fly-speed") ?
-					(Float)this.getMetadata("prev-fly-speed") :
-					0.2f);
-			this.getBukkitPlayer().removePotionEffect(PotionEffectType.JUMP);
+			p.setWalkSpeed(this.hasMetadata("prev-walk-speed") ? (Float)this.getMetadata("prev-walk-speed") : 0.2f);
+			p.setFlySpeed(this.hasMetadata("prev-fly-speed") ? (Float)this.getMetadata("prev-fly-speed") : 0.2f);
+			p.removePotionEffect(PotionEffectType.JUMP);
 			if (this.hasMetadata("prev-jump-level")) {
-				this.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP,
-						(Integer)this.getMetadata("prev-jump-duration"), (Integer)this.getMetadata("prev-jump-level")));
+				p.addPotionEffect(new PotionEffect(
+						PotionEffectType.JUMP,
+						(Integer)this.getMetadata("prev-jump-duration"),
+						(Integer)this.getMetadata("prev-jump-level")
+				));
 			}
 			this.removeMetadata("prev-walk-speed");
 			this.removeMetadata("prev-fly-speed");
@@ -560,13 +563,15 @@ public class MGPlayer implements Metadatable {
 	 */
 	public void spawnIn(int spawn) {
 		Round r = this.getRound();
+		@SuppressWarnings("deprecation")
+		Player p = Bukkit.getPlayer(this.getName());
 		if (r != null) {
 			Location sp = (spawn >= 0 && r.getSpawns().size() > spawn) ?
 					r.getSpawns().get(spawn) :
 					r.getConfigManager().isRandomSpawning() ?
 							r.getSpawns().get(new Random().nextInt(r.getSpawns().size())) :
 							r.getSpawns().get(r.getPlayerList().size() % r.getSpawns().size());
-			this.getBukkitPlayer().teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
+			p.teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
 		}
 	}
 
