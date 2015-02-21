@@ -23,6 +23,7 @@
  */
 package net.amigocraft.mglib.event.round;
 
+import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.MGLibEvent;
@@ -47,8 +48,8 @@ public class MGRoundEvent extends MGLibEvent {
 	public MGRoundEvent(final Round round) {
 		super(round.getPlugin());
 		this.round = round;
-		if (Main.plugin.isEnabled()) {
-			Bukkit.getScheduler().runTaskLater(Main.plugin, new Runnable() {
+		if (MGUtil.getPlugin().isEnabled()) {
+			Bukkit.getScheduler().runTaskLater(MGUtil.getPlugin(), new Runnable() {
 				public void run() {
 					round.getMinigame().getLobbyManager().update(round.getArena());
 				}

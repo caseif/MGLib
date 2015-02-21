@@ -160,7 +160,7 @@ public class Locale {
 			String defaultLocale = Minigame.getMinigameInstance(plugin) != null ?
 			                       Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() :
 			                       "enUS";
-			String locale = Main.plugin.getConfig().getString("locale");
+			String locale = MGUtil.getPlugin().getConfig().getString("locale");
 			String loc = null;
 			try {
 				defaultIs = Bukkit.getPluginManager().getPlugin(plugin).getClass()

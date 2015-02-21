@@ -53,6 +53,20 @@ import java.io.File;
  */
 public class MGUtil {
 
+	static Main plugin;
+
+	/**
+	 * Returns the {@link JavaPlugin} instance for MGLib.
+	 *
+	 * <p><strong>This should not be called</strong> from a hooking plugin under
+	 * any circumstance.</p>
+	 *
+	 * @return the {@link JavaPlugin} instance for MGLib.
+	 * @since 0.3.1
+	 */
+	public static Main getPlugin() {
+		return plugin;
+	}
 
 	/**
 	 * Loads and returns the given plugin's arenas.yml file.

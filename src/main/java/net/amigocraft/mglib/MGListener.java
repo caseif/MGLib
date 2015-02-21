@@ -180,7 +180,7 @@ class MGListener implements Listener {
 							String pUuid = UUIDFetcher.getUUIDOf(p).toString();
 							UUIDFetcher.removeUUID(p);
 							YamlConfiguration y = new YamlConfiguration();
-							File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
+							File f = new File(MGUtil.getPlugin().getDataFolder(), "offlineplayers.yml");
 							if (!f.exists()) {
 								f.createNewFile();
 							}
@@ -321,7 +321,7 @@ class MGListener implements Listener {
 		}
 		try {
 			YamlConfiguration y = new YamlConfiguration();
-			File f = new File(Main.plugin.getDataFolder(), "offlineplayers.yml");
+			File f = new File(MGUtil.getPlugin().getDataFolder(), "offlineplayers.yml");
 			if (!f.exists()) {
 				f.createNewFile();
 			}

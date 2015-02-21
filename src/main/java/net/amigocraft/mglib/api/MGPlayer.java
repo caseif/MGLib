@@ -375,7 +375,7 @@ public class MGPlayer implements Metadatable {
 			p.removePotionEffect(pe.getType()); // remove any potion effects before sending them back to the lobby
 		}
 		try {
-			final File invF = new File(Main.plugin.getDataFolder() + File.separator + "inventories" + File.separator +
+			final File invF = new File(MGUtil.getPlugin().getDataFolder() + File.separator + "inventories" + File.separator +
 					UUIDFetcher.getUUIDOf(p.getName()) + ".dat");
 			if (invF.exists()) {
 				YamlConfiguration invY = new YamlConfiguration();

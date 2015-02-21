@@ -58,16 +58,6 @@ import java.util.logging.Logger;
 public class Main extends JavaPlugin {
 
 	/**
-	 * The current instance of the plugin.
-	 *
-	 * <p><strong>This is for use within the library; please do not modify this
-	 * in your plugin or everything will break.</strong></p>
-	 *
-	 * @since 0.1.0
-	 */
-	public static Main plugin;
-
-	/**
 	 * MGLib's logger.
 	 *
 	 * <p><strong>This is for use within the library; please do not use this in
@@ -108,7 +98,7 @@ public class Main extends JavaPlugin {
 	@SuppressWarnings("unchecked")
 	public void onEnable() {
 
-		plugin = this;
+		MGUtil.plugin = this;
 		log = getLogger();
 		Bukkit.getPluginManager().registerEvents(new MGListener(), this);
 		saveDefaultConfig();
@@ -211,7 +201,7 @@ public class Main extends JavaPlugin {
 
 	private static void uninitialize() {
 		log = null;
-		plugin = null;
+		MGUtil.plugin = null;
 	}
 
 	/**

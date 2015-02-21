@@ -575,7 +575,7 @@ public class Round implements Metadatable {
 				r.setStage(Stage.PLAYING);
 			}
 			if (time != -1) { // I'm pretty sure this is wrong, but I'm also pretty tired
-				timerHandle = Bukkit.getScheduler().runTaskTimer(Main.plugin, new Runnable() {
+				timerHandle = Bukkit.getScheduler().runTaskTimer(MGUtil.getPlugin(), new Runnable() {
 					public void run() {
 						int oldTime = r.getTime();
 						boolean stageChange = false;
@@ -920,8 +920,8 @@ public class Round implements Metadatable {
 		ItemStack leggings = pInv.getLeggings();
 		ItemStack boots = pInv.getBoots();
 		try {
-			File invDir = new File(Main.plugin.getDataFolder(), "inventories");
-			File invF = new File(Main.plugin.getDataFolder() + File.separator +
+			File invDir = new File(MGUtil.getPlugin().getDataFolder(), "inventories");
+			File invF = new File(MGUtil.getPlugin().getDataFolder() + File.separator +
 					"inventories" + File.separator +
 					UUIDFetcher.getUUIDOf(p.getName()) + ".dat");
 			if (!invF.exists()) {

@@ -155,7 +155,7 @@ public class ArenaFactory {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		}
 		yaml.set(arena + ".displayname", displayName);
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}
@@ -171,7 +171,7 @@ public class ArenaFactory {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		}
 		yaml.set(arena + ".world", world);
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}
@@ -224,7 +224,7 @@ public class ArenaFactory {
 		cs.set("spawns." + min + ".z", (int)Math.floor(z));
 		cs.set("spawns." + min + ".pitch", pitch);
 		cs.set("spawns." + min + ".yaw", yaw);
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}
@@ -355,7 +355,7 @@ public class ArenaFactory {
 				spawns.set(k, null); // delete it from the config
 			}
 		}
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}
@@ -420,7 +420,7 @@ public class ArenaFactory {
 				}
 			}
 		}
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}
@@ -455,7 +455,7 @@ public class ArenaFactory {
 		cs.set("minX", x);
 		cs.set("minY", y);
 		cs.set("minZ", z);
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}
@@ -525,7 +525,7 @@ public class ArenaFactory {
 		cs.set("maxX", x);
 		cs.set("maxY", y);
 		cs.set("maxZ", z);
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}
@@ -585,7 +585,7 @@ public class ArenaFactory {
 			Bukkit.getScheduler().cancelTask(timerHandle);
 		}
 		yaml.set(arena + "." + key, value);
-		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, new Runnable() {
+		timerHandle = Bukkit.getScheduler().runTaskLaterAsynchronously(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				writeChanges();
 			}

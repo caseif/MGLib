@@ -99,14 +99,14 @@ public class Minigame {
 		rbManager.checkRollbacks(); // roll back any arenas which were left un-rolled back
 		lobbyManager = new LobbyManager(plugin.getName());
 		lobbyManager.loadSigns();
-		Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
+		Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
 			public void run() {
 				lobbyManager.reset();
 			}
 		});
 		Main.registerWorlds(plugin.getName()); // registers worlds containing arenas for use with the event listener
 		locale = new Locale(plugin.getName());
-		Bukkit.getScheduler().runTask(Main.plugin, new Runnable() {
+		Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
 			// add delay so that the plugin has a chance to change its default locale
 			//TODO: locale messages are not available in the same method call that constructs this object
 			public void run() {

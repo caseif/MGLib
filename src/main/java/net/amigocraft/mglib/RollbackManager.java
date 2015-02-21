@@ -76,7 +76,7 @@ public class RollbackManager {
 			Main.log.severe("An exception occurred while initializing the rollback manager for plugin " +
 					plugin.getName());
 		}
-		logging = Main.plugin.getConfig().getBoolean("rollback-logging");
+		logging = MGUtil.getPlugin().getConfig().getBoolean("rollback-logging");
 	}
 
 	/**
