@@ -310,7 +310,7 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	// so that we can prepare everything for the hooking plugins
-	public void onPlayerJoin(PlayerJoinEvent e) {
+	public void onPlayerJoin(final PlayerJoinEvent e) {
 		final String p = e.getPlayer().getName();
 		try {
 			UUIDFetcher.addUUID(p, UUIDFetcher.getUUIDOf(p));
@@ -349,6 +349,25 @@ class MGListener implements Listener {
 			ex.printStackTrace();
 			Main.log.severe(Main.locale.getMessage("plugin.alert.data.load", p));
 		}
+
+		// update tablist
+		// no idea why it needs to be in a scheduler, but it doesn't work if it's not
+		Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
+			public void run() {
+				outer:
+				for (Player pl : NmsUtil.getOnlinePlayers()) {
+					for (Minigame mg : Minigame.getMinigameInstances()) {
+						if (mg.isPlayer(pl.getName())) {
+							NmsUtil.removeFromTabList(pl, e.getPlayer());
+							NmsUtil.removeFromTabList(e.getPlayer(), pl);
+							continue outer;
+						}
+					}
+					NmsUtil.addToTabList(pl, e.getPlayer());
+					NmsUtil.addToTabList(e.getPlayer(), pl);
+				}
+			}
+		});
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

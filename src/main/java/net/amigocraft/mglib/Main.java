@@ -40,9 +40,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -134,27 +132,8 @@ public class Main extends JavaPlugin {
 
 		// store UUIDs of online players
 		List<String> names = new ArrayList<String>();
-		try {
-			if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) {
-				for (Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers",
-						new Class<?>[0]).invoke(null)) {
-					names.add(pl.getName());
-				}
-			}
-			else {
-				for (Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)) {
-					names.add(pl.getName());
-				}
-			}
-		}
-		catch (NoSuchMethodException ex) { // can never happen
-			ex.printStackTrace();
-		}
-		catch (InvocationTargetException ex) { // can also never happen
-			ex.printStackTrace();
-		}
-		catch (IllegalAccessException ex) { // can still never happen
-			ex.printStackTrace();
+		for (Player pl : NmsUtil.getOnlinePlayers()) {
+			names.add(pl.getName());
 		}
 		try {
 			new UUIDFetcher(names).call();

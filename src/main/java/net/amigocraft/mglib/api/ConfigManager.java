@@ -139,7 +139,7 @@ public class ConfigManager {
 	 * the spawn point of the main world).
 	 *
 	 * @return the default exit location for players upon round end
-	 * @deprecated Use {@link ConfigManager#getDefaultExitLocation()}
+	 * @deprecated Depends on Bukkit
 	 * @since 0.1.0
 	 */
 	//TODO: figure out how to transition to Location3D

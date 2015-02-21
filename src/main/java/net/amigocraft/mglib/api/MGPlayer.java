@@ -49,8 +49,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -213,20 +211,13 @@ public class MGPlayer implements Metadatable {
 			final Player p = Bukkit.getPlayer(this.getName());
 			if (p != null) { // check that player is online
 				p.closeInventory(); // close any inventory they have open
-				if (NmsUtil.newOnlinePlayersMethod) {
-					for (final Player pl : (Collection<? extends Player>)NmsUtil.getOnlinePlayers()) {
-						pl.hidePlayer(p);
-						if (this.getRound().getConfigManager().areSpectatorsInTabList()) {
-							NmsUtil.sendPlayerInfoPacket(pl, p);
-						}
+				for (final Player pl : Bukkit.getWorld(this.getRound().getWorld()).getPlayers()) {
+					pl.hidePlayer(p);
+					if (this.getRound().getConfigManager().areSpectatorsInTabList()) {
+						NmsUtil.addToTabList(pl, p);
 					}
-				}
-				else {
-					for (final Player pl : (Player[])NmsUtil.getOnlinePlayers()) {
-						pl.hidePlayer(p);
-						if (this.getRound().getConfigManager().areSpectatorsInTabList()) {
-							NmsUtil.sendPlayerInfoPacket(pl, p);
-						}
+					else {
+						NmsUtil.removeFromTabList(pl, p);
 					}
 				}
 
@@ -254,29 +245,8 @@ public class MGPlayer implements Metadatable {
 						this.getRound().getConfigManager().isUsingVanillaSpectating()) {
 					p.setGameMode(org.bukkit.GameMode.valueOf(this.getRound().getConfigManager().getDefaultGameMode().toString()));
 				}
-				try {
-					if (Bukkit.class.getMethod("getOnlinePlayers",
-							new Class<?>[0]).getReturnType() == Collection.class) {
-						for (Player pl : (Collection<? extends Player>)Bukkit.class.getMethod("getOnlinePlayers",
-								new Class<?>[0]).invoke(null)) {
-							pl.showPlayer(p);
-						}
-					}
-					else {
-						for (Player pl : (Player[])Bukkit.class.getMethod("getOnlinePlayers",
-								new Class<?>[0]).invoke(null)) {
-							pl.showPlayer(p);
-						}
-					}
-				}
-				catch (NoSuchMethodException ex) { // can never happen
-					ex.printStackTrace();
-				}
-				catch (InvocationTargetException ex) { // can also never happen
-					ex.printStackTrace();
-				}
-				catch (IllegalAccessException ex) { // can still never happen
-					ex.printStackTrace();
+				for (Player pl : NmsUtil.getOnlinePlayers()) {
+					pl.showPlayer(p);
 				}
 				if (getRound() != null) {
 					// set them to the default gamemode for arenas
@@ -567,10 +537,10 @@ public class MGPlayer implements Metadatable {
 		Player p = Bukkit.getPlayer(this.getName());
 		if (r != null) {
 			Location sp = (spawn >= 0 && r.getSpawns().size() > spawn) ?
-					r.getSpawns().get(spawn) :
-					r.getConfigManager().isRandomSpawning() ?
-							r.getSpawns().get(new Random().nextInt(r.getSpawns().size())) :
-							r.getSpawns().get(r.getPlayerList().size() % r.getSpawns().size());
+			              r.getSpawns().get(spawn) :
+			              r.getConfigManager().isRandomSpawning() ?
+			              r.getSpawns().get(new Random().nextInt(r.getSpawns().size())) :
+			              r.getSpawns().get(r.getPlayerList().size() % r.getSpawns().size());
 			p.teleport(sp, TeleportCause.PLUGIN); // teleport the player to it
 		}
 	}

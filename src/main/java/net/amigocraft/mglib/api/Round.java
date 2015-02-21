@@ -48,6 +48,7 @@ import net.amigocraft.mglib.misc.JoinResult;
 import net.amigocraft.mglib.misc.Metadatable;
 
 import com.google.common.collect.Lists;
+import net.amigocraft.mglib.util.NmsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -66,6 +67,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -935,18 +937,10 @@ public class Round implements Metadatable {
 			for (int i = 0; i < contents.length; i++) {
 				invY.set(Integer.toString(i), contents[i]);
 			}
-			if (helmet != null) {
-				invY.set("h", helmet);
-			}
-			if (chestplate != null) {
-				invY.set("c", chestplate);
-			}
-			if (leggings != null) {
-				invY.set("l", leggings);
-			}
-			if (boots != null) {
-				invY.set("b", boots);
-			}
+			invY.set("h", helmet);
+			invY.set("c", chestplate);
+			invY.set("l", leggings);
+			invY.set("b", boots);
 			invY.save(invF);
 		}
 		catch (Exception ex) {
@@ -960,15 +954,22 @@ public class Round implements Metadatable {
 		for (PotionEffect pe : p.getActivePotionEffects()) {
 			p.removePotionEffect(pe.getType()); // remove any potion effects before adding the player
 		}
-		if ((getStage() == Stage.PREPARING || getStage() == Stage.PLAYING) && getConfigManager().getSpectateOnJoin()) {
-			mp.setSpectating(true);
-		}
-		else {
-			mp.setSpectating(false);
-		}
+		mp.setSpectating((getStage() == Stage.PREPARING || getStage() == Stage.PLAYING) && getConfigManager().getSpectateOnJoin());
 		mp.setPrevGameMode(GameMode.getGameMode(p.getGameMode().name()));
 		p.setGameMode(org.bukkit.GameMode.valueOf(getConfigManager().getDefaultGameMode().name()));
 		players.put(name, mp); // register player with round object
+		// update everyone's tablist
+		// this needs to be called before the player is teleported
+		for (Player pl : NmsUtil.getOnlinePlayers()) {
+			if (players.containsKey(pl.getName())) {
+				NmsUtil.addToTabList(pl, p);
+				NmsUtil.addToTabList(p, pl);
+			}
+			else {
+				NmsUtil.removeFromTabList(pl, p);
+				NmsUtil.removeFromTabList(p, pl);
+			}
+		}
 		mp.spawnIn(spawn);
 		if (getStage() == Stage.WAITING && getPlayerCount() >= getMinPlayers() && getPlayerCount() > 0) {
 			start();
@@ -987,7 +988,8 @@ public class Round implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void removePlayer(String name, Location3D location) throws PlayerOfflineException, NoSuchPlayerException {
-		@SuppressWarnings("deprecation") Player p = Bukkit.getPlayer(name);
+		@SuppressWarnings("deprecation")
+		final Player p = Bukkit.getPlayer(name);
 		MGPlayer mp = players.get(name);
 		if (mp == null) {
 			throw new NoSuchPlayerException();
@@ -1001,8 +1003,22 @@ public class Round implements Metadatable {
 			mp.setSpectating(false); // make sure they're not spectating when they join a new round
 			players.remove(name); // remove player from round
 			p.setGameMode(org.bukkit.GameMode.valueOf(mp.getPrevGameMode().name())); // restore the player's gamemode
-			mp.reset(location); // reset the object and send the player to the exit point
 			mp.setArena(null); // they're not in an arena anymore
+			// update everyone's tablist
+			// this needs to be called before the player is teleported
+			outer:
+			for (Player pl : NmsUtil.getOnlinePlayers()) {
+				for (Minigame mg : Minigame.getMinigameInstances()) {
+					if (mg.isPlayer(pl.getName())) {
+						NmsUtil.removeFromTabList(pl, p);
+						NmsUtil.removeFromTabList(p, pl);
+						continue outer;
+					}
+				}
+				NmsUtil.addToTabList(pl, p);
+				NmsUtil.addToTabList(p, pl);
+			}
+			mp.reset(location); // reset the object and send the player to the exit point
 			if (this.getPlayerCount() < this.getMinPlayers()) {
 				this.setStage(Stage.WAITING);
 			}

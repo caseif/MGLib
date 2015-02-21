@@ -36,6 +36,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -63,6 +64,7 @@ public class NmsUtil {
 	// for removing players from the player list
 	private static Constructor<?> packetPlayOutPlayerInfo;
 	private static Object enumPlayerInfoAction_addPlayer;
+	private static Object enumPlayerInfoAction_removePlayer;
 	private static Field entityPlayer_ping;
 
 	private static Method getOnlinePlayers;
@@ -98,6 +100,7 @@ public class NmsUtil {
 					Class<? extends Enum> enumPlayerInfoAction =
 							(Class<? extends Enum>)getNmsClass("EnumPlayerInfoAction");
 					enumPlayerInfoAction_addPlayer = Enum.valueOf(enumPlayerInfoAction, "ADD_PLAYER");
+					enumPlayerInfoAction_removePlayer = Enum.valueOf(enumPlayerInfoAction, "REMOVE_PLAYER");
 					packetPlayOutPlayerInfo = getNmsClass("PacketPlayOutPlayerInfo").getConstructor(
 							enumPlayerInfoAction_addPlayer.getClass(),
 							Array.newInstance(craftPlayer_getHandle.getReturnType(), 0).getClass()
@@ -180,25 +183,45 @@ public class NmsUtil {
 	}
 
 	/**
-	 * Sends a PlayerInfoPacket to the specified {@link org.bukkit.entity.Player}.
+	 * Adds <code>subject</code> to <code>recipient</code>'s tablist.
 	 *
-	 * @param recipient the player to receive the packet
-	 * @param subject   the player addressed by the packet
-	 * @return whether the packet was successfully sent
-	 * @since 0.3.0
+	 * @param recipient the player whose tablist will be modified
+	 * @param subject   the player added to the tablist
+	 * @return whether the info packet was successfully sent
+	 * @since 0.3.1
 	 */
-	public static boolean sendPlayerInfoPacket(final Player recipient, final Player subject) {
+	public static boolean addToTabList(Player recipient, Player subject) {
+		return sendPlayerInfoPacket(recipient, subject, true);
+	}
+
+	/**
+	 * Removes <code>subject</code> from <code>recipient</code>'s tablist.
+	 *
+	 * @param recipient the player whose tablist will be modified
+	 * @param subject   the player removed from the tablist
+	 * @return whether the info packet was successfully sent
+	 * @since 0.3.1
+	 */
+	public static boolean removeFromTabList(Player recipient, Player subject) {
+		return sendPlayerInfoPacket(recipient, subject, false);
+	}
+
+	private static boolean sendPlayerInfoPacket(final Player recipient, final Player subject, boolean visible) {
 		if (NMS_SUPPORT) {
 			try {
 				int ping = (Integer)entityPlayer_ping.get(craftPlayer_getHandle.invoke(subject));
 				Object packet;
-				if (enumPlayerInfoAction_addPlayer != null) {
+				if ((visible && enumPlayerInfoAction_addPlayer != null) ||
+						(!visible && enumPlayerInfoAction_removePlayer != null)) {
 					Object array = Array.newInstance(craftPlayer_getHandle.getReturnType(), 1);
 					Array.set(array, 0, craftPlayer_getHandle.invoke(subject));
-					packet = packetPlayOutPlayerInfo.newInstance(enumPlayerInfoAction_addPlayer, array);
+					packet = packetPlayOutPlayerInfo.newInstance(
+							visible ? enumPlayerInfoAction_addPlayer : enumPlayerInfoAction_removePlayer,
+							array
+					);
 				}
 				else {
-					packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), true, ping);
+					packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), visible, ping);
 				}
 				playerConnection_sendPacket.invoke(
 						playerConnection.get(craftPlayer_getHandle.invoke(recipient)), packet);
@@ -226,14 +249,18 @@ public class NmsUtil {
 	/**
 	 * Version-independent getOnlinePlayers() method.
 	 *
-	 * @return a list of online players in the form of a
-	 * {@link org.bukkit.entity.Player} array or {@link java.util.List},
-	 * depending on the server software version.
+	 * @return a list of online players
 	 * @since 0.3.1
 	 */
-	public static Object getOnlinePlayers() {
+	@SuppressWarnings("unchecked")
+	public static Collection<? extends Player> getOnlinePlayers() {
 		try {
-			return getOnlinePlayers.invoke(null);
+			if (newOnlinePlayersMethod) {
+				return (Collection<? extends Player>)getOnlinePlayers.invoke(null);
+			}
+			else {
+				return Arrays.asList((Player[])getOnlinePlayers.invoke(null));
+			}
 		}
 		catch (IllegalAccessException ex) {
 			ex.printStackTrace();
