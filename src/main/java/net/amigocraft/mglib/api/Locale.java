@@ -173,14 +173,17 @@ public class Locale {
 			}
 			catch (Exception ex) {
 				is = Bukkit.getPluginManager().getPlugin(plugin).getClass()
-						.getResourceAsStream("/locales/" + locale +".properties");
+						.getResourceAsStream("/locales/" + locale + ".properties");
 				if (is == null) {
 					try {
 						if (defaultIs == null) {
 							try {
-								defaultIs = Bukkit.getPluginManager().getPlugin(plugin).getClass().getResourceAsStream("/locales/" + defaultLocale + ".csv");
+								defaultIs = Bukkit.getPluginManager().getPlugin(plugin).getClass()
+										.getResourceAsStream("/locales/" + defaultLocale + ".csv");
 							}
-							catch (Exception swallow) {} // eh
+							catch (Exception swallow) {
+								// meh
+							}
 							File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() +
 									File.separator + "locales" + File.separator + locale + ".csv");
 							is = new FileInputStream(file);

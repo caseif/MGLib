@@ -34,27 +34,30 @@ ext.versionSuffix = version.contains('SNAPSHOT') ? (
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
-ext {
-	bukkit = 'org.bukkit:bukkit:1.8-R0.1-SNAPSHOT'
-	updater = 'net.gravitydevelopment.updater:updater:2.3'
+configurations {
+    deployerJars
 }
+
 
 // Project repositories
 repositories {
 	mavenCentral()
 	maven { url 'http://hub.spigotmc.org/nexus/content/groups/public/' }
-	maven { url 'http://repo.amigocraft.net/content/groups/public/' }
+	maven { url 'http://repo.caseif.net/content/groups/public/' }
 	maven { url 'http://repo.gravitydevelopment.net' }
+    maven { url 'http://repo.mcstats.org/content/repositories/public' }
 }
 
-configurations {
-	deployerJars
+ext {
+    bukkit = 'org.bukkit:bukkit:1.8-R0.1-SNAPSHOT'
+    updater = 'net.gravitydevelopment.updater:updater:2.3'
+    metrics = 'org.mcstats.bukkit:metrics:R7'
 }
-
 // Project dependencies
 dependencies {
 	compile bukkit
 	compile updater
+    compile metrics
 
 	deployerJars 'org.apache.maven.wagon:wagon-ssh:2.8'
 }
@@ -75,6 +78,7 @@ jar {
 shadowJar {
 	dependencies {
 		include dependency(updater)
+        include dependency(metrics)
 	}
 	classifier = ''
 }
