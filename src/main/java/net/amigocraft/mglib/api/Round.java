@@ -850,6 +850,10 @@ public class Round implements Metadatable {
 			throws PlayerOfflineException, PlayerPresentException, RoundFullException {
 		@SuppressWarnings("deprecation")
 		final Player p = Bukkit.getPlayer(name);
+		if (p == null) { // check that the specified player is online
+			throw new PlayerOfflineException();
+		}
+		Main.log.info(p.getGameMode().name());
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null) {
 			if (this.getMinigame().customPlayerClass) {
@@ -893,9 +897,7 @@ public class Round implements Metadatable {
 		else {
 			throw new PlayerPresentException();
 		}
-		if (p == null) { // check that the specified player is online
-			throw new PlayerOfflineException();
-		}
+		Main.log.info(p.getGameMode().name());
 		if (getPlayerCount() >= getMaxPlayers() && getMaxPlayers() > 0) {
 			throw new RoundFullException();
 		}
@@ -953,8 +955,10 @@ public class Round implements Metadatable {
 		for (PotionEffect pe : p.getActivePotionEffects()) {
 			p.removePotionEffect(pe.getType()); // remove any potion effects before adding the player
 		}
-		mp.setSpectating((getStage() == Stage.PREPARING || getStage() == Stage.PLAYING) && getConfigManager().getSpectateOnJoin());
 		mp.setPrevGameMode(GameMode.getGameMode(p.getGameMode().name()));
+		if ((getStage() == Stage.PREPARING || getStage() == Stage.PLAYING) && getConfigManager().getSpectateOnJoin()) {
+			mp.setSpectating(true);
+		}
 		p.setGameMode(org.bukkit.GameMode.valueOf(getConfigManager().getDefaultGameMode().name()));
 		players.put(name, mp); // register player with round object
 		// update everyone's tablist

@@ -243,7 +243,7 @@ public class MGPlayer implements Metadatable {
 			if (p != null) { // check that player is online
 				if (!Main.isVanillaSpectatingDisabled() &&
 						this.getRound().getConfigManager().isUsingVanillaSpectating()) {
-					p.setGameMode(org.bukkit.GameMode.valueOf(this.getRound().getConfigManager().getDefaultGameMode().toString()));
+					p.setGameMode(org.bukkit.GameMode.valueOf(this.getRound().getConfigManager().getDefaultGameMode().name()));
 				}
 				for (Player pl : NmsUtil.getOnlinePlayers()) {
 					pl.showPlayer(p);
@@ -410,9 +410,13 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * You probably shouldn't use this unless you know what it does.
+	 * Gets the gamemode MGLib will impose upon the player upon round exit.
 	 *
-	 * @return the player's previous gamemode
+	 * <p>This method typically <strong>should not</strong> be called from
+	 * outside the library.</p>
+	 *
+	 * @return the gamemode MGLib will impose upon the player upon round
+	 *                 exit.
 	 * @since 0.1.0
 	 */
 	//TODO: deprecate
@@ -421,9 +425,13 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * You probably shouldn't use this unless you know what it does.
+	 * Sets the gamemode MGLib will impose upon the player upon round exit.
 	 *
-	 * @param gameMode the player's previous gamemode
+	 * <p>This method typically <strong>should not</strong> be called from
+	 * outside the library.</p>
+	 *
+	 * @param gameMode the gamemode MGLib will impose upon the player upon round
+	 *                 exit.
 	 * @since 0.3.1
 	 */
 	public void setPrevGameMode(GameMode gameMode) {
@@ -431,9 +439,13 @@ public class MGPlayer implements Metadatable {
 	}
 
 	/**
-	 * You probably shouldn't use this unless you know what it does.
+	 * Sets the gamemode MGLib will impose upon the player upon round exit.
 	 *
-	 * @param gameMode the player's previous gamemode
+	 * <p>This method typically <strong>should not</strong> be called from
+	 * outside the library.</p>
+	 *
+	 * @param gameMode the gamemode MGLib will impose upon the player upon round
+	 *                 exit.
 	 * @deprecated Use {@link MGPlayer#setPrevGameMode(GameMode)}
 	 * @since 0.1.0
 	 */

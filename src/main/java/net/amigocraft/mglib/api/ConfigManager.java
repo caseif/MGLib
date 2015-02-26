@@ -1321,6 +1321,7 @@ public class ConfigManager {
 	 * minigame rounds
 	 * @since 0.1.0
 	 */
+	//TODO: deprecate
 	public GameMode getDefaultGameMode() {
 		return gameMode;
 	}
