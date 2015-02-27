@@ -48,13 +48,8 @@ import java.util.UUID;
  * The primary API class. Contains necessary methods to create a minigame plugin
  * from the library.
  *
- * <p>Building against this version of the library is <em>highly
- * discouraged</em>. This is a development build, and as such, is very prone to
- * change. Methods may be in this version that will disappear in the next
- * release, and existing methods may be temporarily refactored.</p>
- *
  * @author Maxim Roncacé
- * @version 0.4.0-SNAPSHOT
+ * @version 0.4.0
  * @since 0.1.0
  */
 public class Minigame {
