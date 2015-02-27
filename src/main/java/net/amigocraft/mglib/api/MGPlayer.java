@@ -322,7 +322,7 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void removeFromRound() throws NoSuchPlayerException, PlayerOfflineException {
-		removeFromRound(MGUtil.fromBukkitLocation(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation()));
+		this.getRound().removePlayer(this.getName());
 	}
 
 	/**
@@ -379,10 +379,7 @@ public class MGPlayer implements Metadatable {
 		}
 		if (location != null) {
 			// teleport the player
-			p.teleport(
-					new Location(Bukkit.getWorld(location.getWorld()), location.getX(), location.getY(), location.getZ()),
-					TeleportCause.PLUGIN
-			);
+			p.teleport(MGUtil.toBukkitLocation(location), TeleportCause.PLUGIN);
 		}
 	}
 
@@ -396,7 +393,7 @@ public class MGPlayer implements Metadatable {
 	 */
 	@Deprecated
 	public void reset(Location location) {
-		reset(MGUtil.fromBukkitLocation(location));
+		reset(MGUtil.fromBukkitLocation(location, true));
 	}
 
 	/**
@@ -406,7 +403,7 @@ public class MGPlayer implements Metadatable {
 	 * @since 0.1.0
 	 */
 	public void reset() throws PlayerOfflineException {
-		reset(MGUtil.fromBukkitLocation(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation()));
+		reset(MGUtil.fromBukkitLocation(Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultExitLocation(), true));
 	}
 
 	/**

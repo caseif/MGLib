@@ -144,7 +144,7 @@ public class ConfigManager {
 	 */
 	//TODO: figure out how to transition to Location3D
 	public Location getDefaultExitLocation() {
-		return new Location(Bukkit.getWorld(exitLocation.getWorld()), exitLocation.getX(), exitLocation.getY(), exitLocation.getZ());
+		return MGUtil.toBukkitLocation(this.exitLocation);
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class ConfigManager {
 	 */
 	@Deprecated
 	public void setDefaultExitLocation(Location exitLocation) {
-		setDefaultExitLocation(new Location3D(exitLocation.getWorld().getName(), exitLocation.getX(), exitLocation.getY(), exitLocation.getZ()));
+		setDefaultExitLocation(MGUtil.fromBukkitLocation(exitLocation, true));
 	}
 
 	/**

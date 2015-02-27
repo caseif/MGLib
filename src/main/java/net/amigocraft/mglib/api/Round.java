@@ -160,7 +160,7 @@ public class Round implements Metadatable {
 		this.roundTime = cm.getDefaultPlayingTime();
 		this.minPlayers = cm.getMinPlayers();
 		this.maxPlayers = cm.getMaxPlayers();
-		this.exitLocation = MGUtil.fromBukkitLocation(cm.getDefaultExitLocation());
+		this.exitLocation = MGUtil.fromBukkitLocation(cm.getDefaultExitLocation(), true);
 		this.damage = cm.isDamageAllowed();
 		this.pvp = cm.isPvPAllowed();
 		this.rollback = cm.isRollbackEnabled();
@@ -853,7 +853,6 @@ public class Round implements Metadatable {
 		if (p == null) { // check that the specified player is online
 			throw new PlayerOfflineException();
 		}
-		Main.log.info(p.getGameMode().name());
 		MGPlayer mp = Minigame.getMinigameInstance(plugin).getMGPlayer(name);
 		if (mp == null) {
 			if (this.getMinigame().customPlayerClass) {
@@ -897,7 +896,6 @@ public class Round implements Metadatable {
 		else {
 			throw new PlayerPresentException();
 		}
-		Main.log.info(p.getGameMode().name());
 		if (getPlayerCount() >= getMaxPlayers() && getMaxPlayers() > 0) {
 			throw new RoundFullException();
 		}
@@ -1046,7 +1044,7 @@ public class Round implements Metadatable {
 	 */
 	@Deprecated
 	public void removePlayer(String name, Location location) throws PlayerOfflineException, NoSuchPlayerException {
-		removePlayer(name, MGUtil.fromBukkitLocation(location));
+		removePlayer(name, MGUtil.fromBukkitLocation(location, true));
 	}
 
 	/**
@@ -1061,7 +1059,7 @@ public class Round implements Metadatable {
 	 */
 	@SuppressWarnings("deprecation")
 	public void removePlayer(String name) throws PlayerOfflineException, NoSuchPlayerException {
-		removePlayer(name, MGUtil.fromBukkitLocation(getConfigManager().getDefaultExitLocation()));
+		removePlayer(name, MGUtil.fromBukkitLocation(getConfigManager().getDefaultExitLocation(), true));
 	}
 
 	/**
@@ -1145,9 +1143,7 @@ public class Round implements Metadatable {
 	 */
 	@Deprecated
 	public Location getExitLocation() {
-		return new Location(Bukkit.getWorld(exitLocation.getWorld()),
-				exitLocation.getX(), exitLocation.getY(), exitLocation.getZ(),
-				exitLocation.getYaw(), exitLocation.getPitch());
+		return MGUtil.toBukkitLocation(this.exitLocation);
 	}
 
 	/**
@@ -1169,7 +1165,7 @@ public class Round implements Metadatable {
 	 */
 	@Deprecated
 	public void setExitLocation(Location location) {
-		setExitLocation(MGUtil.fromBukkitLocation(location));
+		setExitLocation(MGUtil.fromBukkitLocation(location, true));
 	}
 
 	/**

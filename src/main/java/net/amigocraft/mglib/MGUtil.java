@@ -305,7 +305,8 @@ public class MGUtil {
 	 *
 	 * @param location the {@link Location} to convert
 	 * @param copyOrientation whether the pitch and yaw of <code>location</code>
-	 *                        will be stored in the new {@link Location3D}.
+	 *                        will be stored in the new {@link Location3D}
+	 *                        (defaults to <code>false</code> if omitted).
 	 * @return the new {@link Location3D}
 	 * @since 0.3.1
 	 */
@@ -319,5 +320,19 @@ public class MGUtil {
 			return new Location3D(location.getWorld().getName(),
 					(float)location.getX(), (float)location.getY(), (float)location.getZ());
 		}
+	}
+
+	/**
+	 * Converts a {@link Location3D} to a Bukkit {@link org.bukkit.Location}.
+	 *
+	 * @param location the {@link Location3D} to convert
+	 *                        (defaults to <code>false</code> if omitted).
+	 * @return the new {@link org.bukkit.Location}
+	 * @since 0.3.1
+	 */
+	public static Location toBukkitLocation(Location3D location) {
+			return new Location(Bukkit.getWorld(location.getWorld()),
+					location.getX(), location.getY(), location.getZ(),
+					location.getPitch(), location.getYaw());
 	}
 }

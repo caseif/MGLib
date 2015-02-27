@@ -478,7 +478,6 @@ class MGListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent e) {
-		//Main.log.info("break: " + Bukkit.getWorlds().get(0).getTime() + "");
 		for (Minigame mg : Minigame.getMinigameInstances()) {
 			for (Round r : mg.getRoundList()) {
 				if (r.isRollbackEnabled()) {
