@@ -291,11 +291,11 @@ class MGListener implements Listener {
 				EntityDamageEvent ed = e.getEntity().getLastDamageCause();
 				MGUtil.callEvent(new MGPlayerDeathEvent(mg.getMGPlayer(e.getEntity().getName()), ed.getCause(),
 						ed instanceof EntityDamageByEntityEvent ?
-								((EntityDamageByEntityEvent)ed).getDamager() instanceof Projectile ?
-										(Entity)((Projectile)((EntityDamageByEntityEvent)ed).getDamager())
-												.getShooter() :
-										((EntityDamageByEntityEvent)ed).getDamager()
-								: null));
+						((EntityDamageByEntityEvent)ed).getDamager() instanceof Projectile ?
+						(Entity)((Projectile)((EntityDamageByEntityEvent)ed).getDamager())
+								.getShooter() :
+						((EntityDamageByEntityEvent)ed).getDamager()
+						                                        : null));
 			}
 		}
 	}
@@ -380,53 +380,74 @@ class MGListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerTeleport(PlayerTeleportEvent e) {
+	public void onPlayerTeleport(final PlayerTeleportEvent e) {
 		boolean found = false;
 		for (Minigame mg : Minigame.getMinigameInstances()) {
 			for (Round r : mg.getRoundList()) {
-				MGPlayer p = r.getMGPlayer(e.getPlayer().getName());
-				if (p != null) {
-					Location3D l = MGUtil.fromBukkitLocation(e.getTo());
-					if (!l.getWorld().equals(r.getWorld())) {
-						found = true;
-						try {
-							p.removeFromRound(l);
+				if (!found) {
+					MGPlayer p = r.getMGPlayer(e.getPlayer().getName());
+					if (p != null) {
+						Location3D l = MGUtil.fromBukkitLocation(e.getTo());
+						if (!l.getWorld().equals(r.getWorld())) {
+							found = true;
+							try {
+								p.removeFromRound(l);
+							}
+							catch (NoSuchPlayerException ex) { // this can never happen
+								ex.printStackTrace();
+							}
+							catch (PlayerOfflineException ex) { // this can definitely never happen
+								ex.printStackTrace();
+							}
 						}
-						catch (NoSuchPlayerException ex) { // this can never happen
-							ex.printStackTrace();
-						}
-						catch (PlayerOfflineException ex) { // this can definitely never happen
-							ex.printStackTrace();
-						}
-					}
-					else {
-						Location min = r.getMinBound();
-						Location max = r.getMaxBound();
-						if (min != null && max != null) {
-							if (l.getX() < min.getX() ||
-									l.getY() < min.getY() ||
-									l.getZ() < min.getZ() ||
-									l.getX() > max.getX() ||
-									l.getY() > max.getY() ||
-									l.getZ() > max.getZ()) {
-								found = true;
-								try {
-									p.removeFromRound(l);
-								}
-								catch (NoSuchPlayerException ex) { // this can never happen
-									ex.printStackTrace();
-								}
-								catch (PlayerOfflineException ex) { // this can definitely never happen
-									ex.printStackTrace();
+						else {
+							Location min = r.getMinBound();
+							Location max = r.getMaxBound();
+							if (min != null && max != null) {
+								if (l.getX() < min.getX() ||
+										l.getY() < min.getY() ||
+										l.getZ() < min.getZ() ||
+										l.getX() > max.getX() ||
+										l.getY() > max.getY() ||
+										l.getZ() > max.getZ()) {
+									found = true;
+									try {
+										p.removeFromRound(l);
+									}
+									catch (NoSuchPlayerException ex) { // this can never happen
+										ex.printStackTrace();
+									}
+									catch (PlayerOfflineException ex) { // this can definitely never happen
+										ex.printStackTrace();
+									}
 								}
 							}
 						}
 					}
-					break;
 				}
-			}
-			if (found) {
-				break;
+				// this code ensures players aren't made semi-permanently invisible to each other when they jump worlds
+				if (r.getWorld().equals(e.getTo().getWorld().getName())) {
+					for (MGPlayer mp : r.getPlayerList()) {
+						final Player p = Bukkit.getPlayer(mp.getName());
+						if (p != null) {
+							if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+								NmsUtil.addPlayer(e.getPlayer(), p);
+								NmsUtil.addPlayer(p, e.getPlayer());
+								Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
+									public void run() {
+										NmsUtil.removePlayer(p, e.getPlayer());
+										// no idea why this needs to be delayed for so long
+										Bukkit.getScheduler().runTaskLater(MGUtil.getPlugin(), new Runnable() {
+											public void run() {
+												NmsUtil.removePlayer(e.getPlayer(), p);
+											}
+										}, 20L);
+									}
+								});
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -982,8 +1003,8 @@ class MGListener implements Listener {
 						((Projectile)e.getRemover()).getShooter() instanceof Player)) {
 			for (Minigame mg : Minigame.getMinigameInstances()) {
 				if (!mg.getConfigManager().isHangingBreakAllowed() && mg.isPlayer(e.getRemover() instanceof Player ?
-						((Player)e.getRemover()).getName() :
-						((Player)((Projectile)e.getRemover()).getShooter()).getName())) {
+				                                                                  ((Player)e.getRemover()).getName() :
+				                                                                  ((Player)((Projectile)e.getRemover()).getShooter()).getName())) {
 					e.setCancelled(true);
 				}
 			}
