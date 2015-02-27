@@ -54,7 +54,7 @@ import java.util.UUID;
  * release, and existing methods may be temporarily refactored.</p>
  *
  * @author Maxim Roncacé
- * @version 0.3.1-SNAPSHOT
+ * @version 0.4.0-SNAPSHOT
  * @since 0.1.0
  */
 public class Minigame {
@@ -72,7 +72,7 @@ public class Minigame {
 
 	HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
-	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0", "0.3.1");
+	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0", "0.3.1", "0.4.0");
 
 	boolean customRoundClass = false;
 	boolean customPlayerClass = false;
@@ -273,7 +273,7 @@ public class Minigame {
 	 *                                  same world
 	 * @throws ArenaExistsException     if an arena of the same name already
 	 *                                  exists
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public ArenaFactory createArena(String name, Location3D spawn, Location3D corner1, Location3D corner2)
 			throws InvalidLocationException, ArenaExistsException {
@@ -381,7 +381,7 @@ public class Minigame {
 	 * @param spawn the initial spawn point of the arena (more may be added
 	 *              later)
 	 * @throws ArenaExistsException if an arena of the same name already exists
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void createArena(String name, Location3D spawn) throws ArenaExistsException {
 		try {

@@ -28,7 +28,7 @@ import com.google.common.base.Objects;
 /**
  * Represents a two-dimensional point.
  *
- * @since 0.3.1
+ * @since 0.4.0
  */
 public class Vector2f {
 
@@ -40,7 +40,7 @@ public class Vector2f {
 	 *
 	 * @param x the x-coordinate
 	 * @param y the y-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public Vector2f(float x, float y) {
 		this.x = x;
@@ -51,7 +51,7 @@ public class Vector2f {
 	 * Gets the x-coordinate of this vector.
 	 *
 	 * @return the x-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public float getX() {
 		return this.x;
@@ -61,7 +61,7 @@ public class Vector2f {
 	 * Gets the y-coordinate of this vector.
 	 *
 	 * @return the y-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public float getY() {
 		return this.y;
@@ -71,7 +71,7 @@ public class Vector2f {
 	 * Sets the x-coordinate of this vector.
 	 *
 	 * @param x he x-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setX(float x) {
 		this.x = x;
@@ -81,7 +81,7 @@ public class Vector2f {
 	 * Sets the y-coordinate of this vector.
 	 *
 	 * @param y the y-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setY(float y) {
 		this.y = y;

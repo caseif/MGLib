@@ -26,7 +26,7 @@ package net.amigocraft.mglib.api;
 /**
  * A platform-independent enumeration of available chat colors in Minecraft.
  *
- * @since 0.3.1
+ * @since 0.4.0
  */
 public enum Color {
 
@@ -62,7 +62,7 @@ public enum Color {
 	/**
 	 * Gets the code associated with this {@link Color}.
 	 * @return the code associated with this {@link Color}
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public char getCode() {
 		return code;
@@ -73,7 +73,7 @@ public enum Color {
 	 * found.
 	 * @param code the code to lookup
 	 * @return the {@link Color} color associated with the code
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static Color fromCode(char code) {
 		for (Color c : Color.values()) {

@@ -1,5 +1,5 @@
 name: MGLib
-version: 0.3.1-SNAPSHOT
+version: 0.4.0-SNAPSHOT
 main: net.amigocraft.mglib.Main
 description: A Bukkit library designed to ease the process of minigame plugin creation.
 author: Maxim Roncacé

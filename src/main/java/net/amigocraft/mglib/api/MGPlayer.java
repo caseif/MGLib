@@ -291,7 +291,7 @@ public class MGPlayer implements Metadatable {
 	 *                 point.
 	 * @throws NoSuchPlayerException  if the given player is not in a round
 	 * @throws PlayerOfflineException if the given player is not online
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void removeFromRound(Location3D location) throws NoSuchPlayerException, PlayerOfflineException {
 		getRound().removePlayer(name, location);
@@ -429,7 +429,7 @@ public class MGPlayer implements Metadatable {
 	 *
 	 * @param gameMode the gamemode MGLib will impose upon the player upon round
 	 *                 exit.
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setPrevGameMode(GameMode gameMode) {
 		this.prevGameMode = gameMode;

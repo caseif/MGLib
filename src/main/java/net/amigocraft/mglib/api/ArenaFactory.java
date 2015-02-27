@@ -286,7 +286,7 @@ public class ArenaFactory {
 	 * @throws InvalidLocationException if the provided location's world does
 	 *                                  not match the arena's world
 	 * @deprecated Use {@link ArenaFactory#addSpawn(Location3D, boolean)}
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	@Deprecated
 	public ArenaFactory addSpawn(Location location, boolean saveOrientation) throws InvalidLocationException {
@@ -369,7 +369,7 @@ public class ArenaFactory {
 	 * @param location the {@link Location3D} of the spawn to delete
 	 * @return the instance of {@link ArenaFactory} which this method was called
 	 * from
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public ArenaFactory deleteSpawn(Location3D location) {
 		return deleteSpawn(location.getX(), location.getY(), location.getZ());
@@ -471,7 +471,7 @@ public class ArenaFactory {
 	 * from
 	 * @throws InvalidLocationException if the provided location's world does
 	 *                                  not match the arena's world
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public ArenaFactory setMinBound(Location3D location) throws InvalidLocationException {
 		if (location.getWorld().equals(yaml.get(arena + ".world"))) {
@@ -541,7 +541,7 @@ public class ArenaFactory {
 	 * from
 	 * @throws InvalidLocationException if the provided location's world does
 	 *                                  not match the arena's world
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public ArenaFactory setMaxBound(Location3D location) throws InvalidLocationException {
 		if (location.getWorld().equals(yaml.get(arena + ".world"))) {

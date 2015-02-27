@@ -26,7 +26,7 @@ package net.amigocraft.mglib.api;
 /**
  * A platform-independent enumeration of available gamemodes.
  *
- * @since 0.3.1
+ * @since 0.4.0
  */
 public enum GameMode {
 

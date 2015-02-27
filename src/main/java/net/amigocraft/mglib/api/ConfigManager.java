@@ -387,7 +387,7 @@ public class ConfigManager {
 	 * Sets the color of the top line (the arena name) of a lobby sign.
 	 *
 	 * @param color the new color of the top line of a lobby sign
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyArenaColor(Color color) {
 		lobbyColors.put("arena", color);
@@ -421,7 +421,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#WAITING
 	 *              WAITING} status
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyWaitingColor(Color color) {
 		lobbyColors.put("waiting", color);
@@ -458,7 +458,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#PREPARING
 	 *              PREPARING} status
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyPreparingColor(Color color) {
 		lobbyColors.put("preparing", color);
@@ -494,7 +494,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#PLAYING
 	 *              PLAYING} status
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyPlayingColor(Color color) {
 		lobbyColors.put("playing", color);
@@ -531,7 +531,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's {@link Stage#RESETTING
 	 *              RESETTING} status
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyResettingColor(Color color) {
 		lobbyColors.put("resetting", color);
@@ -569,7 +569,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's timer when remaining time is
 	 *              greater than 60 seconds
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyTimeColor(Color color) {
 		lobbyColors.put("time", color);
@@ -607,7 +607,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's timer when remaining time is
 	 *              less than 60 seconds
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyTimeWarningColor(Color color) {
 		lobbyColors.put("time-warning", color);
@@ -643,7 +643,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's timer when remaining time is
 	 *              infinite
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyTimeInfiniteColor(Color color) {
 		lobbyColors.put("time-infinite", color);
@@ -680,7 +680,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's player count when the round
 	 *              is not full
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyPlayerCountColor(Color color) {
 		lobbyColors.put("player-count", color);
@@ -716,7 +716,7 @@ public class ConfigManager {
 	 *
 	 * @param color the new color of a lobby sign's player count when the round
 	 *              is full
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyPlayerCountFullColor(Color color) {
 		lobbyColors.put("player-count-full", color);
@@ -769,7 +769,7 @@ public class ConfigManager {
 	 * @param key   the key of the color attribute (e.g. arena, player-count,
 	 *              time)
 	 * @param color the color to associate with aforementioned key
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setLobbyColor(String key, Color color) {
 		lobbyColors.put(key, color);
@@ -983,7 +983,7 @@ public class ConfigManager {
 	 *
 	 * @param allowed whether block burning is permitted in worlds containing
 	 *                one or more arenas
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setBlockBurnAllowed(boolean allowed) {
 		actions.put("block-burn", allowed);
@@ -1107,7 +1107,7 @@ public class ConfigManager {
 	 *
 	 * @return whether block physics are permitted in worlds containing one or
 	 * more arenas
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public boolean areBlockPhysicsAllowed() {
 		return actions.get("block-physics");
@@ -1214,7 +1214,7 @@ public class ConfigManager {
 	 *
 	 * @return whether entity explosions are permitted in worlds containing one
 	 * or more arenas
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public boolean areEntityExplosionsAllowed() {
 		return actions.get("entity-explode");

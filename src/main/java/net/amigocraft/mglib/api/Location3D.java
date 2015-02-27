@@ -165,7 +165,7 @@ public class Location3D {
 	 * Returns the position of this location.
 	 *
 	 * @return the position of this location as a {@link Vector3f}
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public Vector3f getPosition() {
 		return this.position;
@@ -175,7 +175,7 @@ public class Location3D {
 	 * Sets the position of this location.
 	 *
 	 * @param position the new position of this locaiton
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setPosition(Vector3f position) {
 		this.position = position;
@@ -305,7 +305,7 @@ public class Location3D {
 	 * Returns the rotation of this location.
 	 *
 	 * @return the rotation of this location as a {@link Vector2f}
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public Vector2f getRotation() {
 		return this.rotation;
@@ -315,7 +315,7 @@ public class Location3D {
 	 * Sets the rotation of this location.
 	 *
 	 * @param rotation the new rotation of this locaiton
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setRotation(Vector2f rotation) {
 		this.rotation = rotation;

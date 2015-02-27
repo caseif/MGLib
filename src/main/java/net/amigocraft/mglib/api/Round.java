@@ -297,7 +297,7 @@ public class Round implements Metadatable {
 	 * returns a number greater than or equal to <code>0</code>.</p>
 	 *
 	 * @return whether this round's timer is currently ticking.
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public boolean isTicking() {
 		return this.getTimerHandle() >= 0;
@@ -320,7 +320,7 @@ public class Round implements Metadatable {
 	 * @param stage      the stage to set this {@link Round} to
 	 * @param resetTimer whether to reset the round timer (defaults to true if
 	 *                   omitted)
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setStage(Stage stage, boolean resetTimer) {
 		MinigameRoundStageChangeEvent event = new MinigameRoundStageChangeEvent(this, this.stage, stage);

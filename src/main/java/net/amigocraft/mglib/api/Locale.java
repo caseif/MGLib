@@ -69,7 +69,7 @@ public class Locale {
 	 * An enumeration of message keys found in the default locale, but not the
 	 * defined one.
 	 *
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public final List<String> undefinedMessages = new ArrayList<String>();
 
@@ -121,7 +121,7 @@ public class Locale {
 	 * strings to replace placeholder sequences (%i) with
 	 * @return the message associated with the given key,
 	 * or the key if the message is not defined
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public String getMessage(String key, String... replacements) {
 		String message = messages.get(key.toLowerCase());
@@ -140,7 +140,7 @@ public class Locale {
 	 *
 	 * @return whether this object was loaded from a legacy
 	 * locale file.
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public boolean isLegacy() {
 		return this.legacy;

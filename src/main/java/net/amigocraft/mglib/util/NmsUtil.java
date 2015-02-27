@@ -44,7 +44,7 @@ import java.util.Collection;
  * not to use this class within their plugin as it is highly subject to
  * non-backwards compatible modifications.
  *
- * @since 0.3.1
+ * @since 0.4.0
  */
 public class NmsUtil {
 
@@ -189,7 +189,7 @@ public class NmsUtil {
 	 * @param recipient the player whose tablist will be modified
 	 * @param subjects  the players added to the tablist
 	 * @return whether the info packet was successfully sent
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static boolean addPlayers(Player recipient, Collection<? extends Player> subjects) {
 		return sendPlayerInfoPacket(recipient, subjects, true);
@@ -200,7 +200,7 @@ public class NmsUtil {
 	 * @param recipient the player whose tablist will be modified
 	 * @param subject   the player added to the tablist
 	 * @return whether the info packet was successfully sent
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static boolean addPlayer(Player recipient, Player subject) {
 		return addPlayers(recipient, Arrays.asList(subject));
@@ -213,7 +213,7 @@ public class NmsUtil {
 	 * @param recipient the player whose tablist will be modified
 	 * @param subjects  the players removed from the tablist
 	 * @return whether the info packet was successfully sent
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static boolean removePlayers(Player recipient, Collection<? extends Player> subjects) {
 		return sendPlayerInfoPacket(recipient, subjects, false);
@@ -225,7 +225,7 @@ public class NmsUtil {
 	 * @param recipient the player whose tablist will be modified
 	 * @param subject   the player removed from the tablist
 	 * @return whether the info packet was successfully sent
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static boolean removePlayer(Player recipient, Player subject) {
 		return removePlayers(recipient, Arrays.asList(subject));
@@ -285,7 +285,7 @@ public class NmsUtil {
 	 * Version-independent getOnlinePlayers() method.
 	 *
 	 * @return a list of online players
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	@SuppressWarnings("unchecked")
 	public static Collection<? extends Player> getOnlinePlayers() {
@@ -313,7 +313,7 @@ public class NmsUtil {
 	 *
 	 * @throws UnsupportedOperationException if MGLib is not currently disabling
 	 *
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static void uninitialize() {
 		MGUtil.verifyDisablingStatus();

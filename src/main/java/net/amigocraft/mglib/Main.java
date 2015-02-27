@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * MGLib's primary (central) class.
  *
  * @author Maxim Roncacé
- * @version 0.3.1-SNAPSHOT
+ * @version 0.4.0-SNAPSHOT
  * @since 0.1.0
  */
 public class Main extends JavaPlugin {
@@ -212,7 +212,7 @@ public class Main extends JavaPlugin {
 	 * @param plugin the plugin to retrieve worlds for
 	 * @return worlds registered with MGLib's event listener for the given
 	 * plugin
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static List<String> getWorlds(String plugin) {
 		return MGListener.getWorlds();
@@ -247,7 +247,7 @@ public class Main extends JavaPlugin {
 	 * This is to provide security when unsetting static objects.
 	 *
 	 * @return whether MGLib is in the process of disabling.
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static boolean isDisabling() {
 		return disabling;

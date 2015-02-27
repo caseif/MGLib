@@ -28,7 +28,7 @@ import com.google.common.base.Objects;
 /**
  * Represents a three-dimensional point.
  *
- * @since 0.3.1
+ * @since 0.4.0
  */
 public class Vector3f {
 
@@ -42,7 +42,7 @@ public class Vector3f {
 	 * @param x the x-coordinate
 	 * @param y the y-coordinate
 	 * @param z the z-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public Vector3f(float x, float y, float z) {
 		this.x = x;
@@ -54,7 +54,7 @@ public class Vector3f {
 	 * Gets the x-coordinate of this vector.
 	 *
 	 * @return the x-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public float getX() {
 		return this.x;
@@ -64,7 +64,7 @@ public class Vector3f {
 	 * Gets the y-coordinate of this vector.
 	 *
 	 * @return the y-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public float getY() {
 		return this.y;
@@ -74,7 +74,7 @@ public class Vector3f {
 	 * Gets the z-coordinate of this vector.
 	 *
 	 * @return the z-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public float getZ() {
 		return this.z;
@@ -84,7 +84,7 @@ public class Vector3f {
 	 * Sets the x-coordinate of this vector.
 	 *
 	 * @param x he x-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setX(float x) {
 		this.x = x;
@@ -94,7 +94,7 @@ public class Vector3f {
 	 * Sets the y-coordinate of this vector.
 	 *
 	 * @param y the y-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setY(float y) {
 		this.y = y;
@@ -104,7 +104,7 @@ public class Vector3f {
 	 * Sets the z-coordinate of this vector.
 	 *
 	 * @param z he z-coordinate
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public void setZ(float z) {
 		this.z = z;

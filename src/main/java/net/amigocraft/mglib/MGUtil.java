@@ -62,7 +62,7 @@ public class MGUtil {
 	 * any circumstance.</p>
 	 *
 	 * @return the {@link JavaPlugin} instance for MGLib.
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static Main getPlugin() {
 		return plugin;
@@ -281,7 +281,7 @@ public class MGUtil {
 	 *
 	 * @throws UnsupportedOperationException if MGLib is not currently
 	 *                                       disabling
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static void verifyDisablingStatus() throws UnsupportedOperationException {
 		if (!Main.isDisabling()) {
@@ -294,7 +294,7 @@ public class MGUtil {
 	 *
 	 * @param location the {@link Location} to convert
 	 * @return the new {@link Location3D}
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static Location3D fromBukkitLocation(Location location) {
 		return fromBukkitLocation(location, false);
@@ -308,7 +308,7 @@ public class MGUtil {
 	 *                        will be stored in the new {@link Location3D}
 	 *                        (defaults to <code>false</code> if omitted).
 	 * @return the new {@link Location3D}
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static Location3D fromBukkitLocation(Location location, boolean copyOrientation) {
 		if (copyOrientation) {
@@ -328,7 +328,7 @@ public class MGUtil {
 	 * @param location the {@link Location3D} to convert
 	 *                        (defaults to <code>false</code> if omitted).
 	 * @return the new {@link org.bukkit.Location}
-	 * @since 0.3.1
+	 * @since 0.4.0
 	 */
 	public static Location toBukkitLocation(Location3D location) {
 			return new Location(Bukkit.getWorld(location.getWorld()),
