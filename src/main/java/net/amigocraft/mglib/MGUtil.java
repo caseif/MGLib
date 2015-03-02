@@ -23,6 +23,8 @@
  */
 package net.amigocraft.mglib;
 
+import net.amigocraft.mglib.api.Color;
+import net.amigocraft.mglib.api.Localizable;
 import net.amigocraft.mglib.api.Location3D;
 import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.MGYamlConfiguration;
@@ -36,7 +38,9 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventException;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredListener;
@@ -159,6 +163,19 @@ public class MGUtil {
 				System.out.println(sb.toString());
 			}
 		}
+	}
+
+	/**
+	 * Logs the given message if verbose logging is enabled.
+	 *
+	 * @param message the message to log
+	 * @param prefix  the prefix to place in front of the message. This will
+	 *                automatically be placed within brackets
+	 * @param level   the {@link LogLevel level} at which to log the message
+	 * @since 0.4.1
+	 */
+	public static void log(Localizable message, String prefix, LogLevel level) {
+		log(message.localize(), prefix, level);
 	}
 
 	/**
@@ -285,7 +302,7 @@ public class MGUtil {
 	 */
 	public static void verifyDisablingStatus() throws UnsupportedOperationException {
 		if (!Main.isDisabling()) {
-			throw new UnsupportedOperationException(Main.locale.getMessage("plugin.alert.not-disabling"));
+			throw new UnsupportedOperationException(Main.locale.getMessage("plugin.alert.not-disabling").localize());
 		}
 	}
 
@@ -334,5 +351,31 @@ public class MGUtil {
 			return new Location(Bukkit.getWorld(location.getWorld()),
 					location.getX(), location.getY(), location.getZ(),
 					location.getPitch(), location.getYaw());
+	}
+
+	/**
+	 * Sends a {@link Localizable} to a {@link CommandSender}.
+	 * @param sender the CommandSender to send the message to
+	 * @param message the message to send
+	 * @param color the color to prefix the message with
+	 * @since 0.4.1
+	 */
+	public static void sendToSender(CommandSender sender, Localizable message, Color color) {
+		if (sender instanceof Player) {
+			message.sendTo(sender.getName(), color);
+		}
+		else {
+			sender.sendMessage((color != null ? color : "") + message.localize());
+		}
+	}
+
+	/**
+	 * Sends a {@link Localizable} to a {@link CommandSender}.
+	 * @param sender the CommandSender to send the message to
+	 * @param message the message to send
+	 * @since 0.4.1
+	 */
+	public static void sendToSender(CommandSender sender, Localizable message) {
+		sendToSender(sender, message, null);
 	}
 }

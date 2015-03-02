@@ -23,11 +23,14 @@
  */
 package net.amigocraft.mglib;
 
+import net.amigocraft.mglib.api.Color;
 import net.amigocraft.mglib.api.Locale;
+import net.amigocraft.mglib.api.Localizable;
 import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.event.MGLibEvent;
+import net.amigocraft.mglib.impl.BukkitLocale;
 import net.amigocraft.mglib.util.NmsUtil;
 
 import net.gravitydevelopment.updater.Updater;
@@ -80,6 +83,8 @@ public class Main extends JavaPlugin {
 	 */
 	private static boolean VANILLA_SPECTATING_DISABLED;
 
+	private static String SERVER_LOCALE;
+
 	/**
 	 * The locale for MGLib itself.
 	 */
@@ -107,8 +112,9 @@ public class Main extends JavaPlugin {
 			Main.log("The configured logging level is invalid!", LogLevel.WARNING);
 		}
 		VANILLA_SPECTATING_DISABLED = getConfig().getBoolean("disable-vanilla-spectating");
+		SERVER_LOCALE = getConfig().getString("locale");
 
-		locale = new Locale("MGLib");
+		locale = new BukkitLocale("MGLib");
 		locale.initialize();
 
 		// updater
@@ -123,11 +129,11 @@ public class Main extends JavaPlugin {
 				metrics.start();
 			}
 			catch (IOException ex) {
-				log.warning(locale.getMessage("plugin.alert.metrics-fail"));
+				log(locale.getMessage("plugin.alert.metrics-fail"), LogLevel.WARNING);
 			}
 		}
 		if (this.getDescription().getVersion().contains("dev")) {
-			log.warning(locale.getMessage("plugin.alert.dev-build"));
+			log(locale.getMessage("plugin.alert.dev-build"), LogLevel.WARNING);
 		}
 
 		// store UUIDs of online players
@@ -140,10 +146,10 @@ public class Main extends JavaPlugin {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe(locale.getMessage("plugin.alert.uuid-fail"));
+			log(locale.getMessage("plugin.alert.uuid-fail"), LogLevel.SEVERE);
 		}
 
-		log.info(locale.getMessage("plugin.event.enable", this.toString()));
+		log(locale.getMessage("plugin.event.enable", this.toString()), LogLevel.INFO);
 	}
 
 	/**
@@ -164,7 +170,7 @@ public class Main extends JavaPlugin {
 		MGLibEvent.uninitialize();
 		NmsUtil.uninitialize();
 		UUIDFetcher.uninitialize();
-		log.info(locale.getMessage("plugin.event.disable", this.toString()));
+		log(locale.getMessage("plugin.event.disable", this.toString()), LogLevel.INFO);
 		Main.uninitialize();
 	}
 
@@ -189,6 +195,18 @@ public class Main extends JavaPlugin {
 	 *
 	 * @param message the message to log.
 	 * @param level   the {@link LogLevel level} at which to log the message
+	 * @since 0.4.1
+	 */
+	public static void log(Localizable message, LogLevel level) {
+		MGUtil.log(message, "MGLib", level);
+	}
+
+	/**
+	 * Internal convenience method for logging. <strong>Please do not call this
+	 * from your plugin.</strong>
+	 *
+	 * @param message the message to log.
+	 * @param level   the {@link LogLevel level} at which to log the message
 	 * @since 0.3.0
 	 */
 	public static void log(String message, LogLevel level) {
@@ -198,11 +216,24 @@ public class Main extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (label.equalsIgnoreCase("mglib")) {
-			sender.sendMessage(ChatColor.LIGHT_PURPLE +
-					locale.getMessage("plugin.event.info", getDescription().getVersion(), "Maxim Roncacé"));
+			MGUtil.sendToSender(
+					sender,
+					locale.getMessage("plugin.event.info", getDescription().getVersion(), "Maxim Roncacé"),
+					Color.LIGHT_PURPLE
+			);
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Gets the locale defined by MGLib's config.
+	 *
+	 * @return the locale defined by MGLib's config.
+	 * @since 0.4.1
+	 */
+	public static String getServerLocale() {
+		return SERVER_LOCALE;
 	}
 
 	/**

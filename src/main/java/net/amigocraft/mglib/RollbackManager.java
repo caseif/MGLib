@@ -23,6 +23,7 @@
  */
 package net.amigocraft.mglib;
 
+import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
 import net.amigocraft.mglib.api.Stage;
@@ -245,7 +246,7 @@ public class RollbackManager {
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-				Main.log.severe(Main.locale.getMessage("plugin.alert.data.save", arena));
+				Main.log(Main.locale.getMessage("plugin.alert.data.save", arena), LogLevel.SEVERE);
 			}
 		}
 		if (r != null) {

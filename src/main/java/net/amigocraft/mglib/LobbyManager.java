@@ -116,7 +116,7 @@ public class LobbyManager {
 					}
 					else {
 						throw new IllegalArgumentException(
-								Main.locale.getMessage("lobby.alert.invalid-index.passive", arena)
+								Main.locale.getMessage("lobby.alert.invalid-index.passive", arena).localize()
 						);
 					}
 				}
@@ -226,7 +226,7 @@ public class LobbyManager {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.warning(Main.locale.getMessage("lobby.alert.create", plugin));
+			Main.log.warning(Main.locale.getMessage("lobby.alert.create", plugin).localize());
 		}
 		return key;
 	}
@@ -277,14 +277,14 @@ public class LobbyManager {
 						signs.put(MGUtil.fromBukkitLocation(l), ls);
 					}
 					else {
-						Main.log.warning(Main.locale.getMessage("lobby.alert.incomplete", plugin, k));
+						Main.log.warning(Main.locale.getMessage("lobby.alert.incomplete", plugin, k).localize());
 					}
 				}
 			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.warning(Main.locale.getMessage("lobby.alert.load", plugin));
+			Main.log.warning(Main.locale.getMessage("lobby.alert.load", plugin).localize());
 		}
 	}
 

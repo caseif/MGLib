@@ -25,9 +25,11 @@ package net.amigocraft.mglib;
 
 import static net.amigocraft.mglib.Main.locale;
 
+import net.amigocraft.mglib.api.Color;
 import net.amigocraft.mglib.api.LobbySign;
 import net.amigocraft.mglib.api.LobbyType;
 import net.amigocraft.mglib.api.Location3D;
+import net.amigocraft.mglib.api.LogLevel;
 import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.api.Round;
@@ -122,7 +124,7 @@ class MGListener implements Listener {
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-				Main.log.severe(Main.locale.getMessage("plugin.alert.world-list.load", plugin));
+				Main.log(Main.locale.getMessage("plugin.alert.world-list.load", plugin), LogLevel.INFO);
 			}
 		}
 	}
@@ -196,7 +198,7 @@ class MGListener implements Listener {
 					}
 					catch (Exception ex) {
 						ex.printStackTrace();
-						Main.log.severe(locale.getMessage("plugin.alert.data.save", p));
+						Main.log(locale.getMessage("plugin.alert.data.save", p), LogLevel.SEVERE);
 					}
 				}
 			}
@@ -318,7 +320,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe(Main.locale.getMessage("plugin.alert.uuid-fail.spec", p));
+			Main.log(Main.locale.getMessage("plugin.alert.uuid-fail.spec", p), LogLevel.SEVERE);
 		}
 		try {
 			YamlConfiguration y = new YamlConfiguration();
@@ -348,7 +350,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.severe(Main.locale.getMessage("plugin.alert.data.load", p));
+			Main.log(Main.locale.getMessage("plugin.alert.data.load", p), LogLevel.SEVERE);
 		}
 
 		// update tablist
@@ -780,28 +782,26 @@ class MGListener implements Listener {
 										LobbyType.fromString(lines[1]), index);
 							}
 							catch (NoSuchArenaException ex) {
-								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("arena.alert.dne"));
+								locale.getMessage("arena.alert.dne").sendTo(e.getPlayer().getName(), Color.RED);
 							}
 							catch (IllegalArgumentException ex) {
 								if (ex.getMessage().contains("index")) {
-									e.getPlayer().sendMessage(ChatColor.RED +
-											locale.getMessage("lobby.alert.invalid-index"));
+									locale.getMessage("lobby.alert.invalid-index").sendTo(e.getPlayer().getName(), Color.RED);
 								}
 								else if (ex.getMessage()
-										.contains(Main.locale.getMessage("plugin.alert.invalid-string"))) {
-									e.getPlayer().sendMessage(ChatColor.RED +
-											locale.getMessage("lobby.alert.invalid-type"));
+										.contains(Main.locale.getMessage("plugin.alert.invalid-string").localize())) {
+									locale.getMessage("lobby.alert.invalid-type").sendTo(e.getPlayer().getName(), Color.RED);
 								}
 								else {
 									ex.printStackTrace();
 								}
 							}
 							catch (InvalidLocationException ex) {
-								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.no-sign"));
+								locale.getMessage("lobby.alert.no-sign").sendTo(e.getPlayer().getName(), Color.RED);
 							}
 						}
 						else {
-							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("lobby.alert.invalid-index"));
+							locale.getMessage("lobby.alert.invalid-index").sendTo(e.getPlayer().getName());
 						}
 					}
 					break;
@@ -841,7 +841,7 @@ class MGListener implements Listener {
 								r = mg.createRound(ls.getArena());
 							}
 							catch (NoSuchArenaException ex) {
-								e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("error.personal.load-fail").replace("%", ls.getArena()));
+								locale.getMessage("error.personal.load-fail", ls.getArena()).sendTo(e.getPlayer().getName(), Color.RED);
 								return;
 							}
 						}
@@ -853,10 +853,10 @@ class MGListener implements Listener {
 							ex.printStackTrace();
 						}
 						catch (PlayerPresentException ex) {
-							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.in-round"));
+							locale.getMessage("alert.personal.in-round").sendTo(e.getPlayer().getName(), Color.RED);
 						}
 						catch (RoundFullException ex) {
-							e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.round-full"));
+							locale.getMessage("alert.personal.round-full").sendTo(e.getPlayer().getName(), Color.RED);
 						}
 					}
 				}
@@ -871,7 +871,7 @@ class MGListener implements Listener {
 				if (mg.isPlayer(e.getPlayer().getName())) {
 					if (!mg.getConfigManager().areKitsAllowed()) {
 						e.setCancelled(true);
-						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.kits"));
+						locale.getMessage("alert.personal.kits").sendTo(e.getPlayer().getName(), Color.RED);
 					}
 				}
 			}
@@ -884,7 +884,7 @@ class MGListener implements Listener {
 				if (mg.isPlayer(e.getPlayer().getName())) {
 					if (!mg.getConfigManager().arePMsAllowed()) {
 						e.setCancelled(true);
-						e.getPlayer().sendMessage(ChatColor.RED + locale.getMessage("alert.personal.pm"));
+						locale.getMessage("alert.personal.pm").sendTo(e.getPlayer().getName(), Color.RED);
 					}
 				}
 			}

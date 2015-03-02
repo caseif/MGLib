@@ -122,7 +122,7 @@ public class NmsUtil {
 				}
 			}
 			catch (ClassNotFoundException ex) {
-				Main.log("plugin.alert.nms.player-info", LogLevel.WARNING);
+				Main.log(Main.locale.getMessage("plugin.alert.nms.player-info"), LogLevel.WARNING);
 			}
 			try {
 				try {
@@ -140,7 +140,7 @@ public class NmsUtil {
 				}
 			}
 			catch (ClassNotFoundException ex) {
-				Main.log("plugin.alert.nms.client-command", LogLevel.WARNING);
+				Main.log(Main.locale.getMessage("plugin.alert.nms.client-command"), LogLevel.WARNING);
 			}
 		}
 		catch (Exception ex) {

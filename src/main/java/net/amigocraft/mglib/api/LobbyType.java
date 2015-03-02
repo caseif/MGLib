@@ -47,7 +47,7 @@ public enum LobbyType {
 			return LobbyType.PLAYERS;
 		}
 		else {
-			throw new IllegalArgumentException(Main.locale.getMessage("plugin.alert.invalid-string", s));
+			throw new IllegalArgumentException(Main.locale.getMessage("plugin.alert.invalid-string", s).localize());
 		}
 	}
 

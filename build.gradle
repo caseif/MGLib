@@ -1,17 +1,27 @@
-// Apply Gradle plugins
-plugins {
-	id 'java'
-	id 'maven'
-	id 'eclipse'
-	id 'idea'
-
-	id 'com.github.hierynomus.license' version '0.11.0'
-	id 'com.github.johnrengelman.shadow' version '1.2.0'
+buildscript {
+    repositories {
+        maven { url 'http://repo.lapis.blue/releases' }
+    }
+    dependencies {
+        classpath 'blue.lapis:remapper:1.1-jdk6'
+    }
 }
 
-apply plugin: 'checkstyle'
+// Apply Gradle plugins
+plugins {
+    id 'java'
+    id 'maven'
+    id 'eclipse'
+    id 'idea'
+    id 'checkstyle'
 
-defaultTasks 'clean', 'licenseFormat', 'build', 'shadowJar'
+    id 'com.github.hierynomus.license' version '0.11.0'
+    id 'com.github.johnrengelman.shadow' version '1.2.0'
+}
+
+apply plugin: 'net.glowstone.remapper'
+
+defaultTasks 'clean', 'licenseFormat', 'build', 'shadowJar', 'remap'
 
 // Project information
 group = 'net.amigocraft.mglib'
@@ -23,12 +33,12 @@ ext.description = 'A high-level API for Bukkit minigame creation.'
 ext.inceptionYear = '2014'
 ext.packaging = 'jar'
 ext.versionSuffix = version.contains('SNAPSHOT') ? (
-		(
-			System.getenv('GIT_COMMIT') ? ('-git(' +
-			(System.getenv('GIT_BRANCH').contains('/') ? System.getenv('GIT_BRANCH').split('/')[1] : System.getenv('GIT_BRANCH')) + '-' +
-			System.getenv('GIT_COMMIT').substring(0, 7) + ')') : ''
-		) +
-		(System.getenv('BUILD_NUMBER') ? '-jnks' + System.getenv('BUILD_NUMBER') : '')
+        (
+            System.getenv('GIT_COMMIT') ? ('-git(' +
+                    (System.getenv('GIT_BRANCH').contains('/') ? System.getenv('GIT_BRANCH').split('/')[1] : System.getenv('GIT_BRANCH')) + '@' +
+                    System.getenv('GIT_COMMIT').substring(0, 7) + ')') : ''
+        ) +
+                (System.getenv('BUILD_NUMBER') ? '-jnks' + System.getenv('BUILD_NUMBER') : '')
 ) : ''
 
 sourceCompatibility = 1.6
@@ -41,10 +51,10 @@ configurations {
 
 // Project repositories
 repositories {
-	mavenCentral()
-	maven { url 'http://hub.spigotmc.org/nexus/content/groups/public/' }
-	maven { url 'http://repo.caseif.net/content/groups/public/' }
-	maven { url 'http://repo.gravitydevelopment.net' }
+    mavenCentral()
+    maven { url 'http://hub.spigotmc.org/nexus/content/groups/public/' }
+    maven { url 'http://repo.caseif.net/content/groups/public/' }
+    maven { url 'http://repo.gravitydevelopment.net' }
     maven { url 'http://repo.mcstats.org/content/repositories/public' }
 }
 
@@ -55,119 +65,125 @@ ext {
 }
 // Project dependencies
 dependencies {
-	compile bukkit
-	compile updater
+    compile bukkit
+    compile updater
     compile metrics
 
-	deployerJars 'org.apache.maven.wagon:wagon-ssh:2.8'
+    deployerJars 'org.apache.maven.wagon:wagon-ssh:2.8'
 }
 
 // Read source files using UTF-8
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 processResources {
-	filter { String line -> line.replace('SNAPSHOT', 'SNAPSHOT' + versionSuffix) }
+    filter { String line -> line.replace('SNAPSHOT', 'SNAPSHOT' + versionSuffix) }
+}
+
+// Remap the older Bukkit methods
+remap {
+    mappingFile = file('etc/remapper.txt')
+    inputTask = shadowJar
+    outputFilename = jar.archiveName
 }
 
 jar {
-	classifier = 'base'
+    classifier = 'base'
 }
 
 shadowJar {
-	dependencies {
-		include dependency(updater)
+    dependencies {
+        include dependency(updater)
         include dependency(metrics)
-	}
-	classifier = ''
+    }
 }
 
 processResources {
-	from 'LICENSE'
+    from 'LICENSE'
 }
 
 // License header formatting
 license {
-	header file('LICENSE')
-	excludes([
-			'**/*.properties',
-			'**/*.yml',
-			'**/Metrics.java'
-	])
-	sourceSets = project.sourceSets
-	ignoreFailures false
-	strictCheck true
-	mapping {
-		java = 'SLASHSTAR_STYLE'
-	}
+    header file('LICENSE')
+    excludes([
+            '**/*.properties',
+            '**/*.yml',
+            '**/Metrics.java'
+    ])
+    sourceSets = project.sourceSets
+    ignoreFailures false
+    strictCheck true
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
 }
 
 // check code style
 checkstyle {
-	configProperties = [
-			"name"		: project.name,
-			"year"		: project.inceptionYear
-	]
-	configFile = file("etc/checkstyle.xml")
+    configProperties = [
+            "name"		: project.name,
+            "year"		: project.inceptionYear
+    ]
+    configFile = file("etc/checkstyle.xml")
 }
 
 tasks.withType(Checkstyle){
-	exclude '**/Metrics.java'
-	exclude '**/*.properties'
-	exclude '**/*.yml'
+    exclude '**/Metrics.java'
+    exclude '**/*.properties'
+    exclude '**/*.yml'
 }
 
 task sourceJar(type: Jar) {
-	from sourceSets.main.java
-	from sourceSets.main.resources
-	classifier = "sources"
+    from sourceSets.main.java
+    from sourceSets.main.resources
+    classifier = "sources"
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	from javadoc.destinationDir
-	classifier = 'javadoc'
+    from javadoc.destinationDir
+    classifier = 'javadoc'
 }
 
 artifacts {
-	archives shadowJar
-	archives sourceJar
-	archives javadocJar
+    archives shadowJar
+    archives sourceJar
+    archives javadocJar
 }
 
 uploadArchives {
-	repositories.mavenDeployer {
-		setUniqueVersion(true)
-		configuration = configurations.deployerJars
-		if (project.hasProperty("mavenRepo")) {
-			repository(url: project.property("mavenRepo")) {
-				authentication(userName: project.property("mavenUser"), password: project.property("mavenPass"))
-			}
-		}
+    repositories.mavenDeployer {
+        setUniqueVersion(true)
+        configuration = configurations.deployerJars
+        if (project.hasProperty("mavenRepo")) {
+            repository(url: project.property("mavenRepo")) {
+                authentication(userName: project.property("mavenUser"), password: project.property("mavenPass"))
+            }
+        }
 
-		pom {
-			groupId = project.group
-			version = project.version
-			artifactId = project.ext.projectName
-			project {
-				packaging 'jar'
-				description project.ext.description
-				url 'http://dev.bukkit.org/bukkit-plugins/mglib'
+        pom {
+            groupId = project.group
+            version = project.version
+            artifactId = project.ext.projectName
+            project {
+                packaging 'jar'
+                description project.ext.description
+                url 'http://dev.bukkit.org/bukkit-plugins/mglib'
 
-				scm {
-					url 'https://github.com/caseif/MGLib'
-					connection 'scm:git:git://github.com/caseif/MGLib.git'
-					developerConnection 'scm:git:git@github.com:caseif/MGLib.git'
-				}
+                scm {
+                    url 'https://github.com/caseif/MGLib'
+                    connection 'scm:git:git://github.com/caseif/MGLib.git'
+                    developerConnection 'scm:git:git@github.com:caseif/MGLib.git'
+                }
 
-				licenses {
-					license {
-						name 'MIT license'
-						url 'http://opensource.org/licenses/MIT'
-						distribution 'repo'
-					}
-				}
-			}
-		}
-	}
+                licenses {
+                    license {
+                        name 'MIT license'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+            }
+        }
+    }
 }

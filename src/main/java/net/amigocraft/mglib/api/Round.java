@@ -863,7 +863,7 @@ public class Round implements Metadatable {
 					mp = (MGPlayer)con.newInstance(plugin, name, arena.toLowerCase());
 				}
 				catch (NoSuchMethodException ex) { // thrown when the required constructor does not exist
-					Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", plugin));
+					Main.log(locale.getMessage("plugin.alert.bad-constructor", plugin), LogLevel.SEVERE);
 					ex.printStackTrace();
 					return JoinResult.INTERNAL_ERROR;
 				}
@@ -876,12 +876,12 @@ public class Round implements Metadatable {
 					return JoinResult.INTERNAL_ERROR;
 				}
 				catch (InstantiationException ex) { // if this happens then the overriding plugin screwed something up
-					Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", plugin));
+					Main.log(locale.getMessage("plugin.alert.bad-constructor", plugin), LogLevel.SEVERE);
 					ex.printStackTrace();
 					return JoinResult.INTERNAL_ERROR;
 				}
 				catch (IllegalAccessException ex) { // thrown if the called method is not public
-					Main.log.severe(locale.getMessage("plugin.alert.invisible-constructor", plugin));
+					Main.log(locale.getMessage("plugin.alert.invisible-constructor", plugin), LogLevel.SEVERE);
 					ex.printStackTrace();
 					return JoinResult.INTERNAL_ERROR;
 				}
@@ -901,13 +901,13 @@ public class Round implements Metadatable {
 		}
 		if (getStage() == Stage.PREPARING) {
 			if (!getConfigManager().getAllowJoinRoundWhilePreparing()) {
-				p.sendMessage(ChatColor.RED + locale.getMessage("alert.personal.already-preparing"));
+				locale.getMessage("alert.personal.already-preparing").sendTo(p.getName(), Color.RED);
 				return JoinResult.ROUND_PREPARING;
 			}
 		}
 		else if (getStage() == Stage.PLAYING) {
 			if (!getConfigManager().getAllowJoinRoundInProgress()) {
-				p.sendMessage(ChatColor.RED + locale.getMessage("alert.personal.already-playing"));
+				locale.getMessage("alert.personal.already-playing").sendTo(p.getName(), Color.RED);
 				return JoinResult.ROUND_PLAYING;
 			}
 		}
@@ -944,7 +944,7 @@ public class Round implements Metadatable {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			p.sendMessage(ChatColor.RED + locale.getMessage("error.personal.inv-save-fail"));
+			locale.getMessage("error.personal.inv-save-fail").sendTo(p.getName(), Color.RED);
 			return JoinResult.INVENTORY_SAVE_ERROR;
 		}
 		p.getInventory().clear();

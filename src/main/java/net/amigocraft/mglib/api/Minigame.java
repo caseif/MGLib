@@ -30,6 +30,7 @@ import net.amigocraft.mglib.RollbackManager;
 import net.amigocraft.mglib.exception.ArenaExistsException;
 import net.amigocraft.mglib.exception.InvalidLocationException;
 import net.amigocraft.mglib.exception.NoSuchArenaException;
+import net.amigocraft.mglib.impl.BukkitLocale;
 
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -100,13 +101,13 @@ public class Minigame {
 			}
 		});
 		Main.registerWorlds(plugin.getName()); // registers worlds containing arenas for use with the event listener
-		locale = new Locale(plugin.getName());
+		locale = new BukkitLocale(plugin.getName());
 		Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
 			// add delay so that the plugin has a chance to change its default locale
 			//TODO: locale messages are not available in the same method call that constructs this object
 			public void run() {
 				locale.initialize();
-				Main.log.info(Main.locale.getMessage("plugin.event.hook", plugin.getName()));
+				Main.log(Main.locale.getMessage("plugin.event.hook", plugin.getName()), LogLevel.INFO);
 			}
 		});
 	}
@@ -219,7 +220,7 @@ public class Minigame {
 				rounds.put(arena.toLowerCase(), r); // register arena with MGLib
 			}
 			catch (NoSuchMethodException ex) { // thrown when the required constructor does not exist
-				Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", "Round", plugin.getName()));
+				Main.log(locale.getMessage("plugin.alert.bad-constructor", "Round", plugin.getName()), LogLevel.SEVERE);
 				ex.printStackTrace();
 			}
 			catch (InvocationTargetException ex) { // any exception thrown from the called constructor
@@ -229,11 +230,11 @@ public class Minigame {
 				ex.printStackTrace();
 			}
 			catch (InstantiationException ex) { // if this happens then the overriding plugin screwed something up
-				Main.log.severe(locale.getMessage("plugin.alert.bad-constructor", "Round", plugin.getName()));
+				Main.log(locale.getMessage("plugin.alert.bad-constructor", "Round", plugin.getName()), LogLevel.SEVERE);
 				ex.printStackTrace();
 			}
 			catch (IllegalAccessException ex) { // thrown if the called method from the overriding class is not public
-				Main.log.severe(locale.getMessage("plugin.alert.invisible-constructor", "Round", plugin.getName()));
+				Main.log(locale.getMessage("plugin.alert.invisible-constructor", "Round", plugin.getName()), LogLevel.SEVERE);
 				ex.printStackTrace();
 			}
 		}
