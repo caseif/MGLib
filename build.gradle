@@ -122,10 +122,10 @@ license {
 // check code style
 checkstyle {
     configProperties = [
-            "name"		: project.name,
-            "year"		: project.inceptionYear
+            'name'		: project.name,
+            'year'		: project.inceptionYear
     ]
-    configFile = file("etc/checkstyle.xml")
+    configFile = file('etc/checkstyle.xml')
 }
 
 tasks.withType(Checkstyle){
@@ -137,12 +137,17 @@ tasks.withType(Checkstyle){
 task sourceJar(type: Jar) {
     from sourceSets.main.java
     from sourceSets.main.resources
-    classifier = "sources"
+    classifier = 'sources'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
     classifier = 'javadoc'
+}
+
+task remappedJar(type: Jar, dependsOn: remap) {
+    from jar.archiveName
+    classifier = ''
 }
 
 artifacts {
@@ -155,9 +160,9 @@ uploadArchives {
     repositories.mavenDeployer {
         setUniqueVersion(true)
         configuration = configurations.deployerJars
-        if (project.hasProperty("mavenRepo")) {
-            repository(url: project.property("mavenRepo")) {
-                authentication(userName: project.property("mavenUser"), password: project.property("mavenPass"))
+        if (project.hasProperty('mavenRepo')) {
+            repository(url: project.property('mavenRepo')) {
+                authentication(userName: project.property('mavenUser'), password: project.property('mavenPass'))
             }
         }
 
