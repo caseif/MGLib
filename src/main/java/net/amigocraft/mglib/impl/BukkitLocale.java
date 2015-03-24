@@ -23,31 +23,26 @@
  */
 package net.amigocraft.mglib.impl;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import net.amigocraft.mglib.MGUtil;
-import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.api.Locale;
 import net.amigocraft.mglib.api.Localizable;
-import net.amigocraft.mglib.api.LogLevel;
-import net.amigocraft.mglib.api.Minigame;
-import net.amigocraft.mglib.exception.PlayerOfflineException;
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 public class BukkitLocale extends Locale {
+
+	private final Map<String, BukkitLocalizable> messages = new HashMap<String, BukkitLocalizable>();
 
 	/**
 	 * The name of the plugin this locale manager belongs to.
@@ -55,13 +50,6 @@ public class BukkitLocale extends Locale {
 	 * @since 0.3.0
 	 */
 	public String plugin;
-
-	/**
-	 * The messages stored by this local manager.
-	 *
-	 * @since 0.3.0
-	 */
-	public final Map<String, String> messages = new HashMap<String, String>();
 
 	/**
 	 * An enumeration of message keys found in the default locale, but not the
@@ -72,8 +60,6 @@ public class BukkitLocale extends Locale {
 	public final List<String> undefinedMessages = new ArrayList<String>();
 
 	private String prefix;
-
-	private boolean legacy = false;
 
 	/**
 	 * Creates a new locale manager for the given plugin (yours).
@@ -96,152 +82,93 @@ public class BukkitLocale extends Locale {
 
 	@Override
 	public String _INVALID_getMessage(String key, String... replacements) {
-		String message = messages.get(key.toLowerCase());
-		if (message != null) {
-			for (int i = 0; i < replacements.length; i++) {
-				message = message.replace("%" + (i + 1), replacements[i]);
-			}
-			return message;
-		}
-		return key;
+		return this.getMessage(key).localizeWithWildcards(replacements);
 	}
 
 	@Override
-	public Localizable getMessage(String key, String... replacements) {
+	public Localizable getMessage(String key) {
 		throw new NotImplementedException();
 	}
 
 	@Override
 	public boolean isLegacy() {
-		return this.legacy;
+		return false;
 	}
 
 	@Override
 	public void initialize() {
-		if (Bukkit.getPluginManager().getPlugin(plugin).getClass().getClassLoader().getResource("locales") != null) {
-			InputStream is;
-			InputStream defaultIs = null;
-			String defaultLocale = Minigame.getMinigameInstance(plugin) != null ?
-			                       Minigame.getMinigameInstance(plugin).getConfigManager().getDefaultLocale() :
-			                       "enUS";
-			String locale = MGUtil.getPlugin().getConfig().getString("locale");
-			String loc = null;
+		File external = new File(Bukkit.getPluginManager().getPlugin(this.plugin).getDataFolder(), "locales");
+		if (external.exists() && external.isDirectory()) {
+			loadContainer(external);
+		}
+		URL internal = Bukkit.getPluginManager().getPlugin(plugin).getClass().getClassLoader().getResource("locales");
+		if (internal != null) {
 			try {
-				defaultIs = Bukkit.getPluginManager().getPlugin(plugin).getClass()
-						.getResourceAsStream("/locales/" + defaultLocale + ".properties");
-				File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() + File.separator +
-						"locales" + File.separator + locale + ".properties");
-				is = new FileInputStream(file);
-				loc = file.getAbsolutePath();
+				File internalContainer = new File(internal.toURI());
+				loadContainer(internalContainer);
+			}
+			catch (URISyntaxException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 
-			}
-			catch (Exception ex) {
-				is = Bukkit.getPluginManager().getPlugin(plugin).getClass()
-						.getResourceAsStream("/locales/" + locale + ".properties");
-				if (is == null) {
-					try {
-						if (defaultIs == null) {
-							try {
-								defaultIs = Bukkit.getPluginManager().getPlugin(plugin).getClass()
-										.getResourceAsStream("/locales/" + defaultLocale + ".csv");
-							}
-							catch (Exception swallow) {
-								// meh
-							}
-							File file = new File(Bukkit.getPluginManager().getPlugin(plugin).getDataFolder() +
-									File.separator + "locales" + File.separator + locale + ".csv");
-							is = new FileInputStream(file);
-							loc = file.getAbsolutePath();
-							legacy = true;
-						}
-						else {
-							MGUtil.log("Locale defined in config not found in JAR or plugin folder; defaulting to " +
-									defaultLocale, prefix, LogLevel.WARNING);
-							is = defaultIs;
-						}
+	private void loadContainer(File container) {
+		if (container.isDirectory()) {
+			final List<File> localeFiles = new ArrayList<File>();
+			final List<File> legacyFiles = new ArrayList<File>();
+			// files are indexed into appropriate lists first so non-legacy locales take priority
+			//noinspection ConstantConditions
+			for (File f : container.listFiles()) {
+				if (f.isFile()) {
+					if (f.getName().endsWith(".csv")) {
+						localeFiles.add(f);
 					}
-					catch (Exception ex2) {
-						is = Bukkit.getPluginManager().getPlugin(plugin).getClass()
-								.getResourceAsStream("/locales/" + locale + ".csv");
-						legacy = true;
-						if (is == null) {
-							MGUtil.log("Locale defined in config not found in JAR or plugin folder; defaulting to " +
-									defaultLocale, prefix, LogLevel.WARNING);
-							is = defaultIs;
-						}
+					else if (f.getName().endsWith(".properties")) {
+						legacyFiles.add(f);
 					}
 				}
 			}
-			try {
-				if (is != null) {
-					if (!legacy) {
-						Properties props = new Properties();
-						props.load(is);
-						for (Map.Entry<Object, Object> e : props.entrySet()) {
-							messages.put(e.getKey().toString(), e.getValue().toString());
-						}
-					}
-					else {
-						BufferedReader br;
-						String line;
-						br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-						while ((line = br.readLine()) != null) {
-							String[] params = line.split("\\|");
-							if (params.length > 1) {
-								messages.put(params[0], params[1]);
-							}
-						}
-					}
-					if (loc != null) {
-						Main.log(this.getMessage("plugin.event.loaded-locale", loc), LogLevel.INFO);
-					}
+			for (File f : localeFiles) {
+				String name = f.getName().substring(0, f.getName().lastIndexOf("."));
+				try {
+					loadLanguage(name, new FileInputStream(f), false);
 				}
-				if (defaultIs != null) {
-					if (!legacy) {
-						Properties props = new Properties();
-						props.load(defaultIs);
-						for (Map.Entry<Object, Object> e : props.entrySet()) {
-							if (!messages.containsKey(e.getKey().toString())) {
-								messages.put(e.getKey().toString(), e.getValue().toString());
-								undefinedMessages.add(e.getKey().toString());
-							}
-						}
-					}
-					else {
-						BufferedReader br;
-						String line;
-						br = new BufferedReader(new InputStreamReader(defaultIs, Charset.forName("UTF-8")));
-						while ((line = br.readLine()) != null) {
-							String[] params = line.split("\\|");
-							if (params.length > 1) {
-								if (!messages.containsKey(params[0])) {
-									messages.put(params[0], params[1]);
-									undefinedMessages.add(params[0]);
-								}
-							}
-						}
-					}
-					if (loc != null) {
-						Main.log(this.getMessage("plugin.event.loaded-locale", loc), LogLevel.INFO);
-					}
-				}
-				if (is == null && defaultIs == null) {
-					MGUtil.log("Neither the defined nor default locale could be loaded. " +
-							"Localized messages will be displayed only as their keys!", prefix, LogLevel.SEVERE);
+				catch (IOException ex) {
+					ex.printStackTrace();
+					System.out.println("Failed to load locale " + name + "! Legacy: false");
 				}
 			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-			finally {
-				if (is != null) {
-					try {
-						is.close();
-					}
-					catch (Exception ex) {
-						ex.printStackTrace();
-					}
+			for (File f : legacyFiles) {
+				String name = f.getName().substring(0, f.getName().lastIndexOf("."));
+				try {
+					loadLanguage(name, new FileInputStream(f), false);
 				}
+				catch (IOException ex) {
+					ex.printStackTrace();
+					System.out.println("Failed to load locale " + name + "! Legacy: true");
+				}
+			}
+		}
+		else {
+			throw new IllegalArgumentException("Invalid locale container: " + container.getPath());
+		}
+	}
+
+	private void loadLanguage(String language, InputStream stream, boolean legacy) throws IOException {
+		language = language.replace("_", "").replace("-", ""); // normalize locale names
+		if (legacy) {
+			throw new NotImplementedException(); //TODO
+		}
+		else {
+			Properties props = new Properties();
+			props.load(stream);
+			for (Map.Entry e : props.entrySet()) {
+				String key = e.getKey().toString();
+				if (!messages.containsKey(key)) {
+					messages.put(key, new BukkitLocalizable(key));
+				}
+				messages.get(key).addLocale(language, e.getValue().toString());
 			}
 		}
 	}

@@ -116,7 +116,7 @@ public class LobbyManager {
 					}
 					else {
 						throw new IllegalArgumentException(
-								Main.locale.getMessage("lobby.alert.invalid-index.passive", arena).localize()
+								Main.locale.getMessage("lobby.alert.invalid-index.passive").localizeWithWildcards(arena)
 						);
 					}
 				}
@@ -226,7 +226,7 @@ public class LobbyManager {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.warning(Main.locale.getMessage("lobby.alert.create", plugin).localize());
+			Main.log.warning(Main.locale.getMessage("lobby.alert.create").localizeWithWildcards(plugin));
 		}
 		return key;
 	}
@@ -277,14 +277,14 @@ public class LobbyManager {
 						signs.put(MGUtil.fromBukkitLocation(l), ls);
 					}
 					else {
-						Main.log.warning(Main.locale.getMessage("lobby.alert.incomplete", plugin, k).localize());
+						Main.log.warning(Main.locale.getMessage("lobby.alert.incomplete").localizeWithWildcards(plugin, k));
 					}
 				}
 			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log.warning(Main.locale.getMessage("lobby.alert.load", plugin).localize());
+			Main.log.warning(Main.locale.getMessage("lobby.alert.load").localizeWithWildcards(plugin));
 		}
 	}
 

@@ -30,128 +30,157 @@ import net.amigocraft.mglib.exception.PlayerOfflineException;
 /**
  * Represents a message which may be retrieved in multiple locales.
  *
- * @since 0.4.1
+ * @since 0.5.0
  */
 public interface Localizable {
 
 	/**
 	 * Gets the key associated with this {@link Localizable}.
 	 *
-	 * @return the key associated with this {@link Localizable}
-	 * @since 0.4.1
+	 * @return The key associated with this {@link Localizable}
+	 * @since 0.5.0
 	 */
 	public String getKey();
 
 	/**
 	 * Attempts to localize this message based on the server's defined locale.
 	 *
-	 * @return the message localized as requested if possible; otherwise the
+	 * @return The message localized as requested if possible; otherwise the
 	 *         message localized in the default locale if possible; otherwise
-	 *         the raw localization key.
-	 * @since 0.4.1
+	 *         the raw localization key
+	 * @since 0.5.0
 	 */
 	public String localize();
 
 	/**
+	 * Attempts to localize this message based on the server's defined locale
+	 * and replace wildcard patterns with their respecitve vararg elements.
+	 *
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @return The message localized as requested if possible; otherwise the
+	 *         message localized in the default locale if possible; otherwise
+	 *         the raw localization key
+	 * @since 0.5.0
+	 */
+	public String localizeWithWildcards(String... replacements);
+
+	/**
 	 * Attempts to localize this message in the given locale.
 	 *
-	 * @param locale the name of the locale to localize in. This should follow
+	 * @param locale The name of the locale to localize in. This should follow
 	 *               the ISO 639-1 and ISO 3166-1 standards, respectively (e.g.
 	 *               en_US or enUS).
-	 * @return the message localized as requested if possible; otherwise the
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @return The message localized as requested if possible; otherwise the
 	 *         message localized in the default locale if possible; otherwise
-	 *         the raw localization key.
-	 * @since 0.4.1
+	 *         the raw localization key
+	 * @since 0.5.0
 	 */
-	public String localize(String locale);
+	public String localize(String locale, String... replacements); //TODO: probably rename this to localizeTo(), idk, I'm way too tired to think
 
 	/**
 	 * Attempts to localize this message for the player with the given username.
 	 *
-	 * @param playerName the username of the player to localize this message
+	 * @param playerName The username of the player to localize this message
 	 *                   for.
-	 * @return the message localized as requested if possible; otherwise the
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @return The message localized as requested if possible; otherwise the
 	 *         message localized in the default locale if possible; otherwise
-	 *         the raw localization key.
-	 * @throws IllegalArgumentException if a player with the given username cannot
-	 *                                  be found
-	 * @since 0.4.1
+	 *         the raw localization key
+	 * @throws IllegalArgumentException If a player with the given username
+	 *                                  cannot be found
+	 * @since 0.5.0
 	 */
-	public String localizeFor(String playerName) throws IllegalArgumentException;
+	public String localizeFor(String playerName, String... replacements) throws IllegalArgumentException;
 
 	/**
 	 * Attempts to localize this message for the player with the given UUID.
 	 *
-	 * @param playerUuid the UUID of the player to localize this message for.
-	 * @return the message localized as requested if possible; otherwise the
+	 * @param playerUuid The UUID of the player to localize this message for.
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @return The message localized as requested if possible; otherwise the
 	 *         message localized in the default locale if possible; otherwise
-	 *         the raw localization key.
-	 * @throws IllegalArgumentException if a player with the given UUID cannot be
-	 *                                  found
-	 * @since 0.4.1
+	 *         the raw localization key
+	 * @throws IllegalArgumentException If a player with the given UUID cannot
+	 *                                  be found
+	 * @since 0.5.0
 	 */
-	public String localizeFor(UUID playerUuid) throws IllegalArgumentException;
+	public String localizeFor(UUID playerUuid, String... replacements) throws IllegalArgumentException;
 
 	/**
 	 * Attempts to localize this message for the given {@link MGPlayer}.
 	 *
-	 * @param player the {@link MGPlayer} to localize this message for
-	 * @return the message localized as requested if possible; otherwise the
+	 * @param player The {@link MGPlayer} to localize this message for
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @return The message localized as requested if possible; otherwise the
 	 *         message localized in the default locale if possible; otherwise
-	 *         the raw localization key.
-	 * @throws IllegalArgumentException if a player with the given username cannot
-	 *                                  be found
-	 * @since 0.4.1
+	 *         the raw localization key
+	 * @throws IllegalArgumentException If a player with the given username
+	 *                                  cannot be found
+	 * @since 0.5.0
 	 */
-	public String localizeFor(MGPlayer player) throws IllegalArgumentException;
+	public String localizeFor(MGPlayer player, String... replacements) throws IllegalArgumentException;
 
 	/**
 	 * Attempts to localize this message for the player with the given username
 	 * and send it to them.
 	 *
-	 * @param playerName the username of the player to send the localized
+	 * @param playerName The username of the player to send the localized
 	 *                   message to
-	 * @throws IllegalArgumentException if a player with the given username cannot
-	 *                                  be found
-	 * @since 0.4.1
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @throws IllegalArgumentException If a player with the given username
+	 *                                  cannot be found
+	 * @since 0.5.0
 	 */
-	public void sendTo(String playerName) throws IllegalArgumentException;
+	public void sendTo(String playerName, String... replacements) throws IllegalArgumentException;
 
 	/**
 	 * Attempts to localize this message for the player with the given username
 	 * and send it to them prefixed by the specified chat color.
 	 *
-	 * @param playerName the username of the player to send the localized
+	 * @param playerName The username of the player to send the localized
 	 *                   message to
-	 * @param color the color to prefix the localized string with
-	 * @throws IllegalArgumentException if a player with the given username cannot
-	 *                                  be found
-	 * @since 0.4.1
+	 * @param color The color to prefix the localized string with
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @throws IllegalArgumentException If a player with the given username
+	 *                                  cannot be found
+	 * @since 0.5.0
 	 */
-	public void sendTo(String playerName, Color color) throws IllegalArgumentException;
+	public void sendTo(String playerName, Color color, String... replacements) throws IllegalArgumentException;
 
 	/**
 	 * Attempts to localize this message for the player with the given username
 	 * and send it to them.
 	 *
-	 * @param playerUuid the username of the player to send the localized
+	 * @param playerUuid The username of the player to send the localized
 	 *                   message to
-	 * @throws IllegalArgumentException if a player with the given username cannot
-	 *                                  be found
-	 * @since 0.4.1
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @throws IllegalArgumentException If a player with the given username
+	 *                                  cannot be found
+	 * @since 0.5.0
 	 */
-	public void sendTo(UUID playerUuid) throws IllegalArgumentException;
+	public void sendTo(UUID playerUuid, String... replacements) throws IllegalArgumentException;
 
 	/**
 	 * Attempts to localize this message for the player with the given UUID and
 	 * send it to them prefixed by the specified chat color.
 	 *
-	 * @param playerUuid the UUID of the player to send the localized message
+	 * @param playerUuid The UUID of the player to send the localized message
 	 *                   to
-	 * @param color the color to prefix the localized string with
-	 * @throws IllegalArgumentException if a player with the given username cannot
-	 *                                  be found
-	 * @since 0.4.1
+	 * @param color The color to prefix the localized string with
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @throws IllegalArgumentException If a player with the given username
+	 *                                  cannot be found
+	 * @since 0.5.0
 	 */
-	public void sendTo(UUID playerUuid, Color color) throws IllegalArgumentException;
+	public void sendTo(UUID playerUuid, Color color, String... replacements) throws IllegalArgumentException;
 }

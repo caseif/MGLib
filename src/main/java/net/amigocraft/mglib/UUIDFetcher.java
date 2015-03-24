@@ -27,7 +27,9 @@ import com.google.common.collect.ImmutableList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -66,7 +68,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 		this(names, true);
 	}
 
-	public Map<String, UUID> call() throws Exception {
+	public Map<String, UUID> call() throws IOException, ParseException {
 		Map<String, UUID> uuidMap = new HashMap<String, UUID>();
 		int requests = (int)Math.ceil(names.size() / PROFILES_PER_REQUEST);
 		for (int i = 0; i < requests; i++) {
@@ -82,21 +84,26 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 				uuidMap.put(name, uuid);
 			}
 			if (rateLimiting && i != requests - 1) {
-				Thread.sleep(100L);
+				try {
+					Thread.sleep(100L);
+				}
+				catch (InterruptedException ex) {
+					// eh
+				}
 			}
 		}
 		uuids.putAll(uuidMap);
 		return uuidMap;
 	}
 
-	private static void writeBody(HttpURLConnection connection, String body) throws Exception {
+	private static void writeBody(HttpURLConnection connection, String body) throws IOException {
 		OutputStream stream = connection.getOutputStream();
 		stream.write(body.getBytes());
 		stream.flush();
 		stream.close();
 	}
 
-	private static HttpURLConnection createConnection() throws Exception {
+	private static HttpURLConnection createConnection() throws IOException {
 		URL url = new URL(PROFILE_URL);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestMethod("POST");
@@ -129,7 +136,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 		return new UUID(mostSignificant, leastSignificant);
 	}
 
-	public static UUID getUUIDOf(String name) throws Exception {
+	public static UUID getUUIDOf(String name) throws IOException, ParseException {
 		if (uuids.containsKey(name)) {
 			return uuids.get(name);
 		}

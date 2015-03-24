@@ -172,9 +172,11 @@ public class MGUtil {
 	 * @param prefix  the prefix to place in front of the message. This will
 	 *                automatically be placed within brackets
 	 * @param level   the {@link LogLevel level} at which to log the message
-	 * @since 0.4.1
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @since 0.5.0
 	 */
-	public static void log(Localizable message, String prefix, LogLevel level) {
+	public static void log(Localizable message, String prefix, LogLevel level, String... replacements) {
 		log(message.localize(), prefix, level);
 	}
 
@@ -358,11 +360,13 @@ public class MGUtil {
 	 * @param sender the CommandSender to send the message to
 	 * @param message the message to send
 	 * @param color the color to prefix the message with
-	 * @since 0.4.1
+	 * @param replacements an array or vararg list of
+	 * strings to replace placeholder sequences (%i) with
+	 * @since 0.5.0
 	 */
-	public static void sendToSender(CommandSender sender, Localizable message, Color color) {
+	public static void sendToSender(CommandSender sender, Localizable message, Color color, String... replacements) {
 		if (sender instanceof Player) {
-			message.sendTo(sender.getName(), color);
+			message.sendTo(sender.getName(), color, replacements);
 		}
 		else {
 			sender.sendMessage((color != null ? color : "") + message.localize());
@@ -373,9 +377,11 @@ public class MGUtil {
 	 * Sends a {@link Localizable} to a {@link CommandSender}.
 	 * @param sender the CommandSender to send the message to
 	 * @param message the message to send
-	 * @since 0.4.1
+	 * @param replacements an array or vararg list of
+	 * strings to replace placeholder sequences (%i) with
+	 * @since 0.5.0
 	 */
-	public static void sendToSender(CommandSender sender, Localizable message) {
-		sendToSender(sender, message, null);
+	public static void sendToSender(CommandSender sender, Localizable message, String... replacements) {
+		sendToSender(sender, message, null, replacements);
 	}
 }

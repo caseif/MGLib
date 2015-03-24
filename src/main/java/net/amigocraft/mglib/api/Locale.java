@@ -86,12 +86,10 @@ public abstract class Locale {
 	 * index 1.</p>
 	 *
 	 * @param key the key of the message to retrieve
-	 * @param replacements an array or vararg list of
-	 * strings to replace placeholder sequences (%i) with
 	 * @return the {@link Localizable} associated with the given key,
-	 * @since 0.4.1
+	 * @since 0.5.0
 	 */
-	public abstract Localizable getMessage(String key, String... replacements);
+	public abstract Localizable getMessage(String key);
 
 	/**
 	 * Returns whether this object was loaded from a legacy
@@ -99,13 +97,15 @@ public abstract class Locale {
 	 *
 	 * @return whether this object was loaded from a legacy
 	 * locale file.
+	 * @deprecated Always returns false due to changes to locale API
 	 * @since 0.4.0
 	 */
+	@Deprecated
 	public abstract boolean isLegacy();
 
 	/**
 	 * Initializes the locale manager. This must be called, or
-	 * {@link Locale#getMessage(String, String...)} will always return its
+	 * {@link Locale#getMessage(String)} will always return its
 	 * parameter.
 	 *
 	 * @since 0.3.0

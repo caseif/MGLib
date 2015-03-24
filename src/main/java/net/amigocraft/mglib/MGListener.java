@@ -124,7 +124,7 @@ class MGListener implements Listener {
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-				Main.log(Main.locale.getMessage("plugin.alert.world-list.load", plugin), LogLevel.INFO);
+				Main.log(Main.locale.getMessage("plugin.alert.world-list.load"), LogLevel.INFO, plugin);
 			}
 		}
 	}
@@ -198,7 +198,7 @@ class MGListener implements Listener {
 					}
 					catch (Exception ex) {
 						ex.printStackTrace();
-						Main.log(locale.getMessage("plugin.alert.data.save", p), LogLevel.SEVERE);
+						Main.log(locale.getMessage("plugin.alert.data.save"), LogLevel.SEVERE, p);
 					}
 				}
 			}
@@ -320,7 +320,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.uuid-fail.spec", p), LogLevel.SEVERE);
+			Main.log(Main.locale.getMessage("plugin.alert.uuid-fail.spec"), LogLevel.SEVERE, p);
 		}
 		try {
 			YamlConfiguration y = new YamlConfiguration();
@@ -350,7 +350,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.data.load", p), LogLevel.SEVERE);
+			Main.log(Main.locale.getMessage("plugin.alert.data.load"), LogLevel.SEVERE, p);
 		}
 
 		// update tablist
@@ -841,7 +841,7 @@ class MGListener implements Listener {
 								r = mg.createRound(ls.getArena());
 							}
 							catch (NoSuchArenaException ex) {
-								locale.getMessage("error.personal.load-fail", ls.getArena()).sendTo(e.getPlayer().getName(), Color.RED);
+								locale.getMessage("error.personal.load-fail").sendTo(e.getPlayer().getName(), Color.RED, ls.getArena());
 								return;
 							}
 						}

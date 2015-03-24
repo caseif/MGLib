@@ -53,7 +53,7 @@ import java.util.logging.Logger;
  * MGLib's primary (central) class.
  *
  * @author Maxim Roncacé
- * @version 0.4.0
+ * @version 0.5.0-SNAPSHOT
  * @since 0.1.0
  */
 public class Main extends JavaPlugin {
@@ -149,7 +149,7 @@ public class Main extends JavaPlugin {
 			log(locale.getMessage("plugin.alert.uuid-fail"), LogLevel.SEVERE);
 		}
 
-		log(locale.getMessage("plugin.event.enable", this.toString()), LogLevel.INFO);
+		log(locale.getMessage("plugin.event.enable"), LogLevel.INFO, this.toString());
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class Main extends JavaPlugin {
 		MGLibEvent.uninitialize();
 		NmsUtil.uninitialize();
 		UUIDFetcher.uninitialize();
-		log(locale.getMessage("plugin.event.disable", this.toString()), LogLevel.INFO);
+		log(locale.getMessage("plugin.event.disable"), LogLevel.INFO, this.toString());
 		Main.uninitialize();
 	}
 
@@ -195,10 +195,12 @@ public class Main extends JavaPlugin {
 	 *
 	 * @param message the message to log.
 	 * @param level   the {@link LogLevel level} at which to log the message
-	 * @since 0.4.1
+	 * @param replacements An array of strings to replace any wildcard patterns
+	 *                     with in the returned message
+	 * @since 0.5.0
 	 */
-	public static void log(Localizable message, LogLevel level) {
-		MGUtil.log(message, "MGLib", level);
+	public static void log(Localizable message, LogLevel level, String... replacements) {
+		MGUtil.log(message, "MGLib", level, replacements);
 	}
 
 	/**
@@ -218,8 +220,9 @@ public class Main extends JavaPlugin {
 		if (label.equalsIgnoreCase("mglib")) {
 			MGUtil.sendToSender(
 					sender,
-					locale.getMessage("plugin.event.info", getDescription().getVersion(), "Maxim Roncacé"),
-					Color.LIGHT_PURPLE
+					locale.getMessage("plugin.event.info"),
+					Color.LIGHT_PURPLE,
+					getDescription().getVersion(), this.getDescription().getAuthors().get(0)
 			);
 			return true;
 		}
@@ -230,7 +233,7 @@ public class Main extends JavaPlugin {
 	 * Gets the locale defined by MGLib's config.
 	 *
 	 * @return the locale defined by MGLib's config.
-	 * @since 0.4.1
+	 * @since 0.5.0
 	 */
 	public static String getServerLocale() {
 		return SERVER_LOCALE;
