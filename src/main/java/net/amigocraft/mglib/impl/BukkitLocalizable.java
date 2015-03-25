@@ -71,15 +71,10 @@ public class BukkitLocalizable implements Localizable {
 	}
 
 	@Override
-	public String localize() {
-		return this.localizeWithWildcards();
-	}
-
-	@Override
-	public String localizeWithWildcards(String... replacements) {
-		String message = this.localize(DEFAULT_LOCALE, replacements);
+	public String localize(String... replacements) {
+		String message = this.localizeIn(DEFAULT_LOCALE, replacements);
 		if (message.equals(key)) {
-			return this.localize(FALLBACK_LOCALE, replacements);
+			return this.localizeIn(FALLBACK_LOCALE, replacements);
 		}
 		else {
 			return message;
@@ -87,7 +82,7 @@ public class BukkitLocalizable implements Localizable {
 	}
 
 	@Override
-	public String localize(String locale, String... replacements) {
+	public String localizeIn(String locale, String... replacements) {
 		return locales.containsKey(locale) ? locales.get(locale) : this.getKey();
 	}
 

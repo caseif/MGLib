@@ -45,16 +45,9 @@ public interface Localizable {
 	/**
 	 * Attempts to localize this message based on the server's defined locale.
 	 *
-	 * @return The message localized as requested if possible; otherwise the
-	 *         message localized in the default locale if possible; otherwise
-	 *         the raw localization key
-	 * @since 0.5.0
-	 */
-	public String localize();
-
-	/**
-	 * Attempts to localize this message based on the server's defined locale
-	 * and replace wildcard patterns with their respecitve vararg elements.
+	 * <p>Please note that this does not accept locale codes. If you wish to
+	 * localize this message in a specific language, you should instead use
+	 * {@link Localizable#localizeIn(String, String...)}.</p>
 	 *
 	 * @param replacements An array of strings to replace any wildcard patterns
 	 *                     with in the returned message
@@ -63,7 +56,7 @@ public interface Localizable {
 	 *         the raw localization key
 	 * @since 0.5.0
 	 */
-	public String localizeWithWildcards(String... replacements);
+	public String localize(String... replacements);
 
 	/**
 	 * Attempts to localize this message in the given locale.
@@ -78,7 +71,7 @@ public interface Localizable {
 	 *         the raw localization key
 	 * @since 0.5.0
 	 */
-	public String localize(String locale, String... replacements); //TODO: probably rename this to localizeTo(), idk, I'm way too tired to think
+	public String localizeIn(String locale, String... replacements);
 
 	/**
 	 * Attempts to localize this message for the player with the given username.

@@ -62,8 +62,10 @@ public enum Color {
 	/**
 	 * Gets the code associated with this {@link Color}.
 	 * @return the code associated with this {@link Color}
+	 * @deprecated Raw character codes are being phased out of Minecraft
 	 * @since 0.4.0
 	 */
+	@Deprecated
 	public char getCode() {
 		return code;
 	}
@@ -73,8 +75,10 @@ public enum Color {
 	 * found.
 	 * @param code the code to lookup
 	 * @return the {@link Color} color associated with the code
+	 * @deprecated Raw character codes are being phased out of Minecraft
 	 * @since 0.4.0
 	 */
+	@Deprecated
 	public static Color fromCode(char code) {
 		for (Color c : Color.values()) {
 			if (c.getCode() == code) {

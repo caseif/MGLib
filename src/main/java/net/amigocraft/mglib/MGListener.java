@@ -124,7 +124,7 @@ class MGListener implements Listener {
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-				Main.log(Main.locale.getMessage("plugin.alert.world-list.load"), LogLevel.INFO, plugin);
+				Main.log(Main.locale.getMessage("plugin.alert.world-list.load").localize(plugin), LogLevel.INFO);
 			}
 		}
 	}
@@ -198,7 +198,7 @@ class MGListener implements Listener {
 					}
 					catch (Exception ex) {
 						ex.printStackTrace();
-						Main.log(locale.getMessage("plugin.alert.data.save"), LogLevel.SEVERE, p);
+						Main.log(locale.getMessage("plugin.alert.data.save").localize(p), LogLevel.SEVERE);
 					}
 				}
 			}
@@ -320,7 +320,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.uuid-fail.spec"), LogLevel.SEVERE, p);
+			Main.log(Main.locale.getMessage("plugin.alert.uuid-fail.spec").localize(p), LogLevel.SEVERE);
 		}
 		try {
 			YamlConfiguration y = new YamlConfiguration();
@@ -350,7 +350,7 @@ class MGListener implements Listener {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.data.load"), LogLevel.SEVERE, p);
+			Main.log(Main.locale.getMessage("plugin.alert.data.load").localize(p), LogLevel.SEVERE);
 		}
 
 		// update tablist

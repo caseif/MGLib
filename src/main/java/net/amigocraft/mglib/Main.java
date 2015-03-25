@@ -129,11 +129,11 @@ public class Main extends JavaPlugin {
 				metrics.start();
 			}
 			catch (IOException ex) {
-				log(locale.getMessage("plugin.alert.metrics-fail"), LogLevel.WARNING);
+				log(locale.getMessage("plugin.alert.metrics-fail").localize(), LogLevel.WARNING);
 			}
 		}
 		if (this.getDescription().getVersion().contains("dev")) {
-			log(locale.getMessage("plugin.alert.dev-build"), LogLevel.WARNING);
+			log(locale.getMessage("plugin.alert.dev-build").localize(), LogLevel.WARNING);
 		}
 
 		// store UUIDs of online players
@@ -146,10 +146,10 @@ public class Main extends JavaPlugin {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			log(locale.getMessage("plugin.alert.uuid-fail"), LogLevel.SEVERE);
+			log(locale.getMessage("plugin.alert.uuid-fail").localize(), LogLevel.SEVERE);
 		}
 
-		log(locale.getMessage("plugin.event.enable"), LogLevel.INFO, this.toString());
+		log(locale.getMessage("plugin.event.enable").localize(this.toString()), LogLevel.INFO);
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class Main extends JavaPlugin {
 		MGLibEvent.uninitialize();
 		NmsUtil.uninitialize();
 		UUIDFetcher.uninitialize();
-		log(locale.getMessage("plugin.event.disable"), LogLevel.INFO, this.toString());
+		log(locale.getMessage("plugin.event.disable").localize(this.toString()), LogLevel.INFO);
 		Main.uninitialize();
 	}
 
@@ -199,9 +199,9 @@ public class Main extends JavaPlugin {
 	 *                     with in the returned message
 	 * @since 0.5.0
 	 */
-	public static void log(Localizable message, LogLevel level, String... replacements) {
+	/*public static void log(Localizable message, LogLevel level, String... replacements) {
 		MGUtil.log(message, "MGLib", level, replacements);
-	}
+	}*/
 
 	/**
 	 * Internal convenience method for logging. <strong>Please do not call this

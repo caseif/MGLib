@@ -82,7 +82,7 @@ public class BukkitLocale extends Locale {
 
 	@Override
 	public String _INVALID_getMessage(String key, String... replacements) {
-		return this.getMessage(key).localizeWithWildcards(replacements);
+		return this.getMessage(key).localize(replacements);
 	}
 
 	@Override

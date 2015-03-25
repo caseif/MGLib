@@ -166,21 +166,6 @@ public class MGUtil {
 	}
 
 	/**
-	 * Logs the given message if verbose logging is enabled.
-	 *
-	 * @param message the message to log
-	 * @param prefix  the prefix to place in front of the message. This will
-	 *                automatically be placed within brackets
-	 * @param level   the {@link LogLevel level} at which to log the message
-	 * @param replacements An array of strings to replace any wildcard patterns
-	 *                     with in the returned message
-	 * @since 0.5.0
-	 */
-	public static void log(Localizable message, String prefix, LogLevel level, String... replacements) {
-		log(message.localize(), prefix, level);
-	}
-
-	/**
 	 * Calls an event, but sends it only to the appropriate plugin.
 	 * <strong>Please do not call this from your pluginv unless you are aware of
 	 * the implications.</strong>

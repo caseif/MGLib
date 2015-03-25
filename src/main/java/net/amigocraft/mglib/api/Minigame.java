@@ -107,7 +107,7 @@ public class Minigame {
 			//TODO: locale messages are not available in the same method call that constructs this object
 			public void run() {
 				locale.initialize();
-				Main.log(Main.locale.getMessage("plugin.event.hook"), LogLevel.INFO, plugin.getName());
+				Main.log(Main.locale.getMessage("plugin.event.hook").localize(plugin.getName()), LogLevel.INFO);
 			}
 		});
 	}
@@ -220,7 +220,7 @@ public class Minigame {
 				rounds.put(arena.toLowerCase(), r); // register arena with MGLib
 			}
 			catch (NoSuchMethodException ex) { // thrown when the required constructor does not exist
-				Main.log(locale.getMessage("plugin.alert.bad-constructor"), LogLevel.SEVERE, "Round", plugin.getName());
+				Main.log(locale.getMessage("plugin.alert.bad-constructor").localize("Round", plugin.getName()), LogLevel.SEVERE);
 				ex.printStackTrace();
 			}
 			catch (InvocationTargetException ex) { // any exception thrown from the called constructor
@@ -230,11 +230,11 @@ public class Minigame {
 				ex.printStackTrace();
 			}
 			catch (InstantiationException ex) { // if this happens then the overriding plugin screwed something up
-				Main.log(locale.getMessage("plugin.alert.bad-constructor"), LogLevel.SEVERE, "Round", plugin.getName());
+				Main.log(locale.getMessage("plugin.alert.bad-constructor").localize("Round", plugin.getName()), LogLevel.SEVERE);
 				ex.printStackTrace();
 			}
 			catch (IllegalAccessException ex) { // thrown if the called method from the overriding class is not public
-				Main.log(locale.getMessage("plugin.alert.invisible-constructor"), LogLevel.SEVERE, "Round", plugin.getName());
+				Main.log(locale.getMessage("plugin.alert.invisible-constructor").localize("Round", plugin.getName()), LogLevel.SEVERE);
 				ex.printStackTrace();
 			}
 		}

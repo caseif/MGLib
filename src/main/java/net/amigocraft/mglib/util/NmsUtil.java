@@ -122,7 +122,7 @@ public class NmsUtil {
 				}
 			}
 			catch (ClassNotFoundException ex) {
-				Main.log(Main.locale.getMessage("plugin.alert.nms.player-info"), LogLevel.WARNING);
+				Main.log(Main.locale.getMessage("plugin.alert.nms.player-info").localize(), LogLevel.WARNING);
 			}
 			try {
 				try {
@@ -140,12 +140,12 @@ public class NmsUtil {
 				}
 			}
 			catch (ClassNotFoundException ex) {
-				Main.log(Main.locale.getMessage("plugin.alert.nms.client-command"), LogLevel.WARNING);
+				Main.log(Main.locale.getMessage("plugin.alert.nms.client-command").localize(), LogLevel.WARNING);
 			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.nms.fail"), LogLevel.WARNING);
+			Main.log(Main.locale.getMessage("plugin.alert.nms.fail").localize(), LogLevel.WARNING);
 			nmsException = true;
 		}
 
@@ -299,11 +299,11 @@ public class NmsUtil {
 		}
 		catch (IllegalAccessException ex) {
 			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players"), LogLevel.SEVERE);
+			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players").localize(), LogLevel.SEVERE);
 		}
 		catch (InvocationTargetException ex) {
 			ex.printStackTrace();
-			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players"), LogLevel.SEVERE);
+			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players").localize(), LogLevel.SEVERE);
 		}
 		return null;
 	}
