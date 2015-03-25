@@ -52,8 +52,10 @@ public class NmsUtil {
 	private static final boolean NMS_SUPPORT;
 	public static final boolean SPECTATOR_SUPPORT;
 
-	// general classes for sending packets
+	// general stuff for NMS magic
 	public static Method craftPlayer_getHandle;
+
+	// player connection related stuff (mostly for sending packets)
 	public static Field playerConnection;
 	public static Method playerConnection_sendPacket;
 	public static Method playerConnection_a_packetPlayInClientCommand;
@@ -67,8 +69,11 @@ public class NmsUtil {
 	private static Object enumPlayerInfoAction_removePlayer;
 	private static Field entityPlayer_ping;
 
+	// for getting online players
 	private static Method getOnlinePlayers;
 	public static boolean newOnlinePlayersMethod = false;
+
+	private static Field entityPlayer_locale;
 
 	static {
 		SPECTATOR_SUPPORT = GameMode.valueOf("SPECTATOR") != null;
@@ -83,6 +88,8 @@ public class NmsUtil {
 
 			// field for player ping
 			entityPlayer_ping = getNmsClass("EntityPlayer").getDeclaredField("ping");
+			// field for player locale
+			entityPlayer_locale = getNmsClass("EntityPlayer").getDeclaredField("locale");
 			// get method for recieving CraftPlayer's EntityPlayer
 			craftPlayer_getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle");
 			// get the PlayerConnection of the EntityPlayer
@@ -304,6 +311,28 @@ public class NmsUtil {
 		catch (InvocationTargetException ex) {
 			ex.printStackTrace();
 			Main.log(Main.locale.getMessage("plugin.alert.nms.online-players").localize(), LogLevel.SEVERE);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the current client locale of the given player.
+	 *
+	 * @param player The player to get a locale from
+	 * @return The player's current client locale
+	 * @since 0.5.0
+	 */
+	public static String getLocale(Player player) {
+		try {
+			return (String)entityPlayer_locale.get(craftPlayer_getHandle.invoke(player));
+		}
+		catch (IllegalAccessException ex) {
+			ex.printStackTrace();
+			Main.log("Failed to get locale for " + player.getName(), LogLevel.SEVERE);
+		}
+		catch (InvocationTargetException ex) {
+			ex.printStackTrace();
+			Main.log("Failed to get locale for " + player.getName(), LogLevel.SEVERE);
 		}
 		return null;
 	}

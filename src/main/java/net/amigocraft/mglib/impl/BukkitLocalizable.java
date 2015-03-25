@@ -29,12 +29,15 @@ import java.util.UUID;
 
 import com.google.common.collect.Maps;
 import net.amigocraft.mglib.MGUtil;
+import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.api.Color;
+import net.amigocraft.mglib.api.Locale;
 import net.amigocraft.mglib.api.Localizable;
 import net.amigocraft.mglib.api.MGPlayer;
-import org.apache.commons.lang.NotImplementedException;
+import net.amigocraft.mglib.util.NmsUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.json.simple.parser.ParseException;
@@ -45,6 +48,7 @@ public class BukkitLocalizable implements Localizable {
 	private static final String DEFAULT_LOCALE;
 
 	private String key;
+	private Locale parent;
 	private Map<String, String> locales = Maps.newHashMap();
 
 	static {
@@ -57,7 +61,7 @@ public class BukkitLocalizable implements Localizable {
 		}
 	}
 
-	BukkitLocalizable(String key) {
+	BukkitLocalizable(Locale parent, String key) {
 		this.key = key;
 	}
 
@@ -68,6 +72,11 @@ public class BukkitLocalizable implements Localizable {
 	@Override
 	public String getKey() {
 		return this.key;
+	}
+
+	@Override
+	public Locale getParent() {
+		return this.parent;
 	}
 
 	@Override
@@ -102,7 +111,12 @@ public class BukkitLocalizable implements Localizable {
 
 	@Override
 	public String localizeFor(UUID playerUuid, String... replacements) throws IllegalArgumentException {
-		throw new NotImplementedException();
+		Player player = Bukkit.getPlayer(playerUuid);
+		String locale = null;
+		if (player != null) {
+			locale = NmsUtil.getLocale(player);
+		}
+		return locale != null ? locale : Main.getServerLocale();
 	}
 
 	@Override
@@ -138,14 +152,14 @@ public class BukkitLocalizable implements Localizable {
 
 	@Override
 	public void sendTo(UUID playerUuid, String... replacements) throws IllegalArgumentException {
-		this.sendTo(playerUuid, Color.WHITE);
+		this.sendTo(playerUuid, Color.RESET);
 	}
 
 	@Override
 	public void sendTo(UUID playerUuid, Color color, String... replacements) throws IllegalArgumentException {
 		Player player = Bukkit.getPlayer(playerUuid);
 		if (player != null) {
-			player.sendMessage(this.localizeFor(playerUuid));
+			player.sendMessage(ChatColor.valueOf(color.name()) + this.localizeFor(playerUuid));
 		}
 		else {
 			throw new IllegalArgumentException();

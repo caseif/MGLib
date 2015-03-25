@@ -43,6 +43,14 @@ public interface Localizable {
 	public String getKey();
 
 	/**
+	 * Gets the parent {@link Locale} of this message.
+	 *
+	 * @return the parent {@link Locale} of this message
+	 * @since 0.5.0
+	 */
+	public Locale getParent();
+
+	/**
 	 * Attempts to localize this message based on the server's defined locale.
 	 *
 	 * <p>Please note that this does not accept locale codes. If you wish to

@@ -166,7 +166,7 @@ public class BukkitLocale extends Locale {
 			for (Map.Entry e : props.entrySet()) {
 				String key = e.getKey().toString();
 				if (!messages.containsKey(key)) {
-					messages.put(key, new BukkitLocalizable(key));
+					messages.put(key, new BukkitLocalizable(this, key));
 				}
 				messages.get(key).addLocale(language, e.getValue().toString());
 			}
