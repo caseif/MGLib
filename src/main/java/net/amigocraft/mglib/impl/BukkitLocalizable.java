@@ -75,7 +75,7 @@ public class BukkitLocalizable implements Localizable {
 
 	@Override
 	public String localizeIn(String locale, String... replacements) {
-		locale = locale.replace("_", "").replace("-", ""); // normalize locale code
+		locale = locale.replace("_", "").replace("-", "").toLowerCase(); // normalize locale code
 		if (locales.containsKey(locale)) {
 			String message = locales.get(locale);
 			for (int i = 0; i < replacements.length; i++) {
@@ -83,8 +83,13 @@ public class BukkitLocalizable implements Localizable {
 			}
 			return message;
 		}
-		else if (locale.equals(Main.getServerLocale()) && !locale.equals(FALLBACK_LOCALE)) {
-			return this.localizeIn(FALLBACK_LOCALE, replacements);
+		else if (!locale.equals(FALLBACK_LOCALE)) {
+			if (!locale.equals(Main.getServerLocale())) {
+				return this.localizeIn(Main.getServerLocale(), replacements);
+			}
+			else {
+				return this.localizeIn(FALLBACK_LOCALE, replacements);
+			}
 		}
 		else {
 			return this.getKey();

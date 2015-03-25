@@ -190,7 +190,7 @@ public class BukkitLocale extends Locale {
 	}
 
 	private void loadLanguage(String language, InputStream stream, boolean legacy) throws IOException {
-		language = language.replace("_", "").replace("-", ""); // normalize locale names
+		language = language.replace("_", "").replace("-", "").toLowerCase(); // normalize locale names
 		if (legacy) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 			String line;
