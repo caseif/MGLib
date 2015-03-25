@@ -102,14 +102,8 @@ public class Minigame {
 		});
 		Main.registerWorlds(plugin.getName()); // registers worlds containing arenas for use with the event listener
 		locale = new BukkitLocale(plugin.getName());
-		Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
-			// add delay so that the plugin has a chance to change its default locale
-			//TODO: locale messages are not available in the same method call that constructs this object
-			public void run() {
-				locale.initialize();
-				Main.log(Main.locale.getMessage("plugin.event.hook").localize(plugin.getName()), LogLevel.INFO);
-			}
-		});
+		locale.initialize();
+		Main.log(Main.locale.getMessage("plugin.event.hook").localize(plugin.getName()), LogLevel.INFO);
 	}
 
 	/**

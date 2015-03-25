@@ -1271,11 +1271,43 @@ public class Round implements Metadatable {
 	/**
 	 * Broadcasts a message to all players in this round.
 	 *
+	 * @param message               the message to broadcast
+	 * @param color The color to broadcast with (pass <code>null</code> for none)
+	 * @param broadcastToSpectators whether the message should be broadcast to
+	 *                              spectators
+	 * @param replacements Strings to replace wildcard sequences with
+	 * @since 0.5.0
+	 */
+	public void broadcast(Localizable message, Color color, boolean broadcastToSpectators, String... replacements) {
+		for (MGPlayer p : players.values()) {
+			@SuppressWarnings("deprecation")
+			Player bP = Bukkit.getPlayer(p.getName());
+			if ((!p.isSpectating() || broadcastToSpectators) && bP != null) {
+				message.sendTo(bP.getUniqueId(), color, replacements);
+			}
+		}
+	}
+
+	/**
+	 * Broadcasts a message to all players in this round.
+	 *
 	 * @param message the message to broadcast
 	 * @since 0.2.0
 	 */
 	public void broadcast(String message) {
 		broadcast(message, true);
+	}
+
+	/**
+	 * Broadcasts a message to all players in this round.
+	 *
+	 * @param message the message to broadcast
+	 * @param color The color to broadcast with (pass <code>null</code> for none)
+	 * @param replacements Strings to replace wildcard sequences with
+	 * @since 0.2.0
+	 */
+	public void broadcast(Localizable message, Color color, String... replacements) {
+		broadcast(message, color, true, replacements);
 	}
 
 	/**

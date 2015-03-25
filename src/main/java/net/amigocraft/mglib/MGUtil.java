@@ -32,6 +32,7 @@ import net.amigocraft.mglib.api.Minigame;
 import net.amigocraft.mglib.event.MGLibEvent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
@@ -354,7 +355,7 @@ public class MGUtil {
 			message.sendTo(sender.getName(), color, replacements);
 		}
 		else {
-			sender.sendMessage((color != null ? color : "") + message.localize());
+			sender.sendMessage((color != null ? ChatColor.valueOf(color.name()) : "") + message.localize(replacements));
 		}
 	}
 

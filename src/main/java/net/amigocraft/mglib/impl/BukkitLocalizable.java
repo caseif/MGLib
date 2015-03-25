@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.collect.Maps;
-import net.amigocraft.mglib.MGUtil;
 import net.amigocraft.mglib.Main;
 import net.amigocraft.mglib.UUIDFetcher;
 import net.amigocraft.mglib.api.Color;
@@ -38,34 +37,24 @@ import net.amigocraft.mglib.api.MGPlayer;
 import net.amigocraft.mglib.util.NmsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.json.simple.parser.ParseException;
 
 public class BukkitLocalizable implements Localizable {
 
 	private static final String FALLBACK_LOCALE = "enUS";
-	private static final String DEFAULT_LOCALE;
 
-	private String key;
 	private Locale parent;
+	private String key;
 	private Map<String, String> locales = Maps.newHashMap();
 
-	static {
-		FileConfiguration config = MGUtil.getPlugin().getConfig();
-		if (config.contains("locale")) {
-			DEFAULT_LOCALE = config.getString("locale");
-		}
-		else {
-			DEFAULT_LOCALE = FALLBACK_LOCALE;
-		}
-	}
-
 	BukkitLocalizable(Locale parent, String key) {
+		this.parent = parent;
 		this.key = key;
 	}
 
 	void addLocale(String locale, String message) {
+		locale = locale.replace("_", "").replace("-", ""); // normalize locale code
 		locales.put(locale, message);
 	}
 
@@ -81,9 +70,9 @@ public class BukkitLocalizable implements Localizable {
 
 	@Override
 	public String localize(String... replacements) {
-		String message = this.localizeIn(DEFAULT_LOCALE, replacements);
+		String message = this.localizeIn(Main.getServerLocale(), replacements);
 		if (message.equals(key)) {
-			return this.localizeIn(FALLBACK_LOCALE, replacements);
+			return this.localizeIn(Main.getServerLocale(), replacements);
 		}
 		else {
 			return message;
@@ -92,13 +81,26 @@ public class BukkitLocalizable implements Localizable {
 
 	@Override
 	public String localizeIn(String locale, String... replacements) {
-		return locales.containsKey(locale) ? locales.get(locale) : this.getKey();
+		locale = locale.replace("_", "").replace("-", ""); // normalize locale code
+		if (locales.containsKey(locale)) {
+			String message = locales.get(locale);
+			for (int i = 0; i < replacements.length; i++) {
+				message = message.replaceAll("%" + (i + 1), replacements[i]);
+			}
+			return message;
+		}
+		else if (!locale.equals(FALLBACK_LOCALE)) {
+			return this.localizeIn(FALLBACK_LOCALE, replacements);
+		}
+		else {
+			return this.getKey();
+		}
 	}
 
 	@Override
 	public String localizeFor(String playerName, String... replacements) throws IllegalArgumentException {
 		try {
-			return this.localizeFor(UUIDFetcher.getUUIDOf(playerName));
+			return this.localizeFor(UUIDFetcher.getUUIDOf(playerName), replacements);
 		}
 		catch (IOException ex) {
 			ex.printStackTrace();
@@ -116,18 +118,18 @@ public class BukkitLocalizable implements Localizable {
 		if (player != null) {
 			locale = NmsUtil.getLocale(player);
 		}
-		return locale != null ? locale : Main.getServerLocale();
+		return this.localizeIn(locale != null ? locale : Main.getServerLocale(), replacements);
 	}
 
 	@Override
 	public String localizeFor(MGPlayer player, String... replacements) throws IllegalArgumentException {
-		return this.localizeFor(player.getName());
+		return this.localizeFor(player.getName(), replacements);
 	}
 
 	@Override
 	public void sendTo(String playerName, String... replacements) throws IllegalArgumentException {
 		try {
-			this.sendTo(UUIDFetcher.getUUIDOf(playerName));
+			this.sendTo(UUIDFetcher.getUUIDOf(playerName), replacements);
 		}
 		catch (IOException ex) {
 			ex.printStackTrace();
@@ -140,7 +142,7 @@ public class BukkitLocalizable implements Localizable {
 	@Override
 	public void sendTo(String playerName, Color color, String... replacements) throws IllegalArgumentException {
 		try {
-			this.sendTo(UUIDFetcher.getUUIDOf(playerName), color);
+			this.sendTo(UUIDFetcher.getUUIDOf(playerName), color, replacements);
 		}
 		catch (IOException ex) {
 			ex.printStackTrace();
@@ -152,14 +154,14 @@ public class BukkitLocalizable implements Localizable {
 
 	@Override
 	public void sendTo(UUID playerUuid, String... replacements) throws IllegalArgumentException {
-		this.sendTo(playerUuid, Color.RESET);
+		this.sendTo(playerUuid, Color.RESET, replacements);
 	}
 
 	@Override
 	public void sendTo(UUID playerUuid, Color color, String... replacements) throws IllegalArgumentException {
 		Player player = Bukkit.getPlayer(playerUuid);
 		if (player != null) {
-			player.sendMessage(ChatColor.valueOf(color.name()) + this.localizeFor(playerUuid));
+			player.sendMessage(ChatColor.valueOf(color.name()) + this.localizeFor(playerUuid, replacements));
 		}
 		else {
 			throw new IllegalArgumentException();

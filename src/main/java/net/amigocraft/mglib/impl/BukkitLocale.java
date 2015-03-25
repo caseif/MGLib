@@ -28,12 +28,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import net.amigocraft.mglib.api.Locale;
 import net.amigocraft.mglib.api.Localizable;
@@ -46,33 +48,26 @@ public class BukkitLocale extends Locale {
 
 	/**
 	 * The name of the plugin this locale manager belongs to.
-	 *
-	 * @since 0.3.0
 	 */
 	public String plugin;
 
 	/**
 	 * An enumeration of message keys found in the default locale, but not the
 	 * defined one.
-	 *
-	 * @since 0.4.0
 	 */
 	public final List<String> undefinedMessages = new ArrayList<String>();
 
-	private String prefix;
-
 	/**
-	 * Creates a new locale manager for the given plugin (yours).
-	 * MGLib attempts to load locales first from the "locales"
+	 * Creates a new locale manager for the given plugin.
+	 *
+	 * <p>MGLib attempts to load locales first from the "locales"
 	 * directory in the plugin's data folder, then from the locales
-	 * directory in the plugin JAR's root.
+	 * directory in the plugin JAR's root.</p>
 	 *
 	 * @param plugin the plugin to create a locale manager for
-	 * @since 0.3.0
 	 */
 	public BukkitLocale(String plugin) {
 		this.plugin = plugin;
-		prefix = plugin.equals("MGLib") ? null : "[" + plugin + "]";
 	}
 
 	@Override
@@ -87,7 +82,7 @@ public class BukkitLocale extends Locale {
 
 	@Override
 	public Localizable getMessage(String key) {
-		throw new NotImplementedException();
+		return this.messages.containsKey(key) ? this.messages.get(key) : new BukkitLocalizable(this, key);
 	}
 
 	@Override
@@ -97,52 +92,87 @@ public class BukkitLocale extends Locale {
 
 	@Override
 	public void initialize() {
+		loadFromDataFolder();
+		loadFromInternal();
+	}
+
+	private void loadFromDataFolder() {
 		File external = new File(Bukkit.getPluginManager().getPlugin(this.plugin).getDataFolder(), "locales");
-		if (external.exists() && external.isDirectory()) {
-			loadContainer(external);
-		}
-		URL internal = Bukkit.getPluginManager().getPlugin(plugin).getClass().getClassLoader().getResource("locales");
-		if (internal != null) {
-			try {
-				File internalContainer = new File(internal.toURI());
-				loadContainer(internalContainer);
+		if (external.exists()) {
+			if (external.isDirectory()) {
+				// files are indexed into appropriate lists first so non-legacy locales take priority
+				final List<File> localeFiles = new ArrayList<File>();
+				final List<File> legacyFiles = new ArrayList<File>();
+				//noinspection ConstantConditions
+				for (File f : external.listFiles()) {
+					if (f.isFile()) {
+						if (f.getName().endsWith(".properties")) {
+							localeFiles.add(f);
+						}
+						else if (f.getName().endsWith(".csv")) {
+							legacyFiles.add(f);
+						}
+					}
+				}
+				for (File f : localeFiles) {
+					String name = f.getName().substring(0, f.getName().lastIndexOf(".")).replace("_", "").replace("-", "");
+					try {
+						loadLanguage(name, new FileInputStream(f), false);
+					}
+					catch (IOException ex) {
+						ex.printStackTrace();
+						System.out.println("Failed to load locale " + name + "! Legacy: false");
+					}
+				}
+				for (File f : legacyFiles) {
+					String name = f.getName().substring(0, f.getName().lastIndexOf(".")).replace("_", "").replace("-", "");
+					try {
+						loadLanguage(name, new FileInputStream(f), false);
+					}
+					catch (IOException ex) {
+						ex.printStackTrace();
+						System.out.println("Failed to load locale " + name + "! Legacy: true");
+					}
+				}
 			}
-			catch (URISyntaxException ex) {
-				ex.printStackTrace();
+			else {
+				throw new IllegalArgumentException("Invalid locale container: " + external.getPath());
 			}
 		}
 	}
 
-	private void loadContainer(File container) {
-		if (container.isDirectory()) {
-			final List<File> localeFiles = new ArrayList<File>();
-			final List<File> legacyFiles = new ArrayList<File>();
-			// files are indexed into appropriate lists first so non-legacy locales take priority
-			//noinspection ConstantConditions
-			for (File f : container.listFiles()) {
-				if (f.isFile()) {
-					if (f.getName().endsWith(".csv")) {
-						localeFiles.add(f);
+	private void loadFromInternal() {
+		// files are indexed into appropriate lists first so non-legacy locales take priority
+		final List<JarEntry> localeFiles = new ArrayList<JarEntry>();
+		final List<JarEntry> legacyFiles = new ArrayList<JarEntry>();
+		try {
+			JarFile jar = new JarFile(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+			Enumeration<JarEntry> entries = jar.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry e = entries.nextElement();
+				if (!e.isDirectory() && e.getName().startsWith("locales")) {
+					if (e.getName().endsWith(".properties")) {
+						localeFiles.add(e);
 					}
-					else if (f.getName().endsWith(".properties")) {
-						legacyFiles.add(f);
+					else if (e.getName().endsWith(".csv")) {
+						legacyFiles.add(e);
 					}
 				}
 			}
-			for (File f : localeFiles) {
-				String name = f.getName().substring(0, f.getName().lastIndexOf("."));
+			for (JarEntry e : localeFiles) {
+				String name = e.getName().substring(0, e.getName().lastIndexOf(".")).replace("locales/", "").replace("_", "").replace("-", "");
 				try {
-					loadLanguage(name, new FileInputStream(f), false);
+					loadLanguage(name, jar.getInputStream(e), false);
 				}
 				catch (IOException ex) {
 					ex.printStackTrace();
 					System.out.println("Failed to load locale " + name + "! Legacy: false");
 				}
 			}
-			for (File f : legacyFiles) {
-				String name = f.getName().substring(0, f.getName().lastIndexOf("."));
+			for (JarEntry e : legacyFiles) {
+				String name = e.getName().substring(0, e.getName().lastIndexOf(".")).replace("locales/", "").replace("_", "").replace("-", "");
 				try {
-					loadLanguage(name, new FileInputStream(f), false);
+					loadLanguage(name, jar.getInputStream(e), false);
 				}
 				catch (IOException ex) {
 					ex.printStackTrace();
@@ -150,8 +180,11 @@ public class BukkitLocale extends Locale {
 				}
 			}
 		}
-		else {
-			throw new IllegalArgumentException("Invalid locale container: " + container.getPath());
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		catch (URISyntaxException ex) {
+			ex.printStackTrace();
 		}
 	}
 

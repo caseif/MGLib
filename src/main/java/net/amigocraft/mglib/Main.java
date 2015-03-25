@@ -112,7 +112,7 @@ public class Main extends JavaPlugin {
 			Main.log("The configured logging level is invalid!", LogLevel.WARNING);
 		}
 		VANILLA_SPECTATING_DISABLED = getConfig().getBoolean("disable-vanilla-spectating");
-		SERVER_LOCALE = getConfig().getString("locale");
+		SERVER_LOCALE = getConfig().getString("locale").replace("_", "").replace("-", ""); // normalize
 
 		locale = new BukkitLocale("MGLib");
 		locale.initialize();
@@ -188,20 +188,6 @@ public class Main extends JavaPlugin {
 		log = null;
 		MGUtil.plugin = null;
 	}
-
-	/**
-	 * Internal convenience method for logging. <strong>Please do not call this
-	 * from your plugin.</strong>
-	 *
-	 * @param message the message to log.
-	 * @param level   the {@link LogLevel level} at which to log the message
-	 * @param replacements An array of strings to replace any wildcard patterns
-	 *                     with in the returned message
-	 * @since 0.5.0
-	 */
-	/*public static void log(Localizable message, LogLevel level, String... replacements) {
-		MGUtil.log(message, "MGLib", level, replacements);
-	}*/
 
 	/**
 	 * Internal convenience method for logging. <strong>Please do not call this

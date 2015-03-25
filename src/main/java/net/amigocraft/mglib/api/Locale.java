@@ -80,13 +80,13 @@ public abstract class Locale {
 	 * Retrieves the message with the given key from the
 	 * current locale, and replaces placeholder sequences
 	 * (<code>%i</code>) with the corresponding vararg
-	 * parameter.
+	 * parameter. This method will never return <code>null</code>.
 	 *
 	 * <p><strong>Note:</strong> placeholder sequences should start at
 	 * index 1.</p>
 	 *
 	 * @param key the key of the message to retrieve
-	 * @return the {@link Localizable} associated with the given key,
+	 * @return the {@link Localizable} associated with the given key
 	 * @since 0.5.0
 	 */
 	public abstract Localizable getMessage(String key);
