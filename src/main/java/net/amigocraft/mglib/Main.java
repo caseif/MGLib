@@ -160,7 +160,7 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		disabling = true;
-		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("plugin.event.restart"));
+		Bukkit.broadcastMessage(ChatColor.DARK_PURPLE + "[MGLib] " + locale.getMessage("plugin.event.restart").localize());
 		for (Minigame mg : Minigame.getMinigameInstances()) {
 			for (Round r : mg.getRoundList()) {
 				r.end(false);

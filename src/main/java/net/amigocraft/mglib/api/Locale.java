@@ -97,18 +97,21 @@ public abstract class Locale {
 	 *
 	 * @return whether this object was loaded from a legacy
 	 * locale file.
-	 * @deprecated Always returns false due to changes to locale API
+	 * @deprecated Always returns <code>false</code> due to changes to locale
+	 * API
 	 * @since 0.4.0
 	 */
 	@Deprecated
 	public abstract boolean isLegacy();
 
 	/**
-	 * Initializes the locale manager. This must be called, or
-	 * {@link Locale#getMessage(String)} will always return its
-	 * parameter.
+	 * Initializes the locale manager.
 	 *
+	 * @deprecated This method is obsolete and does nothing, but is retained for
+	 * compatibility purposes
 	 * @since 0.3.0
 	 */
-	public abstract void initialize();
+	@Deprecated
+	public void initialize(){
+	}
 }

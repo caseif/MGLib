@@ -352,7 +352,7 @@ public class MGUtil {
 	 */
 	public static void sendToSender(CommandSender sender, Localizable message, Color color, String... replacements) {
 		if (sender instanceof Player) {
-			message.sendTo(sender.getName(), color, replacements);
+			message.sendTo(((Player)sender).getUniqueId(), color, replacements);
 		}
 		else {
 			sender.sendMessage((color != null ? ChatColor.valueOf(color.name()) : "") + message.localize(replacements));

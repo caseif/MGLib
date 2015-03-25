@@ -1,2 +1,2 @@
-net/amigocraft/mglib/impl/BukkitLocale _INVALID_getMessage (Ljava/lang/String;)Ljava/lang/String; getMessage
-net/amigocraft/mglib/impl/BukkitLocale _INVALID_getMessage (Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String; getMessage
+net/amigocraft/mglib/api/Locale _INVALID_getMessage (Ljava/lang/String;)Ljava/lang/String; getMessage
+net/amigocraft/mglib/api/Locale _INVALID_getMessage (Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String; getMessage

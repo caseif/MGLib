@@ -88,8 +88,10 @@ public class NmsUtil {
 
 			// field for player ping
 			entityPlayer_ping = getNmsClass("EntityPlayer").getDeclaredField("ping");
+			entityPlayer_ping.setAccessible(true);
 			// field for player locale
 			entityPlayer_locale = getNmsClass("EntityPlayer").getDeclaredField("locale");
+			entityPlayer_locale.setAccessible(true);
 			// get method for recieving CraftPlayer's EntityPlayer
 			craftPlayer_getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle");
 			// get the PlayerConnection of the EntityPlayer
@@ -324,7 +326,7 @@ public class NmsUtil {
 	 */
 	public static String getLocale(Player player) {
 		try {
-			return (String)entityPlayer_locale.get(craftPlayer_getHandle.invoke(player));
+			return entityPlayer_locale.get(craftPlayer_getHandle.invoke(player)).toString().replace("_", "").replace("-", "");
 		}
 		catch (IllegalAccessException ex) {
 			ex.printStackTrace();
@@ -348,6 +350,7 @@ public class NmsUtil {
 		MGUtil.verifyDisablingStatus();
 		packetPlayOutPlayerInfo = null;
 		entityPlayer_ping = null;
+		entityPlayer_locale = null;
 		craftPlayer_getHandle = null;
 		playerConnection = null;
 		playerConnection_sendPacket = null;

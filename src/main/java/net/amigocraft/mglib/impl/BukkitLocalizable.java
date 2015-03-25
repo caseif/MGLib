@@ -70,13 +70,7 @@ public class BukkitLocalizable implements Localizable {
 
 	@Override
 	public String localize(String... replacements) {
-		String message = this.localizeIn(Main.getServerLocale(), replacements);
-		if (message.equals(key)) {
-			return this.localizeIn(Main.getServerLocale(), replacements);
-		}
-		else {
-			return message;
-		}
+		return this.localizeIn(Main.getServerLocale(), replacements);
 	}
 
 	@Override
@@ -89,7 +83,7 @@ public class BukkitLocalizable implements Localizable {
 			}
 			return message;
 		}
-		else if (!locale.equals(FALLBACK_LOCALE)) {
+		else if (locale.equals(Main.getServerLocale()) && !locale.equals(FALLBACK_LOCALE)) {
 			return this.localizeIn(FALLBACK_LOCALE, replacements);
 		}
 		else {

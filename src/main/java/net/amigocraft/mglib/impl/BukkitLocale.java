@@ -23,10 +23,12 @@
  */
 package net.amigocraft.mglib.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -39,7 +41,6 @@ import java.util.jar.JarFile;
 
 import net.amigocraft.mglib.api.Locale;
 import net.amigocraft.mglib.api.Localizable;
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
 
 public class BukkitLocale extends Locale {
@@ -68,6 +69,8 @@ public class BukkitLocale extends Locale {
 	 */
 	public BukkitLocale(String plugin) {
 		this.plugin = plugin;
+		loadFromDataFolder();
+		loadFromInternal();
 	}
 
 	@Override
@@ -88,12 +91,6 @@ public class BukkitLocale extends Locale {
 	@Override
 	public boolean isLegacy() {
 		return false;
-	}
-
-	@Override
-	public void initialize() {
-		loadFromDataFolder();
-		loadFromInternal();
 	}
 
 	private void loadFromDataFolder() {
@@ -146,7 +143,8 @@ public class BukkitLocale extends Locale {
 		final List<JarEntry> localeFiles = new ArrayList<JarEntry>();
 		final List<JarEntry> legacyFiles = new ArrayList<JarEntry>();
 		try {
-			JarFile jar = new JarFile(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+			Class<?> mainClass = Class.forName(Bukkit.getPluginManager().getPlugin(this.plugin).getDescription().getMain());
+			JarFile jar = new JarFile(mainClass.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
 			Enumeration<JarEntry> entries = jar.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry e = entries.nextElement();
@@ -180,6 +178,9 @@ public class BukkitLocale extends Locale {
 				}
 			}
 		}
+		catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
 		catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -191,7 +192,19 @@ public class BukkitLocale extends Locale {
 	private void loadLanguage(String language, InputStream stream, boolean legacy) throws IOException {
 		language = language.replace("_", "").replace("-", ""); // normalize locale names
 		if (legacy) {
-			throw new NotImplementedException(); //TODO
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				if (!line.startsWith("#")) {
+					if (line.contains("\\|") && line.indexOf("\\|") != 0) {
+						String[] entry = line.split("\\|");
+						if (!messages.containsKey(entry[0])) {
+							messages.put(entry[0], new BukkitLocalizable(this, entry[0]));
+						}
+						messages.get(entry[0]).addLocale(language, entry[1]);
+					}
+				}
+			}
 		}
 		else {
 			Properties props = new Properties();
