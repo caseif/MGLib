@@ -71,7 +71,14 @@ public class NmsUtil {
 	public static boolean newOnlinePlayersMethod = false;
 
 	static {
-		SPECTATOR_SUPPORT = GameMode.valueOf("SPECTATOR") != null;
+		boolean ss;
+		try {
+			GameMode.valueOf("SPECTATOR");
+			ss = true;
+		} catch (IllegalArgumentException ex) {
+			ss = false;
+		}
+		SPECTATOR_SUPPORT = ss;
 		boolean nmsException = false;
 		String[] array = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
 		VERSION_STRING = array.length == 4 ? array[3] + "." : "";
