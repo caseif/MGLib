@@ -211,16 +211,6 @@ public class MGPlayer implements Metadatable {
 			final Player p = Bukkit.getPlayer(this.getName());
 			if (p != null) { // check that player is online
 				p.closeInventory(); // close any inventory they have open
-				for (final Player pl : Bukkit.getWorld(this.getRound().getWorld()).getPlayers()) {
-					pl.hidePlayer(p);
-					if (this.getRound().getConfigManager().areSpectatorsInTabList()) {
-						NmsUtil.addPlayer(pl, p);
-					}
-					else {
-						NmsUtil.removePlayer(pl, p);
-					}
-				}
-
 				if (!Main.isVanillaSpectatingDisabled() &&
 						this.getRound().getConfigManager().isUsingVanillaSpectating() &&
 						NmsUtil.SPECTATOR_SUPPORT) {
@@ -245,6 +235,7 @@ public class MGPlayer implements Metadatable {
 						this.getRound().getConfigManager().isUsingVanillaSpectating()) {
 					p.setGameMode(org.bukkit.GameMode.valueOf(this.getRound().getConfigManager().getDefaultGameMode().name()));
 				}
+				//noinspection ConstantConditions
 				for (Player pl : NmsUtil.getOnlinePlayers()) {
 					pl.showPlayer(p);
 				}

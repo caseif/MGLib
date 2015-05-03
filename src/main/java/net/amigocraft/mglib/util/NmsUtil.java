@@ -31,8 +31,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,9 +38,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Utility methods for accessing NMS resources. Developers are strongly advised
- * not to use this class within their plugin as it is highly subject to
- * non-backwards compatible modifications.
+ * Utility methods for accessing NMS resources. This is not an API class and
+ * thus is subject to non-backwards-compatible changes. It is <em>strongly</em>
+ * advised that hooking plugins do not reference this class or its methods.
  *
  * @since 0.4.0
  */
@@ -60,12 +58,6 @@ public class NmsUtil {
 
 	// for respawning players automatically
 	public static Object clientCommandPacketInstance;
-
-	// for removing players from the player list
-	private static Constructor<?> packetPlayOutPlayerInfo;
-	private static Object enumPlayerInfoAction_addPlayer;
-	private static Object enumPlayerInfoAction_removePlayer;
-	private static Field entityPlayer_ping;
 
 	private static Method getOnlinePlayers;
 	public static boolean newOnlinePlayersMethod = false;
@@ -88,8 +80,6 @@ public class NmsUtil {
 				newOnlinePlayersMethod = true;
 			}
 
-			// field for player ping
-			entityPlayer_ping = getNmsClass("EntityPlayer").getDeclaredField("ping");
 			// get method for recieving CraftPlayer's EntityPlayer
 			craftPlayer_getHandle = getCraftClass("entity.CraftPlayer").getMethod("getHandle");
 			// get the PlayerConnection of the EntityPlayer
@@ -99,38 +89,6 @@ public class NmsUtil {
 			playerConnection_a_packetPlayInClientCommand = getNmsClass("PlayerConnection")
 					.getMethod("a", getNmsClass("PacketPlayInClientCommand"));
 
-			//get the constructor of the packet
-			try {
-				try {
-					// 1.8.x and above
-					@SuppressWarnings("unchecked")
-					Class<? extends Enum> enumPlayerInfoAction =
-							(Class<? extends Enum>)getNmsClass("EnumPlayerInfoAction");
-					enumPlayerInfoAction_addPlayer = Enum.valueOf(enumPlayerInfoAction, "ADD_PLAYER");
-					enumPlayerInfoAction_removePlayer = Enum.valueOf(enumPlayerInfoAction, "REMOVE_PLAYER");
-					packetPlayOutPlayerInfo = getNmsClass("PacketPlayOutPlayerInfo").getConstructor(
-							enumPlayerInfoAction_addPlayer.getClass(),
-							Array.newInstance(craftPlayer_getHandle.getReturnType(), 0).getClass()
-					);
-				}
-				catch (ClassNotFoundException ex1) {
-					try {
-						// 1.7.x
-						packetPlayOutPlayerInfo = getNmsClass("PacketPlayOutPlayerInfo").getConstructor(
-								String.class, boolean.class, int.class
-						);
-					}
-					catch (ClassNotFoundException ex2) {
-						// 1.6.x and below
-						packetPlayOutPlayerInfo = getNmsClass("Packet201PlayerInfo").getConstructor(
-								String.class, boolean.class, int.class
-						);
-					}
-				}
-			}
-			catch (ClassNotFoundException ex) {
-				Main.log("plugin.alert.nms.player-info", LogLevel.WARNING);
-			}
 			try {
 				try {
 					@SuppressWarnings("unchecked")
@@ -190,102 +148,17 @@ public class NmsUtil {
 	}
 
 	/**
-	 * Adds each player from <code>subjects</code> to <code>recipient</code>'s
-	 * tablist.
-	 *
-	 * @param recipient the player whose tablist will be modified
-	 * @param subjects  the players added to the tablist
-	 * @return whether the info packet was successfully sent
-	 * @since 0.4.0
-	 */
-	public static boolean addPlayers(Player recipient, Collection<? extends Player> subjects) {
-		return sendPlayerInfoPacket(recipient, subjects, true);
-	}
-	/**
-	 * Adds <code>subject</code> to <code>recipient</code>'s tablist.
-	 *
-	 * @param recipient the player whose tablist will be modified
-	 * @param subject   the player added to the tablist
-	 * @return whether the info packet was successfully sent
-	 * @since 0.4.0
-	 */
-	public static boolean addPlayer(Player recipient, Player subject) {
-		return addPlayers(recipient, Arrays.asList(subject));
-	}
-
-	/**
-	 * Removes each player from <code>subjects</code> from
-	 * <code>recipient</code>'s tablist.
-	 *
-	 * @param recipient the player whose tablist will be modified
-	 * @param subjects  the players removed from the tablist
-	 * @return whether the info packet was successfully sent
-	 * @since 0.4.0
-	 */
-	public static boolean removePlayers(Player recipient, Collection<? extends Player> subjects) {
-		return sendPlayerInfoPacket(recipient, subjects, false);
-	}
-
-	/**
-	 * Removes <code>subject</code> from <code>recipient</code>'s tablist.
-	 *
-	 * @param recipient the player whose tablist will be modified
-	 * @param subject   the player removed from the tablist
-	 * @return whether the info packet was successfully sent
-	 * @since 0.4.0
-	 */
-	public static boolean removePlayer(Player recipient, Player subject) {
-		return removePlayers(recipient, Arrays.asList(subject));
-	}
-
-	private static boolean sendPlayerInfoPacket(final Player recipient, final Collection<? extends Player> subjects, boolean visible) {
-		if (NMS_SUPPORT) {
-			try {
-				if ((visible && enumPlayerInfoAction_addPlayer != null) ||
-						(!visible && enumPlayerInfoAction_removePlayer != null)) {
-					Object array = Array.newInstance(craftPlayer_getHandle.getReturnType(), subjects.size());
-					int i = 0;
-					for (Player subject : subjects) {
-						Array.set(array, i, craftPlayer_getHandle.invoke(subject));
-						++i;
-					}
-					Object packet = packetPlayOutPlayerInfo.newInstance(
-							visible ? enumPlayerInfoAction_addPlayer : enumPlayerInfoAction_removePlayer,
-							array
-					);
-					playerConnection_sendPacket.invoke(
-							playerConnection.get(craftPlayer_getHandle.invoke(recipient)), packet);
-				}
-				else {
-					for (Player subject : subjects) {
-						if (subject == null) {
-							continue;
-						}
-						int ping = (Integer)entityPlayer_ping.get(craftPlayer_getHandle.invoke(subject));
-						Object packet = packetPlayOutPlayerInfo.newInstance(subject.getName(), visible, ping);
-						playerConnection_sendPacket.invoke(
-								playerConnection.get(craftPlayer_getHandle.invoke(recipient)), packet);
-					}
-				}
-				return true;
-			}
-			catch (Exception ex) { // just in case
-				ex.printStackTrace();
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Sends a PlayInClientCommand packet to the given player.
 	 *
 	 * @param player the {@link Player} to send the packet to
 	 * @throws Exception if an exception occurs while sending the packet
 	 */
 	public static void sendRespawnPacket(Player player) throws Exception {
-		Object nmsPlayer = NmsUtil.craftPlayer_getHandle.invoke(player);
-		Object conn = NmsUtil.playerConnection.get(nmsPlayer);
-		NmsUtil.playerConnection_a_packetPlayInClientCommand.invoke(conn, NmsUtil.clientCommandPacketInstance);
+		if (NMS_SUPPORT) {
+			Object nmsPlayer = NmsUtil.craftPlayer_getHandle.invoke(player);
+			Object conn = NmsUtil.playerConnection.get(nmsPlayer);
+			NmsUtil.playerConnection_a_packetPlayInClientCommand.invoke(conn, NmsUtil.clientCommandPacketInstance);
+		}
 	}
 
 	/**
@@ -324,8 +197,6 @@ public class NmsUtil {
 	 */
 	public static void uninitialize() {
 		MGUtil.verifyDisablingStatus();
-		packetPlayOutPlayerInfo = null;
-		entityPlayer_ping = null;
 		craftPlayer_getHandle = null;
 		playerConnection = null;
 		playerConnection_sendPacket = null;

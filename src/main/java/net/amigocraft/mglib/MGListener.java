@@ -91,7 +91,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -350,33 +349,6 @@ class MGListener implements Listener {
 			ex.printStackTrace();
 			Main.log.severe(Main.locale.getMessage("plugin.alert.data.load", p));
 		}
-
-		// update tablist
-		// no idea why it needs to be in a scheduler, but it doesn't work if it's not
-		Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
-			public void run() {
-				List<Player> toAdd = new ArrayList<Player>();
-				List<Player> toRemove = new ArrayList<Player>();
-				outer:
-				for (Player pl : NmsUtil.getOnlinePlayers()) {
-					for (Minigame mg : Minigame.getMinigameInstances()) {
-						if (mg.isPlayer(pl.getName())) {
-							NmsUtil.removePlayer(pl, e.getPlayer());
-							toRemove.add(pl);
-							continue outer;
-						}
-					}
-					NmsUtil.addPlayer(pl, e.getPlayer());
-					toAdd.add(pl);
-				}
-				if (!toAdd.isEmpty()) {
-					NmsUtil.addPlayers(e.getPlayer(), toAdd);
-				}
-				if (!toRemove.isEmpty()) {
-					NmsUtil.removePlayers(e.getPlayer(), toRemove);
-				}
-			}
-		});
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -421,29 +393,6 @@ class MGListener implements Listener {
 										ex.printStackTrace();
 									}
 								}
-							}
-						}
-					}
-				}
-				// this code ensures players aren't made semi-permanently invisible to each other when they jump worlds
-				if (r.getWorld().equals(e.getTo().getWorld().getName())) {
-					for (MGPlayer mp : r.getPlayerList()) {
-						final Player p = Bukkit.getPlayer(mp.getName());
-						if (p != null) {
-							if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
-								NmsUtil.addPlayer(e.getPlayer(), p);
-								NmsUtil.addPlayer(p, e.getPlayer());
-								Bukkit.getScheduler().runTask(MGUtil.getPlugin(), new Runnable() {
-									public void run() {
-										NmsUtil.removePlayer(p, e.getPlayer());
-										// no idea why this needs to be delayed for so long
-										Bukkit.getScheduler().runTaskLater(MGUtil.getPlugin(), new Runnable() {
-											public void run() {
-												NmsUtil.removePlayer(e.getPlayer(), p);
-											}
-										}, 20L);
-									}
-								});
 							}
 						}
 					}
