@@ -91,21 +91,31 @@ public class NmsUtil {
 
 			try {
 				try {
-					@SuppressWarnings("unchecked")
-					Object performRespawn = Enum.valueOf(
-							(Class<? extends Enum>)getNmsClass("EnumClientCommand"), "PERFORM_RESPAWN"
+					Class<? extends Enum> enumClass;
+					Object performRespawn;
+					try {
+						// this changed at some point in 1.8 to an inner class; I don't really care to figure out exactly when
+						enumClass = (Class<? extends Enum>)getNmsClass("PacketPlayInClientCommand$EnumClientCommand");
+					} catch (ClassNotFoundException ex) {
+						// older 1.8 builds/1.7
+						enumClass = (Class<? extends Enum>)getNmsClass("EnumClientCommand");
+					}
+					performRespawn = Enum.valueOf(
+							enumClass, "PERFORM_RESPAWN"
 					);
 					clientCommandPacketInstance = getNmsClass("PacketPlayInClientCommand")
 							.getConstructor(performRespawn.getClass())
 							.newInstance(performRespawn);
 				}
 				catch (ClassNotFoundException ex) {
+					ex.printStackTrace();
 					clientCommandPacketInstance = getNmsClass("Packet205ClientCommand").getConstructor().newInstance();
 					clientCommandPacketInstance.getClass().getDeclaredField("a").set(clientCommandPacketInstance, 1);
 				}
 			}
 			catch (ClassNotFoundException ex) {
-				Main.log("plugin.alert.nms.client-command", LogLevel.WARNING);
+				ex.printStackTrace();
+				Main.log(Main.locale.getMessage("plugin.alert.nms.client-command"), LogLevel.WARNING);
 			}
 		}
 		catch (Exception ex) {
