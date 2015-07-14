@@ -67,7 +67,7 @@ public class Minigame {
 
 	HashMap<String, ArenaFactory> arenaFactories = new HashMap<String, ArenaFactory>();
 
-	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0", "0.3.1", "0.4.0");
+	private static List<String> versions = Arrays.asList("0.1.0", "0.2.0", "0.3.0", "0.3.1", "0.4.0", "0.4.1", "0.4.2", "0.4.3");
 
 	boolean customRoundClass = false;
 	boolean customPlayerClass = false;
@@ -122,6 +122,18 @@ public class Minigame {
 	 */
 	public static Minigame registerPlugin(JavaPlugin plugin) {
 		return new Minigame(plugin);
+	}
+
+	/**
+	 * Unregisters the {@link Minigame} associated with the plugin by the given
+	 * name.
+	 *
+	 * @param plugin The name of the plugin to unregister
+	 * @return Whether the plugin was successfully unregistered
+	 * @since 0.4.3
+	 */
+	public static boolean unregisterPlugin(String plugin) {
+		return registeredInstances.remove(plugin) != null;
 	}
 
 	/**
@@ -599,9 +611,6 @@ public class Minigame {
 	 */
 	public static void uninitialize() {
 		MGUtil.verifyDisablingStatus();
-		for (Minigame mg : registeredInstances.values()) {
-			mg = null;
-		}
 		registeredInstances = null;
 	}
 

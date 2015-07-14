@@ -87,6 +87,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -959,4 +960,14 @@ class MGListener implements Listener {
 			}
 		}
 	}
+
+	@EventHandler
+	public void onPluginDisable(PluginDisableEvent event) {
+		for (Minigame mg : Minigame.getMinigameInstances()) {
+			if (mg.getPlugin().getName().equals(event.getPlugin().getName())) {
+				Minigame.unregisterPlugin(event.getPlugin().getName());
+			}
+		}
+	}
+
 }
